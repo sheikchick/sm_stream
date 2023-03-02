@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>Smash Bros. Melee Overlay Config</title>
+	<script src="{{ url_for('static', filename='scripts/jquery-3.4.1.min.js') }}"></script>
+	<script src="{{ url_for('static', filename='scripts/long-press-event.js') }}"></script>
+	<script src="{{ url_for('static', filename='scripts/auto-scripts.js') }}"></script>
+	<script src="{{ url_for('static', filename='scripts/obs-websocket.js') }}"></script>
+	<script src="{{ url_for('static', filename='scripts/fontawesome-b.js') }}"></script>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/updater.css') }}">
+</head>
+
+<body>
+	<div id="wrapper">
+		<div id="player1" class="player">
+			<div id="p1_info" class="info_top">
+				<div class="text_flex" id="p1_text">
+					<input type="text" id="p1_tag_actual" class="tag" value="{{p1_tag}}" placeholder="Player 1 Tag" readonly="true">
+					<input type="text" id="p1d_tag_actual" class="tag" value="{{p1d_tag}}" placeholder="Player 2 Tag" readonly="true">
+				</div>
+				<div id="p1_chosen" class="chosen">
+					<div id="csp_player1" class="chosen_csp">
+						<img id="p1_character" class="chosen_csp_image" src="static/img/csp_icons/{{p1_char}}/{{p1_colour}}.png">
+					</div>
+
+				</div>
+				<div id="p1d_chosen" class="chosen">
+					<div id="csp_player1d" class="chosen_csp">
+						<img id="p1d_character" class="chosen_csp_image" src="static/img/csp_icons/{{p1d_char}}/{{p1d_colour}}.png">
+					</div>
+
+				</div>
+				<input id="p1_score_actual" class="score" min="0" max="99" value="{{p1_score}}" readonly="true">
+			</div>
+		</div>
+
+		<a id="outer_displayed">Currently displayed on stream</a>
+
+		<div id="center_actual" class="center">
+			<a id="inner_displayed">Currently displayed on stream</a>
+			<div id="round_wrapper">
+				<a>Round</a>
+				<input type="text" id="round_actual" value="{{round}}" placeholder="Round" readonly="true">
+			</div>
+			<div id="best_of_wrapper">
+				<a>Best of</a>
+				<input id="best_of_actual" value="{{best_of}}" readonly="true">
+				</select>
+			</div>
+		</div>
+
+
+
+		<div id="player2" class="player">
+			<div id="p2_info" class="info_top">
+				<input id="p2_score_actual" class="score" min="0" max="99" value="{{p2_score}}" readonly="true">
+				<div id="p2_chosen" class="chosen">
+					<div id="csp_player2" class="chosen_csp">
+						<img id="p2_character" class="chosen_csp_image" src="static/img/csp_icons/{{p2_char}}/{{p2_colour}}.png">
+					</div>
+				</div>
+				<div id="p2d_chosen" class="chosen">
+					<div id="csp_player2d" class="chosen_csp">
+						<img id="p2d_character" class="chosen_csp_image" src="static/img/csp_icons/{{p2d_char}}/{{p2d_colour}}.png">
+					</div>
+
+				</div>
+				<div class="text_flex" id="p2_text">
+					<input type="text" id="p2_tag_actual" class="tag" value="{{p2_tag}}" placeholder="Player 1 Tag" readonly="true">
+					<input type="text" id="p2d_tag_actual" class="tag" value="{{p2d_tag}}" placeholder="Player 2 Tag" readonly="true">
+				</div>
+			</div>
+		</div>
+
+		<div id="player1change" class="player">
+			<div id="p1_info" class="info">
+				<div id="p1_text_change" class="text_flex_change">
+					<input type="text" id="p1_tag" class="tag" value="{{p1_tag}}" placeholder="Player 1 Tag">
+					<input type="text" id="p1d_tag" class="tag" value="{{p1d_tag}}" placeholder="Player 2 Tag">
+					<button type="button" id="team1_swap" class="swap" onclick="swap_team(1)">Swap Ports <i class="fa-solid fa-arrows-up-down"></i></button>
+				</div>
+				<input type="number" id="p1_score" class="score" min="0" max="99" value="{{p1_score}}">
+			</div>
+		</div>
+
+		<a id="outer_change">Make changes here</a>
+
+		<div id="center" class="center">
+			<a id="inner_change">Make changes here</a>
+			<div id="update_box">
+				<button type="button" class="update" onclick="update()">Update <i class="fa fa-sync"></i></button>
+				<div id="update_status"><b>_</b></div>
+			</div>
+			<div id="scene_box">
+				<select id="scenes"></select>
+				<div>
+					<button id="update_scene" class="scene" onclick="update_scene()">Change Scene</button>
+				</div>
+			</div>
+			<div id="round_wrapper">
+				<a>Round</a>
+				<input type="text" id="round" value="{{round}}" placeholder="Round">
+			</div>
+			<div id="best_of_wrapper">
+				<a>Best of</a>
+				<select name="best_of" id="best_of">
+					<option value="{{best_of}}" selected hidden disabled>{{best_of}}</option>
+					<option value="3">3</option>
+					<option value="5">5</option>
+				</select>
+			</div>
+			<button type="button" class="swap_sides" onclick="swap_sides()">Swap Sides <i class="fa fa-exchange-alt"></i></button>
+			<div class="doubles_wrapper" id="doubles_wrapper">
+				<button type="button" class="toggle_doubles" onclick="toggle_doubles()" value="{{is_doubles}}"></button>
+				<div id="doubles_info"></div>
+			</div>
+		</div>
+
+		<div id="player2change" class="player">
+			<div id="p2_info" class="info">
+				<input type="number" id="p2_score" class="score" min="0" max="99" value="{{p2_score}}">
+				<div id="p2_text_change" class="text_flex_change">
+					<input type="text" id="p2_tag" class="tag" value="{{p2_tag}}" placeholder="Player 1 Tag">
+					<input type="text" id="p2d_tag" class="tag" value="{{p2d_tag}}" placeholder="Player 2 Tag">
+					<button type="button" id="team2_swap" class="swap" onclick="swap_team(2)">Swap Ports <i class="fa-solid fa-arrows-up-down"></i></button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>

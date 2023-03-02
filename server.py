@@ -40,6 +40,8 @@ scene_changer = config['SLIPPI']['scene_changer']
 slp_folder = config['SLIPPI']['slp_folder']
 capture_card = config['SLIPPI']['capture_card']
 
+advanced_game_detection = config['DEBUG'].getboolean('advanced_game_detection')
+
 client = GraphQLClient('https://api.start.gg/gql/' + api_ver)
 client.inject_token('Bearer ' + api_key)
 
@@ -109,7 +111,7 @@ def manual():
         best_of=best_of
     )
 
-@app.route("/data/json/data.json", methods=["POST", "GET"])
+@app.route("/data.json", methods=["POST", "GET"])
 def data():
     data = readJSON()
     return data;
@@ -175,14 +177,14 @@ def name_update():
 @app.route("/database.json", methods=["POST", "GET"])
 def databaseJSON():
     try:
-        return send_file('/data/json/database.json', as_attachment=True)
+        return send_file('data/json/database.json', as_attachment=True)
     except Exception as e:
         return str(e)
     
 @app.route("/match_result.json", methods=["POST", "GET"])
 def matchJSON():
     try:
-        return send_file('/data/json/match_result.json', as_attachment=True)
+        return send_file('data/json/match_result.json', as_attachment=True)
     except Exception as e:
         return str(e)
 
@@ -190,7 +192,7 @@ def matchJSON():
 def infoJSON():
     mutex.acquire()
     try:
-        return send_file('/data/json/info.json', as_attachment=True)
+        return send_file('data/json/info.json', as_attachment=True)
     except Exception as e:
         return str(e)
     finally:
@@ -199,7 +201,7 @@ def infoJSON():
 @app.route("/top8.json", methods=["POST", "GET"])
 def top8JSON():
     try:
-        return send_file('/data/json/top8.json', as_attachment=True)
+        return send_file('data/json/top8.json', as_attachment=True)
     except Exception as e:
         return str(e)
 
@@ -211,13 +213,13 @@ def favicon():
         return str(e)
         
 def readTablet():
-    with open("/data/json/tablet.json") as infile:
+    with open("data/json/tablet.json") as infile:
         data = json.load(infile)
         return data
 
 def writeJSON(information):
     try:
-        pronoun_lookup = json.load(open("/data/json/pronouns.json"))
+        pronoun_lookup = json.load(open("data/json/pronouns.json"))
         p1pro = ""
         p2pro = ""
         if information["p1_tag"] in pronoun_lookup:
@@ -255,7 +257,7 @@ def writeJSON(information):
         }
         mutex.acquire()
         try:
-            with open("/data/json/info.json", "w") as outfile:
+            with open("data/json/info.json", "w") as outfile:
                 json.dump(data, outfile)
         finally:
             mutex.release()
@@ -264,7 +266,7 @@ def writeJSON(information):
 
         
 def processNames(information):
-    pronoun_lookup = json.load(open("/data/json/pronouns.json"))
+    pronoun_lookup = json.load(open("data/json/pronouns.json"))
     pronouns = ""
     tablet = readTablet()
     stream_data = readJSON()
@@ -294,7 +296,7 @@ def processNames(information):
         stream_data["Player2"]["score"] = 0
     mutex.acquire()
     try:
-        with open("/data/json/info.json", "w") as outfile:
+        with open("data/json/info.json", "w") as outfile:
             json.dump(stream_data, outfile)
     finally:
         mutex.release()
@@ -303,7 +305,7 @@ def readJSON():
     data = None
     mutex.acquire()
     try:
-        with open("/data/json/info.json") as infile:
+        with open("data/json/info.json") as infile:
             data = json.load(infile)
             return data
     finally:
@@ -420,7 +422,7 @@ def smashgg_loop():
             current_time = time.perf_counter()
             if (current_time-10 > last_request_timestamp) or (last_request_timestamp == 0):
                 json_out = get_top8_info();
-                with open("/data/json/top8.json", "w") as outfile:
+                with open("data/json/top8.json", "w") as outfile:
                     json.dump(json_out, outfile)
                 last_request_timestamp = time.perf_counter()
             time.sleep(1)
@@ -537,7 +539,7 @@ def get_game_finished():
         return
     except:
         #game in progress
-        print("Game loaded, in progress...")
+        print("--Game loaded, in progress...")
         show_slippi()
         pass
 
@@ -554,7 +556,7 @@ def get_game_finished():
         data['Player2']['score'] = p2_score
         mutex.acquire()
         try:
-            with open("/data/json/info.json", "w") as outfile:
+            with open("data/json/info.json", "w") as outfile:
                 json.dump(data, outfile)
         finally:
             mutex.release()
@@ -585,8 +587,8 @@ def get_game_finished():
             running = False
             #past here the game has ended
             #on normal end, pause for 0.5s
-            if game.end.lras_initiator is None:
-                print("Game ended")
+            if game.end.lras_initiator is None or not advanced_game_detection:
+                print("--Game ended")
                 time.sleep(0.5)
                 show_capture()
             #on lrastart, swap instantly
@@ -623,15 +625,18 @@ def get_game_finished():
                     for player in info["players"]:
                         if player["type"] == 1:
                             scoreupdate = False
-                            print("--Game included CPU player")
+                            print("  --Game included CPU player")
                 except Exception as f:
                     print(f)
                 if int(stats["playableFrameCount"]) < 2700 :
                     scoreupdate = False
-                    print("--False game detected - Under 45 seconds played")
+                    print("  --False game detected - Under 45 seconds played")
                 if stats["overall"][0]["totalDamage"] < 120 and stats["overall"][1]["totalDamage"] < 120:
-                    print("--False game detected - No character dealt over 120%")
+                    print("  --False game detected - No character dealt over 120%")
                     scoreupdate = False
+                if not advanced_game_detection:
+                    print("  --Continuing anyway as 'advanced_game_detection' is disabled in the config file")
+                    scoreupdate = True
                 if scoreupdate:
                     p1_id = stats["stocks"][0]["playerIndex"]
                     p2_id = stats["stocks"][1]["playerIndex"]
@@ -648,48 +653,56 @@ def get_game_finished():
                     game_data["p1"]["stocks"] = 4 - p1
                     game_data["p2"]["stocks"] = 4 - p2
                     if p1 < p2:
-                        print(" --Player 1 wins")
+                        print("--Player 1 wins - " + str(game_data["p1"]["stocks"]) + " stocks to " + str(game_data["p2"]["stocks"]) + " stocks")
                         game_data["winner"] = 1
                         p1_score += 1
                     elif p2 < p1:
-                        print(" --Player 2 wins")
+                        print("--Player 2 wins - " + str(game_data["p2"]["stocks"]) + " stocks to " + str(game_data["p1"]["stocks"]) + " stocks")
                         game_data["winner"] = 2
                         p2_score += 1
                     elif p1 == p2:
                         length = len(stats["stocks"])
-                        p1_dmg = stats["stocks"][length-2]["currentPercent"]
-                        p2_dmg = stats["stocks"][length-2]["currentPercent"]
+                        #probably redundant to check playerIndex but for safety
+                        if stats["stocks"][length-2]['playerIndex'] < stats["stocks"][length-1]['playerIndex']:
+                            p1_dmg = stats["stocks"][length-2]["currentPercent"]
+                            p2_dmg = stats["stocks"][length-1]["currentPercent"]
+                        else:
+                            p1_dmg = stats["stocks"][length-1]["currentPercent"]
+                            p2_dmg = stats["stocks"][length-2]["currentPercent"]
                         if p1_dmg < p2_dmg:
-                            print(" --Player 1 wins")
-                            game_data["winner"] = 2
+                            print("--Player 1 wins - " + str(p1_dmg) + "% to " + str(p2_dmg) + "%")
+                            game_data["winner"] = 1
                             p1_score += 1
                         elif p2_dmg > p1_dmg:
-                            print(" --Player 2 wins")
+                            print(" --Player 2 wins - " + str(p2_dmg) + "% to " + str(p1_dmg) + "%")
                             game_data["winner"] = 2
                             p2_score += 1
                         else:
-                            print(" --Match ended but could not determine winner. Draw?")
+                            print("--Match ended but could not determine winner. Draw?")
                     data = readJSON()
                     data['Player1']['score'] = p1_score
                     data['Player2']['score'] = p2_score
-                    match_data.append(game_data)
+                    #if a tie
+                    if game_data["winner"] != 0:
+                        match_data.append(game_data)
                     #If game finished, do something with the stats
                     if p1_score >= math.ceil(best_of/2) or p2_score >= math.ceil(best_of/2):
                         #shitty system but it works lol
                         for game in match_data:
                             game['p1']['tag'] = game_data['p1']['tag']
                             game['p2']['tag'] = game_data['p2']['tag']
-                        with open("/data/json/match_result.json", "w") as outfile:
+                        with open("data/json/match_result.json", "w") as outfile:
                             json.dump(match_data, outfile)
-                        print(match_data)
                         slp_tools.print_match(match_data)
                         match_data = []
                     mutex.acquire()
                     try:
-                        with open("/data/json/info.json", "w") as outfile:
+                        with open("data/json/info.json", "w") as outfile:
                             json.dump(data, outfile)
                     finally:
                         mutex.release()
+                else:
+                    print("--Game not tracked")
 
         except Exception as e:
             out = read_game(file)
@@ -724,7 +737,7 @@ def update_chars(out):
         data['is_doubles'] = "false"
         mutex.acquire()
         try:
-            with open("/data/json/info.json", "w") as outfile:
+            with open("data/json/info.json", "w") as outfile:
                 json.dump(data, outfile)
         finally:
             mutex.release()
@@ -765,7 +778,7 @@ def update_chars(out):
         data['is_doubles'] = "true"
         mutex.acquire()
         try:
-            with open("/data/json/info.json", "w") as outfile:
+            with open("data/json/info.json", "w") as outfile:
                 json.dump(data, outfile)
         finally:
             mutex.release()

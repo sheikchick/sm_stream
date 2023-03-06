@@ -89,13 +89,6 @@
   	#p2_tag {
   		order: 0;
   	}
-	#p1_stock {
-		display: none;
-	}
-
-	#p2_stock {
-		display: none;
-	}
   	#round {
   		height: 15px;
   		margin: 5px !important;
@@ -173,14 +166,6 @@
 
 #outer_change {
 	text-align: center;
-	display: none;
-}
-
-#p1_stock {
-	display: none;
-}
-
-#p2_stock {
 	display: none;
 }
 
@@ -269,7 +254,7 @@ a {
 }
 
 .score {
-	margin: 0px 24px 0px 24px;
+	margin: 0px 16px 0px 16px;
 	font-size: 50px;
 	width: 80px;
 	text-align: center;
@@ -582,7 +567,6 @@ button:focus {
 
 .text_flex {
 	margin-right: 68px;
-	width: 301px;
 }
 
 .text_flex_change {

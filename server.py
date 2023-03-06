@@ -114,7 +114,7 @@ def manual():
 @app.route("/data.json", methods=["POST", "GET"])
 def data():
     data = readJSON()
-    return data;
+    return data
 
 @app.route("/")
 def index():

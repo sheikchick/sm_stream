@@ -211,6 +211,13 @@ def favicon():
         return send_file('static/favicon.ico')
     except Exception as e:
         return str(e)
+    
+@app.route("/slippi.svg")
+def slippi_svg():
+    try:
+        return send_file('static/slippi.svg')
+    except Exception as e:
+        return str(e)
         
 def readTablet():
     with open("data/json/tablet.json") as infile:

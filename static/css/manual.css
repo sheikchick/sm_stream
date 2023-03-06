@@ -153,6 +153,17 @@
 	#inner_change {
 		display: none !important;
 	}
+	#auto_button {
+		position: absolute;
+		top: 50px !important;
+		left: 10px !important;
+	}
+	
+	#settings_button {
+		position: absolute;
+		top: 0px !important;
+		left: 10px !important;
+	}
 }
 
 #outer_displayed {
@@ -209,6 +220,38 @@ a {
 	background-color: #222;
 	border-radius: 5px;
 	margin-bottom: 10px;
+}
+
+#auto_button {
+	position: absolute;
+	left: 60px;
+	bottom: 10px;
+	font-size: 24px;
+	margin: 5px;
+	margin-top: 20px;
+	color: #323232;
+	background-color: #fff;
+	border: none;
+	border-bottom: 3px solid #AAA;
+	height: 39px;
+	width: 40px;
+	padding: 3px 1px 3px 3px;
+}
+
+#settings_button {
+	position: absolute;
+	left: 10px;
+	bottom: 10px;
+	font-size: 24px;
+	margin: 5px;
+	margin-top: 20px;
+	color: #323232;
+	background-color: #5EEBB1;
+	border: none;
+	border-bottom: 3px solid #25634a;
+	height: 39px;
+	width: 40px;
+	padding: 3px 1px 3px 3px;
 }
 
 .info_top {
@@ -337,6 +380,13 @@ select {
 
 select:focus {
 	outline: none;
+}
+
+.slp {
+	width: 30px;
+	height: 30px;
+	margin-top: 1px;
+	filter: saturate(100%) brightness(0);
 }
 
 #p1_tag {

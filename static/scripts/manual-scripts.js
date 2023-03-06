@@ -748,3 +748,11 @@ function update_scene() {
 		console.log("Changed scene to '" + newScene + "'");
 	})
 }
+
+function settings() {
+	window.location.href = "/settings";
+}
+
+function auto() {
+	window.location.href = "/";
+}

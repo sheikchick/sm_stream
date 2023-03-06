@@ -8,11 +8,13 @@
 	<script src="{{ url_for('static', filename='scripts/manual-scripts.js') }}"></script>
 	<script src="{{ url_for('static', filename='scripts/obs-websocket.js') }}"></script>
 	<script src="{{ url_for('static', filename='scripts/fontawesome.js') }}"></script>
-	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/updater.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/manual.css') }}">
 </head>
 
 <body>
 	<div id="wrapper">
+		<button id="auto_button" class="absolute_button" onclick="auto()"><img class="slp" src="static/slippi.svg"/></button>
+		<button id="settings_button" class="absolute_button" onclick="settings()"><i class="fas fa-cog"></i></button>
 		<div id="player1" class="player">
 			<div id="p1_info" class="info">
 				<div class="text_flex">

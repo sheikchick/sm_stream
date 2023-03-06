@@ -1,6 +1,8 @@
 is_doubles = false;
 var obs;
 
+const phone_aspect = window.matchMedia("(max-aspect-ratio: 1/1), (max-width: 1000px)");
+
 
 $(document).ready(function(){
 	obs = new OBSWebSocket();
@@ -122,19 +124,27 @@ function update() {
 				best_of: best_of
 			},
 		success: function() {
-			$("#update_status").css("color", "#CBFFC7");
-			$("#update_status").text("Updated");
-			$("#update_status").css("opacity", "1");
+			$(".update").css("background-color", "#55F76B");
+			$(".update").css("border-bottom", "3px solid #349641");
+			$(".update").text("Updated ");
+			$(".update").append('<i class="fa-solid fa-thumbs-up"></i>')
 			setTimeout(function(){
-				$("#update_status").css("opacity", "0");
+				$(".update").css("background-color", "#CBFFC7");
+				$(".update").css("border-bottom", "3px solid #64B55E");
+				$(".update").text("Update ");
+				$(".update").append('<i class="fa fa-sync"></i>')
 			}, 2000);
 		},
 		error: function() {
-			$("#update_status").css("color", "#F56262");
-			$("#update_status").text("Error");
-			$("#update_status").css("opacity", "1");
+			$(".update").css("background-color", "#F56262");
+			$(".update").css("border-bottom", "3px solid #F53535");
+			$(".update").text("Error ");
+			$(".update").append('<i class="fa-solid fa-triangle-exclamation"></i>')
 			setTimeout(function(){
-				$("#update_status").css("opacity", "0");
+				$(".update").css("background-color", "#CBFFC7");
+				$(".update").css("border-bottom", "3px solid #64B55E");
+				$(".update").text("Update ");
+				$(".update").append('<i class="fa fa-sync"></i>')
 			}, 2000);
 		},
 		timeout: 5000
@@ -162,37 +172,58 @@ function swap_team(n) {
 }
 
 function toggle_doubles() {
+	//changing to singles
 	if(is_doubles) {
 		$(".toggle_doubles").text("Singles ");
 		$(".toggle_doubles").append("<i class='fa fa-user'></i>");
 		$("#p1d_chosen").hide();
 		$("#p2d_chosen").hide();
 		$(".text_flex").css("margin-top", "0px");
-		$(".text_flex").css("width", "403px");
+		$(".text_flex change").css("width", "403px");
 		$(".tag").css("height", "");
 		$("#p2_tag").attr("placeholder", "Player 2 Tag")
+		$(".swap").hide()
 
 		$("#p1d_tag").hide();
 		$("#p2d_tag").hide();
 		$("#p1d_tag_actual").hide();
 		$("#p2d_tag_actual").hide();
+		$(".tag.actual").css("font-size", "30px");
+		$(".tag.actual").css("height", "");
+
+		$(".info").css("height", "150px");
+		$(".score.change").css("margin-bottom", "0px");
+		$(".tag.change").css("margin-top", "0px");
+
+		$(".text_flex.actual").css("width", "");
 
 		is_doubles = false;
 	}
+	//changing to doubles
 	else {
 		$(".toggle_doubles").text("Doubles ");
 		$(".toggle_doubles").append("<i class='fa fa-user-friends'></i>");
 		$("#p1d_chosen").show();
 		$("#p2d_chosen").show();
-		$(".text_flex").css("margin-top", "40px");
-		$(".text_flex").css("width", "301px");
+		$(".text_flex").css("margin-top", "0px");
+		//$(".text_flex change").css("width", "301px");
 		$(".tag").css("height", "16px");
 		$("#p2_tag").attr("placeholder", "Player 1 Tag")
+		$(".swap").show()
 
 		$("#p1d_tag").show();
 		$("#p2d_tag").show();
+
 		$("#p1d_tag_actual").show();
 		$("#p2d_tag_actual").show();
+		$(".tag.actual").css("font-size", "20px");
+		$(".tag.actual").css("height", "20px");
+
+		$(".info").css("height", "200px");
+		$(".score.change").css("margin-bottom", "50px");
+		$(".tag.change").css("margin-top", "0px");
+
+		$(".text_flex.actual").css("width", "341px !important");
 
 		is_doubles = true;
 	}
@@ -247,3 +278,31 @@ function update_scene() {
 		console.log("Changed scene to '" + newScene + "'");
 	})
 }
+
+function settings() {
+	window.location.href = "/settings";
+}
+
+function manual() {
+	window.location.href = "/manual";
+}
+
+//run on aspect ratio change
+/*function handle_aspect_change(e) {
+	//phone
+	if (e.matches) {
+		if(is_doubles) {
+			
+		} else {
+
+		}
+	}
+	//desktop
+	else {
+		if(is_doubles) {
+
+		} else {
+			
+		}
+	}
+}*/

@@ -386,6 +386,7 @@ select:focus {
 	width: 30px;
 	height: 30px;
 	margin-top: 1px;
+	margin-left: -2px;
 	filter: saturate(100%) brightness(0);
 }
 

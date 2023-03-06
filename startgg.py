@@ -8,6 +8,9 @@ import time
 import subprocess
 import math
 
+def get_events(client, tournament):
+    
+
 #Get sets yet to happen from a given phase with 2 entrants
 def get_current_sets(client, phase_id):
     result = client.execute('''

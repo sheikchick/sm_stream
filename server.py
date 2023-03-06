@@ -31,10 +31,10 @@ obs_host = config['GENERAL']['obs_host']
 obs_port = config['GENERAL']['obs_port']
 obs_pass = config['GENERAL']['password']
 
-api_key = config['SMASHGG']['api_key']
-api_ver = config['SMASHGG']['api_ver']
-phase_id = config['SMASHGG']['phase_id']
-bracket_size = int(config['SMASHGG']['bracket_size'])
+api_key = config['STARTGG']['api_key']
+api_ver = config['STARTGG']['api_ver']
+phase_id = config['STARTGG']['phase_id']
+bracket_size = int(config['STARTGG']['bracket_size'])
 
 scene_changer = config['SLIPPI']['scene_changer']
 slp_folder = config['SLIPPI']['slp_folder']
@@ -166,6 +166,7 @@ def index():
 
 @app.route("/update", methods=["POST"])
 def update():
+    print(request.form)
     writeJSON(request.form)
     return "OK"
     
@@ -422,7 +423,7 @@ def get_set_object(x, bracket):
 def sort_id(json):
     return(int(json['id']))
 
-def smashgg_loop():
+def startgg_loop():
     global last_request_timestamp
     try:
         while True:
@@ -808,13 +809,14 @@ def slippi_loop():
 
 
 if __name__ == "__main__":
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
     if phase_id != "0":
-        print("Searching smash.gg for bracket info...")
-        top8 = threading.Thread(target=smashgg_loop, name="smashgg loop")
+        print("Searching start.gg for bracket info...")
+        top8 = threading.Thread(target=startgg_loop, name="startgg loop")
         top8.daemon = True
         top8.start()
     else:
-        print("No smash.gg phase provided, top 8 data will not be updated")
+        print("No start.gg phase provided, top 8 data will not be updated")
     if scene_changer == "true":
         slippi_checker = threading.Thread(target=slippi_loop, name="slippi loop")
         slippi_checker.daemon = True

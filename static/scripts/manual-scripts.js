@@ -609,19 +609,27 @@ function update() {
 				best_of: 5
 			},
 		success: function() {
-			$("#update_status").css("color", "#CBFFC7");
-			$("#update_status").text("Updated");
-			$("#update_status").css("opacity", "1");
+			$(".update").css("background-color", "#55F76B");
+			$(".update").css("border-bottom", "3px solid #349641");
+			$(".update").text("Updated ");
+			$(".update").append('<i class="fa-solid fa-thumbs-up"></i>')
 			setTimeout(function(){
-				$("#update_status").css("opacity", "0");
+				$(".update").css("background-color", "#CBFFC7");
+				$(".update").css("border-bottom", "3px solid #64B55E");
+				$(".update").text("Update ");
+				$(".update").append('<i class="fa fa-sync"></i>')
 			}, 2000);
 		},
 		error: function() {
-			$("#update_status").css("color", "#F56262");
-			$("#update_status").text("Error");
-			$("#update_status").css("opacity", "1");
+			$(".update").css("background-color", "#F56262");
+			$(".update").css("border-bottom", "3px solid #F53535");
+			$(".update").text("Error ");
+			$(".update").append('<i class="fa-solid fa-triangle-exclamation"></i>')
 			setTimeout(function(){
-				$("#update_status").css("opacity", "0");
+				$(".update").css("background-color", "#CBFFC7");
+				$(".update").css("border-bottom", "3px solid #64B55E");
+				$(".update").text("Update ");
+				$(".update").append('<i class="fa fa-sync"></i>')
 			}, 2000);
 		},
 		timeout: 5000

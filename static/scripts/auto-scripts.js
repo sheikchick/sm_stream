@@ -9,30 +9,31 @@ $(document).ready(function(){
 	url = window.location.href;
 	var arr = url.split(":");
 	var ip = arr[1].substr(2, this.length);
-	obsurl = ip + ':4444';
+	obsurl = "ws://" + ip + ":4455";
 
 	load_changes();
 
-	/*$("#p1_character").attr("character", $("#p1_character").attr("src").split("/")[3].split(".")[0]);
-	$("#p1d_character").attr("character", $("#p1d_character").attr("src").split("/")[3].split(".")[0]);
-	$("#p2_character").attr("character", $("#p2_character").attr("src").split("/")[3].split(".")[0]);
-	$("#p2d_character").attr("character", $("#p2d_character").attr("src").split("/")[3].split(".")[0]);*/
+	console.log(best_of_value)
 
-	obs.connect({
-		address: obsurl, password: 'password'
-		})
+	change_best_of(best_of_value);
+
+	obs.connect(obsurl, '00000000')
 		.then(() => {
 			$("#scenes").show();
 			$("#update_scene").show();
-			obs.send(
-				'GetSceneList', {}
+			obs.call(
+				'GetSceneList'
 			)
 			.then(function(value) {
+				$("#scene_box").show()
+				$("#round_change").css("margin-top", "-35px")
+				$(".best_of").css("margin-top", "-30px")
+				$(".toggle_doubles").css("margin-top", "-30px")
+				$(".update").css("margin-top", "-30px")
 				value["scenes"].forEach(function(scene) {
-					$("#scenes").append(new Option(scene["name"], scene["name"]));
+					$("#scenes").append(new Option(scene["sceneName"], scene["sceneName"]));
 				})
 				$("#scenes").val(value["current-scene"])
-		  		//console.log(value);
 		  	})
 		})
 		.catch(err => {
@@ -45,26 +46,8 @@ $(document).ready(function(){
 		is_doubles = true;
 	}
 
-	promise1 = obs.send('GetSceneList', {});
-	promise1.then(function(value) {
-	  	console.log(value);
-	});
-
 	toggle_doubles();
 });
-
-function set(player, slot, character, colour) {
-	side = "left"
-	if (player == 1) {
-		side = "left";
-	} else {
-		side = "right";
-	}
-	$("#p" + player + "_colour" + slot).attr("src", "static/img/csp_icons/" + character + "/" + colour + ".png");
-	$("#p" + player + "_colour" + slot).show();
-	$("#p" + player + "_stock" + slot).attr("src", "static/img/stock_icons/" + side + "/" + character + ".png");
-	$("#p" + player + "_stock" + slot).hide();
-};
 
 function hide(player, slot) {
 		$("#p" + player + "_colour" + slot).attr("src", "");
@@ -80,24 +63,21 @@ function reset_background(player) {
 function update() {
 	player1tag = $("#p1_tag").val();
 	player1dtag = $("#p1d_tag").val();
-	player1char = $("#p1_character").attr("character");
-	player1colour = $("#p1_character").attr("colour");
-	player1dchar = $("#p1d_character").attr("character");
-	player1dcolour = $("#p1d_character").attr("colour");
-	player1score = $("#p1_score").val();
+	player1char = $("#p1_character_actual").attr("character");
+	player1colour = $("#p1_character_actual").attr("colour");
+	player1dchar = $("#p1d_character_actual").attr("character");
+	player1dcolour = $("#p1d_character_actual").attr("colour");
+	player1score = $("#p1_score_change").val();
 	player2tag = $("#p2_tag").val();
 	player2dtag = $("#p2d_tag").val();
-	player2char = $("#p2_character").attr("character");
-	player2colour = $("#p2_character").attr("colour");
-	player2dchar = $("#p2d_character").attr("character");
-	player2dcolour = $("#p2d_character").attr("colour");
-	player2score = $("#p2_score").val();
-	round = $("#round").val();
+	player2char = $("#p2_character_actual").attr("character");
+	player2colour = $("#p2_character_actual").attr("colour");
+	player2dchar = $("#p2d_character_actual").attr("character");
+	player2dcolour = $("#p2d_character_actual").attr("colour");
+	player2score = $("#p1_score_change").val();
+	round = $("#round_change").val();
 	caster1 = "";
 	caster2 = "";
-	best_of = $("#best_of").find(":selected").text();
-
-	console.log(best_of)
 
 	$.ajax({
 		type: 'POST',
@@ -121,7 +101,7 @@ function update() {
 				caster1: caster1,
 				caster2: caster2,
 				is_doubles: is_doubles,
-				best_of: best_of
+				best_of: best_of_value
 			},
 		success: function() {
 			$(".update").css("background-color", "#55F76B");
@@ -176,24 +156,33 @@ function toggle_doubles() {
 	if(is_doubles) {
 		$(".toggle_doubles").text("Singles ");
 		$(".toggle_doubles").append("<i class='fa fa-user'></i>");
-		$("#p1d_chosen").hide();
-		$("#p2d_chosen").hide();
-		$(".text_flex").css("margin-top", "0px");
-		$(".text_flex change").css("width", "403px");
-		$(".tag").css("height", "");
-		$("#p2_tag").attr("placeholder", "Player 2 Tag")
+
+		$("#p1d_character_actual").hide();
+		$("#p2d_character_actual").hide();
+		$("#p1d_character_change").hide();
+		$("#p2d_character_change").hide();
+
+		//resize for singles
+		$("#p1_score_actual").css("grid-column", "3");
+		$("#p1_info_actual").css("grid-template-columns", "280px [col-start] 90px [col-start] 50px [col-start]")
+
+		$("#p2_text_actual").css("grid-column", "3");
+		$("#p2_info_actual").css("grid-template-columns", "50px [col-start] 90px [col-start] 280px [col-start]")
+
 		$(".swap").hide()
+		$(".tag_container.change").css("grid-column", "1")
+		$("#p1_character_change").css("grid-column", "2")
+		$("#p2_character_change").css("grid-column", "2")
+		$(".score.change").css("grid-column", "3")
+		$(".info.change").css("grid-template-columns", "480px [col-start] 240px [col-start] 100px [col-start]");
+		$(".tag.change").css("width", "440px")
+
+		$("#p2_tag").attr("placeholder", "Player 2 Tag")
 
 		$("#p1d_tag").hide();
 		$("#p2d_tag").hide();
 		$("#p1d_tag_actual").hide();
 		$("#p2d_tag_actual").hide();
-		$(".tag.actual").css("font-size", "30px");
-		$(".tag.actual").css("height", "");
-
-		$(".info").css("height", "150px");
-		$(".score.change").css("margin-bottom", "0px");
-		$(".tag.change").css("margin-top", "0px");
 
 		$(".text_flex.actual").css("width", "");
 
@@ -203,25 +192,34 @@ function toggle_doubles() {
 	else {
 		$(".toggle_doubles").text("Doubles ");
 		$(".toggle_doubles").append("<i class='fa fa-user-friends'></i>");
-		$("#p1d_chosen").show();
-		$("#p2d_chosen").show();
-		$(".text_flex").css("margin-top", "0px");
-		//$(".text_flex change").css("width", "301px");
-		$(".tag").css("height", "16px");
-		$("#p2_tag").attr("placeholder", "Player 1 Tag")
-		$(".swap").show()
 
+		$("#p1d_character_actual").show();
+		$("#p2d_character_actual").show();
+		$("#p1d_character_change").show();
+		$("#p2d_character_change").show();
+
+		//resize for doubles
+		$("#p1_score_actual").css("grid-column", "4");
+		$("#p1_info_actual").css("grid-template-columns", "280px [col-start] 45px [col-start] 45px [col-start] 50px [col-start]")
+
+		$("#p2_text_actual").css("grid-column", "4");
+		$("#p2_info_actual").css("grid-template-columns", "50px [col-start] 45px [col-start] 45px [col-start] 280px [col-start]")
+
+		$(".swap").show()
+		$(".tag_container.change").css("grid-column", "2")
+		$("#p1_character_change").css("grid-column", "3")
+		$("#p2_character_change").css("grid-column", "3")
+		$(".score.change").css("grid-column", "5")
+		$(".info.change").css("grid-template-columns", "80px [col-start] 400px [col-start] 120px [col-start] 120px [col-start] 100px [col-start]");
+		$(".tag.change").css("width", "360px")
+		
+
+		$("#p2_tag").attr("placeholder", "Player 1 Tag")
 		$("#p1d_tag").show();
 		$("#p2d_tag").show();
 
 		$("#p1d_tag_actual").show();
 		$("#p2d_tag_actual").show();
-		$(".tag.actual").css("font-size", "20px");
-		$(".tag.actual").css("height", "20px");
-
-		$(".info").css("height", "200px");
-		$(".score.change").css("margin-bottom", "50px");
-		$(".tag.change").css("margin-top", "0px");
 
 		$(".text_flex.actual").css("width", "341px !important");
 
@@ -242,7 +240,7 @@ function load_changes() {
 			$("#p2d_tag_actual").attr("value", response.Player2["dubs_name"])
 			$("#p2_score_actual").attr("value", response.Player2["score"])
 			$("#round_actual").attr("value", response.round)
-			$("#best_of_actual").attr("value", response.best_of)
+			$("#best_of_actual").attr("value", "Best of " + response.best_of)
 			load_char("1", response.Player1["character"], response.Player1["colour"])
 			load_char("1d", response.Player1["character_dubs"], response.Player1["colour_dubs"])
 			load_char("2", response.Player2["character"], response.Player2["colour"])
@@ -256,27 +254,67 @@ function load_changes() {
 	setTimeout(load_changes, 1000)
 }
 
-function load(player, slot) {
-	$("#p" + player + slot + "_tag").attr("value", $("#p" + player + "_select :selected").text());
-	$("#p" + player + slot + "_tag").val($("#p" + player + "_select :selected").text());
-	$("#p" + player + slot + "_character").attr("src", "static/img/csp_icons/" + $("#p" + player + "_select :selected").attr("value"));
-	$("#p" + player + slot + "_stock").attr("src", "static/img/stock_icons/" + $("#p" + player + "_select :selected").attr("value"));
-}
 
 function load_char(player, character, colour) {
-	$("#p" + player + "_character").attr("src", "static/img/csp_icons/" + character + "/" + colour + ".png");
-	$("#p" + player + "_character").attr("character", character);
-	$("#p" + player + "_character").attr("colour", colour);
+	$("#p" + player + "_character_actual").attr("src", "static/img/stock_icons/" + character + "/" + colour + ".png");
+	$("#p" + player + "_character_actual").attr("character", character);
+	$("#p" + player + "_character_actual").attr("colour", colour);
 }
 
 function update_scene() {
 	newScene = $("#scenes :selected").text();
-	obs.send(
-		'SetCurrentScene', {'scene-name': newScene}
+	obs.call(
+		'SetCurrentProgramScene', {'sceneName': newScene}
 	)
 	.then(function(value) {
 		console.log("Changed scene to '" + newScene + "'");
 	})
+}
+
+function change_best_of(value) {
+	if(value == 3) {
+		$("#bo3").css("background-color", "#AAA");
+		$("#bo3").css("border-bottom", "3px solid #999");
+		$("#bo3").hover(
+			function() {
+				$(this).css("background-color","#AAA");
+			},
+			function() {
+				$(this).css("background-color", "#AAA");
+			});
+		$("#bo5").css("background-color", "#FFF");
+		$("#bo5").css("border-bottom", "3px solid #AAA");
+		$("#bo5").hover(
+			function() {
+				$(this).css("background-color","#CCC");
+			},
+			function() {
+				$(this).css("background-color", "#FFF");
+			});
+		best_of_value = 3
+	} else if (value == 5) {
+		$("#bo5").css("background-color", "#AAA");
+		$("#bo5").css("border-bottom", "3px solid #999");
+		$("#bo5").hover(
+			function() {
+				$(this).css("background-color","#AAA");
+			},
+			function() {
+				$(this).css("background-color", "#AAA");
+			});
+		$("#bo3").css("background-color", "#FFF");
+		$("#bo3").css("border-bottom", "3px solid #AAA");
+		$("#bo3").hover(
+			function() {
+				$(this).css("background-color","#CCC");
+			},
+			function() {
+				$(this).css("background-color", "#FFF");
+			});
+		best_of_value = 5
+	} else {
+		console.log("ERROR: wrong best-of value provided")
+	}
 }
 
 function settings() {

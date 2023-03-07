@@ -164,9 +164,56 @@ def index():
         best_of=best_of
     )
 
+@app.route("/old_auto")
+def old_auto():
+    data = readJSON()
+    p1_tag = data["Player1"]["name"]
+    p1d_tag = data["Player1"]["dubs_name"]
+    p1_char = data["Player1"]["character"]
+    p1_colour = data["Player1"]["colour"]
+    p1d_char = data["Player1"]["character_dubs"]
+    p1d_colour = data["Player1"]["colour_dubs"]
+    p1_score = data["Player1"]["score"]
+
+    p2_tag = data["Player2"]["name"]
+    p2d_tag = data["Player2"]["dubs_name"]
+    p2_char = data["Player2"]["character"]
+    p2_colour = data["Player2"]["colour"]
+    p2d_char = data["Player2"]["character_dubs"]
+    p2d_colour = data["Player2"]["colour_dubs"]
+    p2_score = data["Player2"]["score"]
+
+    tournament_round = data["round"]
+    caster1 = data["caster1"]
+    caster2 = data["caster2"]
+    is_doubles = data["is_doubles"]
+    best_of = data["best_of"]
+    return render_template("old_auto.html", 
+        p1_tag=p1_tag, 
+        p1d_tag=p1d_tag, 
+        p1_char=p1_char, 
+        p1_colour=p1_colour, 
+        p1d_char=p1d_char,
+        p1d_colour=p1d_colour,
+        p1_score=p1_score,
+
+        p2_tag=p2_tag, 
+        p2d_tag=p2d_tag, 
+        p2_char=p2_char,
+        p2_colour=p2_colour,
+        p2d_char=p2d_char,
+        p2d_colour=p2d_colour,
+        p2_score=p2_score,
+
+        round=tournament_round,
+        caster1=caster1,
+        caster2=caster2,
+        is_doubles=is_doubles,
+        best_of=best_of
+    )
+
 @app.route("/update", methods=["POST"])
 def update():
-    print(request.form)
     writeJSON(request.form)
     return "OK"
     

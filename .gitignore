@@ -42,3 +42,7 @@ venv/
 node_modules/
 slp/
 __pycache__/
+
+# OTHER #
+#########
+startgg.bat

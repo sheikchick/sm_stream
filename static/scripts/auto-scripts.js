@@ -11,13 +11,13 @@ $(document).ready(function(){
 	url = window.location.href;
 	var arr = url.split(":");
 	var ip = arr[1].substr(2, this.length);
-	obsurl = "ws://" + ip + ":4455";
+	obsurl = "ws://" + ip + ":" + obs_port;
 
 	load_changes();
 
 	change_best_of(best_of_value);
 
-	obs.connect(obsurl, '00000000')
+	obs.connect(obsurl, obs_password)
 		.then(() => {
 			$("#scenes").show();
 			$("#update_scene").show();
@@ -318,7 +318,8 @@ function change_best_of(value) {
 }
 
 function settings() {
-	window.location.href = "/settings";
+	//window.location.href = "/settings";
+	return
 }
 
 function manual() {

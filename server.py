@@ -117,6 +117,8 @@ def data():
 @app.route("/")
 def index():
     global api_key
+    global obs_port
+    global obs_pass
     data = readJSON()
     p1_tag = data["Player1"]["name"]
     p1d_tag = data["Player1"]["dubs_name"]
@@ -139,8 +141,6 @@ def index():
     caster2 = data["caster2"]
     is_doubles = data["is_doubles"]
     best_of = data["best_of"]
-
-    api_key = api_key
     return render_template("auto.html", 
         p1_tag=p1_tag, 
         p1d_tag=p1d_tag, 
@@ -164,7 +164,9 @@ def index():
         is_doubles=is_doubles,
         best_of=best_of,
 
-        api_key = api_key
+        api_key = api_key,
+        obs_port = obs_port,
+        obs_password = obs_pass
     )
 
 @app.route("/old_auto")
@@ -615,7 +617,6 @@ def get_game_finished():
                         mutex.release()
                 else:
                     print("--Game not tracked")
-
         except Exception as e:
             out = read_game(file)
             update_chars(out)
@@ -714,7 +715,7 @@ def slippi_loop():
 
 if __name__ == "__main__":
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    if phase_id != "0":
+    if False:#if phase_id != "0":
         print("Searching start.gg for bracket info...")
         top8 = threading.Thread(target=startgg_loop, name="startgg loop")
         top8.daemon = True
@@ -722,8 +723,11 @@ if __name__ == "__main__":
     else:
         print("No start.gg phase provided, top 8 data will not be updated")
     if scene_changer == "true":
-        slippi_checker = threading.Thread(target=slippi_loop, name="slippi loop")
-        slippi_checker.daemon = True
-        slippi_checker.start()
+        if slp_folder == "":
+            print("No slippi folder provided, game data will not be tracked")
+        else:
+            slippi_checker = threading.Thread(target=slippi_loop, name="slippi loop")
+            slippi_checker.daemon = True
+            slippi_checker.start()
     print("----------\nApplication running. To access settings, go to http://127.0.0.1:" + server_port + "/\n----------")
     app.run(host=host, port=server_port)

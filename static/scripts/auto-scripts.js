@@ -257,6 +257,7 @@ function load_changes() {
 
 function load_char(player, character, colour) {
 	$("#p" + player + "_character_actual").attr("src", "static/img/stock_icons/" + character + "/" + colour + ".png");
+	$("#p" + player + "_character_change").attr("src", "static/img/csp_icons/" + character + "/" + colour + ".png");
 	$("#p" + player + "_character_actual").attr("character", character);
 	$("#p" + player + "_character_actual").attr("colour", colour);
 }

@@ -346,8 +346,6 @@ def processNames(information):
     if information["tag 1"] in pronoun_lookup:
         pronouns = pronoun_lookup[information["tag 1"]]
 
-        
-
     if information["device"] == tablet["device 1"]:
         stream_data["Player1"]["name"] = information["tag 1"]
         stream_data["Player1"]["pronouns"] = pronouns
@@ -607,7 +605,6 @@ def get_game_finished():
                             game['p2']['tag'] = game_data['p2']['tag']
                         with open("data/json/match_result.json", "w") as outfile:
                             json.dump(match_data, outfile)
-                        slp_tools.print_match(match_data)
                         match_data = []
                     mutex.acquire()
                     try:
@@ -647,7 +644,6 @@ def update_chars(out):
         data['Player1']['colour'] = p1_char['colour']
         data['Player2']['character'] = p2_char['character']
         data['Player2']['colour'] = p2_char['colour']
-        data['is_doubles'] = "false"
         mutex.acquire()
         try:
             with open("data/json/info.json", "w") as outfile:

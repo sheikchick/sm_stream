@@ -1,5 +1,7 @@
 is_doubles = false;
 var obs;
+var sets = [];
+var set_page = 0;
 
 const phone_aspect = window.matchMedia("(max-aspect-ratio: 1/1), (max-width: 1000px)");
 
@@ -12,8 +14,6 @@ $(document).ready(function(){
 	obsurl = "ws://" + ip + ":4455";
 
 	load_changes();
-
-	console.log(best_of_value)
 
 	change_best_of(best_of_value);
 
@@ -323,6 +323,263 @@ function settings() {
 
 function manual() {
 	window.location.href = "/manual";
+}
+
+/**
+ * up : 			direction of page
+ */
+function showSets(up) {
+	if(up) {
+		//check if going over the amount
+		max_index = set_page * 5;
+		console.log(max_index)
+		console.log(sets.length)
+		if (max_index < sets.length) {
+			set_page++;
+		}
+		//should never occur but just in case
+		else if(set_page > Math.ceil(sets.length/5)) {
+			set_page = Math.ceil(sets.length/5);
+		}
+	} else {
+		//limit to 1
+		if(set_page > 1) {
+			set_page--;
+		}
+		//should never occur but just in case
+		else {
+			set_page = 1;
+		}
+	}
+
+	for(x = 0; x<5; x++) {
+		index = x + ((set_page-1)*5);
+		if (typeof(sets.length) != "undefined") {
+			if(sets.length == 0 || index >= sets.length) {
+				$("#set" + (x+1)).css("display", "none");
+			} else {
+				$("#row2r").css("display", "grid")
+				$("#set" + (x+1)).css("display", "grid");
+				$("#set" + (x+1)).attr("match_id", sets[index]["id"])
+				$("#set" + (x+1) + "_tag1").text(sets[index]["player1"]["name"])
+				$("#set" + (x+1) + "_tag1").attr("user_id", sets[index]["player1"]["id"])
+				$("#set" + (x+1) + "_tag2").text(sets[index]["player2"]["name"])
+				$("#set" + (x+1) + "_tag2").attr("user_id", sets[index]["player2"]["id"])
+				$("#set" + (x+1) + "_round").text(sets[index]["round"])
+			}
+		} else {
+			$("#set" + (x+1)).css("display", "none");
+		}
+	}
+	if(sets.length == 0) {
+		$("#row2r").css("display", "none")
+	}
+
+	//Hide arrows based on page number
+	if(set_page == 1 || set_page == 0) {
+		$("#page_left").hide()
+	} else {
+		$("#page_left").show()
+	}
+	max_index = set_page * 5;
+	if(max_index >= sets.length) {
+		$("#page_right").hide()
+	} else {
+		$("#page_right").show()
+	}
+} 
+/**
+ * STARTGG
+ */
+
+function getTournament() {
+	tournament_slug = $("#tournament_slug").val()
+	fetch('https://api.start.gg/gql/alpha', {
+		method: 'POST',
+		headers: {
+			'Authorization': 'Bearer ' + api_key,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			query: `
+				query TournamentEvents($name:String!){
+					tournament(slug:$name){
+						id
+						name
+						events{
+							id
+							name
+							phases{
+								id
+								name
+							}
+						}
+					}
+				}
+			`,
+			variables: {
+				name: tournament_slug
+			},
+		}),
+	})
+	.then((res) => res.json())
+	.then((result) => {
+		if(result["data"]["tournament"] == null) {
+			$("#event").hide()
+			$("#event_submit").hide()
+			$("#row2r").css("display", "none")
+			return
+		}
+		$("#event").empty()
+        for (let sgg_event of result["data"]["tournament"]["events"]) {
+           	phases = []
+            for (let sgg_phase of sgg_event["phases"]) {
+                phase_json = {
+                    "id" : sgg_phase["id"],
+                    "name" : sgg_phase["name"],
+                }
+                phases.push(phase_json)
+			}
+			event_option = new Option(sgg_event["name"], sgg_event["name"]);
+			$(event_option).attr("event_id", JSON.stringify(sgg_event["id"]))
+			$(event_option).attr("phases", JSON.stringify(phases))
+
+			$("#event").append(event_option);
+			$("#event").attr("tournament_slug", tournament_slug)
+			$("#event").show()
+			$("#event_submit").show()
+		}
+	});
+}
+//
+function getEvent() {
+	tournament_slug = $("#event").attr("tournament_slug")
+	event_name = $("#event :selected").text().toLowerCase().replace(/ /g,"-")
+	$("#row2r").attr("tournament_slug", tournament_slug)
+	$("#row2r").attr("event_name", event_name)
+	fetch('https://api.start.gg/gql/alpha', {
+		method: 'POST',
+		headers: {
+			'Authorization': 'Bearer ' + api_key,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			query: `
+				query EventSets($eventID:ID!, $page:Int!, $perPage:Int!){
+					event(id:$eventID) {
+						phases{
+							id
+							bracketType
+							name
+							phaseGroups{
+								nodes{
+									displayIdentifier
+									sets(
+										page: $page
+										perPage: $perPage
+										sortType: STANDARD
+										filters: {
+											hideEmpty: true
+											state: [1,2,4,6,7]
+										}
+									){
+										nodes{
+											id
+											fullRoundText
+											slots{
+												entrant{
+													participants{
+														gamerTag
+														user{
+															discriminator
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			`,
+			variables: {
+				eventID: $("#event :selected").attr("event_id"),
+				page: 1,
+				perPage: 5
+			},
+		}),
+	})
+	.then((res) => res.json())
+	.then((result) => {
+		sets = []
+		console.log(result)
+		for (let phase of result["data"]["event"]["phases"]) {
+			for (let phase_group of phase["phaseGroups"]["nodes"]) {
+				for (let set of phase_group["sets"]["nodes"]) {
+					valid = true
+					for (let entrant of set["slots"]) {
+						if (!(entrant["entrant"])) {
+							valid = false
+						}
+					}
+					if (valid) {
+						match_id = set["id"]
+						if(phase["bracketType"] == "ROUND_ROBIN") {
+							match_round = phase["name"] + " " + phase_group["displayIdentifier"]
+						} else {
+							match_round = set["fullRoundText"]
+						}
+						if(set["slots"][0]["entrant"]["participants"].length > 1) {
+							p1_name = set["slots"][0]["entrant"]["participants"][0]["gamerTag"] + "/" + set["slots"][0]["entrant"]["participants"][1]["gamerTag"]
+						} else {
+							p1_name = set["slots"][0]["entrant"]["participants"][0]["gamerTag"]
+						}
+						if(set["slots"][1]["entrant"]["participants"].length > 1) {
+							p2_name = set["slots"][1]["entrant"]["participants"][0]["gamerTag"] + "/" + set["slots"][1]["entrant"]["participants"][1]["gamerTag"]
+						} else {
+							p2_name = set["slots"][1]["entrant"]["participants"][0]["gamerTag"]
+						}
+						p1_user = set["slots"][0]["entrant"]["participants"][0]["user"]
+						p1_user_id = ""
+						if (p1_user != null) {
+							p1_user_id = p1_user["discriminator"]
+						}
+						p2_user = set["slots"][1]["entrant"]["participants"][0]["user"]
+						p2_user_id = ""
+						if (p2_user != null) {
+							p2_user = p2_user["discriminator"]
+						}
+						
+						match_data = {
+							"id": match_id,
+							"round": match_round,
+							"player1": {
+								"id": p1_user_id,
+								"name": p1_name
+							},
+							"player2": {
+								"id": p2_user_id,
+								"name": p2_name
+							}
+						}
+						if(sets.length<16) {
+							sets.push(match_data)
+						}
+					}
+				}
+			}
+		}
+		set_page = 0;
+		showSets(true);
+	});
+}
+
+function load_set(x) {
+	$("#p1_tag").val($("#set" + x + "_tag1").text())
+	$("#p2_tag").val($("#set" + x + "_tag2").text())
+	$("#round_change").val($("#set" + x + "_round").text())
 }
 
 //run on aspect ratio change

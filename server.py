@@ -1,9 +1,12 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, send_from_directory
 from flask_cors import CORS
 from graphqlclient import GraphQLClient
 from slippi import Game
 from threading import Lock
+
 import slp_tools
+import startgg
+
 import configparser
 import glob
 import json
@@ -44,11 +47,6 @@ advanced_game_detection = config['DEBUG'].getboolean('advanced_game_detection')
 
 client = GraphQLClient('https://api.start.gg/gql/' + api_ver)
 client.inject_token('Bearer ' + api_key)
-
-last_request_timestamp = 0;
-last_id = '0'
-
-match_data = []
 
 cli = sys.modules['flask.cli']
 cli.show_server_banner = lambda *x: None
@@ -118,6 +116,7 @@ def data():
 
 @app.route("/")
 def index():
+    global api_key
     data = readJSON()
     p1_tag = data["Player1"]["name"]
     p1d_tag = data["Player1"]["dubs_name"]
@@ -140,6 +139,8 @@ def index():
     caster2 = data["caster2"]
     is_doubles = data["is_doubles"]
     best_of = data["best_of"]
+
+    api_key = api_key
     return render_template("auto.html", 
         p1_tag=p1_tag, 
         p1d_tag=p1d_tag, 
@@ -161,7 +162,9 @@ def index():
         caster1=caster1,
         caster2=caster2,
         is_doubles=is_doubles,
-        best_of=best_of
+        best_of=best_of,
+
+        api_key = api_key
     )
 
 @app.route("/old_auto")
@@ -212,6 +215,11 @@ def old_auto():
         best_of=best_of
     )
 
+@app.route("/startgg_sets.json", methods=["POST", "GET"])
+def startgg_sets():
+    data = startgg.get_current_sets(client, phase_id)
+    return json.dumps(data)
+
 @app.route("/update", methods=["POST"])
 def update():
     writeJSON(request.form)
@@ -220,6 +228,12 @@ def update():
 @app.route("/name_update", methods=["POST"])
 def name_update():
     processNames(request.json)
+    return "OK"
+
+#startgg
+@app.route("/startgg/tournament", methods=["POST"])
+def tournament():
+    writeJSON(request.form)
     return "OK"
 
 @app.route("/database.json", methods=["POST", "GET"])
@@ -317,6 +331,7 @@ def writeJSON(information):
         finally:
             mutex.release()
     except Exception as e:
+        print("Exception in writeJSON()")
         print(e)
 
         
@@ -371,112 +386,16 @@ def readJSON():
 #__)| || |__)| |\_|\_|
 #
 
-def get_score(id):
-    result = client.execute('''
-    query set($setId: ID!){
-      set(id:$setId){
-        id
-        slots{
-          standing{
-            placement
-            stats{
-              score {
-                label
-                value
-              }
-            }
-          }
-        }
-      }
-    }
-    ''',
-    {
-      "setId": id
-    })
-    response = json.loads(result)
-
-    p1info = response['data']['set']['slots'][0]['standing']
-    p2info = response['data']['set']['slots'][1]['standing']
-
-    p1 = ''
-    p2 = ''
-
-    if p1info is not None:
-        p1 = p1info['stats']['score']['value']
-
-    if p2info is not None:
-        p2 = p2info['stats']['score']['value']
-
-    return {
-        "p1": p1,
-        "p2": p2
-    }
 
 #Get set information
-def get_set_object(x, bracket):
-    global last_id
-    global skip_set2
-    
-    #just in case of overflow
-    if len(bracket) <= (x):
-        return
-
-    #if grand finals set 2 wasn't played
-    if last_id != '0':
-        if int(bracket[x]['id']) != int(last_id)+1:
-            skip_set2 = True
-            return {
-                "p1": {
-                    "tag": '',
-                    "score": ''
-                },
-                "p2": {
-                    "tag": '',
-                    "score": ''
-                }
-            }
-    last_id = bracket[x]['id']
-
-    name1 = ''
-    name2 = ''
-
-    scores = get_score(bracket[x]['id'])
-    score1 = scores['p1']
-    score2 = scores['p2']
-
-    entrant1 = bracket[x]['slots'][0]['entrant']
-    entrant2 = bracket[x]['slots'][1]['entrant']
-
-    if entrant1 is not None:
-        name1_split = entrant1['name'].split("|")
-        name1 = name1_split[len(name1_split)-1].strip()
-
-    if entrant2 is not None:
-        name2_split = entrant2['name'].split("|")
-        name2 = name2_split[len(name2_split)-1].strip()
-
-    return {
-        "p1": {
-            "tag": name1,
-            "score": score1
-        },
-        "p2": {
-            "tag": name2,
-            "score": score2
-        }
-    }
-
-#Sort by ID
-def sort_id(json):
-    return(int(json['id']))
 
 def startgg_loop():
-    global last_request_timestamp
+    last_request_timestamp = 0
     try:
         while True:
             current_time = time.perf_counter()
             if (current_time-10 > last_request_timestamp) or (last_request_timestamp == 0):
-                json_out = get_top8_info();
+                json_out = startgg.get_top8_info(client, phase_id, bracket_size)
                 with open("data/json/top8.json", "w") as outfile:
                     json.dump(json_out, outfile)
                 last_request_timestamp = time.perf_counter()
@@ -484,68 +403,6 @@ def startgg_loop():
     except:
         print("Error parsing start.gg data, perhaps bracket has no information? Stopping loop. Please restart application to resume.")
         pass
-
-##MAIN METHOD
-def get_top8_info():
-    global last_id
-    #Get response from smash.gg
-    result = client.execute('''
-        query PhaseSets($phaseId: ID!, $page:Int!, $perPage:Int!){
-          phase(id:$phaseId){
-            id
-            name
-            sets(
-              page: $page
-              perPage: $perPage
-              sortType: STANDARD
-            ){
-              pageInfo{
-                total
-              }
-              nodes{
-                id
-                slots{
-                  id
-                  entrant{
-                    id
-                    name
-                  }
-                }
-              }
-            }
-          }
-        }
-        ''',
-        {
-            "phaseId": l,
-            "page": 1,
-            "perPage": 100
-        })
-    json_response = json.loads(result)
-
-    #Extract and sort the bracket
-    bracket = json_response['data']['phase']['sets']['nodes']
-    bracket.sort(key=sort_id, reverse=False)
-
-    json_out = {
-        "winners": [],
-        "losers": []
-    }
-
-    skip_set2 = False
-
-    #Winners Bracket
-    for x in range (bracket_size-4, bracket_size+1):
-        json_out['winners'].append(get_set_object(x, bracket))
-
-    last_id = '0'
-
-    for x in range (len(bracket)-6, len(bracket)):
-        json_out['losers'].append(get_set_object(x, bracket))
-
-    last_id = '0'
-
-    return json_out
 
 # __   ___ _  _ ___
 #(_ |   | |_)|_) | 
@@ -584,7 +441,6 @@ def show_capture():
             obs_client.set_current_program_scene('capture_card')
 
 def get_game_finished():
-    global match_data
 
     #Check if game in progress
     #If the file loaded here is a completed game (ie: not a game in progress), return
@@ -632,7 +488,7 @@ def get_game_finished():
             "stocks" : 4,
         }
     }
-
+    match_data = []
     #Loop till game has ended
     running = True
     while running:
@@ -682,6 +538,7 @@ def get_game_finished():
                             scoreupdate = False
                             print("  --Game included CPU player")
                 except Exception as f:
+                    print("Exception trying to parse CPU players")
                     print(f)
                 if int(stats["playableFrameCount"]) < 2700 :
                     scoreupdate = False

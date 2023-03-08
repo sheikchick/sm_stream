@@ -9,13 +9,14 @@
 	<script src="{{ url_for('static', filename='scripts/obs-ws.min.js') }}"></script>
 	<script src="{{ url_for('static', filename='scripts/fontawesome.js') }}"></script>
 	<script>var best_of_value = "{{best_of}}"</script>
+	<script>var api_key = "{{api_key}}"</script>
 	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/auto.css') }}">
 </head>
 
 <body>
 	<button id="manual_button" class="absolute_button" onclick="manual()"><i class="fas fa-pencil"></i></button>
 	<button id="settings_button" class="absolute_button" onclick="settings()"><i class="fas fa-cog"></i></button>
-	<div id="outer_wrapper">
+	<div id="left_wrapper">
 		<div id="row1" class="row">
 			<div id="p1_info_actual" class="info actual">
 				<div id="p1_text_actual" class="tag_container actual">
@@ -35,11 +36,6 @@
 					<input type="text" id="p2_tag_actual" class="tag actual right" value="{{p2_tag}}" placeholder="Player 1 Tag" readonly="true">
 					<input type="text" id="p2d_tag_actual" class="tag actual right doubles" value="{{p2d_tag}}" placeholder="Player 2 Tag" readonly="true">
 				</div>
-			</div>
-
-			<div id="data_actual" class="data">
-				<input type="text" id="round_actual" class="data_text actual" value="{{round}}" placeholder="Round" readonly="true">
-				<input id="best_of_actual" class="data_text actual" best_of="{{best_of}}" value="Best of {{best_of}}" readonly="true">
 			</div>
 		</div>
 		
@@ -85,6 +81,62 @@
 				</div>
 			</div>
 			<button type="button" class="update" onclick="update()">Update <i class="fa fa-sync"></i></button>
+		</div>
+
+		<div id="row6" class="row">
+			<input type="text" id="tournament_slug" class="startgg tournament input" placeholder="startgg tournament slug">
+			<button type="button" id="tournament_slug_submit" class="startgg bottom button" onclick="getTournament()">Submit</button>
+			<select id="event"></select>
+			<button type="button" id="event_submit" class="startgg bottom button" onclick="getEvent()">Submit</button>
+		</div>
+	</div>
+	<div id="right_wrapper">
+		<div id="row1r" class="row right">
+			<div id="data_actual" class="data">
+				<input type="text" id="round_actual" class="data_text actual" value="{{round}}" placeholder="Round" readonly="true">
+				<input id="best_of_actual" class="data_text actual" best_of="{{best_of}}" value="Best of {{best_of}}" readonly="true">
+			</div>
+		</div>
+		<div id="row2r" class="row right">
+			<div id="pages">
+				<button	id="page_left" class="page_button" onclick="showSets(false)"><i class="fa-solid fa-arrow-left"></i></button>
+				<button	id="page_right" class="page_button" onclick="showSets(true)"><i class="fa-solid fa-arrow-right"></i></button>
+			</div>
+			<div id="set1" class="set">
+				<label id="set1_tag1" class="startgg tag left"></label>
+				<label id="set1_vs" class="startgg tag vs">vs</label>
+				<label id="set1_tag2" class="startgg tag right"></label>
+				<label id="set1_round" class="startgg round"></label>
+				<button	id="set_button" class="startgg button load" onclick="load_set(1)">Load</button>
+			</div>
+			<div id="set2" class="set">
+				<label id="set2_tag1" class="startgg tag left"></label>
+				<label id="set2_vs" class="startgg tag vs">vs</label>
+				<label id="set2_tag2" class="startgg tag right"></label>
+				<label id="set2_round" class="startgg round"></label>
+				<button	id="set2_button" class="startgg button load" onclick="load_set(2)">Load</button>
+			</div>
+			<div id="set3" class="set">
+				<label id="set3_tag1" class="startgg tag left"></label>
+				<label id="set3_vs" class="startgg tag vs">vs</label>
+				<label id="set3_tag2" class="startgg tag right"></label>
+				<label id="set3_round" class="startgg round"></label>
+				<button	id="set3_button" class="startgg button load" onclick="load_set(3)">Load</button>
+			</div>
+			<div id="set4" class="set">
+				<label id="set4_tag1" class="startgg tag left"></label>
+				<label id="set4_vs" class="startgg tag vs">vs</label>
+				<label id="set4_tag2" class="startgg tag right"></label>
+				<label id="set4_round" class="startgg round"></label>
+				<button	id="set4_button" class="startgg button load" onclick="load_set(4)">Load</button>
+			</div>
+			<div id="set5" class="set">
+				<label id="set5_tag1" class="startgg tag left"></label>
+				<label id="set5_vs" class="startgg tag vs">vs</label>
+				<label id="set5_tag2" class="startgg tag right"></label>
+				<label id="set5_round" class="startgg round"></label>
+				<button	id="set5_button" class="startgg button load" onclick="load_set(5)">Load</button>
+			</div>
 		</div>
 	</div>
 </body>

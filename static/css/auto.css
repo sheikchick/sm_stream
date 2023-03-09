@@ -555,7 +555,6 @@ button:focus {
 
 .tag_container.change {
 	grid-column: 2;
-	width: 400px !important;
 }
 
 #p1_text_actual {
@@ -625,11 +624,11 @@ button:focus {
 }
 
 #p1d_character_change {
-	grid-column: 4;
+	grid-column: 5;
 }
 
 #p2d_character_change {
-	grid-column: 4;
+	grid-column: 5;
 }
 
 #p1_score_change {
@@ -723,11 +722,27 @@ button:focus {
 	display: grid;
 	place-items: center;
 	grid-template-columns: 140px [col-start] 120px [col-start];
-	grid-template-rows: 30px [col-start] 30px [col-start] 30px [col-start];
+	
 	height: 90px;
 	background-color: #336;
 	border-radius: 5px;
 	padding: 5px;
+}
+
+.set.wrapper.left {
+	width: 140px;
+	display: grid;
+	grid-template-columns: 140px [col-start];
+	grid-template-rows: 30px [row-start] 30px [row-start] 30px [row-start];
+	padding: 0px;
+}
+
+.set.wrapper.right {
+	width: 120px;
+	display: grid;
+	grid-template-columns: 120px [col-start];
+	grid-template-rows: 50px [row-start] 40px [row-start];
+	padding: 0px;
 }
 
 #set1 {
@@ -780,6 +795,7 @@ button:focus {
 .startgg.tag {
 	text-align: center;
 	font-size: 18px;
+	width: 140px;
 }
 
 .startgg.tag.left {
@@ -796,15 +812,17 @@ button:focus {
 }
 
 .startgg.round {
+	width: 120px;
 	text-align: center;
 	font-size: 14px;
+	grid-row: 1;
 }
 
 .startgg.button.load {
 	height: 30px;
 	width: 70px;
-	margin-top: 30px;
 	padding: 2px;
+	grid-row: 2;
 }
 
 .startgg.bottom.button {
@@ -812,4 +830,23 @@ button:focus {
 	width: 70px;
 	padding: 4px 5px 1px 5px;
 	margin-right: 20px;
+}
+
+.pronouns_container {
+	width: 80px;
+}
+
+input.pronouns {
+	width: 70px;
+	padding: 5px;
+	margin: 15px 0px 15px 0px;
+	text-align: right;
+}
+
+input.pronouns.left {
+	border-bottom: 2px solid #F56262;
+}
+
+input.pronouns.right {
+	border-bottom: 2px solid #4A6DD9;
 }

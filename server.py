@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, send_from_directory
+from flask import Flask, render_template, request, send_file
 from flask_cors import CORS
 from graphqlclient import GraphQLClient
 from slippi import Game
@@ -60,12 +60,104 @@ try:
     obs_client = obs.ReqClient(host=obs_host, port=int(obs_port), password=obs_pass)
 except:
     print("OBS connection could not be made")
+#https://patorjk.com/software/taag/#p=display&h=2&v=1&f=Standard
+'''
+  _____ _           _    
+ |  ___| | __ _ ___| | __
+ | |_  | |/ _` / __| |/ /
+ |  _| | | (_| \__ \   < 
+ |_|   |_|\__,_|___/_|\_\               
+'''
 
+'''Data Updates'''
+
+#Website update
+@app.route("/update", methods=["POST"])
+def update():
+    writeJSON(request.form)
+    return "OK"
+
+#Tablet update
+@app.route("/name_update", methods=["POST"])
+def name_update():
+    processNames(request.json)
+    return "OK"
+
+'''Config-pages'''
+
+#Auto
+@app.route("/")
+def index():
+    global api_key
+    global obs_port
+    global obs_pass
+    data = readJSON()
+    p1_tag = data["Player1"]["name"]
+    p1_char = data["Player1"]["character"]
+    p1_colour = data["Player1"]["colour"]
+    p1_pronouns = data["Player1"]["pronouns"]
+    
+    p1d_tag = data["Player1"]["name_dubs"]
+    p1d_char = data["Player1"]["character_dubs"]
+    p1d_colour = data["Player1"]["colour_dubs"]
+    p1d_pronouns = data["Player1"]["pronouns_dubs"]
+
+    p1_score = data["Player1"]["score"]
+
+    p2_tag = data["Player2"]["name"]
+    p2_char = data["Player2"]["character"]
+    p2_colour = data["Player2"]["colour"]
+    p2_pronouns = data["Player2"]["pronouns"]
+
+    p2d_tag = data["Player2"]["name_dubs"]
+    p2d_char = data["Player2"]["character_dubs"]
+    p2d_colour = data["Player2"]["colour_dubs"]
+    p2d_pronouns = data["Player2"]["pronouns_dubs"]
+
+    p2_score = data["Player2"]["score"]
+
+    tournament_round = data["round"]
+    caster1 = data["caster1"]
+    caster2 = data["caster2"]
+    is_doubles = data["is_doubles"]
+    best_of = data["best_of"]
+    return render_template("auto.html", 
+        p1_tag=p1_tag, 
+        p1_char=p1_char, 
+        p1_colour=p1_colour, 
+        p1_pronouns=p1_pronouns,
+        p1d_tag=p1d_tag, 
+        p1d_char=p1d_char,
+        p1d_colour=p1d_colour,
+        p1d_pronouns=p1d_pronouns,
+        p1_score=p1_score,
+
+        p2_tag=p2_tag, 
+        p2_char=p2_char,
+        p2_colour=p2_colour,
+        p2_pronouns=p2_pronouns,
+        p2d_tag=p2d_tag, 
+        p2d_char=p2d_char,
+        p2d_colour=p2d_colour,
+        p2d_pronouns=p2d_pronouns,
+        p2_score=p2_score,
+
+        round=tournament_round,
+        caster1=caster1,
+        caster2=caster2,
+        is_doubles=is_doubles,
+        best_of=best_of,
+
+        api_key = api_key,
+        obs_port = obs_port,
+        obs_password = obs_pass
+    )
+#Manual
 @app.route("/manual")
 def manual():
     data = readJSON()
     p1_tag = data["Player1"]["name"]
-    p1d_tag = data["Player1"]["dubs_name"]
+    p1d_tag = data["Player1"]["name_dubs"]
     p1_char = data["Player1"]["character"]
     p1_colour = data["Player1"]["colour"]
     p1d_char = data["Player1"]["character_dubs"]
@@ -73,7 +165,7 @@ def manual():
     p1_score = data["Player1"]["score"]
 
     p2_tag = data["Player2"]["name"]
-    p2d_tag = data["Player2"]["dubs_name"]
+    p2d_tag = data["Player2"]["name_dubs"]
     p2_char = data["Player2"]["character"]
     p2_colour = data["Player2"]["colour"]
     p2d_char = data["Player2"]["character_dubs"]
@@ -108,72 +200,12 @@ def manual():
         is_doubles=is_doubles,
         best_of=best_of
     )
-
-@app.route("/data.json", methods=["POST", "GET"])
-def data():
-    data = readJSON()
-    return data
-
-@app.route("/")
-def index():
-    global api_key
-    global obs_port
-    global obs_pass
-    data = readJSON()
-    p1_tag = data["Player1"]["name"]
-    p1d_tag = data["Player1"]["dubs_name"]
-    p1_char = data["Player1"]["character"]
-    p1_colour = data["Player1"]["colour"]
-    p1d_char = data["Player1"]["character_dubs"]
-    p1d_colour = data["Player1"]["colour_dubs"]
-    p1_score = data["Player1"]["score"]
-
-    p2_tag = data["Player2"]["name"]
-    p2d_tag = data["Player2"]["dubs_name"]
-    p2_char = data["Player2"]["character"]
-    p2_colour = data["Player2"]["colour"]
-    p2d_char = data["Player2"]["character_dubs"]
-    p2d_colour = data["Player2"]["colour_dubs"]
-    p2_score = data["Player2"]["score"]
-
-    tournament_round = data["round"]
-    caster1 = data["caster1"]
-    caster2 = data["caster2"]
-    is_doubles = data["is_doubles"]
-    best_of = data["best_of"]
-    return render_template("auto.html", 
-        p1_tag=p1_tag, 
-        p1d_tag=p1d_tag, 
-        p1_char=p1_char, 
-        p1_colour=p1_colour, 
-        p1d_char=p1d_char,
-        p1d_colour=p1d_colour,
-        p1_score=p1_score,
-
-        p2_tag=p2_tag, 
-        p2d_tag=p2d_tag, 
-        p2_char=p2_char,
-        p2_colour=p2_colour,
-        p2d_char=p2d_char,
-        p2d_colour=p2d_colour,
-        p2_score=p2_score,
-
-        round=tournament_round,
-        caster1=caster1,
-        caster2=caster2,
-        is_doubles=is_doubles,
-        best_of=best_of,
-
-        api_key = api_key,
-        obs_port = obs_port,
-        obs_password = obs_pass
-    )
-
+#Old Auto
 @app.route("/old_auto")
 def old_auto():
     data = readJSON()
     p1_tag = data["Player1"]["name"]
-    p1d_tag = data["Player1"]["dubs_name"]
+    p1d_tag = data["Player1"]["name_dubs"]
     p1_char = data["Player1"]["character"]
     p1_colour = data["Player1"]["colour"]
     p1d_char = data["Player1"]["character_dubs"]
@@ -181,7 +213,7 @@ def old_auto():
     p1_score = data["Player1"]["score"]
 
     p2_tag = data["Player2"]["name"]
-    p2d_tag = data["Player2"]["dubs_name"]
+    p2d_tag = data["Player2"]["name_dubs"]
     p2_char = data["Player2"]["character"]
     p2_colour = data["Player2"]["colour"]
     p2d_char = data["Player2"]["character_dubs"]
@@ -217,26 +249,12 @@ def old_auto():
         best_of=best_of
     )
 
-@app.route("/startgg_sets.json", methods=["POST", "GET"])
-def startgg_sets():
-    data = startgg.get_current_sets(client, phase_id)
-    return json.dumps(data)
+'''JSON data'''
 
-@app.route("/update", methods=["POST"])
-def update():
-    writeJSON(request.form)
-    return "OK"
-    
-@app.route("/name_update", methods=["POST"])
-def name_update():
-    processNames(request.json)
-    return "OK"
-
-#startgg
-@app.route("/startgg/tournament", methods=["POST"])
-def tournament():
-    writeJSON(request.form)
-    return "OK"
+@app.route("/data.json", methods=["POST", "GET"])
+def data():
+    data = readJSON()
+    return data
 
 @app.route("/database.json", methods=["POST", "GET"])
 def databaseJSON():
@@ -282,41 +300,41 @@ def slippi_svg():
         return send_file('static/slippi.svg')
     except Exception as e:
         return str(e)
-        
-def readTablet():
-    with open("data/json/tablet.json") as infile:
-        data = json.load(infile)
-        return data
+    
+'''
+  _____ _ _       __        __    _ _   _             
+ |  ___(_) | ___  \ \      / / __(_) |_(_)_ __   __ _ 
+ | |_  | | |/ _ \  \ \ /\ / / '__| | __| | '_ \ / _` |
+ |  _| | | |  __/   \ V  V /| |  | | |_| | | | | (_| |
+ |_|   |_|_|\___|    \_/\_/ |_|  |_|\__|_|_| |_|\__, |
+                                                |___/ 
+'''
 
+#Write data to info.json
 def writeJSON(information):
     try:
-        pronoun_lookup = json.load(open("data/json/pronouns.json"))
-        p1pro = ""
-        p2pro = ""
-        if information["p1_tag"] in pronoun_lookup:
-            p1pro = pronoun_lookup[information["p1_tag"]]
-        if information["p2_tag"] in pronoun_lookup:
-            p2pro = pronoun_lookup[information["p2_tag"]]
         data = {
             "Player1": {
                 "name": information["p1_tag"],
-                "dubs_name": information["p1d_tag"],
                 "character": information["p1_char"],
                 "colour": information["p1_colour"],
+                "pronouns": information["p1_pronouns"],
+                "name_dubs": information["p1d_tag"],
                 "character_dubs": information["p1d_char"],
                 "colour_dubs": information["p1d_colour"],
-                "pronouns": p1pro,
+                "pronouns_dubs": information["p1d_pronouns"],
                 "score": information["p1_score"],
                 "team_name": information["p1_tag"] + " & " + information["p1d_tag"]
             },
             "Player2": {
                 "name": information["p2_tag"],
-                "dubs_name": information["p2d_tag"],
                 "character": information["p2_char"],
                 "colour": information["p2_colour"],
+                "pronouns": information["p2_pronouns"],
+                "name_dubs": information["p2d_tag"],
                 "character_dubs": information["p2d_char"],
                 "colour_dubs": information["p2d_colour"],
-                "pronouns": p2pro,
+                "pronouns_dubs": information["p2d_pronouns"],
                 "score": information["p2_score"],
                 "team_name": information["p2_tag"] + " & " + information["p2d_tag"]
             },
@@ -336,7 +354,32 @@ def writeJSON(information):
         print("Exception in writeJSON()")
         print(e)
 
-        
+#Read data from info.json
+def readJSON():
+    data = None
+    mutex.acquire()
+    try:
+        with open("data/json/info.json") as infile:
+            data = json.load(infile)
+            return data
+    finally:
+        mutex.release()
+
+'''
+  _____     _     _      _   
+ |_   _|_ _| |__ | | ___| |_ 
+   | |/ _` | '_ \| |/ _ \ __|
+   | | (_| | |_) | |  __/ |_ 
+   |_|\__,_|_.__/|_|\___|\__|
+'''
+
+#Write tablet data to tablet.json
+def readTablet():
+    with open("data/json/tablet.json") as infile:
+        data = json.load(infile)
+        return data
+
+#Process names received from the tablet
 def processNames(information):
     pronoun_lookup = json.load(open("data/json/pronouns.json"))
     pronouns = ""
@@ -349,7 +392,8 @@ def processNames(information):
     if information["device"] == tablet["device 1"]:
         stream_data["Player1"]["name"] = information["tag 1"]
         stream_data["Player1"]["pronouns"] = pronouns
-        stream_data["Player1"]["dubs_name"] = information["tag 2"]
+        stream_data["Player1"]["pronouns_dubs"] = ""
+        stream_data["Player1"]["name_dubs"] = information["tag 2"]
         stream_data["Player1"]["team_name"] = information["tag 1"] + " & " + information["tag 2"]
 
         #has potential to break everything if erroneous inputs are sent from the tablet mid-match, needs beta testing TODO
@@ -358,7 +402,8 @@ def processNames(information):
     elif information["device"] == tablet["device 2"]:
         stream_data["Player2"]["name"] = information["tag 1"]
         stream_data["Player2"]["pronouns"] = pronouns
-        stream_data["Player2"]["dubs_name"] = information["tag 2"]
+        stream_data["Player2"]["pronouns_dubs"] = ""
+        stream_data["Player2"]["name_dubs"] = information["tag 2"]
         stream_data["Player2"]["team_name"] = information["tag 1"] + " & " + information["tag 2"]
 
         #has potential to break everything if erroneous inputs are sent from the tablet mid-match, needs beta testing TODO
@@ -371,25 +416,17 @@ def processNames(information):
     finally:
         mutex.release()
 
-def readJSON():
-    data = None
-    mutex.acquire()
-    try:
-        with open("data/json/info.json") as infile:
-            data = json.load(infile)
-            return data
-    finally:
-        mutex.release()
+'''
+      _             _                
+  ___| |_ __ _ _ __| |_   __ _  __ _ 
+ / __| __/ _` | '__| __| / _` |/ _` |
+ \__ \ || (_| | |  | |_ | (_| | (_| |
+ |___/\__\__,_|_|   \__(_)__, |\__, |
+                         |___/ |___/ 
+'''
 
-# __    _  __    __ __
-#(_ |V||_|(_ |_|/__/__
-#__)| || |__)| |\_|\_|
-#
-
-
-#Get set information
-
-def startgg_loop():
+#Get set information from start.gg (not in use currently)
+def startggLoop():
     last_request_timestamp = 0
     try:
         while True:
@@ -404,21 +441,25 @@ def startgg_loop():
         print("Error parsing start.gg data, perhaps bracket has no information? Stopping loop. Please restart application to resume.")
         pass
 
-# __   ___ _  _ ___
-#(_ |   | |_)|_) | 
-#__)|___|_|  |  _|_
-#
-def get_latest_file():
-    #Get latest file
+'''
+  ____  _ _             _ 
+ / ___|| (_)_ __  _ __ (_)
+ \___ \| | | '_ \| '_ \| |
+  ___) | | | |_) | |_) | |
+ |____/|_|_| .__/| .__/|_|
+           |_|   |_|      
+'''
+#Get latest file from the slippi directory
+def getLatestFile():
     try:
         directory_list = glob.glob(slp_folder + '\*')
-        latest_file = max(directory_list, key=os.path.getctime)
+        latest_file = max(directory_list, key=os.path.getctime) #TODO: add check for .slp
         return latest_file
     except:
         print("Error reading .slp directory")
         exit()
 
-def show_slippi():
+def showSlippi():
     global obs_client
     scene = ""
     try:
@@ -429,7 +470,7 @@ def show_slippi():
         if scene == 'capture_card':
             obs_client.set_current_program_scene('slippi')
 
-def show_capture():
+def showCapture():
     global obs_client
     scene = ""
     try:
@@ -440,18 +481,19 @@ def show_capture():
         if scene == 'slippi':
             obs_client.set_current_program_scene('capture_card')
 
-def get_game_finished():
-
-    #Check if game in progress
+#Process currently in-progress .slp file
+def processSLP():
     #If the file loaded here is a completed game (ie: not a game in progress), return
-    file = get_latest_file()
+    file = getLatestFile()
+    #TODO: have a better way to detect in-progress games than throwing a fucking exception jesus christ
+    #If game is in progress, exception will be thrown and will continue, else it will return and continually loop, lol.
     try:
         game = Game(file)
         return
     except:
         #game in progress
         print("--Game loaded, in progress...")
-        show_slippi()
+        showSlippi()
         pass
 
     data = readJSON()
@@ -494,6 +536,7 @@ def get_game_finished():
     while running:
         try:
             #This will throw an exception until the game has ended
+            #TODO fix this abomination
             game = Game(file)
             running = False
             #past here the game has ended
@@ -501,18 +544,18 @@ def get_game_finished():
             if game.end.lras_initiator is None or not advanced_game_detection:
                 print("--Game ended")
                 time.sleep(0.5)
-                show_capture()
+                showCapture()
             #on lrastart, swap instantly
             else:
                 print(" --LRAStart - will not automatically update score")
-                show_capture()
+                showCapture()
                 running = False
                 break
             p = subprocess.Popen(['node', 'node/stats.js', file], stdout=subprocess.PIPE)
             out = p.stdout.read()
             stats = json.loads(out)
 
-            info = json.loads(read_game(file))
+            info = json.loads(slippiJS(file))
             game_data["p1"]["tag"] = data['Player1']['name']
             game_data["p2"]["tag"] = data['Player2']['name']
             game_data["stage"] = slp_tools.match_stage(info["stageId"])
@@ -615,11 +658,12 @@ def get_game_finished():
                 else:
                     print("--Game not tracked")
         except Exception as e:
-            out = read_game(file)
-            update_chars(out)
+            out = slippiJS(file)
+            updateChars(out)
             pass
-            
-def update_chars(out):
+
+#Update characters based on what is being played in the .slp file           
+def updateChars(out):
     slpj = json.loads(out)
 
     player_count = len(slpj['players'])
@@ -692,28 +736,26 @@ def update_chars(out):
         finally:
             mutex.release()
 
-    
-def read_game(file):
+#Read the game data using slippi-js
+def slippiJS(file):
     p = subprocess.Popen(['node', 'node/slippi.js', file], stdout=subprocess.PIPE)
     out = p.stdout.read()
     out = out.decode("utf-8").replace("'", '"')
     return out
     
-def slippi_loop():
+def slippiLoop():
     try:
         while True:
-            get_game_finished()
+            processSLP()
             time.sleep(0.5)
     except KeyboardInterrupt:
         pass
-
-
 
 if __name__ == "__main__":
     app.config['TEMPLATES_AUTO_RELOAD'] = True
     if False:#if phase_id != "0":
         print("Searching start.gg for bracket info...")
-        top8 = threading.Thread(target=startgg_loop, name="startgg loop")
+        top8 = threading.Thread(target=startggLoop, name="startgg loop")
         top8.daemon = True
         top8.start()
     else:
@@ -722,7 +764,7 @@ if __name__ == "__main__":
         if slp_folder == "":
             print("No slippi folder provided, game data will not be tracked")
         else:
-            slippi_checker = threading.Thread(target=slippi_loop, name="slippi loop")
+            slippi_checker = threading.Thread(target=slippiLoop, name="slippi loop")
             slippi_checker.daemon = True
             slippi_checker.start()
     print("----------\nApplication running. To access settings, go to http://127.0.0.1:" + server_port + "/\n----------")

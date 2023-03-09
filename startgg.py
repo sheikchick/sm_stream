@@ -1,12 +1,6 @@
 from graphqlclient import GraphQLClient
 import configparser
 import json
-import os
-import sys
-import threading
-import time
-import subprocess
-import math
 
 
 def get_events(client, tournament):
@@ -190,6 +184,3 @@ if __name__ == "__main__":
 
     client = GraphQLClient('https://api.start.gg/gql/' + api_ver)
     client.inject_token('Bearer ' + api_key)
-
-    get_tournament(client, 'stg3-test-3')
-    # get_current_sets(client, '1238875')

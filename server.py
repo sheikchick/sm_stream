@@ -60,7 +60,26 @@ try:
     obs_client = obs.ReqClient(host=obs_host, port=int(obs_port), password=obs_pass)
 except:
     print("OBS connection could not be made")
-#https://patorjk.com/software/taag/#p=display&h=2&v=1&f=Standard
+#https://patorjk.com/software/taag/#p=display&h=2&v=1&f=Standar
+
+def gameDataJSON():
+    return {
+        "stage" : "",
+        "winner" : 0,
+        "p1" : {
+            "tag" : "",
+            "char" : "",
+            "colour" : "",
+            "stocks" : 4,
+        },
+        "p2" : {
+            "tag" : "",
+            "char" : "",
+            "colour" : "",
+            "stocks" : 4,
+        }
+    }
+
 '''
   _____ _           _    
  |  ___| | __ _ ___| | __
@@ -74,7 +93,7 @@ except:
 #Website update
 @app.route("/update", methods=["POST"])
 def update():
-    writeJSON(request.form)
+    updateJSON(request.form)
     return "OK"
 
 #Tablet update
@@ -309,9 +328,28 @@ def slippi_svg():
  |_|   |_|_|\___|    \_/\_/ |_|  |_|\__|_|_| |_|\__, |
                                                 |___/ 
 '''
+#Read data from info.json
+def readJSON():
+    data = None
+    mutex.acquire()
+    try:
+        with open("data/json/info.json") as infile:
+            data = json.load(infile)
+            return data
+    finally:
+        mutex.release()
 
 #Write data to info.json
-def writeJSON(information):
+def writeJSON(data):
+    mutex.acquire()
+    try:
+        with open("data/json/info.json", "w") as outfile:
+            json.dump(data, outfile)
+    finally:
+        mutex.release()
+
+#Write data to info.json as perscribed by the /update endpoint
+def updateJSON(information):
     try:
         data = {
             "Player1": {
@@ -344,26 +382,10 @@ def writeJSON(information):
             "is_doubles": information["is_doubles"],
             "best_of": information["best_of"]
         }
-        mutex.acquire()
-        try:
-            with open("data/json/info.json", "w") as outfile:
-                json.dump(data, outfile)
-        finally:
-            mutex.release()
+        writeJSON(data)
     except Exception as e:
-        print("Exception in writeJSON()")
+        print("Exception in updateJSON()")
         print(e)
-
-#Read data from info.json
-def readJSON():
-    data = None
-    mutex.acquire()
-    try:
-        with open("data/json/info.json") as infile:
-            data = json.load(infile)
-            return data
-    finally:
-        mutex.release()
 
 '''
   _____     _     _      _   
@@ -409,12 +431,7 @@ def processNames(information):
         #has potential to break everything if erroneous inputs are sent from the tablet mid-match, needs beta testing TODO
         stream_data["Player1"]["score"] = 0
         stream_data["Player2"]["score"] = 0
-    mutex.acquire()
-    try:
-        with open("data/json/info.json", "w") as outfile:
-            json.dump(stream_data, outfile)
-    finally:
-        mutex.release()
+    writeJSON(stream_data)
 
 '''
       _             _                
@@ -450,14 +467,19 @@ def startggLoop():
            |_|   |_|      
 '''
 #Get latest file from the slippi directory
-def getLatestFile():
+def getLatestFile(print_error):
     try:
         directory_list = glob.glob(slp_folder + '\*')
-        latest_file = max(directory_list, key=os.path.getctime) #TODO: add check for .slp
-        return latest_file
+        sort_time = sorted(directory_list, key=os.path.getctime, reverse=True) #TODO: add check for .slp
+        for file in sort_time:
+            if file[-4:] == ".slp":
+                return file
+        if print_error:
+            print("No .slp files in directory, awaiting files")
+        return ""
     except:
         print("Error reading .slp directory")
-        exit()
+        return ""
 
 def showSlippi():
     global obs_client
@@ -481,18 +503,256 @@ def showCapture():
         if scene == 'slippi':
             obs_client.set_current_program_scene('capture_card')
 
+def processSLP_new(match_data):
+    file = getLatestFile(False)
+    if file == "":
+        return
+    if getGameComplete(file):
+        return
+    #Past here game is in progress
+    print("--Game in progress")
+    #Reset score if game has ended
+    data = readJSON()
+    p1_score = int(data['Player1']['score'])
+    p2_score = int(data['Player2']['score'])
+    best_of = int(data['best_of'])
+    if p1_score == math.ceil(best_of/2) or p2_score == math.ceil(best_of/2):
+        p1_score = 0
+        p2_score = 0
+        data['Player1']['score'] = p1_score
+        data['Player2']['score'] = p2_score
+        writeJSON(data)
+
+    while True:
+        if(getGameComplete(file)):
+            try:
+                gameEnd = slpJS('getGameEnd', file)
+                if gameEnd["lrasInitiatorIndex"] == "-1" or not advanced_game_detection:
+                    print("--Game ended")
+                    time.sleep(0.5)
+                    showCapture()
+                #on lrastart, swap instantly
+                else:
+                    print(" --LRAStart - will not automatically update score")
+                    showCapture()
+                    break
+                stats = slpJS('getStats', file)
+                settings = slpJS('getSettings', file)
+
+                scoreupdate = True
+                #Detect if CPU players
+                for player in settings["players"]:
+                    if player["type"] == 1:
+                        scoreupdate = False
+                        print("  --Game included CPU player")
+                #If game is less than 45 seconds
+                if int(stats["playableFrameCount"]) < 2700 :
+                    scoreupdate = False
+                    print("  --False game detected - Under 45 seconds played")
+                #If neither character dealt over 120%
+                if stats["overall"][0]["totalDamage"] < 120 and stats["overall"][1]["totalDamage"] < 120:
+                    #Brute force game (needed for doubles)
+                    if stats["overall"][0]["totalDamage"] == 0 and stats["overall"][1]["totalDamage"] < 0:
+                        damage_dealt = getDamageBruteForce(file)
+                        over_120 = False
+                        for x in damage_dealt:
+                            if x > 120:
+                                over_120 = True
+                        if not over_120:
+                            print("  --False game detected - No character dealt over 120%")
+                            scoreupdate = False
+                    else:
+                        print("  --False game detected - No character dealt over 120%")
+                        scoreupdate = False
+                #Whether or not to ignore the above
+                if not advanced_game_detection:
+                    print("  --Continuing anyway as 'advanced_game_detection' is disabled in the config file")
+                    scoreupdate = True
+                if scoreupdate:
+                    if len(stats["overall"]) == 2:
+                            last_frame = slpJS('getLatestFrame', file)
+                            winner = slpJS('getWinners', file)
+
+                            game_data = gameDataJSON()
+                            game_data["p1"]["tag"] = data['Player1']['name']
+                            game_data["p2"]["tag"] = data['Player2']['name']
+                            game_data["stage"] = slp_tools.match_stage(settings["stageId"])
+
+                            p1_char = slp_tools.match_chars(settings['players'][0]['characterId'], settings['players'][0]['characterColor'])
+                            p2_char = slp_tools.match_chars(settings['players'][1]['characterId'], settings['players'][1]['characterColor'])
+                            game_data["p1"]["char"] = p1_char["character"]
+                            game_data["p1"]["colour"] = p1_char["colour"]
+                            game_data["p2"]["char"] = p2_char["character"]
+                            game_data["p2"]["colour"] = p2_char["colour"]
+                            #update score
+                            if len(winner) == 1:
+                                if winner[0]['playerIndex'] == settings['players'][0]['port']:
+                                    print("--Player 1 wins")
+                                    p1_score += 1
+                                    game_data["winner"] = 1
+                                elif winner[0]['playerIndex'] == settings['players'][1]['port']:
+                                    print("--Player 2 wins")
+                                    p2_score += 1
+                                    game_data["winner"] = 2
+                                else:
+                                    print("Error: Winner cannot be determined, winner's port is incorrect")
+                                    return
+                            else:
+                                print("Error: Multiple winners in 2 player game?")
+                                return
+                            #update game data
+                            game_data["p1"]["stocks"] = last_frame["players"][0]["post"]["stocksRemaining"]
+                            game_data["p2"]["stocks"] = last_frame["players"][0]["post"]["stocksRemaining"]
+
+                            data = readJSON()
+                            data['Player1']['score'] = p1_score
+                            data['Player2']['score'] = p2_score
+                            #if a tie
+                            if game_data["winner"] != 0:
+                                match_data.append(game_data)
+                            #If game finished, do something with the stats
+                            if p1_score >= math.ceil(best_of/2) or p2_score >= math.ceil(best_of/2):
+                                #shitty system but it works lol
+                                for game in match_data:
+                                    game['p1']['tag'] = game_data['p1']['tag']
+                                    game['p2']['tag'] = game_data['p2']['tag']
+                                with open("data/json/match_result.json", "w") as outfile:
+                                    json.dump(match_data, outfile)
+                                match_data = []
+                            writeJSON(data)
+                    elif len(stats["overall"]) == 4:
+                        winner = slpJS('getWinners', file)
+                        if winner == []:
+                            #should never be required but just in case, will brute force winner based off stats
+                            winner = getDoublesWinner(file)
+                        if len(winner) == 2:
+                            team1_winner = False
+                            for player in winner:
+                                if player['playerIndex'] == 0:
+                                    team1_winner = True
+                            if team1_winner:
+                                print("--Team 1 wins")
+                                p1_score += 1
+                            else:
+                                print("--Team 2 wins")
+                                p2_score += 1
+                        elif len(winner) >= 2:
+                            print("Error: More than 2 winners in game of doubles")
+                            print(winner)
+                            return
+                        elif len(winner) <= 2:
+                            print("Error: Fewer than 2 winners in game of doubles")
+                            print(winner)
+                            return
+                    data = readJSON()
+                    data['Player1']['score'] = p1_score
+                    data['Player2']['score'] = p2_score
+                    writeJSON(data)
+                else:
+                    print("--Game not tracked")
+            finally:
+                break
+        else:
+            settings = slpJS('getSettings', file)
+            updateChars(settings)
+            time.sleep(0.5)
+            pass
+            
+#Brute force getting the damage dealt in a game
+def getDamageBruteForce(file):
+    p = subprocess.Popen(['node', 'node/getDoublesDamage.js', file], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out = p.stdout.read().decode("utf-8").replace("'", '"')
+    err = p.stderr.read().decode("utf-8").replace("'", '"')
+    if err == '':
+        try:
+            return json.loads(out)
+        except Exception:
+            raise Exception("ERROR: '" + file + "' is not a valid .slp replay")
+    else:
+        raise Exception("ERROR: " + file + " is not a valid .slp replay")
+
+def getDoublesWinner(file):
+    try:
+        settings = slpJS('getSettings', file)
+        lastFrame = slpJS('getLatestFrame', file)
+        stocks = []
+        percent = []
+        for player in lastFrame["players"]:
+            if player != None:
+                stocks.append(player["post"]["stocksRemaining"])
+                percent.append(player["post"]["percent"])
+            else:
+                stocks.append(0)
+                percent.append(0)
+        p1_team = settings["players"][0]["teamId"]
+        settings["players"].remove(settings["players"][0])
+        p1d_index = -1
+        for player in settings["players"]:
+            if player["teamId"] == p1_team:
+                p1d_index = player["playerIndex"]
+                break
+        if p1d_index == -1:
+            return []
+        t1_stocks = stocks[0] + stocks[p1d_index]
+        t1_percent = percent[0] + percent[p1d_index]
+        stocks.remove(stocks[0])
+        stocks.remove(stocks[p1d_index])
+        percent.remove(percent[0])
+        percent.remove(percent[p1d_index])
+        t2_stocks = 0
+        t2_percent = 0
+        winner = 0
+        for player_stocks in stocks:
+            t2_stocks += player_stocks
+        for player_percent in percent:
+            t2_percent += player_percent
+        if t1_stocks > t2_stocks:
+            winner = 1
+        elif t2_stocks > t1_stocks:
+            winner = 2
+        else:
+            if t2_percent > t1_percent:
+                winner = 1
+            elif t1_percent > t2_percent:
+                winner = 2
+            else:
+                return []
+        if winner == 1:
+            return [{"playerIndex":0,"position":0},{"playerIndex":p1d_index,"position":0}]
+        else:
+            return [{"playerIndex":settings["players"][0]["playerIndex"],"position":0},{"playerIndex":settings["players"][1]["playerIndex"],"position":0}]
+    except Exception as e:
+        print(e)
+
+def getGameComplete(file):
+    try:
+        settings = slpJS('getStats', file)
+        gameComplete = settings["gameComplete"]
+        if gameComplete:
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(e)
+        print("Exiting slippi loop")
+        sys.exit()
+
 #Process currently in-progress .slp file
 def processSLP():
     #If the file loaded here is a completed game (ie: not a game in progress), return
-    file = getLatestFile()
+    file = getLatestFile(False)
     #TODO: have a better way to detect in-progress games than throwing a fucking exception jesus christ
     #If game is in progress, exception will be thrown and will continue, else it will return and continually loop, lol.
+    if file == "":
+        return
     try:
         game = Game(file)
         return
     except:
         #game in progress
         print("--Game loaded, in progress...")
+        print(slpJS('getSettings', file))
+        print(slpJS('getStats', file))
         showSlippi()
         pass
 
@@ -507,30 +767,9 @@ def processSLP():
         p2_score = 0
         data['Player1']['score'] = p1_score
         data['Player2']['score'] = p2_score
-        mutex.acquire()
-        try:
-            with open("data/json/info.json", "w") as outfile:
-                json.dump(data, outfile)
-        finally:
-            mutex.release()
+        writeJSON(data)
     
-    game_data = {
-        "stage" : "",
-        "winner" : 0,
-        "p1" : {
-            "tag" : "",
-            "char" : "",
-            "colour" : "",
-            "stocks" : 4,
-        },
-        "p2" : {
-            "tag" : "",
-            "char" : "",
-            "colour" : "",
-            "stocks" : 4,
-        }
-    }
-    match_data = []
+    game_data = gameDataJSON()
     #Loop till game has ended
     running = True
     while running:
@@ -551,24 +790,21 @@ def processSLP():
                 showCapture()
                 running = False
                 break
-            p = subprocess.Popen(['node', 'node/stats.js', file], stdout=subprocess.PIPE)
-            out = p.stdout.read()
-            stats = json.loads(out)
-
-            info = json.loads(slippiJS(file))
+            stats = slpJS('getStats', file)
+            settings = slpJS('getSettings', file)
             game_data["p1"]["tag"] = data['Player1']['name']
             game_data["p2"]["tag"] = data['Player2']['name']
-            game_data["stage"] = slp_tools.match_stage(info["stageId"])
+            game_data["stage"] = slp_tools.match_stage(settings["stageId"])
             p1_char = ""
             p2_char = ""
-            p1port = info['players'][0]['port']
-            p2port = info['players'][1]['port']
+            p1port = settings['players'][0]['port']
+            p2port = settings['players'][1]['port']
             if p1port < p2port:
-                p1_char = slp_tools.match_chars(info['players'][0]['characterId'], info['players'][0]['characterColor'])
-                p2_char = slp_tools.match_chars(info['players'][1]['characterId'], info['players'][1]['characterColor'])
+                p1_char = slp_tools.match_chars(settings['players'][0]['characterId'], settings['players'][0]['characterColor'])
+                p2_char = slp_tools.match_chars(settings['players'][1]['characterId'], settings['players'][1]['characterColor'])
             else:
-                p2_char = slp_tools.match_chars(info['players'][0]['characterId'], info['players'][0]['characterColor'])
-                p1_char = slp_tools.match_chars(info['players'][1]['characterId'], info['players'][1]['characterColor'])
+                p2_char = slp_tools.match_chars(settings['players'][0]['characterId'], settings['players'][0]['characterColor'])
+                p1_char = slp_tools.match_chars(settings['players'][1]['characterId'], settings['players'][1]['characterColor'])
             game_data["p1"]["char"] = p1_char["character"]
             game_data["p1"]["colour"] = p1_char["colour"]
             game_data["p2"]["char"] = p2_char["character"]
@@ -576,7 +812,7 @@ def processSLP():
             if len(stats["overall"]) == 2:
                 scoreupdate = True
                 try:
-                    for player in info["players"]:
+                    for player in settings["players"]:
                         if player["type"] == 1:
                             scoreupdate = False
                             print("  --Game included CPU player")
@@ -649,26 +885,19 @@ def processSLP():
                         with open("data/json/match_result.json", "w") as outfile:
                             json.dump(match_data, outfile)
                         match_data = []
-                    mutex.acquire()
-                    try:
-                        with open("data/json/info.json", "w") as outfile:
-                            json.dump(data, outfile)
-                    finally:
-                        mutex.release()
+                    writeJSON(data)
                 else:
                     print("--Game not tracked")
         except Exception as e:
-            out = slippiJS(file)
-            updateChars(out)
+            settings = slpJS('getSettings', file)
+            updateChars(settings)
             pass
 
 #Update characters based on what is being played in the .slp file           
-def updateChars(out):
-    slpj = json.loads(out)
+def updateChars(settings):
+    player_count = len(settings['players'])
 
-    player_count = len(slpj['players'])
-
-    players = slpj['players']
+    players = settings['players']
 
     #singles
     if player_count <= 2:
@@ -688,12 +917,7 @@ def updateChars(out):
         data['Player1']['colour'] = p1_char['colour']
         data['Player2']['character'] = p2_char['character']
         data['Player2']['colour'] = p2_char['colour']
-        mutex.acquire()
-        try:
-            with open("data/json/info.json", "w") as outfile:
-                json.dump(data, outfile)
-        finally:
-            mutex.release()
+        writeJSON(data)
     #doubles
     elif player_count == 4:
         p1_char = ""
@@ -706,7 +930,7 @@ def updateChars(out):
         p1_char = players[0]
         port1_team = p1_char['teamId']
         p1_char = slp_tools.match_chars(p1_char['characterId'], p1_char['characterColor'])
-        players.remove(p1_char)
+        players.remove(players[0])
 
         #player 1 doubles
         for char in players:
@@ -715,38 +939,39 @@ def updateChars(out):
                 players.remove(char)
                 break
         #very likely redundant
-        p2_char = slp_tools.match_chars(slpj['players'][0]['characterId'], slpj['players'][0]['characterColor'])
-        p2d_char = slp_tools.match_chars(slpj['players'][1]['characterId'], slpj['players'][1]['characterColor'])
+        p2_char = slp_tools.match_chars(settings['players'][0]['characterId'], settings['players'][0]['characterColor'])
+        p2d_char = slp_tools.match_chars(settings['players'][1]['characterId'], settings['players'][1]['characterColor'])
         data = readJSON()
 
         data['Player1']['character'] = p1_char['character']
-        data['Player1']['colour'] = p1_char['character']
+        data['Player1']['colour'] = p1_char['colour']
         data['Player1']['character_dubs'] = p1d_char['character']
-        data['Player1']['colour_dubs'] = p1d_char['character']
+        data['Player1']['colour_dubs'] = p1d_char['colour']
 
         data['Player2']['character'] = p2_char['character']
-        data['Player2']['colour'] = p2_char['character']
+        data['Player2']['colour'] = p2_char['colour']
         data['Player2']['character_dubs'] = p2d_char['character']
-        data['Player2']['colour_dubs'] = p2d_char['character']
+        data['Player2']['colour_dubs'] = p2d_char['colour']
         data['is_doubles'] = "true"
-        mutex.acquire()
-        try:
-            with open("data/json/info.json", "w") as outfile:
-                json.dump(data, outfile)
-        finally:
-            mutex.release()
+        writeJSON(data)
 
-#Read the game data using slippi-js
-def slippiJS(file):
-    p = subprocess.Popen(['node', 'node/slippi.js', file], stdout=subprocess.PIPE)
-    out = p.stdout.read()
-    out = out.decode("utf-8").replace("'", '"')
-    return out
+def slpJS(command, file):
+    p = subprocess.Popen(['node', 'node/slippi.js', file, command], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    out = p.stdout.read().decode("utf-8").replace("'", '"')
+    err = p.stderr.read().decode("utf-8").replace("'", '"')
+    if err == '':
+        try:
+            return json.loads(out)
+        except Exception:
+            raise Exception("ERROR: '" + file + "' is not a valid .slp replay")
+    else:
+        raise Exception("ERROR: " + file + " is not a valid .slp replay")
     
 def slippiLoop():
+    match_data = []
     try:
         while True:
-            processSLP()
+            processSLP_new(match_data)
             time.sleep(0.5)
     except KeyboardInterrupt:
         pass

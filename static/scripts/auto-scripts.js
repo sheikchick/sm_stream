@@ -538,7 +538,7 @@ function getEvent() {
 			variables: {
 				eventID: $("#event :selected").attr("event_id"),
 				page: 1,
-				perPage: 5
+				perPage: 25
 			},
 		}),
 	})
@@ -579,7 +579,7 @@ function getEvent() {
 						if(team1["entrant"]["participants"].length > 1) {
 							if (team1["entrant"]["participants"][1]["user"] != null) {
 								p1_doubles_user_id = team1["entrant"]["participants"][1]["user"]["discriminator"]
-								p1_doubles_pronouns = team1["entrant"]["participants"][1]["user"]["genderPronouns"]
+								p1_doubles_pronouns = team1["entrant"]["participants"][1]["user"]["genderPronoun"]
 							}
 							p1_doubles_name = team1["entrant"]["participants"][1]["gamerTag"]
 						}
@@ -589,7 +589,7 @@ function getEvent() {
 						p2_pronouns = ""
 						if (team2["entrant"]["participants"][0]["user"] != null) {
 							p2_user_id = team2["entrant"]["participants"][0]["user"]["discriminator"]
-							p2_pronouns = team2["entrant"]["participants"][0]["user"]["genderPronouns"]
+							p2_pronouns = team2["entrant"]["participants"][0]["user"]["genderPronoun"]
 						}
 						p2_name = team2["entrant"]["participants"][0]["gamerTag"]
 						//player 2 doubles
@@ -599,7 +599,7 @@ function getEvent() {
 						if(team2["entrant"]["participants"].length > 1) {
 							if (team2["entrant"]["participants"][1]["user"] != null) {
 								p2_doubles_user_id = team2["entrant"]["participants"][1]["user"]["discriminator"]
-								p2_doubles_pronouns = team2["entrant"]["participants"][1]["user"]["genderPronouns"]
+								p2_doubles_pronouns = team2["entrant"]["participants"][1]["user"]["genderPronoun"]
 							}
 							p2_doubles_name = team1["entrant"]["participants"][1]["gamerTag"]
 						}
@@ -650,10 +650,14 @@ function load_set(x) {
 	$("#p1d_tag").val(p1d_data["name"])
 	$("#p2_tag").val(p2_data["name"])
 	$("#p2d_tag").val(p2d_data["name"])
-	console.log("p1 pronouns: " + p1_data["pronouns"])
-	console.log("p1d pronouns: " + p1d_data["pronouns"])
-	console.log("p2 pronouns: " + p2_data["pronouns"])
-	console.log("p2d1 pronouns: " + p2d_data["pronouns"])
+	p1_pronouns = p1_data["pronouns"]
+	p1d_pronouns = p1d_data["pronouns"]
+	p2_pronouns = p2_data["pronouns"]
+	p2d_pronouns = p2d_data["pronouns"]
+	$("#p1_pronouns").val(p1_pronouns)
+	$("#p1d_pronouns").val(p1d_pronouns)
+	$("#p2_pronouns").val(p2_pronouns)
+	$("#p2d_pronouns").val(p2d_pronouns)
 	$("#round_change").val($("#set" + x + "_round").text())
 }
 

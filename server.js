@@ -91,6 +91,20 @@ app.all("/favicon.ico", (req, res) => {
         res.json(file);
     });
 });
+
+/* External endpoints */
+
+app.post("/update_stats", (req, res) => {
+    updateStats(req.body.file);
+    res.sendStatus(200);
+});
+
+app.post("/process_slp", (req, res) => {
+    processResult(req.body.file, []);
+    res.sendStatus(200);
+});
+
+/* Run app */
   
 app.listen(config.web.port, () => {
     logging.log("Web application listening on port " + config.web.port)
@@ -364,4 +378,6 @@ async function processGameHandler() {
     }
 }
 
-processGameHandler();
+if(require.main == module) {
+    processGameHandler();
+}

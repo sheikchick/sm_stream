@@ -1,2 +1,2 @@
 @echo off
-call npm install
+call npm install --omit=dev

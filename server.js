@@ -164,7 +164,7 @@ function getNewFile(file_path) {
     return new Promise(function(resolve) {
         const timer = setInterval(() => {
             var file = getLatestFile();
-            if(file.path != file_path) {
+            if(file != file_path) {
                 clearInterval(timer);
                 resolve(file);
             }
@@ -322,17 +322,17 @@ function processResult(game, match_data) {
 async function processGameHandler() {
     try{
         var file = getLatestFile();
-        var game = new SlippiGame(file.path);
+        var game = new SlippiGame(file);
         /*used to skip the first .slp file if it is completed
         if not completed it will continue to process the game*/
         if(game.getGameEnd() != null) {
             logging.log("Waiting for game");
-            file = await getNewFile(file.path)
+            file = await getNewFile(file)
         }
         changeScene(config.obs.start_scene)
         match_data = []
         while(true) {
-            game = new SlippiGame(file.path);
+            game = new SlippiGame(file);
             //game in progress
             logging.log("Game in progress");
             updateStats(game)
@@ -347,7 +347,7 @@ async function processGameHandler() {
             }
             match_data = processResult(game, match_data)
             logging.log("Waiting for game");
-            file = await getNewFile(file.path)
+            file = await getNewFile(file)
             changeScene(config.obs.start_scene)
         }
     } catch (e) {

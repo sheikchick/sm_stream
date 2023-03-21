@@ -187,6 +187,10 @@ function getGameComplete(game) {
 function updateStats(game) {
     var settings = game.getSettings();
     info = JSON.parse(fs.readFileSync("data/json/info.json", {encoding:'utf8', flag:'r'}));
+    if(info.Player1.score == Math.ceil(info.best_of/2) || info.Player2.score == Math.ceil(info.best_of/2)) {
+        info.Player1.score == 0;
+        info.Player2.score == 0;
+    }
     if(settings.players.length == 2) {
         p1_data = slpTools.matchChar(settings.players[0].characterId, settings.players[0].characterColor);
         p2_data = slpTools.matchChar(settings.players[1].characterId, settings.players[1].characterColor);
@@ -336,6 +340,7 @@ async function processGameHandler() {
             //game in progress
             logging.log("Game in progress");
             updateStats(game)
+
             var gameEnd = await getGameComplete(game);
             //game complete
             if(gameEnd.lrasIndicatorIndex != -1) {

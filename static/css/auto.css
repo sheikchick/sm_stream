@@ -159,7 +159,7 @@ a {
 	grid-template-columns: 80px [col-start] 400px [col-start] 120px [col-start] 120px [col-start] 100px [col-start];
 }
 
-.tag.actual {
+.name.actual {
 	height: 18px;
 	font-size: 20px;
 	padding: 2px 10px 2px 10px;
@@ -174,11 +174,11 @@ a {
     box-shadow: 0px 4px 2px #202020;
 }
 
-.tag.actual.left {
+.name.actual.left {
 	text-align: right;
 }
 
-.tag.actual.right {
+.name.actual.right {
 	text-align: left;
 }
 
@@ -209,7 +209,7 @@ a {
 	border-radius: 5px;
 }
 
-.tag.change {
+.name.change {
 	height: 32px;
 	font-size: 24px;
 	padding: 2px 10px 2px 10px;
@@ -281,7 +281,7 @@ a {
 	padding: 3px 1px 3px 3px;
 }
 
-.tag {
+.name {
 	font-size: 24px;
 }
 
@@ -548,12 +548,12 @@ button:focus {
 }
 
 
-.tag_container.actual {
+.name_container.actual {
 	margin: 0px 10px 0px 10px;
 	width: 261px;
 }
 
-.tag_container.change {
+.name_container.change {
 	grid-column: 2;
 }
 
@@ -601,16 +601,16 @@ button:focus {
 	grid-column: 1;
 }
 
-.tag.change {
+.name.change {
 	box-shadow: 0px 4px 2px #000;
 }
 
-.tag.change.left {
+.name.change.left {
 	grid-column: 2;
 	border-bottom: 2px solid #F56262;
 }
 
-.tag.change.right {
+.name.change.right {
 	grid-column: 2;
 	border-bottom: 2px solid #4A6DD9;
 }
@@ -792,22 +792,22 @@ button:focus {
 	grid-column: 2;
 }
 
-.startgg.tag {
+.startgg.name {
 	text-align: center;
 	font-size: 18px;
 	width: 140px;
 }
 
-.startgg.tag.left {
+.startgg.name.left {
 	grid-row: 1;
 }
 
-.startgg.tag.vs {
+.startgg.name.vs {
 	color: #AAA;
 	grid-row: 2;
 }
 
-.startgg.tag.right {
+.startgg.name.right {
 	grid-row: 3;
 }
 

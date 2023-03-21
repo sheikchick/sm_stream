@@ -61,107 +61,113 @@ function reset_background(player) {
 }
 
 function update() {
-	player1tag = $("#p1_tag").val();
+	player1name = $("#p1_name").val();
 	player1char = $("#p1_character_actual").attr("character");
 	player1colour = $("#p1_character_actual").attr("colour");
 	player1pronouns = $("#p1_pronouns").val();
 
-	player1dtag = $("#p1d_tag").val();
+	player1dname = $("#p1d_name").val();
 	player1dchar = $("#p1d_character_actual").attr("character");
 	player1dcolour = $("#p1d_character_actual").attr("colour");
 	player1dpronouns = $("#p1d_pronouns").val();
 
-	player1score = $("#p1_score_change").val();
+	player1score = parseInt($("#p1_score_change").val());
 
-	player2tag = $("#p2_tag").val();
+	player2name = $("#p2_name").val();
 	player2char = $("#p2_character_actual").attr("character");
 	player2colour = $("#p2_character_actual").attr("colour");
 	player2pronouns = $("#p2_pronouns").val();
 
-	player2dtag = $("#p2d_tag").val();
+	player2dname = $("#p2d_name").val();
 	player2dchar = $("#p2d_character_actual").attr("character");
 	player2dcolour = $("#p2d_character_actual").attr("colour");
 	player2dpronouns = $("#p2d_pronouns").val();
 
-	player2score = $("#p1_score_change").val();
+	player2score = parseInt($("#p2_score_change").val());
 	round = $("#round_change").val();
 	caster1 = "";
 	caster2 = "";
 
-	$.ajax({
-		type: 'POST',
-		url: "/update",
-		data: {
-				p1_tag: player1tag,
-				p1_char: player1char,
-				p1_colour: player1colour,
-				p1_pronouns: player1pronouns,
-				p1d_tag: player1dtag,
-				p1d_char : player1dchar,
-				p1d_colour: player1dcolour,
-				p1d_pronouns: player1dpronouns,
-				p1_score: player1score,
-				p2_tag: player2tag,
-				p2_char: player2char,
-				p2_colour: player2colour,
-				p2_pronouns: player2pronouns,
-				p2d_tag: player2dtag,
-				p2d_char : player2dchar,
-				p2d_colour: player2dcolour,
-				p2d_pronouns: player2dpronouns,
-				p2_score: player2score,
-				round: round,
-				caster1: caster1,
-				caster2: caster2,
-				is_doubles: is_doubles,
-				best_of: best_of_value
+	const update_controller = new AbortController()
+	const update_timeout = setTimeout(() => {
+		update_controller.abort()
+		$(".update").css("background-color", "#F56262");
+		$(".update").css("border-bottom", "3px solid #F53535");
+		$(".update").text("Error ");
+		$(".update").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+		setTimeout(function(){
+			$(".update").css("background-color", "#CBFFC7");
+			$(".update").css("border-bottom", "3px solid #64B55E");
+			$(".update").text("Update ");
+			$(".update").append('<i class="fa fa-sync"></i>')
+		}, 2000);
+	}, 5000);
+	fetch("/update", {
+		method: 'POST',
+		headers: { "Content-Type": "application/json"},
+		body: JSON.stringify({
+			Player1: {
+				name: player1name,
+				character: player1char,
+				colour: player1colour,
+				pronouns: player1pronouns,
+				name_dubs: player1dname,
+				character_dubs : player1dchar,
+				colour_dubs: player1dcolour,
+				pronouns_dubs: player1dpronouns,
+				score: player1score,
 			},
-		success: function() {
-			$(".update").css("background-color", "#55F76B");
-			$(".update").css("border-bottom", "3px solid #349641");
-			$(".update").text("Updated ");
-			$(".update").append('<i class="fa-solid fa-thumbs-up"></i>')
-			setTimeout(function(){
-				$(".update").css("background-color", "#CBFFC7");
-				$(".update").css("border-bottom", "3px solid #64B55E");
-				$(".update").text("Update ");
-				$(".update").append('<i class="fa fa-sync"></i>')
-			}, 2000);
-		},
-		error: function() {
-			$(".update").css("background-color", "#F56262");
-			$(".update").css("border-bottom", "3px solid #F53535");
-			$(".update").text("Error ");
-			$(".update").append('<i class="fa-solid fa-triangle-exclamation"></i>')
-			setTimeout(function(){
-				$(".update").css("background-color", "#CBFFC7");
-				$(".update").css("border-bottom", "3px solid #64B55E");
-				$(".update").text("Update ");
-				$(".update").append('<i class="fa fa-sync"></i>')
-			}, 2000);
-		},
-		timeout: 5000
+			Player2: {
+				name: player2name,
+				character: player2char,
+				colour: player2colour,
+				pronouns: player2pronouns,
+				name_dubs: player2dname,
+				character_dubs : player2dchar,
+				colour_dubs: player2dcolour,
+				pronouns_dubs: player2dpronouns,
+				score: player2score,
+			},
+			round: round,
+			caster1: caster1,
+			caster2: caster2,
+			is_doubles: is_doubles,
+			best_of: best_of_value
+		}),
+		signal: update_controller.signal
+	}).then(() => {
+		clearTimeout(update_timeout)
+		$(".update").css("background-color", "#55F76B");
+		$(".update").css("border-bottom", "3px solid #349641");
+		$(".update").text("Updated ");
+		$(".update").append('<i class="fa-solid fa-thumbs-up"></i>')
+		setTimeout(function(){
+			$(".update").css("background-color", "#CBFFC7");
+			$(".update").css("border-bottom", "3px solid #64B55E");
+			$(".update").text("Update ");
+			$(".update").append('<i class="fa fa-sync"></i>')
+		}, 2000);
 	})
 }
 
 function swap_sides() {
-	player1tag = $("#p1_tag").val();
-	player1dtag = $("#p1d_tag").val();
-	player2tag = $("#p2_tag").val();
-	player2dtag = $("#p2d_tag").val();
+	player1name = $("#p1_name").val();
+	player1dname = $("#p1d_name").val();
+	player2name = $("#p2_name").val();
+	player2dname = $("#p2d_name").val();
 
-	$("#p1_tag").val(player2tag);
-	$("#p1d_tag").val(player2dtag);
-	$("#p2_tag").val(player1tag);
-	$("#p2d_tag").val(player1dtag);
+	$("#p1_name").val(player2name);
+	$("#p1d_name").val(player2dname);
+	$("#p2_name").val(player1name);
+	$("#p2d_name").val(player1dname);
 }
 
 function swap_team(n) {
-	player_tag = $("#p" + n + "_tag").val();
-	playerd_tag = $("#p" + n + "d_tag").val();
+	player_name = $("#p" + n + "_name").val();
+	playerd_name = $("#p" + n + "d_name").val();
 
-	$("#p" + n + "_tag").val(playerd_tag);
-	$("#p" + n + "d_tag").val(player_tag);
+	$("#p" + n + "_name").val(playerd_name);
+	$("#p" + n + "d_name").val(player_name);
 }
 
 function toggle_doubles() {
@@ -185,19 +191,19 @@ function toggle_doubles() {
 
 		$(".swap").hide()
 		$(".pronouns_container.change").css("grid-column", "1")
-		$(".tag_container.change").css("grid-column", "2")
+		$(".name_container.change").css("grid-column", "2")
 		$("#p1_character_change").css("grid-column", "3")
 		$("#p2_character_change").css("grid-column", "3")
 		$(".score.change").css("grid-column", "4")
 		$(".info.change").css("grid-template-columns", "100px [col-start] 380px [col-start] 240px [col-start] 100px [col-start]");
-		$(".tag.change").css("width", "340px")
+		$(".name.change").css("width", "340px")
 
-		$("#p2_tag").attr("placeholder", "Player 2 Tag")
+		$("#p2_name").attr("placeholder", "Player 2 name")
 
-		$("#p1d_tag").hide();
-		$("#p2d_tag").hide();
-		$("#p1d_tag_actual").hide();
-		$("#p2d_tag_actual").hide();
+		$("#p1d_name").hide();
+		$("#p2d_name").hide();
+		$("#p1d_name_actual").hide();
+		$("#p2d_name_actual").hide();
 
 		is_doubles = false;
 	}
@@ -221,20 +227,20 @@ function toggle_doubles() {
 
 		$(".swap").show()
 		$(".pronouns_container.change").css("grid-column", "2")
-		$(".tag_container.change").css("grid-column", "3")
+		$(".name_container.change").css("grid-column", "3")
 		$("#p1_character_change").css("grid-column", "4")
 		$("#p2_character_change").css("grid-column", "4")
 		$(".score.change").css("grid-column", "6")
 		$(".info.change").css("grid-template-columns", "100px [col-start] 80px [col-start] 300px [col-start] 120px [col-start] 120px [col-start] 100px [col-start]");
-		$(".tag.change").css("width", "260px")
+		$(".name.change").css("width", "260px")
 		
 
-		$("#p2_tag").attr("placeholder", "Player 1 Tag")
-		$("#p1d_tag").show();
-		$("#p2d_tag").show();
+		$("#p2_name").attr("placeholder", "Player 1 name")
+		$("#p1d_name").show();
+		$("#p2d_name").show();
 
-		$("#p1d_tag_actual").show();
-		$("#p2d_tag_actual").show();
+		$("#p1d_name_actual").show();
+		$("#p2d_name_actual").show();
 
 		is_doubles = true;
 	}
@@ -243,14 +249,14 @@ function toggle_doubles() {
 function load_changes() {
 	$.ajax({
 		type: 'POST',
-		url: "/data.json",
+		url: "/info.json",
 		data: {},
 		success: function(response) {
-			$("#p1_tag_actual").attr("value", response.Player1["name"])
-			$("#p1d_tag_actual").attr("value", response.Player1["name_dubs"])
+			$("#p1_name_actual").attr("value", response.Player1["name"])
+			$("#p1d_name_actual").attr("value", response.Player1["name_dubs"])
 			$("#p1_score_actual").attr("value", response.Player1["score"])
-			$("#p2_tag_actual").attr("value", response.Player2["name"])
-			$("#p2d_tag_actual").attr("value", response.Player2["name_dubs"])
+			$("#p2_name_actual").attr("value", response.Player2["name"])
+			$("#p2d_name_actual").attr("value", response.Player2["name_dubs"])
 			$("#p2_score_actual").attr("value", response.Player2["score"])
 			$("#round_actual").attr("value", response.round)
 			$("#best_of_actual").attr("value", "Best of " + response.best_of)
@@ -380,20 +386,20 @@ function showSets(up) {
 				$("#set" + (x+1)).attr("match_id", sets[index]["id"])
 
 				if(sets[index]["player1_doubles"]["name"] != "") {
-					$("#set" + (x+1) + "_tag1").text(sets[index]["player1"]["name"] + " / " + sets[index]["player1_doubles"]["name"])
+					$("#set" + (x+1) + "_name1").text(sets[index]["player1"]["name"] + " / " + sets[index]["player1_doubles"]["name"])
 				} else {
-					$("#set" + (x+1) + "_tag1").text(sets[index]["player1"]["name"])
+					$("#set" + (x+1) + "_name1").text(sets[index]["player1"]["name"])
 				}
-				$("#set" + (x+1) + "_tag1").attr("p1_data", JSON.stringify(sets[index]["player1"]))
-				$("#set" + (x+1) + "_tag1").attr("p2_data", JSON.stringify(sets[index]["player1_doubles"]))
+				$("#set" + (x+1) + "_name1").attr("p1_data", JSON.stringify(sets[index]["player1"]))
+				$("#set" + (x+1) + "_name1").attr("p2_data", JSON.stringify(sets[index]["player1_doubles"]))
 
 				if(sets[index]["player2_doubles"]["name"] != "") {
-					$("#set" + (x+1) + "_tag2").text(sets[index]["player2"]["name"] + " / " + sets[index]["player2_doubles"]["name"])
+					$("#set" + (x+1) + "_name2").text(sets[index]["player2"]["name"] + " / " + sets[index]["player2_doubles"]["name"])
 				} else {
-					$("#set" + (x+1) + "_tag2").text(sets[index]["player2"]["name"])
+					$("#set" + (x+1) + "_name2").text(sets[index]["player2"]["name"])
 				}
-				$("#set" + (x+1) + "_tag2").attr("p1_data", JSON.stringify(sets[index]["player2"]))
-				$("#set" + (x+1) + "_tag2").attr("p2_data", JSON.stringify(sets[index]["player2_doubles"]))
+				$("#set" + (x+1) + "_name2").attr("p1_data", JSON.stringify(sets[index]["player2"]))
+				$("#set" + (x+1) + "_name2").attr("p2_data", JSON.stringify(sets[index]["player2_doubles"]))
 
 				$("#set" + (x+1) + "_round").text(sets[index]["round"])
 			}
@@ -641,15 +647,15 @@ function getEvent() {
 }
 
 function load_set(x) {
-	p1_data = JSON.parse($("#set" + x + "_tag1").attr("p1_data"))
-	p1d_data = JSON.parse($("#set" + x + "_tag1").attr("p2_data"))
-	p2_data = JSON.parse($("#set" + x + "_tag2").attr("p1_data"))
-	p2d_data = JSON.parse($("#set" + x + "_tag2").attr("p2_data"))
+	p1_data = JSON.parse($("#set" + x + "_name1").attr("p1_data"))
+	p1d_data = JSON.parse($("#set" + x + "_name1").attr("p2_data"))
+	p2_data = JSON.parse($("#set" + x + "_name2").attr("p1_data"))
+	p2d_data = JSON.parse($("#set" + x + "_name2").attr("p2_data"))
 
-	$("#p1_tag").val(p1_data["name"])
-	$("#p1d_tag").val(p1d_data["name"])
-	$("#p2_tag").val(p2_data["name"])
-	$("#p2d_tag").val(p2d_data["name"])
+	$("#p1_name").val(p1_data["name"])
+	$("#p1d_name").val(p1d_data["name"])
+	$("#p2_name").val(p2_data["name"])
+	$("#p2d_name").val(p2d_data["name"])
 	p1_pronouns = p1_data["pronouns"]
 	p1d_pronouns = p1d_data["pronouns"]
 	p2_pronouns = p2_data["pronouns"]

@@ -1,0 +1,35 @@
+[web]
+# Port where web config will be accessible
+port = 5000
+
+[obs]
+# Where the OBS WebSocket should connect to, default host is 'localhost'
+host = 0
+port = 0
+password = ""
+
+# Automatically change scenes when a game is in progress using slippi.
+# Useful to avoid the "Waiting for game" screen
+# true / false
+scene_changer = false
+
+#Scenes to automatically switch to when game starts and ends.
+# Typically start_scene will contain an instance of Slippi Dolphin and end_scene one of a capture card or webcams
+start_scene = "slippi"
+end_scene = "capture_card"
+
+
+[startgg]
+# start.gg API key and version - generate one at https://start.gg/admin/profile/developer
+key = "79768efd603a4bef6533ef296c31287d"
+
+[slippi]
+# Output folder for the .SLP files of the stream setup. Leave blank if you wish to manually report
+#"D:\stream stuff\stream\web_application\slp"
+#"F:\SSBM\Slippi\2023-03"
+#"D:\work_replay"
+directory = "D:\work_replay"
+
+# true = games with less than 45 seconds playtime, under 120% damage dealt, games with CPUs, do not advance game score
+# false = manual information reporting
+track_score = true

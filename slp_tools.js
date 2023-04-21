@@ -2,7 +2,7 @@ const { SlippiGame } = require("@slippi/slippi-js");
 
 function currentTime() {
     var date = new Date();
-    return(date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "." + date.getMilliseconds())
+    return(date.getHours().toString().padStart(2,"0") + ":" + date.getMinutes().toString().padStart(2,"0") + ":" + date.getSeconds().toString().padStart(2,"0") + "." + date.getMilliseconds().toString().padStart(3,"0"))
 }
 
 exports.isValidGame = function(game) {
@@ -55,13 +55,13 @@ exports.isValidGame = function(game) {
     return true;
 }
 
-exports.getDamageDealt = function(game) {
+function getDamageDealt(game) {
     // Get game settings – stage, characters, etc
     const frames = game.getFrames();
     var stocks = [];
     var last_percent = [];
     var percent = [];
-    for(x = 0; x < frame.players.length; x++) {
+    for(x = 0; x < frames[0].players.length; x++) {
         stocks.push(4);
         last_percent.push(0);
         last_percent.push(0);

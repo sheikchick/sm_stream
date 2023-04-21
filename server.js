@@ -27,7 +27,7 @@ app.use(cors())
 app.use(express.urlencoded({extended: true}));
 
 if(config.obs.host != 0 && config.obs.port != 0) {
-    obs.connect(`ws://${config.obs.host}/${config.obs.port}`, config.obs.password).then(() => {
+    obs.connect(`ws://${config.obs.host}:${config.obs.port}`, config.obs.password).then(() => {
         logging.log("OBS web-socket connected");
     }, () => {
         logging.error("Failed to connect to OBS, proceeding without.");
@@ -55,7 +55,11 @@ app.post("/update", (req, res) => {
 
 app.get("/", (req, res) => {
     fs.readFile("data/json/info.json", (err, file) => {
-        res.render("auto", JSON.parse(file));
+        var data = JSON.parse(file);
+        data.api_key = config.startgg.key;
+        data.obs_port = config.obs.port;
+        data.obs_password = config.obs.password;
+        res.render("auto", data);
     });
 })
 
@@ -209,9 +213,9 @@ function getGameComplete(game) {
 function updateStats(game) {
     var settings = game.getSettings();
     info = JSON.parse(fs.readFileSync("data/json/info.json", {encoding:'utf8', flag:'r'}));
-    if(info.Player1.score == Math.ceil(info.best_of/2) || info.Player2.score == Math.ceil(info.best_of/2)) {
-        info.Player1.score == 0;
-        info.Player2.score == 0;
+    if(info.Player1.score >= Math.ceil(info.best_of/2) || info.Player2.score >= Math.ceil(info.best_of/2)) {
+        info.Player1.score = 0;
+        info.Player2.score = 0;
     }
     if(settings.players.length == 2) {
         p1_data = slpTools.matchChar(settings.players[0].characterId, settings.players[0].characterColor);
@@ -227,8 +231,7 @@ function updateStats(game) {
 
         t1p1_data = slpTools.matchChar(settings.players[0].characterId, settings.players[0].characterColor);
         t1p2_data = null;
-
-        settings.players.slice(1); //remove p1 for search
+        settings.players.splice(0,1); //remove p1 for search
         for(let player of settings.players) {
             if(player.teamId == team1_id) {
                 t1p2_data = slpTools.matchChar(player.characterId, player.characterColor);
@@ -264,7 +267,7 @@ function updateStats(game) {
 }
 
 function processResult(game, match_data) {
-    if(config.slippi.track_score) {
+    if(!config.slippi.debug_mode) {
         if(!slpTools.isValidGame(game)) {
             return match_data;
         };
@@ -379,7 +382,9 @@ async function processGameHandler() {
                     changeScene(config.obs.end_scene)
                 }, 500);
             }
-            match_data = processResult(game, match_data)
+            if(config.slippi.track_score) {
+                match_data = processResult(game, match_data)
+            }
             logging.log("Waiting for game");
             file = await getNewFile(file)
             changeScene(config.obs.start_scene)

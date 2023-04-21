@@ -1,5 +1,6 @@
 //and here we go...
 const express = require("express");
+var cors = require('cors')
 const path = require("path");
 const toml = require("toml");
 const fs = require("fs");
@@ -11,19 +12,18 @@ const logging = require("./logging.js");
 const obs = new OBSWebSocket();
 const app = express()
 
-var config;
-try {
-    config = toml.parse(fs.readFileSync('./config.toml', 'utf-8'));
-} catch (e) {
-    logging.error("Error parsing config.toml, exiting.");
-    process.exit(0);
-}
+
+global.slippi_loop = false;
+global.config;
+
+loadConfig();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 app.use("/static", express.static("static"));
 app.use(express.json());
+app.use(cors())
 app.use(express.urlencoded({extended: true}));
 
 if(config.obs.host != 0 && config.obs.port != 0) {
@@ -35,7 +35,6 @@ if(config.obs.host != 0 && config.obs.port != 0) {
 } else {
     logging.log("No OBS connection information provided, proceeding without.");
 }
-
 
 /*Update Endpoints*/
 
@@ -108,7 +107,6 @@ app.post("/process_slp", (req, res) => {
   
 app.listen(config.web.port, () => {
     logging.log("Web application listening on port " + config.web.port)
-    getLatestFile();
 })
 
 /**
@@ -129,6 +127,15 @@ function changeScene(scene) {
         });
     };
     return false;
+}
+
+function loadConfig() {
+    try {
+        config = toml.parse(fs.readFileSync('./config.toml', 'utf-8'));
+    } catch (e) {
+        logging.error("Error parsing config.toml, exiting.");
+        process.exit(0);
+    }
 }
 
 
@@ -167,8 +174,8 @@ function getLatestFile() {
         //ideally would stop the .slp loop after this exception is thrown
         if(e instanceof TypeError) {
             logging.error("Slippi directory \"" + config.slippi.directory + "\" doesn't exist");
-            throw(e)
         }
+        throw(e)
     }
 }
 
@@ -180,6 +187,7 @@ function getNewFile(file_path) {
             var file = getLatestFile();
             if(file != file_path) {
                 clearInterval(timer);
+                logging.log("File found: " + file);
                 resolve(file);
             }
         }, 500)
@@ -261,10 +269,10 @@ function processResult(game, match_data) {
             return match_data;
         };
     }
-    var stats = game.getStats();
+    var settings = game.getSettings();
     var winner = game.getWinners();
     var info = JSON.parse(fs.readFileSync("data/json/info.json", "utf8"));
-    if(stats.overall.length == 2) {
+    if(settings.players.length == 2) {
         var last_frame = game.getLatestFrame();
 
         var game_data = {"p1": {}, "p2": {}}
@@ -310,7 +318,7 @@ function processResult(game, match_data) {
             fs.writeFileSync("data/json/match_result.json", JSON.stringify(match_json), "utf8");
         }
         fs.writeFileSync("data/json/info.json", JSON.stringify(info), "utf8");
-    } else if(stats.overall.length == 4) {
+    } else if(settings.players.length == 4) {
         //determine winner
         if(winner.length == 0) {
             winner = slpTools.getDoublesWinner(game);
@@ -340,13 +348,20 @@ function processResult(game, match_data) {
 async function processGameHandler() {
     try{
         var file = getLatestFile();
-        var game = new SlippiGame(file);
-        /*used to skip the first .slp file if it is completed
-        if not completed it will continue to process the game*/
-        if(game.getGameEnd() != null) {
+        logging.log("File found: " + file);
+        var game_in_progress = false;
+		if (file != "" && file != null) {
+			var game = new SlippiGame(file);
+			/*used to skip the first .slp file if it is completed
+			if not completed it will continue to process the game*/
+			if(game.getGameEnd() == null) {
+				game_in_progress = true;
+			}
+		}
+		if(!game_in_progress) {
             logging.log("Waiting for game");
-            file = await getNewFile(file)
-        }
+			file = await getNewFile(file)
+		}
         changeScene(config.obs.start_scene)
         match_data = []
         while(true) {
@@ -371,13 +386,18 @@ async function processGameHandler() {
         }
     } catch (e) {
         if(e instanceof TypeError) {
+            slippi_loop = false;
             return;
         } else {
-            throw(e);
+            slippi_loop = false;
+            logging.error(e);
+            logging.error("Closing slippi loop, web config will still run")
+            return;
         }
     }
 }
 
 if(require.main == module) {
+    slippi_loop = true;
     processGameHandler();
 }

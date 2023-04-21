@@ -28,7 +28,7 @@ key = "79768efd603a4bef6533ef296c31287d"
 #"D:\stream stuff\stream\web_application\slp"
 #"F:\SSBM\Slippi\2023-03"
 #"D:\work_replay"
-directory = "D:\work_replay"
+directory = "X:\work_replay"
 
 # true = games with less than 45 seconds playtime, under 120% damage dealt, games with CPUs, do not advance game score
 # false = manual information reporting

@@ -156,18 +156,34 @@ function swap_sides() {
 	player2name = $("#p2_name").val();
 	player2dname = $("#p2d_name").val();
 
+	player1pronouns = $("#p1_pronouns").val();
+	player1dpronouns = $("#p1d_pronouns").val();
+	player2pronouns = $("#p2_pronouns").val();
+	player2dpronouns = $("#p2d_pronouns").val();
+
 	$("#p1_name").val(player2name);
 	$("#p1d_name").val(player2dname);
 	$("#p2_name").val(player1name);
 	$("#p2d_name").val(player1dname);
+
+	$("#p1_pronouns").val(player2pronouns);
+	$("#p1d_pronouns").val(player2dpronouns);
+	$("#p2_pronouns").val(player1pronouns);
+	$("#p2d_pronouns").val(player1dpronouns);
 }
 
 function swap_team(n) {
 	player_name = $("#p" + n + "_name").val();
 	playerd_name = $("#p" + n + "d_name").val();
+	
+	player_pronouns = $("#p" + n + "_pronouns").val();
+	playerd_pronouns = $("#p" + n + "d_pronouns").val();
 
 	$("#p" + n + "_name").val(playerd_name);
 	$("#p" + n + "d_name").val(player_name);
+
+	$("#p" + n + "_pronouns").val(playerd_pronouns);
+	$("#p" + n + "d_pronouns").val(player_pronouns);
 }
 
 function toggle_doubles() {
@@ -607,7 +623,7 @@ function getEvent() {
 								p2_doubles_user_id = team2["entrant"]["participants"][1]["user"]["discriminator"]
 								p2_doubles_pronouns = team2["entrant"]["participants"][1]["user"]["genderPronoun"]
 							}
-							p2_doubles_name = team1["entrant"]["participants"][1]["gamerTag"]
+							p2_doubles_name = team2["entrant"]["participants"][1]["gamerTag"]
 						}
 						
 						match_data = {

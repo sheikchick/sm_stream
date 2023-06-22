@@ -53,6 +53,11 @@ a {
 	margin-bottom: 5px;
 }
 
+button:disabled {
+	background-color: rgb(170, 170, 170);
+	border-bottom-color: rgb(153, 153, 153);
+}
+
 #left_wrapper {
   	display: grid;
 	  grid-template-rows: 100px [row-start] 160px [row-start] 58px [row-start] 160px [row-start] 80px [row-start] 80px [row-start] 37px [row-start];
@@ -95,7 +100,19 @@ a {
 
 #row5 {
 	place-items: center;
-	grid-template-columns: 172px [col-start] 95px [col-start] 95px [col-start] 150px [col-start] 242px [col-start] 116px [col-start];
+	grid-template-columns: 172px [col-start] 200px [col-start] 95px [col-start] 95px [col-start] 150px [col-start] 116px [col-start];
+}
+
+#row7 {
+	display: none;
+	padding-left: 10px;
+	gap: 1em;
+	align-items: center;
+}
+
+.recording {
+	background-color: #284CB8;
+	border-bottom-color: darkblue;
 }
 
 #player1 {
@@ -249,6 +266,22 @@ a {
 	display: none;
 }
 
+#friendlies_button {
+	position: absolute;
+	left: 110px;
+	bottom: 10px;
+	font-size: 24px;
+	margin: 5px;
+	margin-top: 20px;
+	color: #323232;
+	background-color: #fff;
+	border: none;
+	border-bottom: 3px solid #AAA;
+	height: 39px;
+	width: 40px;
+	padding: 3px 1px 3px 3px;
+}
+
 #manual_button {
 	position: absolute;
 	left: 60px;
@@ -369,12 +402,7 @@ input:focus {
 	outline: none;
 }
 
-#scenes {
-	margin: 5px 5px 0px 5px;
-}
-
 select {
-	display: none;
 	font-size: 16px;
 	width: 203px;
 	-webkit-appearance: none;
@@ -466,7 +494,6 @@ button:focus {
 	display: none;
 	align-items: center;
 	text-align: center;
-	flex-direction: column;
 }
 
 .scene {
@@ -646,8 +673,14 @@ button:focus {
 	width: 320px;
 }
 
-#round_change {
+#tournament_change {
 	width: 132px;
+	height: 18px;
+	font-size: 16px;
+}
+
+#round_change {
+	width: 160px;
 	height: 18px;
 	font-size: 16px;
 }

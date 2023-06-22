@@ -19,22 +19,15 @@ $(document).ready(function(){
 
 	obs.connect(obsurl, obs_password)
 		.then(() => {
-			$("#scenes").show();
-			$("#update_scene").show();
-			obs.call(
-				'GetSceneList'
-			)
-			.then(function(value) {
-				$("#scene_box").show()
-				$("#round_change").css("margin-top", "-35px")
-				$(".best_of").css("margin-top", "-30px")
-				$(".toggle_doubles").css("margin-top", "-30px")
-				$(".update").css("margin-top", "-30px")
-				value["scenes"].forEach(function(scene) {
-					$("#scenes").append(new Option(scene["sceneName"], scene["sceneName"]));
+			$("#row7").css('display', 'flex');
+			obs.call('GetSceneList')
+				.then(function(value) {
+					$("#scene_box").css('display', 'flex')
+					value["scenes"].forEach(function(scene) {
+						$("#scenes").append(new Option(scene["sceneName"], scene["sceneName"]));
+					})
+					$("#scenes").val(value["current-scene"])
 				})
-				$("#scenes").val(value["current-scene"])
-		  	})
 		})
 		.catch(err => {
         	console.log(err);
@@ -85,6 +78,7 @@ function update() {
 
 	player2score = parseInt($("#p2_score_change").val());
 	round = $("#round_change").val();
+	tournament = $("#tournament_change").val();
 	caster1 = "";
 	caster2 = "";
 
@@ -129,6 +123,7 @@ function update() {
 				score: player2score,
 			},
 			round: round,
+			tournament,
 			caster1: caster1,
 			caster2: caster2,
 			is_doubles: is_doubles,
@@ -286,15 +281,40 @@ function load_changes() {
 		},
 		timeout: 5000
 	})
+	update_record_button();
 	setTimeout(load_changes, 1000)
 }
-
 
 function load_char(player, character, colour) {
 	$("#p" + player + "_character_actual").attr("src", "static/img/stock_icons/" + character + "/" + colour + ".png");
 	$("#p" + player + "_character_change").attr("src", "static/img/csp_icons/" + character + "/" + colour + ".png");
 	$("#p" + player + "_character_actual").attr("character", character);
 	$("#p" + player + "_character_actual").attr("colour", colour);
+}
+
+function update_record_button() {
+	return obs.call('GetRecordStatus')
+		.then(({outputActive}) => {
+			$('#record_set')[outputActive ? 'addClass' : 'removeClass']('recording');
+			$('#clip').prop('disabled', !outputActive);
+		})
+		.catch(() => {
+			$('#record_set').removeClass('recording');
+			$('#clip').prop('disabled', true);
+		});
+}
+
+function recordSet() {
+	return obs.call('ToggleRecord')
+		.then(({outputActive}) => console.log(`${outputActive ? 'Started' : 'Stopped'} recording.`))
+		.catch(() => console.log('Failed to toggle recording.'));
+}
+
+function clip() {
+	return obs.call(
+		'TriggerHotkeyByKeySequence', 
+		{keyId: 'OBS_KEY_BACKSPACE', keyModifiers: {shift: true, control: true, alt: true}}
+	);
 }
 
 function update_scene() {
@@ -308,49 +328,8 @@ function update_scene() {
 }
 
 function change_best_of(value) {
-	if(value == 3) {
-		$("#bo3").css("background-color", "#AAA");
-		$("#bo3").css("border-bottom", "3px solid #999");
-		$("#bo3").hover(
-			function() {
-				$(this).css("background-color","#AAA");
-			},
-			function() {
-				$(this).css("background-color", "#AAA");
-			});
-		$("#bo5").css("background-color", "#FFF");
-		$("#bo5").css("border-bottom", "3px solid #AAA");
-		$("#bo5").hover(
-			function() {
-				$(this).css("background-color","#CCC");
-			},
-			function() {
-				$(this).css("background-color", "#FFF");
-			});
-		best_of_value = 3
-	} else if (value == 5) {
-		$("#bo5").css("background-color", "#AAA");
-		$("#bo5").css("border-bottom", "3px solid #999");
-		$("#bo5").hover(
-			function() {
-				$(this).css("background-color","#AAA");
-			},
-			function() {
-				$(this).css("background-color", "#AAA");
-			});
-		$("#bo3").css("background-color", "#FFF");
-		$("#bo3").css("border-bottom", "3px solid #AAA");
-		$("#bo3").hover(
-			function() {
-				$(this).css("background-color","#CCC");
-			},
-			function() {
-				$(this).css("background-color", "#FFF");
-			});
-		best_of_value = 5
-	} else {
-		console.log("ERROR: wrong best-of value provided")
-	}
+	$(".best_of").prop('disabled', false);
+	$(`#bo${value}`).prop('disabled', true);
 }
 
 function settings() {
@@ -360,6 +339,10 @@ function settings() {
 
 function manual() {
 	window.location.href = "/manual";
+}
+
+function friendlies() {
+	window.location.href = "/friendlies";
 }
 
 /**

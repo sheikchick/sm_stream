@@ -26,9 +26,10 @@ exports.isValidGame = function(game) {
         return false;
     }
     //if neither character dealt over 120%
+
     if(settings.players.length == 2) {
         if(stats.overall[0].totalDamage < 120 && stats.overall[1].totalDamage < 120) {
-            if(stats.overall[0].totalDamage == 0 && stats.overall[1].totalDamage) {
+            if(stats.overall[0].totalDamage == 0 && stats.overall[1].totalDamage == 0) {
                 var damage_dealt = getDamageDealt(game);
                 var over_120 = damage_dealt.some((e) => {
                     return e > 120;
@@ -64,13 +65,13 @@ function getDamageDealt(game) {
     for(x = 0; x < frames[0].players.length; x++) {
         stocks.push(4);
         last_percent.push(0);
-        last_percent.push(0);
+        percent.push(0);
     }
     var i = 0
-    for(const [key, frame] of Object.entries(frames)) {
+    for(const frame of Object.values(frames)) {
         i++;
         for(x = 0; x < frame["players"].length; x++) {
-            if(typeof frame["players"][x] !== "undefined" && frame["players"][x]) {
+            if(frame["players"][x]) {
                 player = frame["players"][x]["post"];
                 if(player["stocksRemaining"] < stocks[x] || i >= Object.keys(frames).length) {
                     stocks[x]--;
@@ -89,76 +90,52 @@ function getDamageDealt(game) {
  * @returns winner and position
  */
 exports.getSinglesWinner = function(game) {
-    var stats = game.getStats();
-    var p1_stocks = 0;
-    var p2_stocks = 0;
-    for(let stock of stats.stocks) {
-        if(stock.playerIndex == stats.stocks[0].playerIndex) {
-            p1_stocks++;
-        } else if(stock.playerIndex == stats.stocks[0].playerIndex) {
-            p2_stocks++;
-        }
-    }
-    var p1_data = {stocks: p1_stocks, damage: stats.stocks[0].currentPercent};
-    var p2_data = {stocks: p2_stocks, damage: stats.stocks[1].currentPercent};
-    var winner = getWinner(p1_data, p2_data);
-    if(winner == 1) {
-        return [{"playerIndex":stats.stocks[0].playerIndex,"position":0}]
-    } else if (winner == 2) {
-        return [{"playerIndex":stats.stocks[1].playerIndex,"position":0}]
-    } else {
-        return []
-    }
+    const {players} = game.getSettings();
+    const playersLatestFrame = game.getLatestFrame().players;
+
+    const [p1_data, p2_data] = players.map(({playerIndex}) => {
+        const p_data = playersLatestFrame[playerIndex]?.post || {stocksRemaining: 0, percent: 0};
+        return {stocks: p_data.stocksRemaining, damage: p_data.percent};
+    });
+
+    const winner = getWinner(p1_data, p2_data);
+    return winner
+        ? [players[winner - 1]].map(({playerIndex}) => ({playerIndex, position: 0}))
+        : [];
 }
 
 exports.getDoublesWinner = function(game) {
-    var settings = game.getSettings();
-    var latestFrame = game.getLatestFrame();
-    var stocks = [];
-    var damage = [];
-    for(let player of latestFrame.players) {
-        if(player != null) {
-            stocks.push(player.post.stocksRemaining);
-            damage.push(player.post.percent)
-        } else {
-            stocks.push(0)
-            damage.push(0)
-        }
+    const {players} = game.getSettings();
+
+    const p1Id = players[0].teamId;
+    const teams = players.reduce((teams, player) => {
+        // P1 is not necessarily in team 1 in Slippi.
+        teams[player.teamId === p1Id | 0].push(player.playerIndex);
+        return teams;
+    }, [[], []]).reverse();
+
+    if (teams.some(t => t.length !== 2)) {
+        return [];
     }
-    var t1p1 = settings.players[0]
-    var t1p2_index = null;
-    settings.players.slice(1); //remove p1 for search
-    for(let player of settings.players) {
-        if(player.teamId == t1p1.teamId) {
-            t1p2_index = player.playerIndex;
-            var index = settings.players.indexOf(player);
-            if (index > -1) { //remove teammate as not needed
-                settings.players.splice(index, 1);
-            }
-            break;
-        }
-    }
-    if (t1p2_data == null) {
-        return []; //no teammate
-    }
-    var t1_stocks = stocks[0] + stocks[t1p2_index];
-    var t1_damage = damage[0] + damage[t1p2_index];
-    var t2_stocks = 0;
-    var t2_damage = 0;
-    for(let player of settings.players) {
-        t2_stocks += stocks[player.playerIndex];
-        t2_damage += stocks[player.playerIndex];
-    }
-    var t1_data = {stocks: t1_stocks, damage: t1_damage};
-    var t2_data = {stocks: t2_stocks, damage: t2_damage};
-    var winner = getWinner(t1_data, t2_data);
-    if(winner == 1) {
-        return [{"playerIndex":0,"position":0},{"playerIndex":t1p2_index,"position":0}]
-    } else if (winner == 2) {
-        return [{"playerIndex":settings.players[0].playerIndex,"position":0},{"playerIndex":settings.players[1].playerIndex,"position":0}]
-    } else {
-        return []
-    }
+
+    const playersLatestFrame = game.getLatestFrame().players;
+
+    const [t1_data, t2_data] = teams.reduce((acc, team) => {
+        acc.push(team.reduce((acc, player) => {
+            const {stocksRemaining, percent} = playersLatestFrame[player]?.post || 
+                {stocksRemaining: 0, percent: 0};
+            return {
+                stocks: acc.stocks + stocksRemaining,
+                damage: acc.damage + stocksRemaining ? percent : 0
+            };
+        }, {stocks: 0, damage: 0}));
+        return acc;
+    }, []);
+
+    const winner = getWinner(t1_data, t2_data);
+    return winner
+        ? teams[winner - 1].map(playerIndex => ({playerIndex, position: 0}))
+        : [];
 }
 
 function getWinner(p1, p2) {

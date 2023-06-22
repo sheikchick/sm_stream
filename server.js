@@ -49,7 +49,7 @@ app.post("/update", (req, res) => {
     });
 })
 
-//TODO: add gregor endpoints and refactor tablet endpoints
+//TODO: refactor tablet endpoints
 
 /*Views*/
 
@@ -59,13 +59,19 @@ app.get("/", (req, res) => {
         data.api_key = config.startgg.key;
         data.obs_port = config.obs.port;
         data.obs_password = config.obs.password;
-        res.render("auto", data);
+        res.render("glaikit", data);
     });
 })
 
 app.get("/manual", (req, res) => {
     fs.readFile("data/json/info.json", (err, file) => {
         res.render("manual", JSON.parse(file));
+    });
+})
+
+app.get("/friendlies", (req, res) => {
+    fs.readFile("data/json/info.json", (err, file) => {
+        res.render("friendlies", JSON.parse(file));
     });
 })
 
@@ -98,13 +104,17 @@ app.all("/favicon.ico", (req, res) => {
 /* External endpoints */
 
 app.post("/update_stats", (req, res) => {
-    updateStats(req.body.file);
-    res.sendStatus(200);
+    updateStats(new SlippiGame(req.body.file));
+    fs.readFile("data/json/info.json", (err, file) => {
+        res.json(JSON.parse(file));
+    });
 });
 
 app.post("/process_slp", (req, res) => {
-    processResult(req.body.file, []);
-    res.sendStatus(200);
+    processResult(new SlippiGame(req.body.file), []);
+    fs.readFile("data/json/info.json", (err, file) => {
+        res.json(JSON.parse(file));
+    });
 });
 
 /* Run app */
@@ -141,7 +151,6 @@ function loadConfig() {
         process.exit(0);
     }
 }
-
 
 /*
   ____  _ _             _ 
@@ -210,23 +219,53 @@ function getGameComplete(game) {
     });
 }
 
+const maintainScore = (() => {
+    const _maintainScore = (player, firstTo) => {
+        player.score = (player.score || 0) % firstTo;
+    };
+    
+    return (info) => {
+        const firstTo =  Math.ceil((info.best_of || 3)/2);
+        _maintainScore(info.Player1, firstTo);
+        _maintainScore(info.Player2, firstTo);
+    };
+})();
+
+function resetSet() {
+    const info = JSON.parse(fs.readFileSync("data/json/info.json", {encoding:'utf8', flag:'r'}));
+    getNewSet(info);
+    fs.writeFileSync("data/json/info.json", JSON.stringify(info), "utf8");
+}
+
+function getActivePlayers(info, players) {
+    return (Object.keys(info).filter(k => k.startsWith('Player')).length === 2
+        ? [1, 2]
+        : [players[0].port, players[1].port]).map(p => `Player${p}`);
+}
+
 function updateStats(game) {
     var settings = game.getSettings();
-    info = JSON.parse(fs.readFileSync("data/json/info.json", {encoding:'utf8', flag:'r'}));
-    if(info.Player1.score >= Math.ceil(info.best_of/2) || info.Player2.score >= Math.ceil(info.best_of/2)) {
-        info.Player1.score = 0;
-        info.Player2.score = 0;
-    }
-    if(settings.players.length == 2) {
-        p1_data = slpTools.matchChar(settings.players[0].characterId, settings.players[0].characterColor);
-        p2_data = slpTools.matchChar(settings.players[1].characterId, settings.players[1].characterColor);
+    const info = JSON.parse(fs.readFileSync("data/json/info.json", {encoding:'utf8', flag:'r'}));
+    maintainScore(info);
 
-        info.Player1.character = p1_data.character;
-        info.Player1.colour = p1_data.colour;
+    const {players} = settings;
+    if(players.length === 2) {
+        const activePlayers = getActivePlayers(info, players);
+        info.active_players = activePlayers;
 
-        info.Player2.character = p2_data.character;
-        info.Player2.colour = p2_data.colour;
-    } else if (settings.players.length == 4) {
+        const [player1, player2] = players;
+        p1_data = slpTools.matchChar(player1.characterId, player1.characterColor);
+        p2_data = slpTools.matchChar(player2.characterId, player2.characterColor);
+
+        const [p1Key, p2Key] = activePlayers;
+        info[p1Key].port = player1.port;
+        info[p1Key].character = p1_data.character;
+        info[p1Key].colour = p1_data.colour;
+
+        info[p2Key].port = player2.port;
+        info[p2Key].character = p2_data.character;
+        info[p2Key].colour = p2_data.colour;
+    } else if (players.length == 4) {
         team1_id = settings.players[0].teamId;
 
         t1p1_data = slpTools.matchChar(settings.players[0].characterId, settings.players[0].characterColor);

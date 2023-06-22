@@ -8,7 +8,7 @@ port = 5000
 
 host = "127.0.0.1"
 port = 4455
-password = "iamcleo!"
+password = "stillglaikit"
 
 # Automatically change scenes when a game is in progress using slippi.
 # Useful to avoid the "Waiting for game" screen
@@ -34,7 +34,7 @@ key = "1b4b7faacaf7103f8252754ddf4a8a25"
 #"F:\SSBM\Slippi\2023-03"
 #"D:\work_replay"
 
-directory = "C:\Users\Cleo\Documents\Slippi\Spectate\stream"
+directory = "C:\Users\Gregor\Documents\Slippi"
 
 # Automatically keep track of match score
 track_score = true

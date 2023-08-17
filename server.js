@@ -65,6 +65,12 @@ app.get("/", (req, res) => {
 
 app.get("/manual", (req, res) => {
     fs.readFile("data/json/info.json", (err, file) => {
+        res.render("manual-new", JSON.parse(file));
+    });
+})
+
+app.get("/manual-old", (req, res) => {
+    fs.readFile("data/json/info.json", (err, file) => {
         res.render("manual", JSON.parse(file));
     });
 })

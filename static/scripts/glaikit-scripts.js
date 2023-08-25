@@ -320,6 +320,80 @@ function clip() {
 	).catch((response) => console.log(response));
 }
 
+function ffmpeg() {
+	obs.call(
+		'GetRecordStatus'
+	)
+	.then(function(value) {
+		if(!value.outputActive) {
+			
+			current_color = $("#ffmpeg").css("background-color");
+			current_status = $("#ffmpeg").text();
+			current_border = $("#ffmpeg").css("border-bottom");
+
+			$("#ffmpeg").css("background-color", "#F56262");
+			$("#ffmpeg").css("border-bottom", "3px solid #F53535");
+			$("#ffmpeg").text("OBS not recording");
+			$("#ffmpeg").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+
+			setTimeout(function(){
+				$("#ffmpeg").css("background-color", current_color);
+				$("#ffmpeg").css("border-bottom", current_border);
+				$("#ffmpeg").text(current_status);
+			}, 2000);
+			return;
+		} 
+		console.log(value.outputTimecode);
+		const record_controller = new AbortController()
+		const record_timeout = setTimeout(() => {
+			record_controller.abort()
+
+			current_color = $("#ffmpeg").css("background-color");
+			current_status = $("#ffmpeg").text();
+
+			$("#ffmpeg").css("background-color", "#F56262");
+			$(".update").css("border-bottom", "3px solid #F53535");
+			$("#ffmpeg").text("OBS timeout");
+			$("#ffmpeg").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+
+			setTimeout(function(){
+				$("#ffmpeg").css("background-color", current_color);
+				$("#ffmpeg").css("border-bottom", current_border);
+				$("#ffmpeg").text(current_status);
+			}, 2000);
+		}, 5000);
+		fetch("/save_recording", {
+			method: 'POST',
+			headers: { "Content-Type": "application/json"},
+			body: JSON.stringify({
+				timecode: value.outputTimecode
+			}),
+			signal: record_controller.signal
+		})
+		.then((response) => response.json())
+		.then((data) => {
+			clearTimeout(record_timeout)
+			console.log(data)
+			if(data.recording_status == 0) {
+				$("#ffmpeg").text("Recorded!");
+				$("#ffmpeg").css("background-color", "#55F76B");
+				$("#ffmpeg").css("border-bottom", "3px solid #349641");
+				setTimeout(function(){
+					$("#ffmpeg").text("Record");
+					$("#ffmpeg").css("background-color", "#FFFFFF");
+					$("#ffmpeg").css("border-bottom", "3px solid #AAA");
+				}, 2000);
+			} else {
+				$("#ffmpeg").text("Recording...");
+				$("#ffmpeg").css("background-color", "#9146FF");
+				$("#ffmpeg").css("border-bottom", "3px solid #44158a");
+			}
+
+		})
+	})
+
+}
+
 function change_best_of(value) {
 	if(value == 3) {
 		$("#bo3").css("background-color", "#AAA");

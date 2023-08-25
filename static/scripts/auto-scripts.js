@@ -304,6 +304,18 @@ function update_record_button() {
 		});
 }
 
+function update_record_button() {
+	return obs.call('GetRecordStatus')
+		.then(({outputActive}) => {
+			$('#record_set')[outputActive ? 'addClass' : 'removeClass']('recording');
+			$('#clip').prop('disabled', !outputActive);
+		})
+		.catch(() => {
+			$('#record_set').removeClass('recording');
+			$('#clip').prop('disabled', true);
+		});
+}
+
 function recordSet() {
 	return obs.call('ToggleRecord')
 		.then(({outputActive}) => console.log(`${outputActive ? 'Started' : 'Stopped'} recording.`))
@@ -325,6 +337,11 @@ function update_scene() {
 	.then(function(value) {
 		console.log("Changed scene to '" + newScene + "'");
 	})
+}
+
+function ffpmeg() {
+	console.log(obs.call('GetRecordDirectory'));
+	console.log(obs.call('GetRecordStatus'));
 }
 
 function change_best_of(value) {

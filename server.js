@@ -16,6 +16,9 @@ const app = express()
 global.slippi_loop = false;
 global.config;
 
+global.recording_status = false;
+global.current_timestamp = "";
+
 loadConfig();
 
 app.set('views', path.join(__dirname, 'views'));
@@ -48,6 +51,43 @@ app.post("/update", (req, res) => {
         }
     });
 })
+
+app.post("/save_recording", (req, res) => {
+    console.log(req.body)
+    if(recording_status) {
+        //end recording
+        obs.call(
+            'GetRecordDirectory'
+        )
+        .then(function(value) {
+            input_filename = getLatestRecordingFile(value.recordDirectory);
+            fs.readFile("data/json/info.json", (err, file) => {
+                data = JSON.parse(file);
+                filename = data.Player1.name + " vs " + data.Player2.name + " - " + data.round + " - " + data.tournament + " - Scottish Melee"
+                command = 'ffmpeg -copyts -ss ' + current_timestamp + ' -i "' + input_filename + '" -to ' + req.body.timecode + ' -map 0 -c copy "' + filename + '.mp4"\n';
+                if (!fs.existsSync("data/recording/" + data.tournament)){
+                    fs.mkdirSync("data/recording/" + data.tournament);
+                }
+                fs.appendFile("data/recording/" + data.tournament + "/create.bat", command, "utf8", (err) => {
+                    current_timestamp = "";
+                    if (err) {
+                        logging.error(err);
+                        res.sendStatus(500);
+                    } else {
+                        res.json({recording_status: recording_status ? 1 : 0})
+                    }
+                });
+            });
+        });
+        recording_status = false;
+    } else {
+        //start recording
+        current_timestamp = req.body.timecode;
+        recording_status = true;
+        res.json({recording_status: recording_status ? 1 : 0});
+    }
+});
+
 
 //TODO: refactor tablet endpoints
 
@@ -107,6 +147,10 @@ app.all("/favicon.ico", (req, res) => {
     });
 });
 
+app.all("/recording_status", (req, res) => {
+    res.json({recording_status: recording_status ? 1 : 0})
+});
+
 /* External endpoints */
 
 app.post("/update_stats", (req, res) => {
@@ -155,6 +199,33 @@ function loadConfig() {
     } catch (e) {
         logging.error("Error parsing config.toml, exiting.");
         process.exit(0);
+    }
+}
+
+function getLatestRecordingFile(directory) {
+    try {
+        var recent_file = null;
+        var modified_time = 0;
+
+        fs.readdirSync(directory).forEach(file => {
+            stats = fs.statSync(directory + "\/" + file);
+            if (stats.mtimeMs > modified_time) {
+                recent_file = file;
+                modified_time = stats.mtimeMs;
+            }
+        });
+        file_path = "";
+        if(recent_file != null) {
+            file_path = directory + "\\" + recent_file
+        }
+        return file_path;
+
+    } catch (e) {
+        //ideally would stop the .slp loop after this exception is thrown
+        if(e instanceof TypeError) {
+            logging.error("Directory \"" + directory + "\" doesn't exist");
+        }
+        throw(e)
     }
 }
 

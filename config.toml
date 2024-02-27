@@ -19,14 +19,14 @@ scene_changer = true
 #Scenes to automatically switch to when game starts and ends.
 # Typically start_scene will contain an instance of Slippi Dolphin and end_scene one of a capture card or webcams
 
-start_scene = "slippi"
-end_scene = "capture_card"
+start_scene = "game"
+end_scene = "splash"
 
 
 [startgg]
 # start.gg API key and version - generate one at https://start.gg/admin/profile/developer
 
-key = "1b4b7faacaf7103f8252754ddf4a8a25"
+key = "025446143514ddd5187345ca3546cb42"
 
 [slippi]
 # Output folder for the .SLP files of the stream setup
@@ -34,7 +34,8 @@ key = "1b4b7faacaf7103f8252754ddf4a8a25"
 #"F:\SSBM\Slippi\2023-03"
 #"D:\work_replay"
 
-directory = "C:\Users\Gregor\Documents\Slippi"
+directory = "C:\Users\Public\Documents\Slippi"
+# directory = "C:\Users\Gregor\Documents\Slippi\2024-01"
 
 # Automatically keep track of match score
 track_score = true

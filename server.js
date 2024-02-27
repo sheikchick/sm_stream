@@ -53,7 +53,6 @@ app.post("/update", (req, res) => {
 })
 
 app.post("/save_recording", (req, res) => {
-    console.log(req.body)
     if(recording_status) {
         //end recording
         obs.call(
@@ -61,23 +60,22 @@ app.post("/save_recording", (req, res) => {
         )
         .then(function(value) {
             input_filename = getLatestRecordingFile(value.recordDirectory);
-            fs.readFile("data/json/info.json", (err, file) => {
-                data = JSON.parse(file);
-                filename = data.Player1.name + " vs " + data.Player2.name + " - " + data.round + " - " + data.tournament + " - Scottish Melee"
-                command = 'ffmpeg -copyts -ss ' + current_timestamp + ' -i "' + input_filename + '" -to ' + req.body.timecode + ' -map 0 -c copy "' + filename + '.mp4"\n';
-                if (!fs.existsSync("data/recording/" + data.tournament)){
-                    fs.mkdirSync("data/recording/" + data.tournament);
-                }
-                fs.appendFile("data/recording/" + data.tournament + "/create.bat", command, "utf8", (err) => {
-                    current_timestamp = "";
-                    if (err) {
-                        logging.error(err);
-                        res.sendStatus(500);
-                    } else {
-                        res.json({recording_status: recording_status ? 1 : 0})
-                    }
+            if (input_filename) {
+                fs.readFile("data/json/info.json", (err, file) => {
+                    data = JSON.parse(file);
+                    filename = `${data.Player1.name} vs ${data.Player2.name} - ${data.round}`.replace(/[/\\?%*:|"<>]/g, '');
+                    command = `ffmpeg -i "${input_filename}" -ss ${current_timestamp} -to ${req.body.timecode} -c copy "${filename}.mp4"\n`;
+                    fs.appendFile(`${value.recordDirectory}/sets.bat`, command, "utf8", (err) => {
+                        current_timestamp = "";
+                        if (err) {
+                            logging.error(err);
+                            res.sendStatus(500);
+                        } else {
+                            res.json({recording_status: recording_status ? 1 : 0})
+                        }
+                    });
                 });
-            });
+            }
         });
         recording_status = false;
     } else {
@@ -88,6 +86,31 @@ app.post("/save_recording", (req, res) => {
     }
 });
 
+app.post("/save_clip", (req, res) => {
+    obs.call(
+        'GetRecordDirectory'
+    )
+    .then(function(value) {
+        const clipDirectory = `${value.recordDirectory}/clips`;
+        const input_filename = getLatestRecordingFile(clipDirectory);
+        if (input_filename) {
+                const {timecode} = req.body;
+                const regex = /\d\d(?::\d\d)+/;
+                const noMillis = timecode.match(regex)?.[0].split(":") || [];
+                const seconds = (noMillis.pop() || 0) - 30;
+                const minutes = (noMillis.pop() || 0) - (seconds < 0 | 0);
+                const hours = (noMillis.pop() || 0) - (minutes < 0 | 0);
+                const ss = hours < 0
+                    ? "00:00:00"
+                    : `${`${hours}`.padStart(2, '0')}:${`${(60 + minutes) % 60}`.padStart(2, '0')}:${`${(60 + seconds) % 60}`.padStart(2, '0')}`;
+
+                command = `ffmpeg -i "${input_filename}" -ss ${ss} -to ${timecode} -c copy "${timecode.replaceAll(":", "-")}.mp4"\n`;
+                fs.appendFile(`${clipDirectory}/clips.bat`, command, "utf8", (err) => {
+                    res.sendStatus(err ? 500 : 200);
+                });
+        }
+    });
+});
 
 //TODO: refactor tablet endpoints
 
@@ -207,18 +230,15 @@ function getLatestRecordingFile(directory) {
         var recent_file = null;
         var modified_time = 0;
 
+        fs.mkdirSync(directory, {recursive: true});
         fs.readdirSync(directory).forEach(file => {
             stats = fs.statSync(directory + "\/" + file);
-            if (stats.mtimeMs > modified_time) {
+            if (stats.mtimeMs > modified_time && file.endsWith('.mkv')) {
                 recent_file = file;
                 modified_time = stats.mtimeMs;
             }
         });
-        file_path = "";
-        if(recent_file != null) {
-            file_path = directory + "\\" + recent_file
-        }
-        return file_path;
+        return recent_file;
 
     } catch (e) {
         //ideally would stop the .slp loop after this exception is thrown
@@ -300,9 +320,11 @@ const maintainScore = (() => {
     const _maintainScore = (player, firstTo) => {
         player.score = (player.score || 0) % firstTo;
     };
+
+    const FRIENDLIES = 'friendlies';
     
     return (info) => {
-        const firstTo =  Math.ceil((info.best_of || 3)/2);
+        const firstTo =  info.round.toLowerCase() === FRIENDLIES ? Number.MAX_SAFE_INTEGER : Math.ceil((info.best_of || 3)/2);
         _maintainScore(info.Player1, firstTo);
         _maintainScore(info.Player2, firstTo);
     };

@@ -546,7 +546,7 @@ exports.matchChar = function(character, colour) {
             }
             break;
         case 18: //zelda
-            s_character = "sheik"
+            s_character = "zelda"
             switch(colour) {
                 case 0:
                     s_colour = "original"

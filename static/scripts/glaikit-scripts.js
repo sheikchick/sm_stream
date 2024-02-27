@@ -296,12 +296,31 @@ function update_scene() {
 	})
 }
 
-function update_record_button() {
+function update_record_button(recording_status) {
 	obs.call('GetRecordStatus')
 		.catch(() => false)
 		.then(({outputActive}) => {
-			$('#record_set')[outputActive ? 'addClass' : 'removeClass']('recording');
-			$('#clip').prop('disabled', !outputActive);
+			$.ajax({
+				type: 'GET',
+				url: "/recording_status",
+				data: {},
+				success: function(response) {
+					if (outputActive && response.recording_status) {
+						$("#ffmpeg").text("Recording...");
+						$("#ffmpeg").css("background-color", "#9146FF");
+						$("#ffmpeg").css("border-bottom", "3px solid #44158a");
+					} else {
+						$("#ffmpeg").text("Record");
+						$("#ffmpeg").css("background-color", "#FFFFFF");
+						$("#ffmpeg").css("border-bottom", "3px solid #AAA");
+					}
+				},
+				error: function(response) {
+					console.log(response)
+				},
+				timeout: 5000
+			})
+			$('#ffmpeg-clip').prop('disabled', !outputActive);
 		});
 }
 
@@ -325,12 +344,11 @@ function ffmpeg() {
 		'GetRecordStatus'
 	)
 	.then(function(value) {
-		if(!value.outputActive) {
-			
-			current_color = $("#ffmpeg").css("background-color");
-			current_status = $("#ffmpeg").text();
-			current_border = $("#ffmpeg").css("border-bottom");
+		current_color = $("#ffmpeg").css("background-color");
+		current_status = $("#ffmpeg").text();
+		current_border = $("#ffmpeg").css("border-bottom");
 
+		if(!value.outputActive) {
 			$("#ffmpeg").css("background-color", "#F56262");
 			$("#ffmpeg").css("border-bottom", "3px solid #F53535");
 			$("#ffmpeg").text("OBS not recording");
@@ -343,7 +361,7 @@ function ffmpeg() {
 			}, 2000);
 			return;
 		} 
-		console.log(value.outputTimecode);
+
 		const record_controller = new AbortController()
 		const record_timeout = setTimeout(() => {
 			record_controller.abort()
@@ -387,6 +405,82 @@ function ffmpeg() {
 				$("#ffmpeg").text("Recording...");
 				$("#ffmpeg").css("background-color", "#9146FF");
 				$("#ffmpeg").css("border-bottom", "3px solid #44158a");
+			}
+
+		})
+	})
+
+}
+
+function ffmpegClip() {
+	obs.call(
+		'GetRecordStatus'
+	)
+	.then(function(value) {
+		current_color = $("#ffmpeg-clip").css("background-color");
+		current_status = $("#ffmpeg-clip").text();
+		current_border = $("#ffmpeg-clip").css("border-bottom");
+		
+		if(!value.outputActive) {
+			$("#ffmpeg-clip").css("background-color", "#F56262");
+			$("#ffmpeg-clip").css("border-bottom", "3px solid #F53535");
+			$("#ffmpeg-clip").text("OBS not recording");
+			$("#ffmpeg-clip").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+
+			setTimeout(function(){
+				$("#ffmpeg-clip").css("background-color", current_color);
+				$("#ffmpeg-clip").css("border-bottom", current_border);
+				$("#ffmpeg-clip").text(current_status);
+			}, 2000);
+			return;
+		} 
+
+		const record_controller = new AbortController()
+		const record_timeout = setTimeout(() => {
+			record_controller.abort()
+
+			current_color = $("#ffmpeg-clip").css("background-color");
+			current_status = $("#ffmpeg-clip").text();
+
+			$("#ffmpeg-clip").css("background-color", "#F56262");
+			$(".update").css("border-bottom", "3px solid #F53535");
+			$("#ffmpeg-clip").text("OBS timeout");
+			$("#ffmpeg-clip").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+
+			setTimeout(function(){
+				$("#ffmpeg-clip").css("background-color", current_color);
+				$("#ffmpeg-clip").css("border-bottom", current_border);
+				$("#ffmpeg-clip").text(current_status);
+			}, 2000);
+		}, 5000);
+		
+		$("#ffmpeg-clip").text("Clipping...");
+		$("#ffmpeg-clip").css("background-color", "#9146FF");
+		$("#ffmpeg-clip").css("border-bottom", "3px solid #44158a");
+
+		fetch("/save_clip", {
+			method: 'POST',
+			headers: { "Content-Type": "application/json"},
+			body: JSON.stringify({
+				timecode: value.outputTimecode
+			}),
+			signal: record_controller.signal
+		})
+		.then((response) => {
+			if(`${response.status}`.startsWith(2)) {
+				$("#ffmpeg-clip").text("Clipped!");
+				$("#ffmpeg-clip").css("background-color", "#55F76B");
+				$("#ffmpeg-clip").css("border-bottom", "3px solid #349641");
+				setTimeout(function(){
+					$("#ffmpeg-clip").text("Clip");
+					$("#ffmpeg-clip").css("background-color", "#FFFFFF");
+					$("#ffmpeg-clip").css("border-bottom", "3px solid #AAA");
+				}, 2000);
+			} else {
+				$("#ffmpeg-clip").css("background-color", "#F56262");
+				$(".update").css("border-bottom", "3px solid #F53535");
+				$("#ffmpeg-clip").text("Error!");
+				$("#ffmpeg-clip").append('<i class="fa-solid fa-triangle-exclamation"></i>')
 			}
 
 		})

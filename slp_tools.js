@@ -84,6 +84,21 @@ function getDamageDealt(game) {
     return percent;
 }
 
+exports.getSlippiTeams = (players) => {  
+    const teams = Object.values(players.reduce((acc, cur) => ({
+        ...acc,
+        [cur.teamId]: [
+            ...acc[cur.teamId] || [],
+            cur
+        ]
+    }), {}));
+  
+    return (teams.length === 1
+        ? teams[0].map(p => [p])
+        : teams.map(t => t.sort((a, b) => a.playerIndex > b.playerIndex ? 1 : -1))
+    ).sort((a, b) => a[0].playerIndex > b[0].playerIndex ? 1 : -1)
+};
+
 /**
  * Get winner of a game of singles. Likely deprecated by next slippi-js update
  * @param {SlippiGame} game 
@@ -213,486 +228,303 @@ exports.matchStage = function(id) {
     }
 }
 
-//Returns a dict of the character + colour in string format
-exports.matchChar = function(character, colour) {
-    var s_character = ""
-    var s_colour = ""
-    switch(character) {
-        case 0: //falcon
-            s_character = "captainfalcon"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "black"
-                    break;
-                case 2:
-                    s_colour = "red"
-                    break;
-                case 3:
-                    s_colour = "white"
-                    break;
-                case 4:
-                    s_colour = "green"
-                    break;
-                case 5:
-                    s_colour = "blue"
-            }
-            break;
-        case 1: //dk
-            s_character = "donkeykong"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "dark"
-                    break;
-                case 2:
-                    s_colour = "red"
-                    break;
-                case 3:
-                    s_colour = "blue"
-                    break;
-                case 4:
-                    s_colour = "green"
-            }
-            break;
-        case 2: //fox
-            s_character = "fox"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "green"
-            }
-            break;
-        case 3: //gaw
-            s_character = "gameandwatch"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "green"
-            }
-            break;
-        case 4: //kirby
-            s_character = "kirby"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "yellow"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "red"
-                    break;
-                case 4:
-                    s_colour = "green"
-                    break;
-                case 5:
-                    s_colour = "white"
-            }
-            break;
-        case 5: //bowser
-            s_character = "bowser"
-            switch(colour) {
-                case 0:
-                    s_colour = "green"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "green"
-                    break;
-                case 3:
-                    s_colour = "black"
-            }
-            break;
-        case 6: //link
-            s_character = "link"
-            switch(colour) {
-                case 0:
-                    s_colour = "green"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "black"
-                    break;
-                case 4:
-                    s_colour = "white"
-            }
-            break;
-        case 7: //luigi
-            s_character = "luigi"
-            switch(colour) {
-                case 0:
-                    s_colour = "green"
-                    break;
-                case 1:
-                    s_colour = "white"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "red"
-            }
-            break;
-        case 8: //mario
-            s_character = "mario"
-            switch(colour) {
-                case 0:
-                    s_colour = "red"
-                    break;
-                case 1:
-                    s_colour = "yellow"
-                    break;
-                case 2:
-                    s_colour = "black"
-                    break;
-                case 3:
-                    s_colour = "blue"
-                    break;
-                case 4:
-                    s_colour = "green"
-            }
-            break;
-        case 9: //marth
-            s_character = "marth"
-            switch(colour) {
-                case 0:
-                    s_colour = "blue"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "green"
-                    break;
-                case 3:
-                    s_colour = "black"
-                    break;
-                case 4:
-                    s_colour = "white"
-            }
-            break;
-        case 10: //mewtwo
-            s_character = "mewtwo"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "green"
-            }
-            break;
-        case 11: //ness
-            s_character = "ness"
-            switch(colour) {
-                case 0:
-                    s_colour = "red"
-                    break;
-                case 1:
-                    s_colour = "yellow"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "green"
-            }
-            break;
-        case 12: //peach
-            s_character = "peach"
-            switch(colour) {
-                case 0:
-                    s_colour = "red"
-                    break;
-                case 1:
-                    s_colour = "gold"
-                    break;
-                case 2:
-                    s_colour = "white"
-                    break;
-                case 3:
-                    s_colour = "blue"
-                    break;
-                case 4:
-                    s_colour = "green"
-            }
-            break;
-        case 13: //pikachu
-            s_character = "pikachu"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "green"
-            }
-            break;
-        case 14: //ics
-            s_character = "iceclimbers"
-            switch(colour) {
-                case 0:
-                    s_colour = "blue"
-                    break;
-                case 1:
-                    s_colour = "green"
-                    break;
-                case 2:
-                    s_colour = "yellow"
-                    break;
-                case 3:
-                    s_colour = "red"
-            }
-            break;
-        case 15: //jigglypuff
-            s_character = "jigglypuff"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "green"
-                    break;
-                case 4:
-                    s_colour = "gold"
-            }
-            break;
-        case 16: //samus
-            s_character = "samus"
-            switch(colour) {
-                case 0:
-                    s_colour = "red"
-                    break;
-                case 1:
-                    s_colour = "pink"
-                    break;
-                case 2:
-                    s_colour = "dark"
-                    break;
-                case 3:
-                    s_colour = "green"
-                    break;
-                case 4:
-                    s_colour = "blue"
-            }
-            break;
-        case 17: //yoshi
-            s_character = "yoshi"
-            switch(colour) {
-                case 0:
-                    s_colour = "green"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "yellow"
-                    break;
-                case 4:
-                    s_colour = "pink"
-                    break;
-                case 5:
-                    s_colour = "cyan"
-            }
-            break;
-        case 18: //zelda
-            s_character = "zelda"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "green"
-                    break;
-                case 4:
-                    s_colour = "white"
-            }
-            break;
-        case 19: //sheik
-            s_character = "sheik"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "green"
-                    break;
-                case 4:
-                    s_colour = "white"
-            }
-            break;
-        case 20: //falco
-            s_character = "falco"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "green"
-            }
-            break;
-        case 21: //ylink
-            s_character = "younglink"
-            switch(colour) {
-                case 0:
-                    s_colour = "green"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "white"
-                    break;
-                case 4:
-                    s_colour = "black"
-            }
-            break;
-        case 22: //doc
-            s_character = "drmario"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "green"
-                    break;
-                case 4:
-                    s_colour = "black"
-            }
-            break;
-        case 23: //roy
-            s_character = "roy"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "green"
-                    break;
-                case 4:
-                    s_colour = "gold"
-            }
-            break;
-        case 24: //pichu
-            s_character = "pichu"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "green"
-            }
-            break;
-        case 25: //ganondorf
-            s_character = "ganondorf"
-            switch(colour) {
-                case 0:
-                    s_colour = "original"
-                    break;
-                case 1:
-                    s_colour = "red"
-                    break;
-                case 2:
-                    s_colour = "blue"
-                    break;
-                case 3:
-                    s_colour = "green"
-                    break;
-                case 4:
-                    s_colour = "purple"
-            }
+const characters = {
+    0: {
+        character: "mario",
+        colours: [
+            "red",
+            "yellow",
+            "black",
+            "blue",
+            "green"
+        ]
+    },
+    1: {
+        character: "fox",
+        colours: [
+            "original",
+            "red",
+            "blue",
+            "green"
+        ]
+    },
+    2: {
+        character: "captainfalcon",
+        colours: [
+            "original",
+            "black",
+            "red",
+            "white",
+            "green",
+            "blue"
+        ]
+    },
+    3: {
+        character: "donkeykong",
+        colours: [
+            "original",
+            "dark",
+            "red",
+            "blue",
+            "green"
+        ]
+    },
+    4: {
+        character: "kirby",
+        colours: [
+            "original",
+            "yellow",
+            "blue",
+            "red",
+            "green",
+            "white"
+        ]
+    },
+    5: {
+        character: "bowser",
+        colours: [
+            "green",  
+            "red",  
+            "green",
+            "black"
+        ]
+    },
+    6: {
+        character: "link",
+        colours: [
+            "green",
+            "red",
+            "blue",
+            "black",
+            "white"
+        ]
+    },
+    7: {
+        character: "sheik",
+        colours: [
+            "original",
+            "red",
+            "blue",
+            "green",
+            "white"
+        ]
+    },
+    8: {
+        character: "ness",
+        colours: [
+            "red",
+            "yellow",
+            "blue",
+            "green"
+        ]
+    },
+    9: {
+        character: "peach",
+        colours: [
+            "red",
+            "gold",
+            "white",
+            "blue",
+            "green"
+        ]
+    },
+    10: {
+        character: "iceclimbers",
+        colours: [
+            "blue",
+            "green",
+            "yellow",
+            "red"
+        ]
+    },
+    12: {
+        character: "pikachu",
+        colours: [
+            "original",
+            "red",
+            "blue",
+            "green"
+        ]
+    },
+    13: {
+        character: "samus",
+        colours: [
+            "red",
+            "pink",
+            "dark",
+            "green",
+            "blue"
+        ]
+    },
+    14: {
+        character: "yoshi",
+        colours: [
+            "green",
+            "red",
+            "blue",
+            "yellow",
+            "pink",
+            "cyan"
+        ]
+    },
+    15: {
+        character: "jigglypuff",
+        colours: [
+            "original",
+            "red",
+            "blue",
+            "green",
+            "gold"
+        ]
+    },
+    16: {
+        character: "mewtwo",
+        colours: [
+            "original",
+            "red",
+            "blue",
+            "green"
+        ]
+    },
+    17: {
+        character: "luigi",
+        colours: [
+            "green",
+            "white",
+            "blue",
+            "red"
+        ]
+    },
+    18: {
+        character: "marth",
+        colours: [
+            "blue",
+            "red",
+            "green",
+            "black",
+            "white"
+        ]
+    },
+    19: {
+        character: "zelda",
+        colours: [
+            "original",
+            "red",
+            "blue",
+            "green",
+            "white"
+        ]
+    },
+    20: {
+        character: "younglink",
+        colours: [
+            "green",
+            "red",
+            "blue",
+            "white",
+            "black"
+        ]
+    },
+    21: {
+        character: "drmario",
+        colours: [
+            "original",
+            "red",
+            "blue",
+            "green",
+            "black"
+        ]
+    },
+    22: {
+        character: "falco",
+        colours: [
+            "original",
+            "red",
+            "blue",
+            "green"
+        ]
+    },
+    23: {
+        character: "pichu",
+        colours: [
+            "original",
+            "red",
+            "blue",
+            "green"
+        ]
+    },
+    24: {
+        character: "gameandwatch",
+        colours: [
+            "original",
+            "red",
+            "blue",
+            "green"
+        ]
+    },
+    25: {
+        character: "ganondorf",
+        colours: [
+            "original",
+            "red",
+            "blue",
+            "green",
+            "purple"
+        ]
+    },
+    26: {
+        character: "roy",
+        colours: [
+            "original",
+            "red",
+            "blue",
+            "green",
+            "gold"
+        ]
     }
-    return {
-        "character": s_character,
-        "colour": s_colour
-    }
+};
+
+const charactersByExternalId = [
+    2, // captainfalcon
+    3, // donkeykong
+    1, // fox
+    24, // gameandwatch
+    4, // kirby
+    5, // bowser
+    6, // link
+    17, // luigi
+    0, // mario
+    18, // marth
+    16, // mewtwo
+    8, // ness
+    9, // peach
+    12, // pikachu
+    10, // iceclimbers
+    15, // jigglypuff
+    13, // samus
+    14, // yoshi
+    19, // zelda
+    7, // sheik
+    22, // falco
+    20, // younglink
+    21, // drmario
+    26, // roy
+    23, // pichu
+    25 // ganondorf
+].map((id) => characters[id]);
+
+exports.getCharacter = (playerSettings, playersLatestFrame) => {
+    const character = characters[playersLatestFrame[playerSettings.playerIndex]?.post.internalCharacterId];
+
+    return character
+        ? {character: character.character, colour: character.colours[playerSettings.characterColor]}
+        : {};
+};
+
+exports.getCharacterByExternalId = ({characterId, characterColor}) => {
+    const character = charactersByExternalId[characterId];
+
+    return character
+        ? {character: character.character, colour: character.colours[characterColor]}
+        : {};
 }

@@ -199,22 +199,23 @@ app.listen(config.web.port, () => {
 /**
  * change obs scene using obs-websocket.
  * @param {string} scene 
- * @returns {boolean} true if success, false if error
+ * @returns {Promise} resolves to a boolean indicating whether scene was changed.
  */
-function changeScene(scene) {
+const changeScene = (scene) => new Promise((resolve) => {
     if(config.obs.scene_changer) {
         obs.call(
             'SetCurrentProgramScene', {'sceneName': scene}
         )
-        .then(function(value) {
-            logging.log("Changed scene to \"" + scene + "\"");
-            return true
-        }, () => {
-            return false
+        .then(() => {
+            logging.log(`Changed scene to ${scene}.`);
+            resolve(true);
+        }).catch(() => {
+            logging.log(`Failed to change scene to ${scene}.`);
+            resolve(false);
         });
     };
-    return false;
-}
+    resolve(false);
+});
 
 function loadConfig() {
     try {
@@ -307,99 +308,89 @@ function getNewFile(file_path) {
 function getGameComplete(game) {
     return new Promise((resolve) => {
         const timer = setInterval(() => {
-            var stat = game.getGameEnd();
+            const stat = game.getGameEnd();
             if (stat != null) {
                 clearInterval(timer);
-                resolve(stat);
+                setTimeout(() => resolve(stat), stat.lrasIndicatorIndex === -1 ? 500 : 0);
+            } else {
+                updateStats(game);
             }
         }, 1000);
     });
 }
 
 const maintainScore = (() => {
-    const _maintainScore = (player, firstTo) => {
-        player.score = (player.score || 0) % firstTo;
-    };
-
     const FRIENDLIES = 'friendlies';
+    const gf = "grand final";
+    const l = " (L)";
+    const lRegex = /\s\(L\)/;
+    const notL = "";
+
+    const newSet = (info, round) => {
+        info.Player1.score = 0;
+        info.Player2.score = 0;
+
+        let p1Name = info.Player1.name.replace(lRegex, notL);
+        let p2Name = info.Player2.name.replace(lRegex, notL);
+
+        if (round.includes(gf)) {
+            // If round is already gf, it must be a gf reset.
+            p1Name = p1Name + l;
+            p2Name = p2Name + l;
+        }
+
+        info.Player1.name = p1Name;
+        info.Player2.name = p2Name;
+    };
     
     return (info) => {
-        const firstTo =  info.round.toLowerCase() === FRIENDLIES ? Number.MAX_SAFE_INTEGER : Math.ceil((info.best_of || 3)/2);
-        _maintainScore(info.Player1, firstTo);
-        _maintainScore(info.Player2, firstTo);
+        const round = info.round.toLowerCase();
+        const firstTo = round === FRIENDLIES
+            ? Number.MAX_SAFE_INTEGER
+            : Math.ceil((info.best_of || 3)/2);
+
+        if (info.Player1.score >= firstTo || info.Player2.score >= firstTo) {
+            newSet(info, round);
+        }
     };
 })();
 
-function resetSet() {
-    const info = JSON.parse(fs.readFileSync("data/json/info.json", {encoding:'utf8', flag:'r'}));
-    getNewSet(info);
-    fs.writeFileSync("data/json/info.json", JSON.stringify(info), "utf8");
-}
 
-function getActivePlayers(info, players) {
-    return (Object.keys(info).filter(k => k.startsWith('Player')).length === 2
+const getActiveRotationPlayers = (info, players) => (Object.keys(info)
+    .filter(k => k.startsWith('Player'))
+    .length === 2
         ? [1, 2]
-        : [players[0].port, players[1].port]).map(p => `Player${p}`);
-}
+        : [players[0].port, players[1].port]
+    ).map(p => `Player${p}`);
 
 function updateStats(game) {
     var settings = game.getSettings();
     const info = JSON.parse(fs.readFileSync("data/json/info.json", {encoding:'utf8', flag:'r'}));
     maintainScore(info);
 
-    const {players} = settings;
-    if(players.length === 2) {
-        const activePlayers = getActivePlayers(info, players);
+    const players = [...settings.players];
+    const playersLatestFrame = game.getLatestFrame().players;
+    const teams = slpTools.getSlippiTeams(players);
+    if(teams.length === 2) {
+        const activePlayers = getActiveRotationPlayers(info, players);
         info.active_players = activePlayers;
 
-        const [player1, player2] = players;
-        p1_data = slpTools.matchChar(player1.characterId, player1.characterColor);
-        p2_data = slpTools.matchChar(player2.characterId, player2.characterColor);
+        teams.forEach(([p, pd = {}], index) => {
+            pData = slpTools.getCharacter(p, playersLatestFrame);
 
-        const [p1Key, p2Key] = activePlayers;
-        info[p1Key].port = player1.port;
-        info[p1Key].character = p1_data.character;
-        info[p1Key].colour = p1_data.colour;
+            pDData = Object.entries(slpTools.getCharacter(pd, playersLatestFrame))
+                .reduce((acc, [key, val]) => ({
+                    ...acc,
+                    [`${key}_dubs`]: val
+                }), {});
 
-        info[p2Key].port = player2.port;
-        info[p2Key].character = p2_data.character;
-        info[p2Key].colour = p2_data.colour;
-    } else if (players.length == 4) {
-        team1_id = settings.players[0].teamId;
-
-        t1p1_data = slpTools.matchChar(settings.players[0].characterId, settings.players[0].characterColor);
-        t1p2_data = null;
-        settings.players.splice(0,1); //remove p1 for search
-        for(let player of settings.players) {
-            if(player.teamId == team1_id) {
-                t1p2_data = slpTools.matchChar(player.characterId, player.characterColor);
-                var index = settings.players.indexOf(player);
-                if (index > -1) { //remove teammate as not needed
-                    settings.players.splice(index, 1);
-                }
-                break;
-            }
-        }
-        if (t1p2_data == null) {
-            return; //no teammate
-        }
-        t2p1_data = slpTools.matchChar(settings.players[0].characterId, settings.players[0].characterColor);
-        t2p2_data = null;
-        if(settings.players[0].teamId == settings.players[1].teamId) {
-            t2p2_data = slpTools.matchChar(settings.players[1].characterId, settings.players[1].characterColor);
-        } else {
-            return; //no teammate
-        }
-
-        info.Player1.character = t1p1_data.character;
-        info.Player1.colour = t1p1_data.colour;
-        info.Player1.character_dubs = t1p2_data.character;
-        info.Player1.colour_dubs = t1p2_data.colour;
-
-        info.Player2.character = t2p1_data.character;
-        info.Player2.colour = t2p1_data.colour;
-        info.Player2.character_dubs = t2p2_data.character;
-        info.Player2.colour_dubs = t2p2_data.colour;
+            const key = activePlayers[index];
+            info[key] = {
+                ...info[key],
+                ...pData,
+                ...pDData
+            };
+        });
     }
     fs.writeFileSync("data/json/info.json", JSON.stringify(info), "utf8");
 }
@@ -410,80 +401,69 @@ function processResult(game, match_data) {
             return match_data;
         };
     }
-    var settings = game.getSettings();
-    var winner = game.getWinners();
-    var info = JSON.parse(fs.readFileSync("data/json/info.json", "utf8"));
-    if(settings.players.length == 2) {
-        var last_frame = game.getLatestFrame();
+    const settings = game.getSettings();
 
-        var game_data = {"p1": {}, "p2": {}}
-        game_data.stage = slpTools.matchStage(settings.stageId)
-
-        //determine winner
-        if(winner.length == 0) {
-            winner = slpTools.getSinglesWinner(game);
-        }
-        if(winner.length != 1) {
-            logging.log("Too many or no winners in game, draw?")
-            return match_data;
-        }
-        //update data
-        p1_character_data = slpTools.matchChar(settings.players[0].characterId, settings.players[0].characterColor)
-        p2_character_data = slpTools.matchChar(settings.players[1].characterId, settings.players[1].characterColor)
-        
-        game_data.p1.char = p1_character_data.character
-        game_data.p1.colour = p1_character_data.colour
-        game_data.p2.char = p2_character_data.character
-        game_data.p2.colour = p2_character_data.colour        
-        
-        if(winner[0].playerIndex == settings.players[0].playerIndex) {
-            logging.log("Player 1 wins game")
-            info.Player1.score += 1;
-            game_data.winner = 1;
-        } else if(winner[0].playerIndex == settings.players[1].playerIndex) {
-            logging.log("Player 2 wins game")
-            info.Player2.score += 1;
-            game_data.winner = 2;
-        } else {
-            logging.error("Winner cannot be determined, winner's port is incorrect")
-        }
-        game_data.p1.stocks = last_frame.players[settings.players[0].playerIndex].post.stocksRemaining
-        game_data.p2.stocks = last_frame.players[settings.players[1].playerIndex].post.stocksRemaining
-        match_data.push(game_data)
-        if(info.Player1.score >= Math.ceil(info.best_of/2) || info.Player1.score >= Math.ceil(info.best_of/2)) {
-            var match_json = {
-                tags: [info.Player1.name, info.Player2.name],
-                games: match_data
-            }
-            match_data = []
-            fs.writeFileSync("data/json/match_result.json", JSON.stringify(match_json), "utf8");
-        }
-        fs.writeFileSync("data/json/info.json", JSON.stringify(info), "utf8");
-    } else if(settings.players.length == 4) {
-        //determine winner
-        if(winner.length == 0) {
-            winner = slpTools.getDoublesWinner(game);
-        }
-        if(winner.length != 2) {
-            logging.log("Too many or no winners in game, draw?");
-            return match_data;
-        }
-        var team1_winner = winner.some((e) => {
-            return e.playerIndex == 0;
-        })
-        if(team1_winner) {
-            logging.log("Team 1 wins game");
-            info.Player1.score += 1;
-        } else {
-            logging.log("Team 2 wins game");
-            info.Player2.score += 1;
-        }
-        fs.writeFileSync("data/json/info.json", JSON.stringify(info), "utf8");
-    } else {
+    if(settings.players.length % 2) {
         logging.error("Odd number of players in game");
+        return match_data;
     }
-    return match_data;
 
+    //determine winner
+    let winner = game.getWinners();
+    if(winner.length == 0) {
+        logging.log("Replay does not list winner. Calculating manually. May take longer for doubles.");
+        winner = settings.players.length === 2
+            ? slpTools.getSinglesWinner(game)
+            : slpTools.getDoublesWinner(game);
+    }
+
+    if(winner.length != Math.floor(settings.players.length / 2)) {
+        logging.log("Too many or no winners in game, draw?");
+        return match_data;
+    }
+
+    const teams = slpTools.getSlippiTeams(settings.players);
+    const winnerPlayerNumber = teams
+        .findIndex((t) => t.find(({playerIndex}) => playerIndex === winner[0].playerIndex)) + 1;
+    
+    logging.log(`Team ${winnerPlayerNumber} wins game.`);
+    const info = JSON.parse(fs.readFileSync("data/json/info.json", "utf8"));
+    info[`Player${winnerPlayerNumber}`].score += 1;
+    fs.writeFileSync("data/json/info.json", JSON.stringify(info), "utf8");
+
+    // Update match_data and/or match_result.json
+    const {players: playersLatestFrame} = game.getLatestFrame();
+
+    const game_data = teams.reduce((acc, [p, pd], index) => {
+        const key = `Player${index + 1}`;
+        acc[key] = {
+            ...slpTools.getCharacterByExternalId(p),
+            stocks: playersLatestFrame[p.playerIndex]?.post.stocksRemaining || 0,
+            ...(settings.players.length === 4 
+                ? Object.entries(slpTools.getCharacterByExternalId(pd)).reduce((acc, [key, val]) => ({
+                    ...acc,
+                    [`${key}_dubs`]: val
+                }), {stocks_dubs: playersLatestFrame[pd.playerIndex]?.post.stocksRemaining || 0})
+                : {})
+        };
+        return acc;
+    }, {
+        stage: slpTools.matchStage(settings.stageId),
+        winner: winnerPlayerNumber
+    });
+
+    match_data.push(game_data);
+    
+    if(info.Player1.score >= Math.ceil(info.best_of/2) || info.Player2.score >= Math.ceil(info.best_of/2)) {
+        var match_json = {
+            tags: [info.Player1.name, info.Player2.name],
+            games: match_data
+        }
+        match_data = []
+        fs.writeFileSync("data/json/match_result.json", JSON.stringify(match_json), "utf8");
+    }
+
+    return match_data;
 }
 
 async function processGameHandler() {
@@ -509,17 +489,11 @@ async function processGameHandler() {
             game = new SlippiGame(file);
             //game in progress
             logging.log("Game in progress");
-            updateStats(game)
 
-            var gameEnd = await getGameComplete(game);
+            await getGameComplete(game);
             //game complete
-            if(gameEnd.lrasIndicatorIndex != -1) {
-                changeScene(config.obs.end_scene)
-            } else {
-                setTimeout(() => {
-                    changeScene(config.obs.end_scene)
-                }, 500);
-            }
+            await changeScene(config.obs.end_scene);
+  
             if(config.slippi.track_score) {
                 match_data = processResult(game, match_data)
             }

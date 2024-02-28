@@ -34,8 +34,9 @@ key = "025446143514ddd5187345ca3546cb42"
 #"F:\SSBM\Slippi\2023-03"
 #"D:\work_replay"
 
-directory = "C:\Users\Public\Documents\Slippi"
-# directory = "C:\Users\Gregor\Documents\Slippi\2024-01"
+# directory = "C:\Users\Public\Documents\Slippi"
+directory = "C:\Users\Gregor\Documents\Slippi\2024-02"
+# directory = "C:\Users\Gregor\Documents\Slippi\Regenerated"
 
 # Automatically keep track of match score
 track_score = true
@@ -43,4 +44,4 @@ track_score = true
 # Unless debugging, keep this false (duh)
 # false = games with less than 45 seconds playtime, under 120% damage dealt, games with CPUs, do not advance game score
 # true = every match is treated as a tournament game
-debug_mode = false
+debug_mode = true

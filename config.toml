@@ -1,6 +1,5 @@
 [web]
 # Port where web config will be accessible
-
 port = 5000
 
 [obs]
@@ -22,6 +21,7 @@ scene_changer = true
 start_scene = "game"
 end_scene = "splash"
 
+browser_transition = "game-in (browser)"
 
 [startgg]
 # start.gg API key and version - generate one at https://start.gg/admin/profile/developer
@@ -30,13 +30,10 @@ key = "025446143514ddd5187345ca3546cb42"
 
 [slippi]
 # Output folder for the .SLP files of the stream setup
-#"D:\stream stuff\stream\web_application\slp"
-#"F:\SSBM\Slippi\2023-03"
-#"D:\work_replay"
+directory = "D:\slp_files\SlippiSpectate\cleo"
 
-# directory = "C:\Users\Public\Documents\Slippi"
-directory = "C:\Users\Gregor\Documents\Slippi\2024-02"
-# directory = "C:\Users\Gregor\Documents\Slippi\Regenerated"
+# Only used for recording replays after an event
+melee_iso = "C:\Users\Public\Documents\[SSBM]ScotlandStages.iso"
 
 # Automatically keep track of match score
 track_score = true
@@ -44,4 +41,4 @@ track_score = true
 # Unless debugging, keep this false (duh)
 # false = games with less than 45 seconds playtime, under 120% damage dealt, games with CPUs, do not advance game score
 # true = every match is treated as a tournament game
-debug_mode = true
+debug_mode = false

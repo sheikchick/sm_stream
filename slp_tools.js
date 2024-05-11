@@ -1,88 +1,68 @@
 const { SlippiGame } = require("@slippi/slippi-js");
+const logging = require("./logging");
 
-function currentTime() {
-    var date = new Date();
-    return(date.getHours().toString().padStart(2,"0") + ":" + date.getMinutes().toString().padStart(2,"0") + ":" + date.getSeconds().toString().padStart(2,"0") + "." + date.getMilliseconds().toString().padStart(3,"0"))
-}
+exports.isValidGame = (() => {
+    const VALID_DAMAGE = 120;
 
-exports.isValidGame = function(game) {
-    settings = game.getSettings();
-    //check for CPU players
-    for(let player of settings.players) {
-        if(player.type == 1) {
-            console.log(currentTime() + " INFO: Game included CPU player, ignoring.");
-            return false;
-        }
-    }
-    //check if bomb rain enabled (is sudden death)
-    if(settings.gameInfoBlock.bombRainEnabled) {
-        console.log(currentTime() + " INFO: Game is 'Sudden Death', ignoring.");
-        return false;
-    }
-    stats = game.getStats();
-    //if game less than 45 seconds
-    if(stats.playableGameCount < 2700) {
-        console.log(currentTime() + " INFO: Game less than 45 seconds, ignoring.");
-        return false;
-    }
-    //if neither character dealt over 120%
-
-    if(settings.players.length == 2) {
-        if(stats.overall[0].totalDamage < 120 && stats.overall[1].totalDamage < 120) {
-            if(stats.overall[0].totalDamage == 0 && stats.overall[1].totalDamage == 0) {
-                var damage_dealt = getDamageDealt(game);
-                var over_120 = damage_dealt.some((e) => {
-                    return e > 120;
-                });
-                if(!over_120) {
-                    console.log(currentTime() + " INFO: No player dealt over 120%, ignoring.");
-                    return false;
+    function getDamageDealt(game) {
+        const frames = game.getFrames();
+        let frame = frames[0];
+        const acc = frame.players.map(({post: {stocksRemaining}}) => ({stocksRemaining, totalDamage: 0, percent: 0}));
+        let i = 1;
+        // Not doing for frame in frames because there are a number of frames with a negative index
+        // that we get to skip by simply starting at index 0.
+        do {
+            frame.players.forEach(({post}) => {
+                const player = acc[post.playerIndex];
+                if (post.stocksRemaining < acc[post.playerIndex].stocksRemaining) {
+                    player.stocksRemaining--;
+                    player.totalDamage = player.totalDamage + player.percent;
                 }
-            } 
-        }
-    } else if (settings.players.length == 4) {
-        var damage_dealt = getDamageDealt(game);
-        var over_120 = damage_dealt.some((e) => {
-            return e > 120;
-        });
-        if(!over_120) {
-            console.log(currentTime() + " INFO: No player dealt over 120%, ignoring.");
-            return false;
-        }
-    } else {
-        console.log(currentTime() + " INFO: Irregular number of players (not 2 or 4), ignoring.");
-        return false;
+                player.percent = post.percent;
+            });
+            frame = frames[i++];
+        } while (frame && acc.every(({percent}) => percent < VALID_DAMAGE));
+        return acc.map(({percent}) => percent);
     }
-    return true;
-}
+    
+    return function(game) {
+        settings = game.getSettings();
 
-function getDamageDealt(game) {
-    // Get game settings – stage, characters, etc
-    const frames = game.getFrames();
-    var stocks = [];
-    var last_percent = [];
-    var percent = [];
-    for(x = 0; x < frames[0].players.length; x++) {
-        stocks.push(4);
-        last_percent.push(0);
-        percent.push(0);
-    }
-    var i = 0
-    for(const frame of Object.values(frames)) {
-        i++;
-        for(x = 0; x < frame["players"].length; x++) {
-            if(frame["players"][x]) {
-                player = frame["players"][x]["post"];
-                if(player["stocksRemaining"] < stocks[x] || i >= Object.keys(frames).length) {
-                    stocks[x]--;
-                    percent[x] += player["percent"]
-                }
+        for(let player of settings.players) {
+            if(player.type == 1) {
+                logging.log("No contest: Game included CPU player.");
+                return false;
             }
         }
-        last_percent[x] = player["percent"]
+
+        if(settings.gameInfoBlock.bombRainEnabled) {
+            logging.log("No contest: Game is 'Sudden Death'.");
+            return false;
+        }
+        const stats = game.getStats();
+
+        if(stats.playableGameCount < 2700) {
+            logging.log("No contest: Game less than 45 seconds.");
+            return false;
+        }
+
+        if (settings.players.length % 2) {
+            logging.log("No contest: odd number of players.");
+            return false;
+        }
+
+        const correctDamage = stats.overall.some(({totalDamage}) => totalDamage > 0)
+            ? stats.overall.map(({totalDamage}) => totalDamage)
+            : getDamageDealt(game);
+
+        if (correctDamage.every((damage) => damage < VALID_DAMAGE)) {
+            logging.log(`No contest: No player dealt ${VALID_DAMAGE}% or more.`);
+            return false;
+        }
+
+        return true;
     }
-    return percent;
-}
+})();
 
 exports.getSlippiTeams = (players) => {  
     const teams = Object.values(players.reduce((acc, cur) => ({
@@ -99,12 +79,23 @@ exports.getSlippiTeams = (players) => {
     ).sort((a, b) => a[0].playerIndex > b[0].playerIndex ? 1 : -1)
 };
 
+exports.getWinner = (game) => {
+    const winner = game.getWinners();
+    if(winner.length === 0) {
+        logging.log("Replay does not list winner. Calculating manually...");
+        return game.getSettings().players.length === 2
+            ? getSinglesWinner(game)
+            : getDoublesWinner(game);
+    }
+    return winner;
+};
+
 /**
  * Get winner of a game of singles. Likely deprecated by next slippi-js update
  * @param {SlippiGame} game 
  * @returns winner and position
  */
-exports.getSinglesWinner = function(game) {
+getSinglesWinner = function(game) {
     const {players} = game.getSettings();
     const playersLatestFrame = game.getLatestFrame().players;
 
@@ -119,7 +110,7 @@ exports.getSinglesWinner = function(game) {
         : [];
 }
 
-exports.getDoublesWinner = function(game) {
+getDoublesWinner = function(game) {
     const {players} = game.getSettings();
 
     const p1Id = players[0].teamId;
@@ -241,6 +232,7 @@ const characters = {
     },
     1: {
         character: "fox",
+        saga: "starfox",
         colours: [
             "original",
             "red",
@@ -250,6 +242,7 @@ const characters = {
     },
     2: {
         character: "captainfalcon",
+        saga: "fzero",
         colours: [
             "original",
             "black",
@@ -282,15 +275,17 @@ const characters = {
     },
     5: {
         character: "bowser",
+        saga: "mario",
         colours: [
             "green",  
             "red",  
-            "green",
+            "blue",
             "black"
         ]
     },
     6: {
         character: "link",
+        saga: "zelda",
         colours: [
             "green",
             "red",
@@ -301,6 +296,7 @@ const characters = {
     },
     7: {
         character: "sheik",
+        saga: "zelda",
         colours: [
             "original",
             "red",
@@ -311,15 +307,17 @@ const characters = {
     },
     8: {
         character: "ness",
+        saga: "mother",
         colours: [
             "red",
-            "yellow",
+            "gold",
             "blue",
             "green"
         ]
     },
     9: {
         character: "peach",
+        saga: "mario",
         colours: [
             "red",
             "gold",
@@ -339,6 +337,7 @@ const characters = {
     },
     12: {
         character: "pikachu",
+        saga: "pokemon",
         colours: [
             "original",
             "red",
@@ -348,6 +347,7 @@ const characters = {
     },
     13: {
         character: "samus",
+        saga: "metroid",
         colours: [
             "red",
             "pink",
@@ -369,6 +369,7 @@ const characters = {
     },
     15: {
         character: "jigglypuff",
+        saga: "pokemon",
         colours: [
             "original",
             "red",
@@ -379,6 +380,7 @@ const characters = {
     },
     16: {
         character: "mewtwo",
+        saga: "pokemon",
         colours: [
             "original",
             "red",
@@ -388,6 +390,7 @@ const characters = {
     },
     17: {
         character: "luigi",
+        saga: "mario",
         colours: [
             "green",
             "white",
@@ -397,6 +400,7 @@ const characters = {
     },
     18: {
         character: "marth",
+        saga: "fireemblem",
         colours: [
             "blue",
             "red",
@@ -417,6 +421,7 @@ const characters = {
     },
     20: {
         character: "younglink",
+        saga: "zelda",
         colours: [
             "green",
             "red",
@@ -427,6 +432,7 @@ const characters = {
     },
     21: {
         character: "drmario",
+        saga: "mario",
         colours: [
             "original",
             "red",
@@ -437,6 +443,7 @@ const characters = {
     },
     22: {
         character: "falco",
+        saga: "starfox",
         colours: [
             "original",
             "red",
@@ -446,6 +453,7 @@ const characters = {
     },
     23: {
         character: "pichu",
+        saga: "pokemon",
         colours: [
             "original",
             "red",
@@ -464,6 +472,7 @@ const characters = {
     },
     25: {
         character: "ganondorf",
+        saga: "zelda",
         colours: [
             "original",
             "red",
@@ -474,6 +483,7 @@ const characters = {
     },
     26: {
         character: "roy",
+        saga: "fireemblem",
         colours: [
             "original",
             "red",
@@ -482,6 +492,20 @@ const characters = {
             "gold"
         ]
     }
+};
+
+exports.characterRandom = {
+    character: "random",
+    saga: "smash",
+    stock: "smash",
+    css: "empty",
+    colours: [
+        "cpu",
+        "p1",
+        "p2",
+        "p3",
+        "p4"
+    ]
 };
 
 const charactersByExternalId = [
@@ -513,18 +537,20 @@ const charactersByExternalId = [
     25 // ganondorf
 ].map((id) => characters[id]);
 
-exports.getCharacter = (playerSettings, playersLatestFrame) => {
-    const character = characters[playersLatestFrame[playerSettings.playerIndex]?.post.internalCharacterId];
 
-    return character
-        ? {character: character.character, colour: character.colours[playerSettings.characterColor]}
-        : {};
+exports.charactersByName = Object.values(characters).reduce((acc, cur) => {
+    acc[cur.character] = cur;
+    return acc;
+}, {});
+
+exports.getLatestCharacter = (playerSettings, playersLatestFrame) => {
+    const character = characters[playersLatestFrame[playerSettings.playerIndex]?.post.internalCharacterId];
+    return character?.character;
 };
 
-exports.getCharacterByExternalId = ({characterId, characterColor}) => {
+exports.getCharacter = ({characterId, characterColor}) => {
     const character = charactersByExternalId[characterId];
-
     return character
         ? {character: character.character, colour: character.colours[characterColor]}
         : {};
-}
+};

@@ -1,0 +1,13 @@
+body {
+    background-color: rgba(0, 0, 0, 0);
+    margin: 0px auto;
+    overflow: hidden;
+}
+#media {
+    position: fixed;
+    width: 1920px;
+    height: 1080px;
+}
+audio {
+    opacity: 0;
+}

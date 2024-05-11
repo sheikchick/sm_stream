@@ -1,0 +1,128 @@
+.scores {
+    height: 36px;
+}
+
+.black-bar {
+    position: absolute;
+    width: 100vw;
+    height: 266px;
+    display: flex;
+}
+
+.black-bar-inner {
+    flex-grow: 1;
+    align-self: stretch;
+    padding: 25px;
+    display: flex;
+}
+
+#bottom {
+    bottom: 0;
+}
+
+.wrapper {
+    width: 50%;
+    font-size: 40px;
+    line-height: 1em;
+    font-family: "FolkHeavy";
+    text-align: center;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    align-self: flex-end;
+    gap: 0.25em;
+}
+
+.name-wrapper {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: inherit;
+}
+
+.dubs.name {
+    align-self: flex-start;
+    text-align: right;
+    width: 35%;
+}
+
+.dubs.name-dubs {
+    display: block;
+    align-self: flex-end;
+    text-align: left;
+    direction: rtl;
+}
+
+.name-dubs {
+    display: none;
+}
+
+.name {
+    height: 1em;
+    opacity: 0;
+    color: white;
+}
+
+.name-wrapper-p2 {
+    flex-direction: column;
+}
+
+.character {
+    opacity: 0;
+}
+
+.character-img {
+    position: fixed;
+}
+
+.color {
+    opacity: 0;
+    font-size: 36px;
+}
+.pCharacterName {
+    color: lightgrey;
+}
+
+.set-info {
+    width: 8%;
+    flex-grow: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+    opacity: 0;
+}
+
+#set-info-bottom {
+    align-self: flex-end;
+}
+
+.wrapper-bottom {
+    align-self: flex-start;
+    font-size: 48px;
+}
+
+#bottom .name {
+    /* The font being used doesn't reach the top of a span set to line-height: 1em;
+    Compensating for this on the bottom text makes vertical spacings consistent in the
+    mirrored layout between the top and bottom containers. */
+    transform: translateY(-0.23em);
+}
+
+.roundInfo {
+    text-align: center;
+    font-family: "Deansgate";
+}
+
+#round,#date {
+    color: white;
+    font-size: 36px;
+    line-height: 1em;
+}
+
+#tournament {
+    font-size: 48px;
+    line-height: 1em;
+}

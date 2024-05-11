@@ -46,3 +46,6 @@ __pycache__/
 # OTHER #
 #########
 startgg.bat
+static/img/overlay
+static/img/vs_icons
+views/overlay

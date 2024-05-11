@@ -5,7 +5,6 @@ var set_page = 0;
 
 const phone_aspect = window.matchMedia("(max-aspect-ratio: 1/1), (max-width: 1000px)");
 
-
 $(document).ready(function(){
 	obs = new OBSWebSocket();
 	url = window.location.href;
@@ -17,7 +16,7 @@ $(document).ready(function(){
 
 	change_best_of(best_of_value);
 
-	obs.connect(obsurl, obs_password)
+	obs.connect(obsurl, obs_password)	
 		.then(() => {
 			$("#row7").css('display', 'flex');
 			obs.call('GetSceneList')
@@ -31,22 +30,17 @@ $(document).ready(function(){
 		})
 		.catch(err => {
         	console.log(err);
-    });
+    	});
 
-	if($(".toggle_doubles").attr("value") === "true") {
-		is_doubles = false;
-	} else {
-		is_doubles = true;
-	}
-
+	is_doubles = $(".toggle_doubles").attr("value") !== "true"
 	toggle_doubles();
 });
 
-function hide(player, slot) {
-		$("#p" + player + "_colour" + slot).attr("src", "");
-		$("#p" + player + "_colour" + slot).hide();
-		$("#p" + player + "_stock" + slot).attr("src", "");
-		$("#p" + player + "_stock" + slot).hide();
+function hideColour(player, slot) {
+	$("#p" + player + "_colour" + slot).attr("src", "");
+	$("#p" + player + "_colour" + slot).hide();
+	$("#p" + player + "_stock" + slot).attr("src", "");
+	$("#p" + player + "_stock" + slot).hide();
 };
 
 function reset_background(player) {
@@ -259,7 +253,7 @@ function toggle_doubles() {
 
 function load_changes() {
 	$.ajax({
-		type: 'POST',
+		type: 'GET',
 		url: "/info.json",
 		data: {},
 		success: function(response) {
@@ -271,10 +265,10 @@ function load_changes() {
 			$("#p2_score_actual").attr("value", response.Player2["score"])
 			$("#round_actual").attr("value", response.round)
 			$("#best_of_actual").attr("value", "Best of " + response.best_of)
-			load_char("1", response.Player1["character"], response.Player1["colour"])
-			load_char("1d", response.Player1["character_dubs"], response.Player1["colour_dubs"])
-			load_char("2", response.Player2["character"], response.Player2["colour"])
-			load_char("2d", response.Player2["character_dubs"], response.Player2["colour_dubs"])
+			load_char_actual("1", response.Player1["character"], response.Player1["colour"])
+			load_char_actual("1d", response.Player1["character_dubs"], response.Player1["colour_dubs"])
+			load_char_actual("2", response.Player2["character"], response.Player2["colour"])
+			load_char_actual("2d", response.Player2["character_dubs"], response.Player2["colour_dubs"])
 		},
 		error: function(response) {
 			console.log(response)
@@ -285,48 +279,18 @@ function load_changes() {
 	setTimeout(load_changes, 1000)
 }
 
-function load_char(player, character, colour) {
-	$("#p" + player + "_character_actual").attr("src", "static/img/stock_icons/" + character + "/" + colour + ".png");
-	$("#p" + player + "_character_change").attr("src", "static/img/csp_icons/" + character + "/" + colour + ".png");
-	$("#p" + player + "_character_actual").attr("character", character);
-	$("#p" + player + "_character_actual").attr("colour", colour);
-}
+function load_char_actual(player, character, colour) {
+	const characterParams = new URLSearchParams();
+	characterParams.append('character', character);
+	characterParams.append('colour', colour);
+	const characterString = characterParams.toString();
 
-function update_record_button() {
-	return obs.call('GetRecordStatus')
-		.then(({outputActive}) => {
-			$('#record_set')[outputActive ? 'addClass' : 'removeClass']('recording');
-			$('#clip').prop('disabled', !outputActive);
-		})
-		.catch(() => {
-			$('#record_set').removeClass('recording');
-			$('#clip').prop('disabled', true);
-		});
-}
+	const characterActual = $(`#p${player}_character_actual`);
+	characterActual.attr("character", character);
+	characterActual.attr("colour", colour);
 
-function update_record_button() {
-	return obs.call('GetRecordStatus')
-		.then(({outputActive}) => {
-			$('#record_set')[outputActive ? 'addClass' : 'removeClass']('recording');
-			$('#clip').prop('disabled', !outputActive);
-		})
-		.catch(() => {
-			$('#record_set').removeClass('recording');
-			$('#clip').prop('disabled', true);
-		});
-}
-
-function recordSet() {
-	return obs.call('ToggleRecord')
-		.then(({outputActive}) => console.log(`${outputActive ? 'Started' : 'Stopped'} recording.`))
-		.catch(() => console.log('Failed to toggle recording.'));
-}
-
-function clip() {
-	return obs.call(
-		'TriggerHotkeyByKeySequence', 
-		{keyId: 'OBS_KEY_BACKSPACE', keyModifiers: {shift: true, control: true, alt: true}}
-	);
+	characterActual.attr("src", '/stock?' + characterString);
+	$(`#p${player}_character_change`).attr("src", "/csp?" + characterString);
 }
 
 function update_scene() {
@@ -339,27 +303,227 @@ function update_scene() {
 	})
 }
 
-function ffpmeg() {
-	console.log(obs.call('GetRecordDirectory'));
-	console.log(obs.call('GetRecordStatus'));
+function update_record_button(recording_status) {
+	obs.call('GetRecordStatus')
+		.catch(() => false)
+		.then(({outputActive}) => {
+			$.ajax({
+				type: 'GET',
+				url: "/recording_status",
+				data: {},
+				success: function(response) {
+					if (outputActive && response.recording_status) {
+						$("#ffmpeg").text("Recording...");
+						$("#ffmpeg").css("background-color", "#9146FF");
+						$("#ffmpeg").css("border-bottom", "3px solid #44158a");
+					} else {
+						$("#ffmpeg").text("Record");
+						$("#ffmpeg").css("background-color", "#FFFFFF");
+						$("#ffmpeg").css("border-bottom", "3px solid #AAA");
+					}
+				},
+				error: function(response) {
+					console.log(response)
+				},
+				timeout: 5000
+			})
+			$('#ffmpeg-clip').prop('disabled', !outputActive);
+		});
+}
+
+function recordSet() {
+	obs.call(
+		'GetRecordStatus'
+	)
+	.then(function(value) {
+		current_color = $("#ffmpeg").css("background-color");
+		current_status = $("#ffmpeg").text();
+		current_border = $("#ffmpeg").css("border-bottom");
+
+		if(!value.outputActive) {
+			$("#ffmpeg").css("background-color", "#F56262");
+			$("#ffmpeg").css("border-bottom", "3px solid #F53535");
+			$("#ffmpeg").text("OBS not recording");
+			$("#ffmpeg").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+
+			setTimeout(function(){
+				$("#ffmpeg").css("background-color", current_color);
+				$("#ffmpeg").css("border-bottom", current_border);
+				$("#ffmpeg").text(current_status);
+			}, 2000);
+			return;
+		} 
+
+		const record_controller = new AbortController()
+		const record_timeout = setTimeout(() => {
+			record_controller.abort()
+
+			current_color = $("#ffmpeg").css("background-color");
+			current_status = $("#ffmpeg").text();
+
+			$("#ffmpeg").css("background-color", "#F56262");
+			$(".update").css("border-bottom", "3px solid #F53535");
+			$("#ffmpeg").text("OBS timeout");
+			$("#ffmpeg").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+
+			setTimeout(function(){
+				$("#ffmpeg").css("background-color", current_color);
+				$("#ffmpeg").css("border-bottom", current_border);
+				$("#ffmpeg").text(current_status);
+			}, 2000);
+		}, 5000);
+		fetch("/save_recording", {
+			method: 'POST',
+			headers: { "Content-Type": "application/json"},
+			body: JSON.stringify({
+				timecode: value.outputTimecode
+			}),
+			signal: record_controller.signal
+		})
+		.then((response) => response.json())
+		.then((data) => {
+			clearTimeout(record_timeout)
+			console.log(data)
+			if(!data.recording_status) {
+				$("#ffmpeg").text("Recorded!");
+				$("#ffmpeg").css("background-color", "#55F76B");
+				$("#ffmpeg").css("border-bottom", "3px solid #349641");
+				setTimeout(function(){
+					$("#ffmpeg").text("Record");
+					$("#ffmpeg").css("background-color", "#FFFFFF");
+					$("#ffmpeg").css("border-bottom", "3px solid #AAA");
+				}, 2000);
+			} else {
+				$("#ffmpeg").text("Recording...");
+				$("#ffmpeg").css("background-color", "#9146FF");
+				$("#ffmpeg").css("border-bottom", "3px solid #44158a");
+			}
+
+		})
+	})
+
+}
+
+function clip() {
+	obs.call(
+		'GetRecordStatus'
+	)
+	.then(function(value) {
+		current_color = $("#ffmpeg-clip").css("background-color");
+		current_status = $("#ffmpeg-clip").text();
+		current_border = $("#ffmpeg-clip").css("border-bottom");
+		
+		if(!value.outputActive) {
+			$("#ffmpeg-clip").css("background-color", "#F56262");
+			$("#ffmpeg-clip").css("border-bottom", "3px solid #F53535");
+			$("#ffmpeg-clip").text("OBS not recording");
+			$("#ffmpeg-clip").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+
+			setTimeout(function(){
+				$("#ffmpeg-clip").css("background-color", current_color);
+				$("#ffmpeg-clip").css("border-bottom", current_border);
+				$("#ffmpeg-clip").text(current_status);
+			}, 2000);
+			return;
+		} 
+
+		const record_controller = new AbortController()
+		const record_timeout = setTimeout(() => {
+			record_controller.abort()
+
+			current_color = $("#ffmpeg-clip").css("background-color");
+			current_status = $("#ffmpeg-clip").text();
+
+			$("#ffmpeg-clip").css("background-color", "#F56262");
+			$(".update").css("border-bottom", "3px solid #F53535");
+			$("#ffmpeg-clip").text("OBS timeout");
+			$("#ffmpeg-clip").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+
+			setTimeout(function(){
+				$("#ffmpeg-clip").css("background-color", current_color);
+				$("#ffmpeg-clip").css("border-bottom", current_border);
+				$("#ffmpeg-clip").text(current_status);
+			}, 2000);
+		}, 5000);
+		
+		$("#ffmpeg-clip").text("Clipping...");
+		$("#ffmpeg-clip").css("background-color", "#9146FF");
+		$("#ffmpeg-clip").css("border-bottom", "3px solid #44158a");
+
+		fetch("/save_clip", {
+			method: 'POST',
+			headers: { "Content-Type": "application/json"},
+			body: JSON.stringify({
+				timecode: value.outputTimecode
+			}),
+			signal: record_controller.signal
+		})
+		.then((response) => {
+			if(`${response.status}`.startsWith(2)) {
+				$("#ffmpeg-clip").text("Clipped!");
+				$("#ffmpeg-clip").css("background-color", "#55F76B");
+				$("#ffmpeg-clip").css("border-bottom", "3px solid #349641");
+				setTimeout(function(){
+					$("#ffmpeg-clip").text("Clip");
+					$("#ffmpeg-clip").css("background-color", "#FFFFFF");
+					$("#ffmpeg-clip").css("border-bottom", "3px solid #AAA");
+				}, 2000);
+			} else {
+				$("#ffmpeg-clip").css("background-color", "#F56262");
+				$(".update").css("border-bottom", "3px solid #F53535");
+				$("#ffmpeg-clip").text("Error!");
+				$("#ffmpeg-clip").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+			}
+
+		})
+	})
+
 }
 
 function change_best_of(value) {
-	$(".best_of").prop('disabled', false);
-	$(`#bo${value}`).prop('disabled', true);
-}
-
-function settings() {
-	//window.location.href = "/settings";
-	return
-}
-
-function manual() {
-	window.location.href = "/manual";
-}
-
-function friendlies() {
-	window.location.href = "/friendlies";
+	if(value == 3) {
+		$("#bo3").css("background-color", "#AAA");
+		$("#bo3").css("border-bottom", "3px solid #999");
+		$("#bo3").hover(
+			function() {
+				$(this).css("background-color","#AAA");
+			},
+			function() {
+				$(this).css("background-color", "#AAA");
+			});
+		$("#bo5").css("background-color", "#FFF");
+		$("#bo5").css("border-bottom", "3px solid #AAA");
+		$("#bo5").hover(
+			function() {
+				$(this).css("background-color","#CCC");
+			},
+			function() {
+				$(this).css("background-color", "#FFF");
+			});
+		best_of_value = 3
+	} else if (value == 5) {
+		$("#bo5").css("background-color", "#AAA");
+		$("#bo5").css("border-bottom", "3px solid #999");
+		$("#bo5").hover(
+			function() {
+				$(this).css("background-color","#AAA");
+			},
+			function() {
+				$(this).css("background-color", "#AAA");
+			});
+		$("#bo3").css("background-color", "#FFF");
+		$("#bo3").css("border-bottom", "3px solid #AAA");
+		$("#bo3").hover(
+			function() {
+				$(this).css("background-color","#CCC");
+			},
+			function() {
+				$(this).css("background-color", "#FFF");
+			});
+		best_of_value = 5
+	} else {
+		console.log("ERROR: wrong best-of value provided")
+	}
 }
 
 /**
@@ -682,23 +846,3 @@ function load_set(x) {
 	$("#p2d_pronouns").val(p2d_pronouns)
 	$("#round_change").val($("#set" + x + "_round").text())
 }
-
-//run on aspect ratio change
-/*function handle_aspect_change(e) {
-	//phone
-	if (e.matches) {
-		if(is_doubles) {
-			
-		} else {
-
-		}
-	}
-	//desktop
-	else {
-		if(is_doubles) {
-
-		} else {
-			
-		}
-	}
-}*/

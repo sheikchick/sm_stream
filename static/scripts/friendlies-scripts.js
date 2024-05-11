@@ -46,7 +46,7 @@ $(document).ready(function(){
 	toggle_doubles();
 });
 
-function hide(player, slot) {
+function hideColour(player, slot) {
 		$("#p" + player + "_colour" + slot).attr("src", "");
 		$("#p" + player + "_colour" + slot).hide();
 		$("#p" + player + "_stock" + slot).attr("src", "");
@@ -267,7 +267,7 @@ function toggle_doubles() {
 
 function load_changes() {
 	$.ajax({
-		type: 'POST',
+		type: 'GET',
 		url: "/info.json",
 		data: {},
 		success: function(response) {
@@ -276,10 +276,10 @@ function load_changes() {
 			$("#p3_name_actual").attr("value", response.Player3["name"])
 			$("#p4_name_actual").attr("value", response.Player4["name"])
 			$("#round_actual").attr("value", response.round)
-			load_char("1", response.Player1["character"], response.Player1["colour"])
-			load_char("2", response.Player2["character"], response.Player2["colour"])
-			load_char("3", response.Player3["character"], response.Player3["colour"])
-			load_char("4", response.Player4["character"], response.Player4["colour"])
+			load_char_actual("1", response.Player1["character"], response.Player1["colour"])
+			load_char_actual("2", response.Player2["character"], response.Player2["colour"])
+			load_char_actual("3", response.Player3["character"], response.Player3["colour"])
+			load_char_actual("4", response.Player4["character"], response.Player4["colour"])
 		},
 		error: function(response) {
 			console.log(response)
@@ -289,11 +289,18 @@ function load_changes() {
 	setTimeout(load_changes, 1000)
 }
 
-function load_char(player, character, colour) {
-	$("#p" + player + "_character_actual").attr("src", "static/img/stock_icons/" + character + "/" + colour + ".png");
-	$("#p" + player + "_character_change").attr("src", "static/img/csp_icons/" + character + "/" + colour + ".png");
-	$("#p" + player + "_character_actual").attr("character", character);
-	$("#p" + player + "_character_actual").attr("colour", colour);
+function load_char_actual(player, character, colour) {
+	const characterParams = new URLSearchParams();
+	characterParams.append('character', character);
+	characterParams.append('colour', colour);
+	const characterString = characterParams.toString();
+
+	const characterActual = $(`#p${player}_character_actual`);
+	characterActual.attr("character", character);
+	characterActual.attr("colour", colour);
+
+	characterActual.attr("src", '/stock?' + characterString);
+	$(`#p${player}_character_change`).attr("src", "/csp?" + characterString);
 }
 
 function update_scene() {

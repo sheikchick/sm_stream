@@ -1,0 +1,189 @@
+body {
+    display: flex;
+    justify-content: space-between;
+}
+
+.scores {
+    height: 28px;
+}
+
+.link {
+    opacity: 0;
+    font-size: 18px;
+}
+
+#background {
+    clip-path: polygon(
+        0px 0px,
+        0px 1080px,
+        303px 1080px,
+        303px 0px,
+        1617px 0px,
+        1617px 1080px,
+        1920px 1080px,
+        1920px 0px);
+}
+
+.sidebar {
+    width: 303px;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 11px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 11px;
+}
+
+#sidebar-left{
+    border-right: 3px solid white;
+}
+
+#sidebar-right {
+    border-left: 3px solid white;
+}
+
+.player-container {
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+.overlay {
+    opacity: 0;
+    width: 272px;
+    padding: 3px 3px 0;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+.color-overlay {
+    width: 100%;
+    height: 376px;
+    flex-shrink: 0;
+    background-color: #202020;
+}
+
+.character-portrait {
+    width: 100%;
+    height: 100%;
+}
+
+.name {
+    width: 100%;
+    font-size: 24px;
+    line-height: 2em;
+    height: 2em;
+    text-align: center;
+    color: #202020;
+}
+
+.character {
+    width: 100%;
+}
+
+.saga-container {
+    position: absolute;
+}
+
+.saga {
+    margin: 3px;
+    transform: scale(1.5);
+    transform-origin: top left;
+    opacity: 0.5;
+}
+
+.round-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%
+}
+
+#tournament,#date {
+    font-size: 28px;
+    text-align: center;
+    font-family: "Roboto";
+}
+
+#tournament {
+	white-space: normal;
+}
+
+#round {
+    font-size: 22px;
+    text-align: center;
+    font-family: "Roboto";
+}
+
+#intro {
+    position: fixed;
+    width: 1920px;
+    height: 1080px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.50);
+    font-size: 36px;
+}
+
+#intro-content {
+    opacity: 0;
+    width: 1314px;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 11px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.intro-border {
+    border-top: 3px solid white;
+    width: 100%;
+}
+
+.intro-main {
+    font-size: 48px;
+    width: 100%;
+    height: 4em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    box-sizing: border-box;
+    padding: 1em;
+}
+
+.intro-player-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex: 1 1 0;
+}
+
+#intro-tournament-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 3em;
+}
+
+.intro-tournament {
+    text-align: center;
+    flex: 0 0 50%;
+}
+
+#intro-border-1 {
+    transform-origin: left;
+}
+#intro-border-2 {
+    transform-origin: right;
+}

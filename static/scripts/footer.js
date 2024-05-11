@@ -1,0 +1,1 @@
+$(`.navlink[href='${window.location.pathname}']`)?.addClass('navlink-current')

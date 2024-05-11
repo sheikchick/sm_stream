@@ -48,11 +48,6 @@ body {
 	color: white;
 }
 
-a {
-	display: block;
-	margin-bottom: 5px;
-}
-
 #left_wrapper {
   	display: grid;
 	grid-template-rows: 80px [row-start] 150px [row-start] 52px [row-start] 150px [row-start] 52px [row-start] 150px [row-start] 52px [row-start] 150px [row-start] 80px [row-start];
@@ -247,54 +242,6 @@ a {
 
 #p2_stock {
 	display: none;
-}
-
-#auto_button {
-	position: absolute;
-	left: 110px;
-	bottom: 10px;
-	font-size: 24px;
-	margin: 5px;
-	margin-top: 20px;
-	color: #323232;
-	background-color: #fff;
-	border: none;
-	border-bottom: 3px solid #AAA;
-	height: 39px;
-	width: 40px;
-	padding: 3px 1px 3px 3px;
-}
-
-#manual_button {
-	position: absolute;
-	left: 60px;
-	bottom: 10px;
-	font-size: 24px;
-	margin: 5px;
-	margin-top: 20px;
-	color: #323232;
-	background-color: #fff;
-	border: none;
-	border-bottom: 3px solid #AAA;
-	height: 39px;
-	width: 40px;
-	padding: 3px 1px 3px 3px;
-}
-
-#settings_button {
-	position: absolute;
-	left: 10px;
-	bottom: 10px;
-	font-size: 24px;
-	margin: 5px;
-	margin-top: 20px;
-	color: #323232;
-	background-color: #5EEBB1;
-	border: none;
-	border-bottom: 3px solid #25634a;
-	height: 39px;
-	width: 40px;
-	padding: 3px 1px 3px 3px;
 }
 
 .name {

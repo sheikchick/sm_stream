@@ -165,8 +165,8 @@ app.get(`/csp`, (req, res) => {
 });
 
 app.get(`/stock`, (req, res) => {
-    const {query: {character, colour}} = req;
-    res.sendFile(charInfo.getStock(character, colour));
+    const {query: {character, colour, overlay}} = req;
+    res.sendFile(charInfo.getStock(character, colour, overlay));
 });
 
 app.get(`/vs`, (req, res) => {

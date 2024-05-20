@@ -1,5 +1,6 @@
 [web]
 # Port where web config will be accessible
+
 port = 5000
 
 [obs]
@@ -30,7 +31,13 @@ key = "025446143514ddd5187345ca3546cb42"
 
 [slippi]
 # Output folder for the .SLP files of the stream setup
-directory = "D:\slp_files\SlippiSpectate\cleo"
+#"D:\stream stuff\stream\web_application\slp"
+#"F:\SSBM\Slippi\2023-03"
+#"D:\work_replay"
+
+directory = "C:\Users\Gregor\Documents\Slippi\Spectate"
+# directory = "C:\Users\Gregor\Documents\Slippi\2024-02"
+# directory = "C:\Users\Gregor\Documents\Slippi\Regenerated"
 
 # Only used for recording replays after an event
 melee_iso = "C:\Users\Public\Documents\[SSBM]ScotlandStages.iso"

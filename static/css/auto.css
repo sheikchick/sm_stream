@@ -638,9 +638,7 @@ button:focus {
 
 /* START.GG */
 #row6 {
-	display: grid;
-	place-items: center;
-	grid-template-columns: 180px [col-start] 100px [col-start] 180px [col-start] 100px [col-start];
+	display: flex;
 }
 
 #row7 {
@@ -665,16 +663,7 @@ button:focus {
 	grid-column: 2;
 }
 
-#event {
-	display: none;
-	grid-column: 3;
-	width: 160px;
-	height: 35px;
-	padding: 5px 10px 5px 10px;
-	font-size: 14px;
-}
-
-#event_submit {
+#get_sets {
 	display: none;
 	grid-column: 4;
 }
@@ -810,7 +799,34 @@ button:focus {
 	height: 30px;
 	width: 70px;
 	padding: 4px 5px 1px 5px;
-	margin-right: 20px;
+	margin: 0px 10px;
+}
+
+.startgg.input.c {
+	display: none;
+	grid-column: 3;
+	width: 160px;
+	height: 35px;
+	padding: 5px 10px 5px 10px;
+	font-size: 14px;
+}
+
+.startgg.input {
+	margin: 0px 10px;
+}
+
+#phase_groups {
+	width: 100px;
+}
+
+
+.startgg.input.c {
+	display: none;
+	grid-column: 3;
+	width: 160px;
+	height: 35px;
+	padding: 5px 10px 5px 10px;
+	font-size: 14px;
 }
 
 .pronouns_container {

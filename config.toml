@@ -1,11 +1,11 @@
 [web]
-# Port where web config will be accessible
 
+# Port where web config will be accessible
 port = 5000
 
 [obs]
-# Where the OBS WebSocket should connect to, default host is 'localhost'
 
+# Where the OBS WebSocket should connect to, default host is 'localhost'
 host = "127.0.0.1"
 port = 4455
 password = "stillglaikit"
@@ -13,31 +13,24 @@ password = "stillglaikit"
 # Automatically change scenes when a game is in progress using slippi.
 # Useful to avoid the "Waiting for game" screen
 # true / false
-
 scene_changer = true
 
 #Scenes to automatically switch to when game starts and ends.
 # Typically start_scene will contain an instance of Slippi Dolphin and end_scene one of a capture card or webcams
-
 start_scene = "game"
 end_scene = "splash"
 
 browser_transition = "game-in (browser)"
 
 [startgg]
-# start.gg API key and version - generate one at https://start.gg/admin/profile/developer
 
+# start.gg API key and version - generate one at https://start.gg/admin/profile/developer
 key = "025446143514ddd5187345ca3546cb42"
 
 [slippi]
-# Output folder for the .SLP files of the stream setup
-#"D:\stream stuff\stream\web_application\slp"
-#"F:\SSBM\Slippi\2023-03"
-#"D:\work_replay"
 
+# Output folder for the .SLP files of the stream setup
 directory = "C:\Users\Gregor\Documents\Slippi\Spectate"
-# directory = "C:\Users\Gregor\Documents\Slippi\2024-02"
-# directory = "C:\Users\Gregor\Documents\Slippi\Regenerated"
 
 # Only used for recording replays after an event
 melee_iso = "C:\Users\Public\Documents\[SSBM]ScotlandStages.iso"
@@ -45,7 +38,6 @@ melee_iso = "C:\Users\Public\Documents\[SSBM]ScotlandStages.iso"
 # Automatically keep track of match score
 track_score = true
 
-# Unless debugging, keep this false (duh)
-# false = games with less than 45 seconds playtime, under 120% damage dealt, games with CPUs, do not advance game score
-# true = every match is treated as a tournament game
+# Unless debugging, keep this false (duh) - games with less than 45 seconds playtime, under 120% damage dealt, games with CPUs, do not advance game score when false
+# true / false
 debug_mode = false

@@ -91,9 +91,11 @@
 
 		<div id="row6" class="row">
 			<input type="text" id="tournament_slug" class="startgg tournament input" placeholder="startgg tournament slug">
-			<button type="button" id="tournament_slug_submit" class="startgg bottom button" onclick="getTournament()">Submit</button>
-			<select id="event"></select>
-			<button type="button" id="event_submit" class="startgg bottom button" onclick="getEvent()">Submit</button>
+			<button type="button" id="tournament_slug_submit" class="startgg bottom button" onclick="getTournamentEvents()">Submit</button>
+			<select class="startgg input c" id="events" onchange="getEventPhases()"></select>
+			<select class="startgg input c" id="phases" onchange="getPhaseGroups()"></select>
+			<select class="startgg input c" id="phase_groups" onchange="showGetSets()"></select>
+			<button type="button" id="get_sets" class="startgg bottom button" onclick="getSets()">Get sets</button>
 		</div>
 
 		<div id="row7" class="row">

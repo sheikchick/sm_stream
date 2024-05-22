@@ -527,7 +527,7 @@ function change_best_of(value) {
 }
 
 /**
- * up : 			direction of page
+ * up : direction of page (true/false)
  */
 function showSets(up) {
 	if(up) {
@@ -600,7 +600,8 @@ function showSets(up) {
 	} else {
 		$("#page_right").show()
 	}
-} 
+}
+
 /**
  * STARTGG
  */

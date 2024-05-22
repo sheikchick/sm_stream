@@ -6,13 +6,14 @@ const path = require("path");
 const fs = require("fs/promises");
 
 const logging = require("./logging.js");
-const serverConfig = require("./config.js");
+const { parseConfig, writeConfig } = require("./config.js");
 const { loadObs } = require("./obs.js");
 const recordLive = require("./recordLive.js");
 const { recordReplays } = require("./recordReplays.js");
 const charInfo = require("./charInfo.js");
 const { readData, writeData, INFO, DATA_FILES, REPLAY_QUEUE } = require("./data.js");
 const { watch } = require("./slpWatch.js");
+const { start } = require("repl");
 
 const app = express();
 let server;
@@ -58,6 +59,26 @@ fs.readdir(layoutsDir, {withFileTypes: true}).then((files) => {
             });
         })
     })
+});
+
+// live-recording endpoints
+app.all("/get_config", (req, res) => {
+    parseConfig()
+        .then(() => {
+            res.json(config);
+        }).catch(() => {
+            res.sendStatus(500);
+        });
+});
+
+// live-recording endpoints
+app.all("/write_config", (req, res) => {
+    writeConfig(res.json)
+        .then(() => {
+            res.sendStatus(200);
+        }).catch(() => {
+            res.sendStatus(500);
+        });
 });
 
 DATA_FILES.forEach((f) => {
@@ -184,5 +205,5 @@ async function startApp() {
 }
 
 if(require.main == module) {
-    serverConfig.read(startApp);
+    parseConfig().then((f) => startApp());
 }

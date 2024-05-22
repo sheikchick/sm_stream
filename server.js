@@ -9,6 +9,7 @@ const logging = require("./logging.js");
 const serverConfig = require("./config.js");
 const { loadObs } = require("./obs.js");
 const recordLive = require("./recordLive.js");
+const recordAuto = require("./recordLive.js");
 const { recordReplays } = require("./recordReplays.js");
 const charInfo = require("./charInfo.js");
 const { readData, writeData, INFO, DATA_FILES, REPLAY_QUEUE } = require("./data.js");
@@ -79,11 +80,11 @@ app.post("/update", (req, res) => {
 });
 
 // live-recording endpoints
-app.post("/save_recording", (req, res) => {
+app.all("/save_recording", (req, res) => {
     recordLive.saveRecording(req.body.timecode)
         .then((recording_status) => {
             res.json({recording_status});
-        }).catch(() => {
+        }).catch((f) => {
             res.sendStatus(500);
         });
 });
@@ -100,6 +101,24 @@ app.post("/save_clip", (req, res) => {
 app.get("/recording_status", (req, res) => {
     res.json({recording_status: recordLive.getRecordingStatus()});
 });
+
+/* DEBUG START */
+
+// Auto-recording endpoints
+app.all("/save_auto_recording", (req, res) => {
+    recordAuto.saveRecording(req.body.timecode)
+        .then((recording_status) => {
+            res.json({recording_status});
+        }).catch((f) => {
+            res.sendStatus(500);
+        });
+});
+
+app.get("/recording_status_auto", (req, res) => {
+    res.json({recording_status: recordLive.getRecordingStatus()});
+});
+
+/* DEBUG END */
 
 // replay-recording endpoints
 app.all(`/${REPLAY_QUEUE}`, (req, res) => {

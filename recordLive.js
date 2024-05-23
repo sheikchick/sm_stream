@@ -18,7 +18,7 @@ exports.saveRecording = async (filename, start, end) => {
     ]);
 
     const videoName = `${data.Player1.name} vs ${data.Player2.name} - ${data.round}`.replace(/[/\\?%*:|"<>]/g, '');
-    const command = `ffmpeg -i "${vod}" -ss ${start} -to ${end} -c copy "${videoName}.mp4"\n`;
+    const command = `ffmpeg -i "${vod}" -ss ${start}ms -to ${end}ms -c copy "${videoName}.mp4"\n`;
     const batFile = path.join(recordDirectory, filename + '.bat');
 
     await fs.appendFile(batFile, command, "utf8");
@@ -43,8 +43,10 @@ exports.saveClip = async (filename, timecode) => {
     );
     const vod = await getLatestRecordingFile(recordDirectory);
 
+    const startTimecode = timecodeOffset(timecode, -(config.clip_length*1000))
+
     const videoName = timecode.replaceAll(":", "-");
-    const command = `ffmpeg -i "${vod}" -ss ${subtractFromTimescode(timecode)} -to ${timecode} -c copy "${videoName}.mp4"\n`;
+    const command = `ffmpeg -i "${vod}" -ss ${startTimecode}ms -to ${timecode}ms -c copy "${videoName}.mp4"\n`;
     const batFile = path.join(recordDirectory, filename + '.bat');
 
     await fs.appendFile(batFile, command, "utf8");
@@ -57,19 +59,9 @@ exports.saveClip = async (filename, timecode) => {
     } 
 };
 
-const subtractFromTimescode = (() => {
-    const regex = /\d\d(?::\d\d)+/;
-    const startOfVod = "00:00:00";
-    return (timecode) => {
-        const noMillis = timecode.match(regex)?.[0].split(":") || [];
-        const seconds = (noMillis.pop() || 0) - 30;
-        const minutes = (noMillis.pop() || 0) - (seconds < 0 | 0);
-        const hours = (noMillis.pop() || 0) - (minutes < 0 | 0);
-        return hours < 0
-            ? startOfVod
-            : `${`${hours}`.padStart(2, '0')}:${`${(60 + minutes) % 60}`.padStart(2, '0')}:${`${(60 + seconds) % 60}`.padStart(2, '0')}`;
-    };
-})();
+exports.timecodeOffset = (timecode, value) => {
+    return Math.max(0, timecode + value)
+}
 
 const rejectIfObsNotRecording = () => new Promise((resolve, reject) => {
     obs.call('GetRecordStatus').then(({outputActive}) => {

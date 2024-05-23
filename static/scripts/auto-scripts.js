@@ -319,7 +319,7 @@ function recordSet(offset_ms) {
 		'GetRecordStatus'
 	)
 	.then(function(status) {
-		console.log(status.outputTimecode)
+		console.log(status.outputDuration)
 		current_color = $("#ffmpeg-record").css("background-color");
 		current_status = $("#ffmpeg-record").text();
 		current_border = $("#ffmpeg-record").css("border-bottom");
@@ -360,7 +360,7 @@ function recordSet(offset_ms) {
 			method: 'POST',
 			headers: { "Content-Type": "application/json"},
 			body: JSON.stringify({
-				timecode: status.outputTimecode
+				timecode: status.outputDuration
 			}),
 			signal: record_controller.signal
 		})
@@ -392,7 +392,7 @@ function autoRecord(offset_ms) {
 		'GetRecordStatus'
 	)
 	.then(function(status) {
-		var timecode = status.outputTimecode
+		var timecode = status.outputDuration
 		if(!status.outputActive) {
 		} 
 
@@ -497,7 +497,7 @@ function clip() {
 			method: 'POST',
 			headers: { "Content-Type": "application/json"},
 			body: JSON.stringify({
-				timecode: value.outputTimecode
+				timecode: value.outputDuration
 			}),
 			signal: record_controller.signal
 		})

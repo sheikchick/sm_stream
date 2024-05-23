@@ -19,8 +19,11 @@ scene_changer = true
 # Typically start_scene will contain an instance of Slippi Dolphin and end_scene one of a capture card or webcams
 start_scene = "game"
 end_scene = "splash"
-
 browser_transition = "game-in (browser)"
+
+
+# Length of clip (in seconds)
+clip_length = 30
 
 [startgg]
 

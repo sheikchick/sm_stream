@@ -85,7 +85,7 @@ exports.changeScene = (() => {
 });
 
 /**
- * get the timecode of the current recording if it is in progress
+ * get the timecode (in ms since start) of the current recording if it is in progress
  * @param {string} scene 
  * @returns {Promise} resolves to a boolean indicating whether scene was changed.
  */
@@ -93,7 +93,7 @@ exports.getTimecode = (() => {
     const getRecordStatus = 'GetRecordStatus';
     obs?.call(getRecordStatus)
         .then((f) => {
-            return f.outputTimecode;
+            return f.outputDuration;
         }).catch(() => {
             logging.log(`${f}`);
             unloadObs();

@@ -2,6 +2,8 @@ const slpTools = require("./slp_tools.js");
 const logging = require("./logging.js");
 const { SlippiGame } = require("@slippi/slippi-js");
 const { readData, writeData, INFO, MATCH_RESULT } = require("./data.js");
+const { getTimecode } = require("./obs.js");
+let recordLive = require("./recordLive.js");
 
 const maintainScore = (() => {
     const FRIENDLIES = 'friendlies';
@@ -25,6 +27,7 @@ const maintainScore = (() => {
 
         info.Player1.name = p1Name;
         info.Player2.name = p2Name;
+        global.auto_timecode = recordLive.timecodeOffset(getTimecode(), -10000) //start the auto recording 10 seconds earlier
     };
     
     return (info) => {
@@ -33,9 +36,11 @@ const maintainScore = (() => {
             ? Number.MAX_SAFE_INTEGER
             : Math.ceil((info.best_of || 3)/2);
 
-        if (info.Player1.score >= firstTo || info.Player2.score >= firstTo) {
+        const p1Score = info.Player1.score;
+        const p2Score = info.Player2.score;
+
+        if (p1Score >= firstTo || p2Score >= firstTo || p1Score + p2Score === 0) {
             newSet(info, round);
-            auto_timecode = getTimecode() //PROBABLY WRONG
         }
     };
 })();
@@ -47,7 +52,7 @@ const getActiveRotationPlayers = (info, players) => (Object.keys(info)
         : [players[0].port, players[1].port]
     ).map(p => `Player${p}`);
 
-exports.gameStart = async (path) => {
+exports.gameStart = async (path, setStart) => {
     const game = new SlippiGame(path, {processOnTheFly: true});
     const settings = game.getSettings();
     const teams = slpTools.getSlippiTeams(settings.players);
@@ -112,6 +117,8 @@ exports.gameMid = async ({game, settings, teams}) => {
 };
 
 exports.gameEnd = async ({game, settings, teams}, match_data = []) => {
+    const MAX_SCORE = Math.ceil(info.best_of/2)
+
     if(!config.slippi.debug_mode && !slpTools.isValidGame(game)) {
         return match_data;
     }
@@ -157,12 +164,18 @@ exports.gameEnd = async ({game, settings, teams}, match_data = []) => {
 
     match_data.push(game_data);
     
-    if(info.Player1.score >= Math.ceil(info.best_of/2) || info.Player2.score >= Math.ceil(info.best_of/2)) {
-        match_data = [];
+    if(info.Player1.score >= MAX_SCORE || info.Player2.score >= MAX_SCORE) {
+
+        //auto recording save
+        recordLive.saveRecording("auto", auto_timecode, recordLive.timecodeOffset(getTimecode(), 15000)) //save 15 seconds after end of set
+            .then(() => global.auto_timecode = "")
+
         await writeData(MATCH_RESULT, {
             tags: [info.Player1.name, info.Player2.name],
             games: match_data
         });
+        
+        match_data = [];
     }
 
     return writeInfoPromise.then(() => match_data);

@@ -74,7 +74,6 @@ app.all("/get_config", (req, res) => {
         });
 });
 
-// live-recording endpoints
 app.all("/write_config", (req, res) => {
     writeConfig(res.json)
         .then(() => {
@@ -109,7 +108,7 @@ app.all("/save_recording", (req, res) => {
         res.json({recording_status : true});
     } else {
         recordLive.saveRecording("sets", manual_timecode, req.body.timecode)
-            .then((m_recording_status) => {
+            .then(() => {
                 manual_timecode = ""
                 res.json({recording_status});
             }).catch((f) => {

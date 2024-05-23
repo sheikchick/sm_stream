@@ -7,9 +7,8 @@ const fs = require("fs/promises");
 
 const logging = require("./logging.js");
 const { parseConfig, writeConfig } = require("./config.js");
-const { loadObs } = require("./obs.js");
-const recordLive = require("./recordLive.js");
-const recordAuto = require("./recordLive.js");
+const { loadObs, getTimecode } = require("./obs.js");
+let recordLive = require("./recordLive.js");
 const { recordReplays } = require("./recordReplays.js");
 const charInfo = require("./charInfo.js");
 const { readData, writeData, INFO, DATA_FILES, REPLAY_QUEUE } = require("./data.js");
@@ -21,8 +20,11 @@ let server;
 
 global.config;
 
-global.recording_status = false;
-global.current_timestamp = "";
+global.m_recording_status = false;
+global.manual_timecode = "";
+
+global.a_recording_status = false;
+global.auto_timecode = "";
 
 const layoutsDir = path.join(__dirname, 'views', 'layouts');
 app.set('views', layoutsDir);
@@ -102,16 +104,22 @@ app.post("/update", (req, res) => {
 
 // live-recording endpoints
 app.all("/save_recording", (req, res) => {
-    recordLive.saveRecording(req.body.timecode)
-        .then((recording_status) => {
-            res.json({recording_status});
-        }).catch((f) => {
-            res.sendStatus(500);
-        });
+    if(manual_timecode == "") {
+        manual_timecode = req.body.timecode
+        res.json({recording_status : true});
+    } else {
+        recordLive.saveRecording("sets", manual_timecode, req.body.timecode)
+            .then((m_recording_status) => {
+                manual_timecode = ""
+                res.json({recording_status});
+            }).catch((f) => {
+                res.sendStatus(500);
+            });
+    }
 });
 
 app.post("/save_clip", (req, res) => {
-    recordLive.saveClip(req.body.timecode)
+    recordLive.saveClip("clips", req.body.timecode)
         .then(() => {
             res.sendStatus(200);
         }).catch(() => {
@@ -120,23 +128,29 @@ app.post("/save_clip", (req, res) => {
 });
 
 app.get("/recording_status", (req, res) => {
-    res.json({recording_status: recordLive.getRecordingStatus()});
+    res.json({m_recording_status: manual_timecode != ""});
 });
 
 /* DEBUG START */
 
 // Auto-recording endpoints
 app.all("/save_auto_recording", (req, res) => {
-    recordAuto.saveRecording(req.body.timecode)
-        .then((recording_status) => {
-            res.json({recording_status});
-        }).catch((f) => {
-            res.sendStatus(500);
-        });
+    if(auto_timecode == "") {
+        auto_timecode = req.body.timecode
+        res.json({recording_status : true});
+    } else {
+        recordLive.saveRecording("auto", auto_timecode, req.body.timecode)
+            .then((m_recording_status) => {
+                auto_timecode = ""
+                res.json({recording_status});
+            }).catch((f) => {
+                res.sendStatus(500);
+            });
+    }
 });
 
 app.get("/recording_status_auto", (req, res) => {
-    res.json({recording_status: recordLive.getRecordingStatus()});
+    res.json({recording_status: auto_timecode != ""});
 });
 
 /* DEBUG END */
@@ -219,6 +233,7 @@ async function startApp() {
     await loadObs();
     server = app.listen(config.web.port, () => {
         logging.log("Web application listening on port " + config.web.port)
+        getTimecode()
     });
     watch(config.slippi.directory);
 }

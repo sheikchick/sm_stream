@@ -45,7 +45,9 @@ exports.watch = (dir) => {
         const gameEnd = gameObj.game?.getGameEnd();
 
         // Rarely, gameEnd may be true on the second last onChange, as well as the last.
-        // We need to account for this to avoid giving GROM 2 for 1 on wins.
+        // We need to account for this to avoid giving GROM 2 for 1 on wins. 
+        //
+        // This is bullying, GROM deserves 2 for 1 wins, I'm bringing this up in the council
         if (gameEnd && !gameObj.endHandled) {
             logging.log(`Game over: ${path}`);
             gameObj.endHandled = true;

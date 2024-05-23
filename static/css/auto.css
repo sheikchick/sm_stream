@@ -594,6 +594,17 @@ button:focus {
 	margin: 10px;
 }
 
+#obs_auto {
+	display: flex;
+	align-items: center;
+	background-color: #666;
+	border-radius: 5px;
+}
+
+#obs_auto input, #obs_auto button {
+	margin: 10px;
+}
+
 button:disabled {
 	background-color: rgb(170, 170, 170) !important;
 	border-bottom: 3px solid rgb(153, 153, 153) !important;

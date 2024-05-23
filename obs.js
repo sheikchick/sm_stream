@@ -82,4 +82,20 @@ exports.changeScene = (() => {
                 logging.log(`Failed to change scene to ${sceneName}.`);
                 unloadObs();
             });
-})();
+});
+
+/**
+ * get the timecode of the current recording if it is in progress
+ * @param {string} scene 
+ * @returns {Promise} resolves to a boolean indicating whether scene was changed.
+ */
+exports.getTimecode = (() => {
+    const getRecordStatus = 'GetRecordStatus';
+    obs?.call(getRecordStatus)
+        .then((f) => {
+            return f.outputTimecode;
+        }).catch(() => {
+            logging.log(`${f}`);
+            unloadObs();
+        });
+});

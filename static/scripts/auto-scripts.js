@@ -1,20 +1,24 @@
 is_doubles = false;
 var obs;
+var ip;
 var sets = [];
 var set_page = 0;
 
 const phone_aspect = window.matchMedia("(max-aspect-ratio: 1/1), (max-width: 1000px)");
 
 $(document).ready(function(){
-	obs = new OBSWebSocket();
-	url = window.location.href;
-	var arr = url.split(":");
-	var ip = arr[1].substr(2, this.length);
-	obsurl = "ws://" + ip + ":" + obs_port;
-
+	obsConnect();
 	load_changes();
-
 	change_best_of(best_of_value);
+	toggle_doubles();
+	getSets();
+});
+
+function obsConnect() {
+	obs = new OBSWebSocket();
+
+	ip = window.location.href.split(":")[1].substring(2);
+	obsurl = "ws://" + ip + ":" + obs_port;
 
 	obs.connect(obsurl, obs_password)	
 		.then(() => {
@@ -31,11 +35,7 @@ $(document).ready(function(){
 		.catch(err => {
         	console.log(err);
     	});
-
-	is_doubles = $(".toggle_doubles").attr("value") !== "true"
-	toggle_doubles();
-	getSets();
-});
+}
 
 function hideColour(player, slot) {
 	$("#p" + player + "_colour" + slot).attr("src", "");
@@ -177,6 +177,7 @@ function swap_team(n) {
 }
 
 function toggle_doubles() {
+	is_doubles = $(".toggle_doubles").attr("value") !== "true"
 	//changing to singles
 	if(is_doubles) {
 		$(".toggle_doubles").text("Singles ");
@@ -254,7 +255,9 @@ function load_changes() {
 		},
 		timeout: 5000
 	})
-	update_record_button();
+	if (obs !== null) {
+		getRecordStatus();
+	}
 	setTimeout(load_changes, 1000)
 }
 
@@ -282,7 +285,7 @@ function update_scene() {
 	})
 }
 
-function update_record_button() {
+function getRecordStatus() {
 	obs.call('GetRecordStatus')
 		.catch(() => false)
 		.then(({outputActive}) => {
@@ -382,7 +385,66 @@ function recordSet(offset_ms) {
 
 		})
 	})
+}
 
+function autoRecord(offset_ms) {
+	obs.call(
+		'GetRecordStatus'
+	)
+	.then(function(status) {
+		var timecode = status.outputTimecode
+		if(!status.outputActive) {
+		} 
+
+		const record_controller = new AbortController()
+		const record_timeout = setTimeout(() => {
+			record_controller.abort()
+			$("auto-record").text("Failed")
+			setTimeout(function(){
+				$("auto-record").text("Record")
+			}, 2000);
+		}, 5000);
+		fetch("/save_auto_recording", {
+			method: 'POST',
+			headers: { "Content-Type": "application/json"},
+			body: JSON.stringify({
+				timecode: timecode
+			}),
+			signal: record_controller.signal
+		})
+		.then((response) => response.json())
+		.then((data) => {
+			clearTimeout(record_timeout)
+			if(!data.recording_status) {
+				record_controller.abort()
+				$("#auto-record").text("Recorded")
+				setTimeout(function(){
+					$("#auto-record").text("Record")
+				}, 2000);
+			} else {
+				$("#auto-record").text("Recording")
+			}
+		})
+	})
+}
+
+function getAutoStatus() {
+	obs.call('GetRecordStatus')
+		.catch(() => false)
+		.then(({outputActive}) => {
+			$.ajax({
+				type: 'GET',
+				url: "/recording_status_auto",
+				data: {},
+				success: function(response) {
+					console.log(response)
+				},
+				error: function(response) {
+					console.log(response)
+				},
+				timeout: 5000
+			})
+		});
 }
 
 function clip() {

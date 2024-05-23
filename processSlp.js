@@ -35,6 +35,7 @@ const maintainScore = (() => {
 
         if (info.Player1.score >= firstTo || info.Player2.score >= firstTo) {
             newSet(info, round);
+            auto_timecode = getTimecode() //PROBABLY WRONG
         }
     };
 })();

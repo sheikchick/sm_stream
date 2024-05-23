@@ -7,40 +7,34 @@ const { readData, INFO } = require("./data.js");
 const FILE_NOT_FOUND = "FILE NOT FOUND";
 let setStartedAt = "";
 
-exports.saveRecording = async (timecode) => {
+exports.saveRecording = async (filename, start, end) => {
     await rejectIfObsNotRecording();
+    //end recording
 
-    if(setStartedAt) {
-        //end recording
+    const {recordDirectory} = await obs.call('GetRecordDirectory');
+    const [data, vod] = await Promise.all([
+        readData(INFO),
+        getLatestRecordingFile(recordDirectory)
+    ]);
 
-        const {recordDirectory} = await obs.call('GetRecordDirectory');
-        const [data, vod] = await Promise.all([
-            readData(INFO),
-            getLatestRecordingFile(recordDirectory)
-        ]);
+    const videoName = `${data.Player1.name} vs ${data.Player2.name} - ${data.round}`.replace(/[/\\?%*:|"<>]/g, '');
+    const command = `ffmpeg -i "${vod}" -ss ${start} -to ${end} -c copy "${videoName}.mp4"\n`;
+    const batFile = path.join(recordDirectory, filename + '.bat');
 
-        const videoName = `${data.Player1.name} vs ${data.Player2.name} - ${data.round}`.replace(/[/\\?%*:|"<>]/g, '');
-        const command = `ffmpeg -i "${vod}" -ss ${setStartedAt} -to ${timecode} -c copy "${videoName}.mp4"\n`;
-        const batFile = path.join(recordDirectory, 'sets.bat');
-
-        await fs.appendFile(batFile, command, "utf8");
-        logging.log(`Command to extract set from VoD saved to ${batFile}`);
-        
-        setStartedAt = "";
-        if (vod === FILE_NOT_FOUND) {
-            const message = "Unable to find VoD. Command saved with placeholder filename";
-            logging.error(message)
-            throw new Error(message); // Throw simply to return a 500
-        } 
-    } else {
-        //start recording
-        setStartedAt = timecode;
-    }
+    await fs.appendFile(batFile, command, "utf8");
+    logging.log(`Command to extract set from VoD saved to ${batFile}`);
+    
+    setStartedAt = "";
+    if (vod === FILE_NOT_FOUND) {
+        const message = "Unable to find VoD. Command saved with placeholder filename";
+        logging.error(message)
+        throw new Error(message); // Throw simply to return a 500
+    } 
 
     return this.getRecordingStatus();
 };
 
-exports.saveClip = async (timecode) => {
+exports.saveClip = async (filename, timecode) => {
     await rejectIfObsNotRecording();
 
     const recordDirectory = path.join(
@@ -51,7 +45,7 @@ exports.saveClip = async (timecode) => {
 
     const videoName = timecode.replaceAll(":", "-");
     const command = `ffmpeg -i "${vod}" -ss ${subtractFromTimescode(timecode)} -to ${timecode} -c copy "${videoName}.mp4"\n`;
-    const batFile = path.join(recordDirectory, 'clips.bat');
+    const batFile = path.join(recordDirectory, filename + '.bat');
 
     await fs.appendFile(batFile, command, "utf8");
     logging.log(`Command to extract set from VoD saved to ${batFile}`);

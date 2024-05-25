@@ -11,6 +11,7 @@ const os = require('os');
 const processSlp = require("./processSlp");
 const { REPLAY_QUEUE, writeData, INFO, DOLPHIN, DIRECTORY } = require('./data');
 const { changeScene } = require('./obs');
+const { delayPromiseStart } = require('./util');
 
 const sceneBlank = 'blank';
 
@@ -50,12 +51,6 @@ const parseSlippiGames = (() => {
         .map(({ path }) => (path))
     )
 })();
-
-const delayPromiseStart = (timeout, fn) => new Promise((resolve, reject) => {
-    setTimeout(() => {
-        fn().then(resolve).catch(reject);
-    }, timeout);
-});
 
 const loadSet = (() => {
     const savedDataName = 'set-data.json';

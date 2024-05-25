@@ -11,16 +11,23 @@ const { loadObs } = require("./obs.js");
 const recordLive = require("./recordLive.js");
 const { recordReplays } = require("./recordReplays.js");
 const charInfo = require("./charInfo.js");
-const { readData, writeData, INFO, DATA_FILES, REPLAY_QUEUE } = require("./data.js");
+const { readData, writeData, INFO, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
 const { watch } = require("./slpWatch.js");
+const { start } = require("repl");
+const { check_set_start } = require("./processSlp.js");
 
 const app = express();
 let server;
 
 global.config;
 
-global.recording_status = false;
-global.current_timestamp = "";
+global.m_recording_status = false;
+global.manual_timecode = "";
+
+global.a_recording_status = false;
+global.auto_timecode = "";
+
+global.current_set = [];
 
 const layoutsDir = path.join(__dirname, 'views', 'layouts');
 app.set('views', layoutsDir);
@@ -60,16 +67,35 @@ fs.readdir(layoutsDir, {withFileTypes: true}).then((files) => {
     })
 });
 
+// live-recording endpoints
+app.all("/get_config", (req, res) => {
+    parseConfig()
+        .then(() => {
+            res.json(config);
+        }).catch(() => {
+            res.sendStatus(500);
+        });
+});
+
+app.all("/write_config", (req, res) => {
+    writeConfig(res.json)
+        .then(() => {
+            res.sendStatus(200);
+        }).catch(() => {
+            res.sendStatus(500);
+        });
+});
+
 DATA_FILES.forEach((f) => {
     app.get(`/${f}`, (req, res) => {
-        readData(f).then((f) => {
-            res.json(f)
-        });
+        res.sendFile(path.join(__dirname, DIRECTORY + f));
     });
 });
 
 app.post("/update", (req, res) => {
-    writeData(INFO, req.body)
+    const info = req.body;
+    check_set_start(info);
+    writeData(INFO, info)
         .then(() => {
             res.sendStatus(200);
         })
@@ -79,20 +105,27 @@ app.post("/update", (req, res) => {
 });
 
 // live-recording endpoints
-app.post("/save_recording", (req, res) => {
-    recordLive.saveRecording(req.body.timecode)
-        .then((recording_status) => {
-            res.json({recording_status});
-        }).catch(() => {
-            res.sendStatus(500);
-        });
+app.all("/save_recording", (req, res) => {
+    if(manual_timecode == "") {
+        manual_timecode = req.body.timecode
+        res.json({recording_status : true});
+    } else {
+        recordLive.saveRecording("sets", manual_timecode, req.body.timecode)
+            .then(() => {
+                manual_timecode = ""
+                res.json({recording_status});
+            }).catch((f) => {
+                res.sendStatus(500);
+            });
+    }
 });
 
 app.post("/save_clip", (req, res) => {
     recordLive.saveClip(req.body.timecode)
         .then(() => {
             res.sendStatus(200);
-        }).catch(() => {
+        }).catch((e) => {
+            logging.error(e);
             res.sendStatus(500);
         });
 });

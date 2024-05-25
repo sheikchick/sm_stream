@@ -2,42 +2,57 @@ const slpTools = require("./slp_tools.js");
 const logging = require("./logging.js");
 const { SlippiGame } = require("@slippi/slippi-js");
 const { readData, writeData, INFO, MATCH_RESULT } = require("./data.js");
+const { getTimecode } = require("./obs.js");
+const recordLive = require("./recordLive.js");
 
-const maintainScore = (() => {
+const get_first_to = (best_of) => Math.ceil((best_of || 3)/2);
+
+exports.check_set_start = (() => {
     const FRIENDLIES = 'friendlies';
     const gf = "grand final";
     const l = " (L)";
-    const lRegex = /\s\(L\)/;
-    const notL = "";
+    const lRegex = /\s*(?:\(L\))?$/;
 
-    const newSet = (info, round) => {
-        info.Player1.score = 0;
-        info.Player2.score = 0;
-
-        let p1Name = info.Player1.name.replace(lRegex, notL);
-        let p2Name = info.Player2.name.replace(lRegex, notL);
-
-        if (round.includes(gf)) {
-            // If round is already gf, it must be a gf reset.
-            p1Name = p1Name + l;
-            p2Name = p2Name + l;
-        }
-
-        info.Player1.name = p1Name;
-        info.Player2.name = p2Name;
-    };
-    
     return (info) => {
-        const round = info.round.toLowerCase();
-        const firstTo = round === FRIENDLIES
-            ? Number.MAX_SAFE_INTEGER
-            : Math.ceil((info.best_of || 3)/2);
+        const round = info.round?.toLowerCase();
+        
+        if (!round.includes(FRIENDLIES)) {
+            const first_to = get_first_to(info.best_of);
+            const p1_score = info.Player1.score;
+            const p2_score = info.Player2.score;
+            const total_score = p1_score + p2_score;
+    
+            if (p1_score >= first_to || p2_score >= first_to || total_score === 0) {                       
+                logging.log('New set detected');
+                if (round.includes(gf) && total_score) {
+                    logging.log('Grand Final reset detected. Both players now in losers')
+                    info.Player1.name = info.Player1.name.replace(lRegex, l);
+                    info.Player2.name = info.Player2.name.replace(lRegex, l);
+                }
 
-        if (info.Player1.score >= firstTo || info.Player2.score >= firstTo) {
-            newSet(info, round);
+                info.Player1.score = 0;
+                info.Player2.score = 0;
+                current_set = [];
+                global.auto_timecode = global.auto_timecode || //ignore if a set has already started and we're simply updating the names partway through game 1
+                    recordLive.timecodeOffset(getTimecode(), -10000); //start the auto recording 10 seconds earlier
+            }
         }
     };
 })();
+
+check_set_end = async (info) => {
+    const first_to = get_first_to(info.best_of);
+    if(info.Player1.score >= first_to || info.Player2.score >= first_to) {
+        //auto recording save
+        recordLive.saveRecording("auto", auto_timecode, recordLive.timecodeOffset(getTimecode(), 15000)) //save 15 seconds after end of set
+            .then(() => global.auto_timecode = "")
+
+        await writeData(MATCH_RESULT, {
+            tags: [info.Player1.name, info.Player2.name],
+            games: current_set
+        });
+    }
+}
 
 const getActiveRotationPlayers = (info, players) => (Object.keys(info)
     .filter(k => k.startsWith('Player'))
@@ -52,7 +67,7 @@ exports.gameStart = async (path) => {
     const teams = slpTools.getSlippiTeams(settings.players);
 
     const info = await readData(INFO);
-    maintainScore(info);
+    this.check_set_start(info);
     if(teams.length === 2) {
         const activePlayers = getActiveRotationPlayers(info, settings.players);
         info.active_players = activePlayers;
@@ -110,16 +125,16 @@ exports.gameMid = async ({game, settings, teams}) => {
     }
 };
 
-exports.gameEnd = async ({game, settings, teams}, match_data = []) => {
+exports.gameEnd = async ({game, settings, teams}) => {
     if(!config.slippi.debug_mode && !slpTools.isValidGame(game)) {
-        return match_data;
+        return;
     }
 
     const winner = slpTools.getWinner(game);
 
     if(winner.length != Math.floor(settings.players.length / 2)) {
         logging.log("Too many or no winners in game, draw?");
-        return match_data;
+        return;
     }
 
     const winnerPlayerNumber = teams
@@ -154,15 +169,8 @@ exports.gameEnd = async ({game, settings, teams}, match_data = []) => {
         winner: winnerPlayerNumber
     });
 
-    match_data.push(game_data);
-    
-    if(info.Player1.score >= Math.ceil(info.best_of/2) || info.Player2.score >= Math.ceil(info.best_of/2)) {
-        match_data = [];
-        await writeData(MATCH_RESULT, {
-            tags: [info.Player1.name, info.Player2.name],
-            games: match_data
-        });
-    }
+    current_set.push(game_data);
+    await check_set_end(info);
 
-    return writeInfoPromise.then(() => match_data);
+    return writeInfoPromise;
 };

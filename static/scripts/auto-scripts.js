@@ -312,10 +312,10 @@ function update_record_button(recording_status) {
 				url: "/recording_status",
 				data: {},
 				success: function(response) {
-					if (outputActive && response.recording_status) {
-						$("#ffmpeg").text("Recording...");
-						$("#ffmpeg").css("background-color", "#9146FF");
-						$("#ffmpeg").css("border-bottom", "3px solid #44158a");
+					if (outputActive && response.m_recording_status) {
+						$("#ffmpeg-record").text("Recording...");
+						$("#ffmpeg-record").css("background-color", "#9146FF");
+						$("#ffmpeg-record").css("border-bottom", "3px solid #44158a");
 					} else {
 						$("#ffmpeg").text("Record");
 						$("#ffmpeg").css("background-color", "#FFFFFF");
@@ -335,10 +335,11 @@ function recordSet() {
 	obs.call(
 		'GetRecordStatus'
 	)
-	.then(function(value) {
-		current_color = $("#ffmpeg").css("background-color");
-		current_status = $("#ffmpeg").text();
-		current_border = $("#ffmpeg").css("border-bottom");
+	.then(function(status) {
+		console.log(status.outputTimecode)
+		current_color = $("#ffmpeg-record").css("background-color");
+		current_status = $("#ffmpeg-record").text();
+		current_border = $("#ffmpeg-record").css("border-bottom");
 
 		if(!value.outputActive) {
 			$("#ffmpeg").css("background-color", "#F56262");
@@ -376,7 +377,7 @@ function recordSet() {
 			method: 'POST',
 			headers: { "Content-Type": "application/json"},
 			body: JSON.stringify({
-				timecode: value.outputTimecode
+				timecode: status.outputTimecode
 			}),
 			signal: record_controller.signal
 		})
@@ -401,7 +402,66 @@ function recordSet() {
 
 		})
 	})
+}
 
+function autoRecord(offset_ms) {
+	obs.call(
+		'GetRecordStatus'
+	)
+	.then(function(status) {
+		var timecode = status.outputTimecode
+		if(!status.outputActive) {
+		} 
+
+		const record_controller = new AbortController()
+		const record_timeout = setTimeout(() => {
+			record_controller.abort()
+			$("auto-record").text("Failed")
+			setTimeout(function(){
+				$("auto-record").text("Record")
+			}, 2000);
+		}, 5000);
+		fetch("/save_auto_recording", {
+			method: 'POST',
+			headers: { "Content-Type": "application/json"},
+			body: JSON.stringify({
+				timecode: timecode
+			}),
+			signal: record_controller.signal
+		})
+		.then((response) => response.json())
+		.then((data) => {
+			clearTimeout(record_timeout)
+			if(!data.recording_status) {
+				record_controller.abort()
+				$("#auto-record").text("Recorded")
+				setTimeout(function(){
+					$("#auto-record").text("Record")
+				}, 2000);
+			} else {
+				$("#auto-record").text("Recording")
+			}
+		})
+	})
+}
+
+function getAutoStatus() {
+	obs.call('GetRecordStatus')
+		.catch(() => false)
+		.then(({outputActive}) => {
+			$.ajax({
+				type: 'GET',
+				url: "/recording_status_auto",
+				data: {},
+				success: function(response) {
+					console.log(response)
+				},
+				error: function(response) {
+					console.log(response)
+				},
+				timeout: 5000
+			})
+		});
 }
 
 function clip() {
@@ -454,7 +514,7 @@ function clip() {
 			method: 'POST',
 			headers: { "Content-Type": "application/json"},
 			body: JSON.stringify({
-				timecode: value.outputTimecode
+				timecode: value.outputDuration
 			}),
 			signal: record_controller.signal
 		})

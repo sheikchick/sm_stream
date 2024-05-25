@@ -74,12 +74,30 @@ const unloadObs = () => {
  */
 exports.changeScene = (() => {
     const setCurrentProgramScene = 'SetCurrentProgramScene';
-    return async (sceneName) => config.obs.scene_changer &&
-        obs?.call(setCurrentProgramScene, {sceneName})
-            .then(() => {
-                logging.log(`Changed scene to ${sceneName}.`);
-            }).catch(() => {
-                logging.log(`Failed to change scene to ${sceneName}.`);
-                unloadObs();
-            });
+    return async (sceneName) => {
+        if (config.obs.scene_changer) {
+            return obs?.call(setCurrentProgramScene, {sceneName})
+                .then(() => {
+                    logging.log(`Changed scene to ${sceneName}.`);
+                }).catch(() => {
+                    logging.log(`Failed to change scene to ${sceneName}.`);
+                    unloadObs();
+                });
+        }
+    }
 })();
+
+/**
+ * get the timecode (in ms since start) of the current recording if it is in progress
+ * @param {string} scene 
+ * @returns {Promise} resolves to a boolean indicating whether scene was changed.
+ */
+exports.getTimecode = () => {
+    const getRecordStatus = 'GetRecordStatus';
+    return obs?.call(getRecordStatus)
+        .then((f) => {
+            return f.outputDuration;
+        }).catch(() => {
+            unloadObs();
+        });
+};

@@ -19,8 +19,11 @@ scene_changer = true
 # Typically start_scene will contain an instance of Slippi Dolphin and end_scene one of a capture card or webcams
 start_scene = "game"
 end_scene = "splash"
-
 browser_transition = "game-in (browser)"
+
+
+# Length of clip (in seconds)
+clip_length = 30
 
 [startgg]
 
@@ -30,7 +33,7 @@ key = "025446143514ddd5187345ca3546cb42"
 [slippi]
 
 # Output folder for the .SLP files of the stream setup
-directory = "C:\Users\Gregor\Documents\Slippi\Spectate"
+directory = "C:\Users\Public\Documents\Slippi"
 
 # Only used for recording replays after an event
 melee_iso = "C:\Users\Public\Documents\[SSBM]ScotlandStages.iso"

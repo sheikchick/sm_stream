@@ -27,7 +27,3 @@ exports.readData = async (file) => this.DATA_FILES.includes(file)
         .then((data) => JSON.parse(data))
         .catch(() => logging.log(`Failed to open ${file}`))
     : {};
-
-exports.dataEndpoints = (app) => {
-
-}

@@ -19,9 +19,9 @@ exports.saveRecording = async (timecode) => {
             getLatestRecordingFile(recordDirectory)
         ]);
 
-        const videoName = `${data.Player1.name} vs ${data.Player2.name} - ${data.round}`.replace(/[/\\?%*:|"<>]/g, '');
-        const command = `ffmpeg -i "${vod}" -ss ${setStartedAt} -to ${timecode} -c copy "${videoName}.mp4"\n`;
-        const batFile = path.join(recordDirectory, 'sets.bat');
+    const videoName = `${data.Player1.name} vs ${data.Player2.name} - ${data.round}`.replace(/[/\\?%*:|"<>]/g, '');
+    const command = `ffmpeg -i "${vod}" -ss ${ms_to_hhmmss(start)} -to ${ms_to_hhmmss(end)} -c copy "${videoName}.mp4"\n`;
+    const batFile = path.join(recordDirectory, filename + '.bat');
 
         await fs.appendFile(batFile, command, "utf8");
         logging.info(`Command to extract set from VoD saved to ${batFile}`);
@@ -49,12 +49,15 @@ exports.saveClip = async (timecode) => {
     );
     const vod = await getLatestRecordingFile(recordDirectory);
 
-    const videoName = timecode.replaceAll(":", "-");
-    const command = `ffmpeg -i "${vod}" -ss ${subtractFromTimescode(timecode)} -to ${timecode} -c copy "${videoName}.mp4"\n`;
-    const batFile = path.join(recordDirectory, 'clips.bat');
+    const startMs = this.timecodeOffset(timecode, -(config.obs.clip_length*1000));
+    const startTimestamp = ms_to_hhmmss(startMs);
+    const endTimestamp = ms_to_hhmmss(timecode);
+
+    const command = `ffmpeg -i "${vod}" -ss ${startTimestamp}ms -to ${endTimestamp}ms -c copy "${endTimestamp}.mp4"\n`;
+    const batFile = path.join(recordDirectory, filename + '.bat');
 
     await fs.appendFile(batFile, command, "utf8");
-    logging.info(`Command to extract set from VoD saved to ${batFile}`);
+    logging.log(`Command to extract clip from vertical VoD saved to ${batFile}`);
 
     if (vod === FILE_NOT_FOUND) {
         const message = "Unable to find VoD. Command saved with placeholder filename";
@@ -63,19 +66,21 @@ exports.saveClip = async (timecode) => {
     } 
 };
 
-const subtractFromTimescode = (() => {
-    const regex = /\d\d(?::\d\d)+/;
-    const startOfVod = "00:00:00";
-    return (timecode) => {
-        const noMillis = timecode.match(regex)?.[0].split(":") || [];
-        const seconds = (noMillis.pop() || 0) - 30;
-        const minutes = (noMillis.pop() || 0) - (seconds < 0 | 0);
-        const hours = (noMillis.pop() || 0) - (minutes < 0 | 0);
-        return hours < 0
-            ? startOfVod
-            : `${`${hours}`.padStart(2, '0')}:${`${(60 + minutes) % 60}`.padStart(2, '0')}:${`${(60 + seconds) % 60}`.padStart(2, '0')}`;
-    };
-})();
+const ms_to_hhmmss = (ms) => {
+    let seconds = ms / 1000;
+    
+    const hours = parseInt(seconds / 3600);
+    seconds = seconds % 3600;
+
+    const minutes = parseInt(seconds / 60);
+    seconds = seconds % 60;
+
+    return `${String(hours).padStart(2, '')}:${String(minutes).padStart(2, '')}:${String(seconds).padStart(2, '')}`;
+};
+
+exports.timecodeOffset = (timecode, value) => {
+    return Math.max(0, timecode + value)
+}
 
 const rejectIfObsNotRecording = () => new Promise((resolve, reject) => {
     obs.call('GetRecordStatus').then(({outputActive}) => {

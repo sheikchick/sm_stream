@@ -2,6 +2,7 @@ const chokidar = require("chokidar");
 const processSlp = require("./processSlp");
 const { changeScene } = require("./obs");
 const logging = require("./logging");
+const { delayPromiseStart } = require('./util');
 
 const ignoredRegex = /^[/\w\.-]+(?<!\.slp)$/;
 const pending = 'pending';
@@ -19,7 +20,6 @@ exports.watch = (dir) => {
     });
 
     const games = {};
-    let match_data = [];
     watcher.on("change", (path) => {
         const gameObj = games[path];
         try {
@@ -52,10 +52,9 @@ exports.watch = (dir) => {
             gameObj.lastUpdate.then(() => {
                 Promise.all([
                     processSlp.gameEnd(gameObj),
-                    changeScene(config.obs.end_scene)
-                ]).then(([data]) => {
-                    match_data = data;
-                    !match_data.length && delete games[path];
+                    delayPromiseStart(1000, () => changeScene(config.obs.end_scene))
+                ]).then(() => {
+                    delete games[path];
                 });
             });
             return;

@@ -19,33 +19,36 @@
 
 <body>
 	{{> footer}}
-	<div id="left_wrapper">
-		<div id="row1" class="row">
-			<div id="p1_info_actual" class="info actual">
-				<div id="p1_text_actual" class="name_container actual">
-					<input type="text" id="p1_name_actual" class="name actual left" value="{{Player1.name}}" placeholder="Player 1 name" readonly="true">
-					<input type="text" id="p1d_name_actual" class="name actual left doubles" value="{{Player1.name_dubs}}" placeholder="Player 2 name" readonly="true">
-				</div>
-				<img id="p1_character_actual" class="stock_icon actual" src="stock">
-				<img id="p1d_character_actual" class="stock_icon actual" src="stock">
-				<input id="p1_score_actual" class="score actual" min="0" max="99" value="{{Player1.score}}" readonly="true">
+	<div id="header">
+		<div id="p1_info_actual" class="info actual">
+			<div id="p1_text_actual" class="name_container actual">
+				<input type="text" id="p1_name_actual" class="name actual left" value="{{Player1.name}}" placeholder="Player 1 name" readonly="true">
+				<input type="text" id="p1d_name_actual" class="name actual left doubles" value="{{Player1.name_dubs}}" placeholder="Player 2 name" readonly="true">
 			</div>
+			<img id="p1_character_actual" class="stock_icon actual" src="stock">
+			<img id="p1d_character_actual" class="stock_icon actual" src="stock">
+			<input id="p1_score_actual" class="score actual" min="0" max="99" value="{{Player1.score}}" readonly="true">
+		</div>
 
-			<div id="p2_info_actual" class="info actual">
-				<input id="p2_score_actual" class="score actual" min="0" max="99" value="{{Player2.score}}" readonly="true">
-				<img id="p2_character_actual" class="stock_icon actual" src="stock">
-				<img id="p2d_character_actual" class="stock_icon actual" src="stock">
-				<div id="p2_text_actual" class="name_container actual">
-					<input type="text" id="p2_name_actual" class="name actual right" value="{{Player2.name}}" placeholder="Player 1 name" readonly="true">
-					<input type="text" id="p2d_name_actual" class="name actual right doubles" value="{{Player2.name_dubs}}" placeholder="Player 2 name" readonly="true">
-				</div>
+		<div id="p2_info_actual" class="info actual">
+			<input id="p2_score_actual" class="score actual" min="0" max="99" value="{{Player2.score}}" readonly="true">
+			<img id="p2_character_actual" class="stock_icon actual" src="stock">
+			<img id="p2d_character_actual" class="stock_icon actual" src="stock">
+			<div id="p2_text_actual" class="name_container actual">
+				<input type="text" id="p2_name_actual" class="name actual right" value="{{Player2.name}}" placeholder="Player 1 name" readonly="true">
+				<input type="text" id="p2d_name_actual" class="name actual right doubles" value="{{Player2.name_dubs}}" placeholder="Player 2 name" readonly="true">
 			</div>
 		</div>
-		
-		<div id="row2" class="row">
-			<div id="p1_info_change" class="info change">
+		<div id="data_actual" class="data">
+			<input type="text" id="round_actual" class="data_text actual" value="{{round}}" placeholder="Round" readonly="true">
+			<input id="best_of_actual" class="data_text actual" best_of="{{best_of}}" value="Best of {{best_of}}" readonly="true">
+		</div>
+	</div>
+	<div id="main">
+		<div id="left_wrapper">
+			<div id="p1_info_change" class="info change left">
 				<button type="button" id="team1_swap" class="swap" onclick="swap_team(1)"><i class="fa-solid fa-arrows-up-down"></i></button>
-				<div id="p1_pronouns_change" class="pronouns_container change">
+				<div id="p1_pronouns_wrapper" class="pronouns wrapper change">
 					<input type="text" id="p1_pronouns" class="pronouns change left" value="{{Player1.pronouns}}" placeholder="Pronouns">
 					<input type="text" id="p1d_pronouns" class="pronouns change left doubles" value="{{Player1.pronouns_dubs}}" placeholder="Pronouns">
 				</div>
@@ -55,18 +58,16 @@
 				</div>
 				<img id="p1_character_change" class="csp actual" src="csp">
 				<img id="p1d_character_change" class="csp actual" src="csp">
-				<input type="number" id="p1_score_change" class="score change" min="0" max="99" value="{{Player1.score}}">
+				<input type="number" id="p1_score_change" class="score change left" min="0" max="99" value="{{Player1.score}}">
 			</div>
-		</div>
 
-		<div id="row3" class="row">
-			<button type="button" class="swap_sides" onclick="swap_sides()">Swap <i class="fa-solid fa-arrows-up-down"></i></button>
-		</div>
+			<div id="middle_row" class="row">
+				<button type="button" class="swap_sides" onclick="swap_sides()">Swap <i class="fa-solid fa-arrows-up-down"></i></button>
+			</div>
 
-		<div id="row4" class="row">
-			<div id="p2_info_change" class="info change">
+			<div id="p2_info_change" class="info change right">
 				<button type="button" id="team2_swap" class="swap" onclick="swap_team(2)"><i class="fa-solid fa-arrows-up-down"></i></button>
-				<div id="p2_pronouns_change" class="pronouns_container change">
+				<div id="p2_pronouns_wrapper" class="pronouns wrapper change">
 					<input type="text" id="p2_pronouns" class="pronouns change right" value="{{Player2.pronouns}}" placeholder="Pronouns">
 					<input type="text" id="p2d_pronouns" class="pronouns change right doubles" value="{{Player2.pronouns_dubs}}" placeholder="Pronouns">
 				</div>
@@ -76,48 +77,48 @@
 				</div>
 				<img id="p2_character_change" class="csp actual" src="csp">
 				<img id="p2d_character_change" class="csp actual" src="csp">
-				<input type="number" id="p2_score_change" class="score change" min="0" max="99" value="{{Player2.score}}">
+				<input type="number" id="p2_score_change" class="score change right" min="0" max="99" value="{{Player2.score}}">
 			</div>
-		</div>
 
-		<div id="row5" class="row">
-			<input type="text" id="tournament_change" value="{{tournament}}" placeholder="Tournament">
-			<input type="text" id="round_change" value="{{round}}" placeholder="Round">
-			<button type="button" class="best_of" id="bo3" onclick="change_best_of(3)">Best of 3</button>
-			<button type="button" class="best_of" id="bo5" onclick="change_best_of(5)">Best of 5</button>
-			<button type="button" class="toggle_doubles" onclick="toggle_doubles()" value="{{is_doubles}}"></button>
-			<button type="button" class="update" onclick="update()">Update <i class="fa fa-sync"></i></button>
-		</div>
+			<div id="data_wrapper" class="row">
+				<input type="text" id="tournament_change" value="{{tournament}}" placeholder="Tournament">
+				<input type="text" id="round_change" value="{{round}}" placeholder="Round">
+				<button type="button" class="best_of" id="bo3" onclick="change_best_of(3)">Best of 3</button>
+				<button type="button" class="best_of" id="bo5" onclick="change_best_of(5)">Best of 5</button>
+				<button type="button" class="toggle_doubles" onclick="toggle_doubles()" value="{{is_doubles}}"></button>
+				<button type="button" class="update" onclick="update()">Update <i class="fa fa-sync"></i></button>
+			</div>
 
-		<div id="row6" class="row">
-			<input type="text" id="tournament_slug" class="startgg tournament input" placeholder="startgg tournament slug">
-			<button type="button" id="tournament_slug_submit" class="startgg bottom button" onclick="getTournamentEvents()">Submit</button>
-			<select class="startgg input c" id="events" onchange="getEventPhases()"></select>
-			<select class="startgg input c" id="phases" onchange="getPhaseGroups()"></select>
-			<select class="startgg input c" id="phase_groups" onchange="showGetSets()"></select>
-			<button type="button" id="get_sets" class="startgg bottom button" onclick="getSets()">Get sets</button>
-		</div>
+			<div id="startgg_wrapper" class="row">
+				<img class="icon" id="startgg_icon" src="static/img/startgg.svg" alt="SGG"/>
+				<input type="text" id="tournament_slug" class="startgg tournament input" placeholder="startgg slug">
+				<button type="button" id="tournament_slug_submit" class="startgg bottom button" onclick="getTournamentEvents()">Submit</button>
+				<select class="startgg input c" id="events" onchange="getEventPhases()"></select>
+				<select class="startgg input c" id="phases" onchange="getPhaseGroups()"></select>
+				<select class="startgg input c" id="phase_groups" onchange="showGetSets()"></select>
+				<button type="button" id="get_sets" class="startgg bottom button" onclick="getSets()">Get sets</button>
+			</div>
 
-		<div id="row7" class="row">
-			<button type="button" id="ffmpeg" onclick="recordSet()">Record</button>
-			<button type="button" id="ffmpeg-clip" onclick="clip()">Clip</button>
-			
-			<div id="scene_box">
-				<select id="scenes"></select>
-				<div>
-					<button id="update_scene" class="scene" onclick="update_scene()">Change Scene</button>
+			<div id="obs_wrapper" class="row">
+				<img class="icon" id="startgg_icon" src="static/img/obs.svg" alt="OBS"/>
+				<button type="button" id="ffmpeg-record" onclick="recordSet(0)">Record</button>
+				<button type="button" id="ffmpeg-clip" onclick="clip()">Clip</button>
+				<div id="scene_box">
+					<select id="scenes"></select>
+					<div>
+						<button id="update_scene" class="scene" onclick="update_scene()">Change Scene</button>
+					</div>
 				</div>
 			</div>
-		</div>
-	</div>
-	<div id="right_wrapper">
-		<div id="row1r" class="row right">
-			<div id="data_actual" class="data">
-				<input type="text" id="round_actual" class="data_text actual" value="{{round}}" placeholder="Round" readonly="true">
-				<input id="best_of_actual" class="data_text actual" best_of="{{best_of}}" value="Best of {{best_of}}" readonly="true">
+
+			<div id="obs_auto" class="row">
+				<img class="icon" id="startgg_icon" src="static/img/obs.svg" alt="OBS"/>
+				<button type="button" id="auto-record" onclick="autoRecord(-5000)">Record</button>
+				<span id="start_timecode" class="timecode"></span>
+				<span id="end_timecode" class="timecode"></span>
 			</div>
 		</div>
-		<div id="row2r" class="row right">
+		<div id="right_wrapper">
 			<div id="pages">
 				<button	id="page_left" class="page_button" onclick="showSets(false)"><i class="fa-solid fa-arrow-left"></i></button>
 				<button	id="page_right" class="page_button" onclick="showSets(true)"><i class="fa-solid fa-arrow-right"></i></button>

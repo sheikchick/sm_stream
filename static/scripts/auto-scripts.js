@@ -1,24 +1,28 @@
 is_doubles = false;
 var obs;
+var ip;
 var sets = [];
 var set_page = 0;
 
 const phone_aspect = window.matchMedia("(max-aspect-ratio: 1/1), (max-width: 1000px)");
 
 $(document).ready(function(){
-	obs = new OBSWebSocket();
-	url = window.location.href;
-	var arr = url.split(":");
-	var ip = arr[1].substr(2, this.length);
-	obsurl = "ws://" + ip + ":" + obs_port;
-
+	obsConnect();
 	load_changes();
-
 	change_best_of(best_of_value);
+	toggle_doubles();
+	getSets();
+});
+
+function obsConnect() {
+	obs = new OBSWebSocket();
+
+	ip = window.location.href.split(":")[1].substring(2);
+	obsurl = "ws://" + ip + ":" + obs_port;
 
 	obs.connect(obsurl, obs_password)	
 		.then(() => {
-			$("#row7").css('display', 'flex');
+			$("#obs_wrapper").css('display', 'flex');
 			obs.call('GetSceneList')
 				.then(function(value) {
 					$("#scene_box").css('display', 'flex')
@@ -31,10 +35,7 @@ $(document).ready(function(){
 		.catch(err => {
         	console.log(err);
     	});
-
-	is_doubles = $(".toggle_doubles").attr("value") !== "true"
-	toggle_doubles();
-});
+}
 
 function hideColour(player, slot) {
 	$("#p" + player + "_colour" + slot).attr("src", "");
@@ -176,6 +177,7 @@ function swap_team(n) {
 }
 
 function toggle_doubles() {
+	is_doubles = $(".toggle_doubles").attr("value") !== "true"
 	//changing to singles
 	if(is_doubles) {
 		$(".toggle_doubles").text("Singles ");
@@ -188,19 +190,8 @@ function toggle_doubles() {
 		$(".pronouns.change.doubles").hide();
 
 		//resize for singles
-		$("#p1_score_actual").css("grid-column", "3");
-		$("#p1_info_actual").css("grid-template-columns", "280px [col-start] 90px [col-start] 50px [col-start]")
-
-		$("#p2_text_actual").css("grid-column", "3");
-		$("#p2_info_actual").css("grid-template-columns", "50px [col-start] 90px [col-start] 280px [col-start]")
 
 		$(".swap").hide()
-		$(".pronouns_container.change").css("grid-column", "1")
-		$(".name_container.change").css("grid-column", "2")
-		$("#p1_character_change").css("grid-column", "3")
-		$("#p2_character_change").css("grid-column", "3")
-		$(".score.change").css("grid-column", "4")
-		$(".info.change").css("grid-template-columns", "100px [col-start] 380px [col-start] 240px [col-start] 100px [col-start]");
 		$(".name.change").css("width", "340px")
 
 		$("#p2_name").attr("placeholder", "Player 2 name")
@@ -224,19 +215,8 @@ function toggle_doubles() {
 		$(".pronouns.change.doubles").show();
 
 		//resize for doubles
-		$("#p1_score_actual").css("grid-column", "4");
-		$("#p1_info_actual").css("grid-template-columns", "280px [col-start] 45px [col-start] 45px [col-start] 50px [col-start]")
-
-		$("#p2_text_actual").css("grid-column", "4");
-		$("#p2_info_actual").css("grid-template-columns", "50px [col-start] 45px [col-start] 45px [col-start] 280px [col-start]")
 
 		$(".swap").show()
-		$(".pronouns_container.change").css("grid-column", "2")
-		$(".name_container.change").css("grid-column", "3")
-		$("#p1_character_change").css("grid-column", "4")
-		$("#p2_character_change").css("grid-column", "4")
-		$(".score.change").css("grid-column", "6")
-		$(".info.change").css("grid-template-columns", "100px [col-start] 80px [col-start] 300px [col-start] 120px [col-start] 120px [col-start] 100px [col-start]");
 		$(".name.change").css("width", "260px")
 		
 
@@ -275,7 +255,9 @@ function load_changes() {
 		},
 		timeout: 5000
 	})
-	update_record_button();
+	if (obs !== null) {
+		getRecordStatus();
+	}
 	setTimeout(load_changes, 1000)
 }
 
@@ -303,7 +285,7 @@ function update_scene() {
 	})
 }
 
-function update_record_button(recording_status) {
+function getRecordStatus() {
 	obs.call('GetRecordStatus')
 		.catch(() => false)
 		.then(({outputActive}) => {
@@ -317,9 +299,9 @@ function update_record_button(recording_status) {
 						$("#ffmpeg-record").css("background-color", "#9146FF");
 						$("#ffmpeg-record").css("border-bottom", "3px solid #44158a");
 					} else {
-						$("#ffmpeg").text("Record");
-						$("#ffmpeg").css("background-color", "#FFFFFF");
-						$("#ffmpeg").css("border-bottom", "3px solid #AAA");
+						$("#ffmpeg-record").text("Record");
+						$("#ffmpeg-record").css("background-color", "#FFFFFF");
+						$("#ffmpeg-record").css("border-bottom", "3px solid #AAA");
 					}
 				},
 				error: function(response) {
@@ -327,30 +309,31 @@ function update_record_button(recording_status) {
 				},
 				timeout: 5000
 			})
+			$('#ffmpeg-record').prop('disabled', !outputActive);
 			$('#ffmpeg-clip').prop('disabled', !outputActive);
 		});
 }
 
-function recordSet() {
+function recordSet(offset_ms) {
 	obs.call(
 		'GetRecordStatus'
 	)
 	.then(function(status) {
-		console.log(status.outputTimecode)
+		console.log(status.outputDuration)
 		current_color = $("#ffmpeg-record").css("background-color");
 		current_status = $("#ffmpeg-record").text();
 		current_border = $("#ffmpeg-record").css("border-bottom");
 
-		if(!value.outputActive) {
-			$("#ffmpeg").css("background-color", "#F56262");
-			$("#ffmpeg").css("border-bottom", "3px solid #F53535");
-			$("#ffmpeg").text("OBS not recording");
-			$("#ffmpeg").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+		if(!status.outputActive) {
+			$("#ffmpeg-record").css("background-color", "#F56262");
+			$("#ffmpeg-record").css("border-bottom", "3px solid #F53535");
+			$("#ffmpeg-record").text("OBS not recording");
+			$("#ffmpeg-record").append('<i class="fa-solid fa-triangle-exclamation"></i>')
 
 			setTimeout(function(){
-				$("#ffmpeg").css("background-color", current_color);
-				$("#ffmpeg").css("border-bottom", current_border);
-				$("#ffmpeg").text(current_status);
+				$("#ffmpeg-record").css("background-color", current_color);
+				$("#ffmpeg-record").css("border-bottom", current_border);
+				$("#ffmpeg-record").text(current_status);
 			}, 2000);
 			return;
 		} 
@@ -359,25 +342,25 @@ function recordSet() {
 		const record_timeout = setTimeout(() => {
 			record_controller.abort()
 
-			current_color = $("#ffmpeg").css("background-color");
-			current_status = $("#ffmpeg").text();
+			current_color = $("#ffmpeg-record").css("background-color");
+			current_status = $("#ffmpeg-record").text();
 
-			$("#ffmpeg").css("background-color", "#F56262");
+			$("#ffmpeg-record").css("background-color", "#F56262");
 			$(".update").css("border-bottom", "3px solid #F53535");
-			$("#ffmpeg").text("OBS timeout");
-			$("#ffmpeg").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+			$("#ffmpeg-record").text("OBS timeout");
+			$("#ffmpeg-record").append('<i class="fa-solid fa-triangle-exclamation"></i>')
 
 			setTimeout(function(){
-				$("#ffmpeg").css("background-color", current_color);
-				$("#ffmpeg").css("border-bottom", current_border);
-				$("#ffmpeg").text(current_status);
+				$("#ffmpeg-record").css("background-color", current_color);
+				$("#ffmpeg-record").css("border-bottom", current_border);
+				$("#ffmpeg-record").text(current_status);
 			}, 2000);
 		}, 5000);
 		fetch("/save_recording", {
 			method: 'POST',
 			headers: { "Content-Type": "application/json"},
 			body: JSON.stringify({
-				timecode: status.outputTimecode
+				timecode: status.outputDuration
 			}),
 			signal: record_controller.signal
 		})
@@ -386,18 +369,18 @@ function recordSet() {
 			clearTimeout(record_timeout)
 			console.log(data)
 			if(!data.recording_status) {
-				$("#ffmpeg").text("Recorded!");
-				$("#ffmpeg").css("background-color", "#55F76B");
-				$("#ffmpeg").css("border-bottom", "3px solid #349641");
+				$("#ffmpeg-record").text("Recorded!");
+				$("#ffmpeg-record").css("background-color", "#55F76B");
+				$("#ffmpeg-record").css("border-bottom", "3px solid #349641");
 				setTimeout(function(){
-					$("#ffmpeg").text("Record");
-					$("#ffmpeg").css("background-color", "#FFFFFF");
-					$("#ffmpeg").css("border-bottom", "3px solid #AAA");
+					$("#ffmpeg-record").text("Record");
+					$("#ffmpeg-record").css("background-color", "#FFFFFF");
+					$("#ffmpeg-record").css("border-bottom", "3px solid #AAA");
 				}, 2000);
 			} else {
-				$("#ffmpeg").text("Recording...");
-				$("#ffmpeg").css("background-color", "#9146FF");
-				$("#ffmpeg").css("border-bottom", "3px solid #44158a");
+				$("#ffmpeg-record").text("Recording...");
+				$("#ffmpeg-record").css("background-color", "#9146FF");
+				$("#ffmpeg-record").css("border-bottom", "3px solid #44158a");
 			}
 
 		})
@@ -409,7 +392,7 @@ function autoRecord(offset_ms) {
 		'GetRecordStatus'
 	)
 	.then(function(status) {
-		var timecode = status.outputTimecode
+		var timecode = status.outputDuration
 		if(!status.outputActive) {
 		} 
 
@@ -530,7 +513,7 @@ function clip() {
 				}, 2000);
 			} else {
 				$("#ffmpeg-clip").css("background-color", "#F56262");
-				$(".update").css("border-bottom", "3px solid #F53535");
+				$(".ffmpeg-clip").css("border-bottom", "3px solid #F53535");
 				$("#ffmpeg-clip").text("Error!");
 				$("#ffmpeg-clip").append('<i class="fa-solid fa-triangle-exclamation"></i>')
 			}
@@ -541,53 +524,15 @@ function clip() {
 }
 
 function change_best_of(value) {
-	if(value == 3) {
-		$("#bo3").css("background-color", "#AAA");
-		$("#bo3").css("border-bottom", "3px solid #999");
-		$("#bo3").hover(
-			function() {
-				$(this).css("background-color","#AAA");
-			},
-			function() {
-				$(this).css("background-color", "#AAA");
-			});
-		$("#bo5").css("background-color", "#FFF");
-		$("#bo5").css("border-bottom", "3px solid #AAA");
-		$("#bo5").hover(
-			function() {
-				$(this).css("background-color","#CCC");
-			},
-			function() {
-				$(this).css("background-color", "#FFF");
-			});
-		best_of_value = 3
-	} else if (value == 5) {
-		$("#bo5").css("background-color", "#AAA");
-		$("#bo5").css("border-bottom", "3px solid #999");
-		$("#bo5").hover(
-			function() {
-				$(this).css("background-color","#AAA");
-			},
-			function() {
-				$(this).css("background-color", "#AAA");
-			});
-		$("#bo3").css("background-color", "#FFF");
-		$("#bo3").css("border-bottom", "3px solid #AAA");
-		$("#bo3").hover(
-			function() {
-				$(this).css("background-color","#CCC");
-			},
-			function() {
-				$(this).css("background-color", "#FFF");
-			});
-		best_of_value = 5
-	} else {
+	$("#bo3").prop('disabled', value == 3 ? true : false);
+	$("#bo5").prop('disabled', value == 5 ? true : false);
+	if (value != 3 || value != 5){
 		console.log("ERROR: wrong best-of value provided")
 	}
 }
 
 /**
- * up : 			direction of page
+ * up : direction of page (true/false)
  */
 function showSets(up) {
 	if(up) {
@@ -617,9 +562,9 @@ function showSets(up) {
 			if(sets.length == 0 || index >= sets.length) {
 				$("#set" + (x+1)).css("display", "none");
 			} else {
-				$("#row2r").css("display", "grid")
+				$("#right_wrapper").css("display", "flex")
 
-				$("#set" + (x+1)).css("display", "grid");
+				$("#set" + (x+1)).css("display", "flex");
 				$("#set" + (x+1)).attr("match_id", sets[index]["id"])
 
 				if(sets[index]["player1_doubles"]["name"] != "") {
@@ -645,7 +590,7 @@ function showSets(up) {
 		}
 	}
 	if(sets.length == 0) {
-		$("#row2r").css("display", "none")
+		$("#right_wrapper").css("display", "none")
 	}
 
 	//Hide arrows based on page number
@@ -660,7 +605,8 @@ function showSets(up) {
 	} else {
 		$("#page_right").show()
 	}
-} 
+}
+
 /**
  * STARTGG
  */
@@ -699,7 +645,7 @@ function getTournamentEvents() {
 		$("#phase_groups").hide()
 		$("#get_sets").hide()
 		if(result["data"]["tournament"] == null) {
-			$("#row2r").css("display", "none")
+			$("#right_wrapper").css("display", "none")
 			return
 		}
 		$("#events").empty()
@@ -750,7 +696,7 @@ function getEventPhases() {
 		$("#phase_groups").hide()
 		$("#get_sets").hide()
 		if(result["data"]["event"]["phases"] == null) {
-			$("#row2r").css("display", "none")
+			$("#right_wrapper").css("display", "none")
 			return
 		}
 		$("#phases").empty()
@@ -797,7 +743,7 @@ function getPhaseGroups() {
 		$("#phase_groups").hide()
 		$("#get_sets").hide()
 		if(result["data"]["phase"]["phaseGroups"] == null) {
-			$("#row2r").css("display", "none")
+			$("#right_wrapper").css("display", "none")
 			return
 		}
 		$("#phase_groups").empty()
@@ -826,7 +772,8 @@ function showGetSets() {
 
 /* GET AND LOAD SETS FOR A GIVEN PHASEGROUP */
 function getSets() {
-	phase_group = $("#phase_groups :selected").val();
+	phase_group = 2379028;
+	//phase_group = $("#phase_groups :selected").val();
 	fetch('https://api.start.gg/gql/alpha', {
 		method: 'POST',
 		headers: {
@@ -848,7 +795,7 @@ function getSets() {
 							sortType: STANDARD
 							filters: {
 								hideEmpty: false
-								state: [1,2,4,6,7]
+								state: [1,2,3,4,5,6,7]
 							}
 						){
 							nodes{

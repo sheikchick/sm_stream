@@ -2,6 +2,14 @@ exports.log = function(str) {
     console.log(`${currentTime()} INFO: ${str}`);
 }
 
+exports.info = function(str) {
+    console.log(`${currentTime()} INFO: ${str}`);
+}
+
+exports.warn = function(str) {
+    console.log(`${currentTime()} WARN: ${str}`);
+}
+
 exports.error = function(str) {
     console.log(`${currentTime()} ERROR: ${str}`);
 }

@@ -42,6 +42,7 @@ exports.saveClip = async (filename, timecode) => {
         (await obs.call('GetRecordDirectory')).recordDirectory,
         'clips'
     );
+
     const vod = await getLatestRecordingFile(recordDirectory);
 
     const startMs = this.timecodeOffset(timecode, -(config.obs.clip_length*1000));
@@ -61,16 +62,12 @@ exports.saveClip = async (filename, timecode) => {
     } 
 };
 
-exports.takeScreenshot = async (timecode, filename, dimensions) => {
+exports.takeScreenshot = async (timecode, screenshot_dir, filename, dimensions) => {
     await rejectIfObsNotRecording();
-
-    var dir_arr = process.argv[1].split("\\")
-    dir_arr.pop()
-    var dir = dir_arr.join("\\")
 
     const {recordDirectory} = await obs.call('GetRecordDirectory');
 
-    const timestamp = ms_to_hhmmss(timecode);
+    const timestamp = ms_to_hhmmss(timecode-100);
 
     const vod = await getLatestRecordingFile(recordDirectory);
 
@@ -80,22 +77,24 @@ exports.takeScreenshot = async (timecode, filename, dimensions) => {
         const message = "Unable to find VoD. Command saved with placeholder filename";
         logging.error(message)
     }
-    logging.debug(vod_dir)
 
     ffmpeg(vod_dir)
-        .on('end', function() {
-            logging.log(`Screenshot produced for ${vod} at timestamp ${timestamp} ${dir}`);
+        .on('end', function(err, stdout, stderr) {
+            err ? logging.error(err) : null;
+            stderr ? logging.error(stderr) : null;
+            logging.log(`Screenshot produced for ${vod} at "static/img/screenshots/${filename}.png"`);
         })
-        .screenshots({
-            timestamps: [timecode/1000],
-            folder: "static/img/",
-            filename: filename,
-            size: dimensions
+        .screenshot({
+            timestamps: [timestamp],
+            folder: path.join("static/img/screenshots/", screenshot_dir),
+            filename: `${filename}.png`,
+            size: dimensions,
+            update: true
         });
 }
 
 const ms_to_hhmmss = (ms) => {
-    let seconds = ms / 1000;
+    let seconds = parseInt(ms / 1000);
     
     const hours = parseInt(seconds / 3600);
     seconds = seconds % 3600;
@@ -103,7 +102,7 @@ const ms_to_hhmmss = (ms) => {
     const minutes = parseInt(seconds / 60);
     seconds = seconds % 60;
 
-    return `${String(hours).padStart(2, '')}:${String(minutes).padStart(2, '')}:${String(seconds).padStart(2, '')}`;
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
 
 exports.timecodeOffset = (timecode, value) => {
@@ -118,7 +117,7 @@ const rejectIfObsNotRecording = () => new Promise((resolve, reject) => {
     });
 });
 
-exports.getRecordingStatus = () => !!setStartedAt;
+exports.getRecordingStatus = () => !!global.manual_timecode;
 
 const getLatestRecordingFile = (directory) => fs.mkdir(directory, {recursive: true})
     .then(() => fs.readdir(directory))

@@ -11,7 +11,6 @@ $(document).ready(function(){
 	load_changes();
 	change_best_of(best_of_value);
 	toggle_doubles();
-	getSets();
 });
 
 function obsConnect() {
@@ -294,7 +293,9 @@ function getRecordStatus() {
 				url: "/recording_status",
 				data: {},
 				success: function(response) {
-					if (outputActive && response.m_recording_status) {
+					console.log(outputActive)
+					console.log(response.recording_status)
+					if (outputActive && response.recording_status) {
 						$("#ffmpeg-record").text("Recording...");
 						$("#ffmpeg-record").css("background-color", "#9146FF");
 						$("#ffmpeg-record").css("border-bottom", "3px solid #44158a");
@@ -772,8 +773,7 @@ function showGetSets() {
 
 /* GET AND LOAD SETS FOR A GIVEN PHASEGROUP */
 function getSets() {
-	phase_group = 2379028;
-	//phase_group = $("#phase_groups :selected").val();
+	phase_group = $("#phase_groups :selected").val();
 	fetch('https://api.start.gg/gql/alpha', {
 		method: 'POST',
 		headers: {

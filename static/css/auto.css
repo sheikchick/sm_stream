@@ -629,6 +629,12 @@ button:disabled {
 #tournament_slug_submit {
 }
 
+.screenshot {
+	width: 25%;
+	border-radius: 5px;
+	margin: 10px;
+}
+
 #get_sets {
 	display: none;
 }

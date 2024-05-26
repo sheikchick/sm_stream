@@ -108,10 +108,20 @@ app.post("/update", (req, res) => {
 app.all("/save_recording", (req, res) => {
     if(manual_timecode == "") {
         manual_timecode = req.body.timecode
+        recordLive.takeScreenshot(req.body.timecode, "manual/", "1", "960x540")
+        fs.unlink('static/img/screenshots/manual/2.png')
+            .catch((e) => {
+                if(e.code === 'ENOENT') {
+                    // file doens't exist
+                } else {
+                    logging.error(e)
+                }
+            });
         res.json({recording_status : true});
     } else {
         recordLive.saveRecording("sets", manual_timecode, req.body.timecode)
             .then(() => {
+                recordLive.takeScreenshot(req.body.timecode, "manual/", "2", "960x540")
                 manual_timecode = ""
                 res.json({recording_status: m_recording_status});
             }).catch((f) => {

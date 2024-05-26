@@ -33,8 +33,18 @@ exports.check_set_start = (() => {
                 info.Player1.score = 0;
                 info.Player2.score = 0;
                 current_set = [];
-                global.auto_timecode = global.auto_timecode || //ignore if a set has already started and we're simply updating the names partway through game 1
-                    recordLive.timecodeOffset(getTimecode(), -10000); //start the auto recording 10 seconds earlier
+
+                if (!global.auto_timecode) {
+                    getTimecode().then((timecode) => {
+                        global.auto_timecode = recordLive.timecodeOffset(timecode); //start the auto recording 10 seconds earlier
+                        logging.debug(timecode)
+                        recordLive.takeScreenshot(timecode, "first_screenshot", "960x540")
+                            .then(() => {
+                            }).catch((f) => {
+                                logging.error(f)
+                            });
+                    });
+                }
             }
         }
     };

@@ -113,8 +113,9 @@ app.all("/save_recording", (req, res) => {
         recordLive.saveRecording("sets", manual_timecode, req.body.timecode)
             .then(() => {
                 manual_timecode = ""
-                res.json({recording_status});
+                res.json({recording_status: m_recording_status});
             }).catch((f) => {
+                console.error(f)
                 res.sendStatus(500);
             });
     }

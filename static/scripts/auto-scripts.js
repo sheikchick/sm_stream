@@ -451,12 +451,12 @@ function clip() {
 	obs.call(
 		'GetRecordStatus'
 	)
-	.then(function(value) {
+	.then(function(status) {
 		current_color = $("#ffmpeg-clip").css("background-color");
 		current_status = $("#ffmpeg-clip").text();
 		current_border = $("#ffmpeg-clip").css("border-bottom");
 		
-		if(!value.outputActive) {
+		if(!status.outputActive) {
 			$("#ffmpeg-clip").css("background-color", "#F56262");
 			$("#ffmpeg-clip").css("border-bottom", "3px solid #F53535");
 			$("#ffmpeg-clip").text("OBS not recording");
@@ -497,7 +497,7 @@ function clip() {
 			method: 'POST',
 			headers: { "Content-Type": "application/json"},
 			body: JSON.stringify({
-				timecode: value.outputDuration
+				timecode: status.outputDuration
 			}),
 			signal: record_controller.signal
 		})

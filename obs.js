@@ -99,5 +99,6 @@ exports.getTimecode = () => {
             return f.outputDuration;
         }).catch(() => {
             unloadObs();
+            return false
         });
 };

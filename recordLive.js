@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs/promises");
+const ffmpeg = require("fluent-ffmpeg")
 
 const logging = require("./logging.js");
 const { readData, INFO } = require("./data.js");
@@ -7,40 +8,34 @@ const { readData, INFO } = require("./data.js");
 const FILE_NOT_FOUND = "FILE NOT FOUND";
 let setStartedAt = "";
 
-exports.saveRecording = async (timecode) => {
+exports.saveRecording = async (filename, start, end) => {
     await rejectIfObsNotRecording();
+    //end recording
 
-    if(setStartedAt) {
-        //end recording
-
-        const {recordDirectory} = await obs.call('GetRecordDirectory');
-        const [data, vod] = await Promise.all([
-            readData(INFO),
-            getLatestRecordingFile(recordDirectory)
-        ]);
+    const {recordDirectory} = await obs.call('GetRecordDirectory');
+    const [data, vod] = await Promise.all([
+        readData(INFO),
+        getLatestRecordingFile(recordDirectory)
+    ]);
 
     const videoName = `${data.Player1.name} vs ${data.Player2.name} - ${data.round}`.replace(/[/\\?%*:|"<>]/g, '');
-    const command = `ffmpeg -i "${vod}" -ss ${ms_to_hhmmss(start)} -to ${ms_to_hhmmss(end)} -c copy "${videoName}.mp4"\n`;
+    const command = `ffmpeg -i "${vod}" -ss ${ms_to_hhmmss(start)} -to ${ms_to_hhmmss(end)} -c copy "${videoName}.mp4"\n`; //put -ss before -i to speed up ffmpeg
     const batFile = path.join(recordDirectory, filename + '.bat');
 
-        await fs.appendFile(batFile, command, "utf8");
-        logging.info(`Command to extract set from VoD saved to ${batFile}`);
-        
-        setStartedAt = "";
-        if (vod === FILE_NOT_FOUND) {
-            const message = "Unable to find VoD. Command saved with placeholder filename";
-            logging.error(message)
-            throw new Error(message); // Throw simply to return a 500
-        } 
-    } else {
-        //start recording
-        setStartedAt = timecode;
-    }
+    await fs.appendFile(batFile, command, "utf8");
+    logging.log(`Command to extract set from VoD saved to ${batFile}`);
+    
+    setStartedAt = "";
+    if (vod === FILE_NOT_FOUND) {
+        const message = "Unable to find VoD. Command saved with placeholder filename";
+        logging.error(message)
+        throw new Error(message); // Throw simply to return a 500
+    } 
 
     return this.getRecordingStatus();
 };
 
-exports.saveClip = async (timecode) => {
+exports.saveClip = async (filename, timecode) => {
     await rejectIfObsNotRecording();
 
     const recordDirectory = path.join(
@@ -53,7 +48,7 @@ exports.saveClip = async (timecode) => {
     const startTimestamp = ms_to_hhmmss(startMs);
     const endTimestamp = ms_to_hhmmss(timecode);
 
-    const command = `ffmpeg -i "${vod}" -ss ${startTimestamp}ms -to ${endTimestamp}ms -c copy "${endTimestamp}.mp4"\n`;
+    const command = `ffmpeg -i "${vod}" -ss ${startTimestamp}ms -to ${endTimestamp}ms -c copy "${endTimestamp}.mp4"\n`; //put -ss before -i to speed up ffmpeg
     const batFile = path.join(recordDirectory, filename + '.bat');
 
     await fs.appendFile(batFile, command, "utf8");
@@ -65,6 +60,39 @@ exports.saveClip = async (timecode) => {
         throw new Error(message); // Throw simply to return a 500
     } 
 };
+
+exports.takeScreenshot = async (timecode, filename, dimensions) => {
+    await rejectIfObsNotRecording();
+
+    var dir_arr = process.argv[1].split("\\")
+    dir_arr.pop()
+    var dir = dir_arr.join("\\")
+
+    const {recordDirectory} = await obs.call('GetRecordDirectory');
+
+    const timestamp = ms_to_hhmmss(timecode);
+
+    const vod = await getLatestRecordingFile(recordDirectory);
+
+    const vod_dir = path.join(recordDirectory, vod)
+
+    if (vod === FILE_NOT_FOUND) {
+        const message = "Unable to find VoD. Command saved with placeholder filename";
+        logging.error(message)
+    }
+    logging.debug(vod_dir)
+
+    ffmpeg(vod_dir)
+        .on('end', function() {
+            logging.log(`Screenshot produced for ${vod} at timestamp ${timestamp} ${dir}`);
+        })
+        .screenshots({
+            timestamps: [timecode/1000],
+            folder: "static/img/",
+            filename: filename,
+            size: dimensions
+        });
+}
 
 const ms_to_hhmmss = (ms) => {
     let seconds = ms / 1000;

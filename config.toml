@@ -33,7 +33,10 @@ key = "025446143514ddd5187345ca3546cb42"
 [slippi]
 
 # Output folder for the .SLP files of the stream setup
-directory = "C:\Users\Public\Documents\Slippi"
+#"C:\Users\Public\Documents\Slippi"
+#"D:\SSBM\SlippiSpectate\cleo-wii"
+
+directory = "D:\SSBM\SlippiSpectate\cleo-wii"
 
 # Only used for recording replays after an event
 melee_iso = "C:\Users\Public\Documents\[SSBM]ScotlandStages.iso"

@@ -10,6 +10,7 @@
 	<script src="static/scripts/fontawesome.js"></script>
 	<script>
 		var best_of_value = "{{best_of}}"
+		var tournament = "{{tournament}}"
 		var api_key = "{{api_key}}"
 		var obs_port = "{{obs_port}}"
 		var obs_password = "{{obs_password}}"
@@ -111,7 +112,8 @@
 				</div>
 			</div>
 
-			<div id="obs_auto" class="row">
+			<div id="load_tournament_data" class="row">
+				<select id="tournament_data" tournament="" onchange="getTournamentSet()"></select>
 				<div class="screenshot_container" id="screenshot-container-1">
 					<img class="screenshot" id="screenshot-1" src="">
 					<div class="timecode-wrapper" id="timecode-wrapper-1">
@@ -126,6 +128,7 @@
 						<button	id="timecode-2-update" class="timecode button" onclick="update_timecode(2)">Update</button>
 					</div>
 				</div>
+				<button type="button" id="set_update" onclick="updateSet()">Submit</button>
 			</div>
 		</div>
 		<div id="right_wrapper">

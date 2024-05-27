@@ -11,7 +11,7 @@ const { loadObs } = require("./obs.js");
 const recordLive = require("./recordLive.js");
 const { recordReplays } = require("./recordReplays.js");
 const charInfo = require("./charInfo.js");
-const { readData, writeData, INFO, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
+const { readData, writeData, updateTournament, INFO, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
 const { watch } = require("./slpWatch.js");
 const { start } = require("repl");
 const { check_set_start } = require("./processSlp.js");
@@ -77,7 +77,12 @@ fs.readdir(layoutsDir, {withFileTypes: true}).then((files) => {
 app.get(`/tournaments`, (req, res) => {
     fs.readdir(tournamentDataDir, {withFileTypes: true}).then((files) => {
         const json = '.json';
-        res.json(files.filter((f) => f.isFile() && f.name.endsWith(json)))
+        const data = files.filter((f) => f.isFile() && f.name.endsWith(json));
+        const output = []
+        data.forEach((element) => {
+            output.push(element.name)
+        })
+        res.json(output)
     });
 })
 
@@ -174,6 +179,26 @@ app.all("/save_recording", (req, res) => {
                 res.sendStatus(500);
             });
     }
+});
+
+app.all("/take_screenshot", (req, res) => {
+    recordLive.takeVodScreenshot(req.body.timecode, "set/", req.body.index, "960x540", req.body.vod)
+        .then(() => {
+            res.sendStatus(200);
+        }).catch((e)=>{
+            logging.error(`Failed to create screenshot - ${e}`)
+            res.sendStatus(500);
+        })
+});
+
+app.all("/update_set", (req, res) => {
+    updateTournament(req.body.data, req.body.index, req.body.tournament)
+        .then(() => {
+            res.sendStatus(200);
+        }).catch((e)=>{
+            logging.error(`Failed to update set - ${e}`)
+            res.sendStatus(500);
+        })
 });
 
 app.post("/save_clip", (req, res) => {

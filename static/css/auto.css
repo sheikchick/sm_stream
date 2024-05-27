@@ -31,6 +31,10 @@ body {
 	color: white;
 }
 
+button {
+	background-color: #FFF;
+}
+
 #header {
 	display: flex;
 	flex-direction: row;
@@ -594,12 +598,16 @@ button:focus {
 	margin: 10px;
 }
 
-#obs_auto {
+#load_tournament_data {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	background-color: #666;
 	border-radius: 5px;
+}
+
+#load_tournament_data > * {
+	margin: 10px;
 }
 
 #obs_auto input, #obs_auto button {
@@ -634,6 +642,7 @@ button:disabled {
 	width: 15em;
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	flex-direction: column;
 	margin: 10px;
 }
@@ -642,20 +651,24 @@ button:disabled {
 	max-width: 100%;
 	border-radius: 5px;
 }
+
 .timecode-wrapper {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	justify-content: center;
 }
 
 .timecode {
 	max-width: 50%;
+	margin: 5px;
 }
 
 .timecode.button {
 	height: 26px;
 	padding: 3px;
 	max-width: 25%;
+	margin: 5px;
 }
 
 #get_sets {

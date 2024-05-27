@@ -1,3 +1,4 @@
+const path = require("path");
 const { readFile, writeFile } = require("fs/promises");
 const logging = require("./logging");
 
@@ -27,3 +28,25 @@ exports.readData = async (file) => this.DATA_FILES.includes(file)
         .then((data) => JSON.parse(data))
         .catch((e) => logging.log(`Failed to open ${file} - ${e}`))
     : {};
+
+exports.updateTournament = async (data, index, tournament_filename) => {
+    const json_file = path.join("data/json/tournaments/", tournament_filename);
+    readFile(json_file, FORMAT)
+        .then((read_file) => {
+            var parsed_file = JSON.parse(read_file)
+            parsed_file[index] = (data)
+            writeFile(json_file, JSON.stringify(parsed_file), FORMAT).then(() => {
+                logging.log(`Modified match data "${data.tags[0]} vs ${data.tags[1]}" to ${tournament_filename}`)
+            })
+            .catch((e) => {
+                const message = `Failed to write ${json_file}: ${e}`;
+                logging.error(message)
+                throw new Error(message);
+            });
+        })
+        .catch(() => {
+            const message = `File ${json_file} doesn't exist`;
+            logging.error(message)
+            throw new Error(message);
+        });
+};

@@ -64,16 +64,63 @@ exports.saveClip = async (filename, timecode) => {
     } 
 };
 
-exports.takeScreenshot = (() => {
-    const attempt = async (timecode, screenshot_dir, filename, dimensions) => {
-        await rejectIfObsNotRecording();
+exports.takeVodScreenshot = (() => {
+    const attempt = async (timecode, screenshot_dir, filename, dimensions, vod) => {   
+        const {recordDirectory} = await obs.call('GetRecordDirectory');
+
+        const timestamp = ms_to_hhmmss(timecode);
+
+        const vod_dir = path.join(recordDirectory, vod)
+
+        if (vod === FILE_NOT_FOUND) {
+            // maybe put this in the onEnd() since it's talking past tense
+            const message = "Unable to find VoD. Command saved with placeholder filename";
+            logging.error(message)
+        }
     
+        return new Promise((resolve, reject) => {
+            ffmpeg(vod_dir)
+                .on('end', function(err, stdout, stderr) {
+                    err && logging.error(`takeScreenshot(): ${err}`);
+                    stderr && logging.error(stderr);
+                    if(stdout.includes("File ended prematurely")) {
+                        reject();
+                    } else {
+                        //logging.log(`Screenshot produced for ${vod} at "static/img/screenshots/${screenshot_dir}/${filename}.png"`);
+                        resolve();
+                    }
+                })
+                .screenshot({
+                    timestamps: [timestamp],
+                    folder: path.join("static/img/screenshots/", screenshot_dir),
+                    filename: `${filename}.png`,
+                    size: dimensions,
+                    update: true
+                });
+        });
+    };
+    
+    const tries = 20;
+
+    return (timecode, screenshot_dir, filename, dimensions, vod) => {
+        let p = Promise.reject();
+        for(let i = 0; i < tries; i++) {
+            p = p.catch(() => delayPromiseStart(500, () => attempt(timecode, screenshot_dir, filename, dimensions, vod)));
+        }
+        return p;
+    };
+})();
+
+exports.takeScreenshot = (() => {
+    const attempt = async (timecode, screenshot_dir, filename, dimensions) => { 
+        await rejectIfObsNotRecording();
+
         const {recordDirectory} = await obs.call('GetRecordDirectory');
     
-        const timestamp = ms_to_hhmmss(timecode-100);
-    
+        const timestamp = ms_to_hhmmss(timecode);
+
         const vod = await this.getLatestRecordingFile(recordDirectory);
-    
+
         const vod_dir = path.join(recordDirectory, vod)
     
         if (vod === FILE_NOT_FOUND) {
@@ -90,7 +137,7 @@ exports.takeScreenshot = (() => {
                     if(stdout.includes("File ended prematurely")) {
                         reject();
                     } else {
-                        logging.log(`Screenshot produced for ${vod} at "static/img/screenshots/${filename}.png"`);
+                        logging.log(`Screenshot produced for ${vod} at "static/img/screenshots/${screenshot_dir}/${filename}.png"`);
                         resolve();
                     }
                 })

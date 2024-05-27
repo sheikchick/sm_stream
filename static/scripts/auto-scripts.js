@@ -11,6 +11,7 @@ $(document).ready(function(){
 	load_changes();
 	change_best_of(best_of_value);
 	toggle_doubles();
+	updateTournamentData(tournament);
 });
 
 function obsConnect() {
@@ -126,6 +127,7 @@ function update() {
 		signal: update_controller.signal
 	}).then(() => {
 		clearTimeout(update_timeout)
+		updateTournamentData(tournament)
 		$(".update").css("background-color", "#55F76B");
 		$(".update").css("border-bottom", "3px solid #349641");
 		$(".update").text("Updated ");
@@ -176,9 +178,10 @@ function swap_team(n) {
 }
 
 function toggle_doubles() {
-	is_doubles = $(".toggle_doubles").attr("value") !== "true"
+	is_doubles = $(".toggle_doubles").attr("value") != "true"
 	//changing to singles
 	if(is_doubles) {
+		$(".toggle_doubles").attr("value", "true");
 		$(".toggle_doubles").text("Singles ");
 		$(".toggle_doubles").append("<i class='fa fa-user'></i>");
 
@@ -204,6 +207,7 @@ function toggle_doubles() {
 	}
 	//changing to doubles
 	else {
+		$(".toggle_doubles").attr("value", "false");
 		$(".toggle_doubles").text("Doubles ");
 		$(".toggle_doubles").append("<i class='fa fa-user-friends'></i>");
 
@@ -259,21 +263,18 @@ function load_changes() {
 	}
 	//update images
 	$.ajax({
-		url: "static/img/screenshots/auto/1.png",
+		url: "static/img/screenshots/set/1.png",
 		type: "GET",
 		success: function () {
-			$("#screenshot-container-1").show()
-			$("#screenshot-1").attr("src", `static/img/screenshots/auto/1.png?${Date.now()}`)
+			$("#screenshot-1").attr("src", `static/img/screenshots/set/1.png?${Date.now()}`)
 			try{
 				$.ajax({
-					url: "static/img/screenshots/auto/2.png",
+					url: "static/img/screenshots/set/2.png",
 					type: "GET",
 					success: function () {
-						$("#screenshot-container-2").show()
-						$("#screenshot-2").attr("src", `static/img/screenshots/auto/2.png?${Date.now()}`)
+						$("#screenshot-2").attr("src", `static/img/screenshots/set/2.png?${Date.now()}`)
 					},
 					error: function(e) {
-						$("#screenshot-container-2").hide()
 					},
 					timeout: 5000
 				});
@@ -282,28 +283,6 @@ function load_changes() {
 			}
 		},
 		error: function() {
-			$("#screenshot-container-1").hide()
-			$("#screenshot-container-2").hide()
-		},
-		timeout: 5000
-	  });
-	//update timecodes
-	$.ajax({
-		url: "/recording_timecode",
-		type: "GET",
-		success: function (data) {
-			if(data.timecode) {
-				if($("#timecode-1").attr("timecode") != data.timecode) {
-					console.log("changing timecode")
-					$("#timecode-1").attr("timecode", data.timecode);
-					$("#timecode-1").val(data.timecode);
-				}
-			}
-		},
-		error: function(response) {
-			$("#screenshot-container-1").hide()
-			$("#screenshot-container-2").hide()
-
 		},
 		timeout: 5000
 	  });
@@ -990,4 +969,172 @@ async function reloadImg(url) {
 	await fetch(url, { cache: 'reload', mode: 'no-cors' })
 	document.body.querySelectorAll(`img[src='${url}']`)
 	  .forEach(img => img.src = url)
-  }
+}
+
+function updateTournamentData(tournament) {
+	$("#tournament_data").empty()
+	const tournamentUrl = `${tournament.split(" ").join("_")}.json`
+	$.ajax({
+		type: 'GET',
+		url: "/tournaments",
+		data: {},
+		success: function(response) {
+			if (response.includes(tournamentUrl)) {
+				$.ajax({
+					type: 'GET',
+					url: `/tournaments/${tournamentUrl}`,
+					data: {},
+					success: function(response) {
+						$("#tournament_data").append(new Option(`Select set`, -1));
+						var index = 0;
+						for(let set of response) {
+							var option = $('<option />')
+								.text(`${set.tags[0]} vs ${set.tags[1]} - ${set.round}`)
+								.val(index)
+								.attr("data-set", JSON.stringify(set))
+								.attr("data-tournament", tournament)
+							$("#tournament_data").append(option);
+							index++;
+						}
+						$("#screenshot-container-1").hide()
+						$("#screenshot-container-2").hide()
+						$("#set_update").hide()
+						$("#load_tournament_data").show()
+					},
+					error: function() {
+						console.log(`No valid tournament data found for ${tournamentUrl}`)
+						$("#load_tournament_data").hide()
+					},
+					timeout: 5000
+				})
+			} else {
+				console.log(`No valid tournament data found for ${tournamentUrl}`)
+				$("#load_tournament_data").hide()
+			}
+		},
+		error: function(response) {
+			console.log(response)
+		},
+		timeout: 5000
+	})
+}
+
+function getTournamentSet() {
+	var set = JSON.parse($("#tournament_data :selected").attr("data-set"));
+	if(!set) {
+		return
+	}
+	index = 1;
+	$("#screenshot-container-1").hide()
+	$("#screenshot-container-2").hide()
+	let success = true;
+	for(let timecode of set.timecodes) {
+		if(set.vod) {
+			takeScreenshot(timecode, index, set.vod)
+			$(`#timecode-${index}`).val(ms_to_hhmmss(timecode))
+		}
+		index++;
+	}
+	$(".screenshot_container").show()
+	$("#set_update").show()
+}
+
+function takeScreenshot(timecode, index, vod) {
+	$.ajax({
+		type: 'POST',
+		url: "/take_screenshot",
+		data: {
+			timecode: timecode,
+			index: index,
+			vod: vod
+		},
+		success: function(response) {
+			return true;
+		},
+		error: function(response) {
+			console.error(response)
+			$(".screenshot_container").hide()
+			$("#set_update").hide()
+			return false;
+		},
+		timeout: 5000
+	})
+}
+
+function updateSet() {
+	let data = JSON.parse($('#tournament_data :selected').attr("data-set"))
+	data.timecodes[0] = hhmmss_to_ms($("#timecode-1").val())
+	data.timecodes[1] = hhmmss_to_ms($("#timecode-2").val())
+
+	let index = $('#tournament_data :selected').val()
+	let tournament = `${$('#tournament_data :selected').attr("data-tournament")}.json`
+
+	$.ajax({
+		type: 'POST',
+		url: "/update_set",
+		data: {
+			data: data,
+			index: index,
+			tournament: tournament
+		},
+		success: function() {
+			$("#set_update").css("background-color", "#55F76B");
+			$("#set_update").css("border-bottom", "3px solid #349641");
+			$("#set_update").text("Success ");
+			$("#set_update").append('<i class="fa-solid fa-thumbs-up"></i>')
+			setTimeout(function(){
+				$("#set_update").css("background-color", "#FFF");
+				$("#set_update").css("border-bottom", "3px solid #AAA");
+				$("#set_update").text("Submit");
+			}, 2000);
+			return true;
+		},
+		error: function(response) {
+			console.error(response)
+			$("#set_update").css("background-color", "#F56262");
+			$("#set_update").css("border-bottom", "3px solid #F53535");
+			$("#set_update").text("Error ");
+			$("#set_update").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+			setTimeout(function(){
+				$("#set_update").css("background-color", "#FFF");
+				$("#set_update").css("border-bottom", "3px solid #AAA");
+				$("#set_update").text("Submit");
+			}, 2000);
+			return false;
+		},
+		timeout: 5000
+	})
+}
+
+function update_timecode(index) {
+	const timecode = hhmmss_to_ms($(`#timecode-${index}`).val())
+	const vod = JSON.parse($("#tournament_data :selected").attr("data-set")).vod;
+	takeScreenshot(timecode, index, vod)
+}
+
+function ms_to_hhmmss(ms) {
+	console.log(ms)
+    let seconds = parseInt(ms / 1000);
+
+	const minutes = parseInt(seconds / 60);
+    seconds = seconds % 60;
+    
+    const hours = parseInt(seconds / 3600);
+    seconds = seconds % 3600;
+
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(ms%1000).padStart(3, '0')}`;
+};
+
+function hhmmss_to_ms(input) {
+	let raw = input.split(".")
+
+	let hhmmss = raw[0].split(":")
+
+	let ms = parseInt(raw[1])
+
+	ms += parseInt(hhmmss[0])*60*60*1000
+	ms += parseInt(hhmmss[1])*60*1000
+	ms += parseInt(hhmmss[2])*1000
+	
+	return ms;
+};

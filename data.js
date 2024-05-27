@@ -36,7 +36,7 @@ exports.updateTournament = async (data, index, tournament_filename) => {
             var parsed_file = JSON.parse(read_file)
             parsed_file[index] = (data)
             writeFile(json_file, JSON.stringify(parsed_file), FORMAT).then(() => {
-                logging.log(`Modified match data "${data.tags[0]} vs ${data.tags[1]}" to ${tournament_filename}`)
+                logging.log(`Modified match data "${data.player[0].tag} vs ${data.player[1].tag}" to ${tournament_filename}`)
             })
             .catch((e) => {
                 const message = `Failed to write ${json_file}: ${e}`;

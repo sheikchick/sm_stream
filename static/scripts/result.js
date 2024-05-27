@@ -1,7 +1,3 @@
-$(document).ready(function(){
-    //for debugging
-});
-
 function getCurrentMatchData() {
     $.ajax({
 		type: 'GET',

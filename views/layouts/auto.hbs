@@ -5,7 +5,11 @@
 	<title>Smash Bros. Melee Overlay Config</title>
 	<script src="static/scripts/jquery-3.4.1.min.js"></script>
 	<script src="static/scripts/long-press-event.js"></script>
+
 	<script src="static/scripts/auto-scripts.js"></script>
+	<script src="static/scripts/startgg-scripts.js"></script>
+	<script src="static/scripts/startgg-utils.js"></script>
+
 	<script src="static/scripts/obs-ws.min.js"></script>
 	<script src="static/scripts/fontawesome.js"></script>
 	<script>
@@ -59,7 +63,10 @@
 				</div>
 				<img id="p1_character_change" class="csp actual" src="csp">
 				<img id="p1d_character_change" class="csp actual" src="csp">
-				<input type="number" id="p1_score_change" class="score change left" min="0" max="99" value="{{Player1.score}}">
+				<div class="score_wrapper">
+					<input type="number" id="p1_score_change" class="score change left" min="0" max="99" value="{{Player1.score}}">
+					<input type="text" id="p1_entrant" class="startgg display id" value="{{Player1.entrant}}" placeholder="start.gg Entrant">
+				</div>
 			</div>
 
 			<div id="middle_row" class="row">
@@ -78,7 +85,10 @@
 				</div>
 				<img id="p2_character_change" class="csp actual" src="csp">
 				<img id="p2d_character_change" class="csp actual" src="csp">
-				<input type="number" id="p2_score_change" class="score change right" min="0" max="99" value="{{Player2.score}}">
+				<div class="score_wrapper">
+					<input type="number" id="p2_score_change" class="score change right" min="0" max="99" value="{{Player2.score}}">
+					<input type="text" id="p2_entrant" class="startgg display id" value="{{Player2.entrant}}" placeholder="start.gg Entrant">
+				</div>
 			</div>
 
 			<div id="data_wrapper" class="row">
@@ -129,6 +139,9 @@
 					</div>
 				</div>
 				<button type="button" id="set_update" onclick="updateSet()">Submit</button>
+			</div>
+
+			<div id="display_set_results" class="row">
 			</div>
 		</div>
 		<div id="right_wrapper">

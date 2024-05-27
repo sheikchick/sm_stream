@@ -81,7 +81,16 @@ check_set_end = async (info) => {
                     //THE MOST IMPORTANT FUNCTION GOING FORWARD
                     const json_file = path.join("data/json/tournaments/", tournament_filename);
                     const data = {
-                        tags: [info.Player1.name, info.Player2.name],
+                        players: [
+                            {
+                                tag: info.Player1.name,
+                                entrant_id: info.Player1.startgg_entrant
+                            },
+                            {
+                                tag: info.Player2.name,
+                                entrant_id: info.Player2.startgg_entrant
+                            }
+                        ],
                         round: info.round,
                         vod: vod,
                         set_id: 0, //TODO: startgg set id
@@ -102,7 +111,11 @@ check_set_end = async (info) => {
                         .catch(() => {
                             logging.log(`File ${json_file} doesn't exist yet, creating...`);
                             writeFile(json_file, `[${JSON.stringify(data)}]`, FORMAT).then(() => {
-                                logging.log(`Match data "${info.Player1.name} vs ${info.Player2.name}" written to ile ${tournament_filename}`)
+                                logging.log(`Match data "${info.Player1.name} vs ${info.Player2.name}" written to file ${tournament_filename}`)
+                                //MAY BE INCORRECT
+                                app.get(`/tournaments/${tournament_filename}`, (req, res) => {
+                                    res.sendFile(json_file);
+                                })
                             })
                             .catch((e) => 
                                 logging.error(`Failed to write ${json_file}: ${e}`

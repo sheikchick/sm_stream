@@ -25,6 +25,8 @@ exports.watch = (dir) => {
         try {
             if (!gameObj) {
                 logging.log(`New file at: ${path}`);
+
+                global.game_in_progress = true;
                 
                 games[path] = {
                     lastUpdate: Promise.all([

@@ -63,6 +63,7 @@ const refreshBrowserTransition = async (configTransition) => {
 };
 
 const unloadObs = () => {
+    logging.error('OBS unloaded');
     global.obs?.disconnect();
     global.obs = null;
 };
@@ -80,8 +81,7 @@ exports.changeScene = (() => {
                 .then(() => {
                     logging.log(`Changed scene to ${sceneName}.`);
                 }).catch(() => {
-                    logging.log(`Failed to change scene to ${sceneName}.`);
-                    unloadObs();
+                    logging.warn(`Failed to change scene to ${sceneName}.`);
                 });
         }
     }
@@ -92,13 +92,29 @@ exports.changeScene = (() => {
  * @param {string} scene 
  * @returns {Promise} resolves to a boolean indicating whether scene was changed.
  */
-exports.getTimecode = () => {
+exports.getTimecode = async () => {
     const getRecordStatus = 'GetRecordStatus';
     return obs?.call(getRecordStatus)
         .then((f) => {
             return f.outputDuration;
-        }).catch(() => {
-            unloadObs();
+        }).catch((e) => {
+            logging.error(`error in getTimecode() - ${e}`)
+            return false
+        });
+};
+
+/**
+ * get the timecode (in ms since start) of the current recording if it is in progress
+ * @param {string} scene 
+ * @returns {Promise} resolves to a boolean indicating whether scene was changed.
+ */
+exports.getDirectory = async () => {
+    const getRecordDirectory = 'GetRecordDirectory';
+    return obs?.call(getRecordDirectory)
+        .then((f) => {
+            return f.recordDirectory;
+        }).catch((e) => {
+            logging.error(`error in getDirectory() - ${e}`)
             return false
         });
 };

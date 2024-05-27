@@ -33,10 +33,15 @@ key = "025446143514ddd5187345ca3546cb42"
 [slippi]
 
 # Output folder for the .SLP files of the stream setup
-#"C:\Users\Public\Documents\Slippi"
-#"D:\SSBM\SlippiSpectate\cleo-wii"
 
-directory = "D:\SSBM\SlippiSpectate\cleo-wii"
+# Gregor's directories
+#"C:\Users\Public\Documents\Slippi"
+
+# Cleo's directories
+#"D:\SSBM\SlippiSpectate\cleo-wii"
+#"D:\SSBM\Slippi\2024-0"
+
+directory = "D:\SSBM\Slippi\2024-05"
 
 # Only used for recording replays after an event
 melee_iso = "C:\Users\Public\Documents\[SSBM]ScotlandStages.iso"
@@ -46,4 +51,4 @@ track_score = true
 
 # Unless debugging, keep this false (duh) - games with less than 45 seconds playtime, under 120% damage dealt, games with CPUs, do not advance game score when false
 # true / false
-debug_mode = false
+debug_mode = true

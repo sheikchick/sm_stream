@@ -112,8 +112,20 @@
 			</div>
 
 			<div id="obs_auto" class="row">
-				<img class="icon" id="startgg_icon" src="static/img/obs.svg" alt="OBS"/>
-				<img class="screenshot" id="first-screenshot" src="static/img/screenshots/manual/1.png">
+				<div class="screenshot_container" id="screenshot-container-1">
+					<img class="screenshot" id="screenshot-1" src="">
+					<div class="timecode-wrapper" id="timecode-wrapper-1">
+						<input type="text" id="timecode-1" class="timecode input" placeholder="Start timecode">
+						<button	id="timecode-1-update" class="timecode button" onclick="update_timecode(1)">Update</button>
+					</div>
+				</div>
+				<div class="screenshot_container" id="screenshot-container-2">
+					<img class="screenshot" id="screenshot-2" src="">
+					<div class="timecode-wrapper" id="timecode-wrapper-2">
+						<input type="text" id="timecode-2" class="timecode input" placeholder="End timecode">
+						<button	id="timecode-2-update" class="timecode button" onclick="update_timecode(2)">Update</button>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div id="right_wrapper">

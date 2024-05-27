@@ -597,6 +597,7 @@ button:focus {
 #obs_auto {
 	display: flex;
 	align-items: center;
+	justify-content: center;
 	background-color: #666;
 	border-radius: 5px;
 }
@@ -629,10 +630,32 @@ button:disabled {
 #tournament_slug_submit {
 }
 
-.screenshot {
-	width: 25%;
-	border-radius: 5px;
+.screenshot_container {
+	width: 15em;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
 	margin: 10px;
+}
+
+.screenshot {
+	max-width: 100%;
+	border-radius: 5px;
+}
+.timecode-wrapper {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.timecode {
+	max-width: 50%;
+}
+
+.timecode.button {
+	height: 26px;
+	padding: 3px;
+	max-width: 25%;
 }
 
 #get_sets {

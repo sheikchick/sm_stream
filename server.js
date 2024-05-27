@@ -15,9 +15,12 @@ const { readData, writeData, INFO, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = requi
 const { watch } = require("./slpWatch.js");
 const { start } = require("repl");
 const { check_set_start } = require("./processSlp.js");
+const { ms_to_hhmmss } = require("./util.js")
 
 const app = express();
 let server;
+
+global.game_in_progress = false;
 
 global.config;
 
@@ -30,6 +33,10 @@ global.auto_timecode = "";
 global.current_set = [];
 
 const layoutsDir = path.join(__dirname, 'views', 'layouts');
+
+const tournamentDataDir = path.join(__dirname, 'data', 'json', 'tournaments');
+
+
 app.set('views', layoutsDir);
 app.set('view engine', 'hbs');
 hbs.registerPartials(path.join(__dirname, 'views', 'partials'));
@@ -67,6 +74,24 @@ fs.readdir(layoutsDir, {withFileTypes: true}).then((files) => {
     })
 });
 
+app.get(`/tournaments`, (req, res) => {
+    fs.readdir(tournamentDataDir, {withFileTypes: true}).then((files) => {
+        const json = '.json';
+        res.json(files.filter((f) => f.isFile() && f.name.endsWith(json)))
+    });
+})
+
+// Endpoints for tournament JSON files
+fs.readdir(tournamentDataDir, {withFileTypes: true}).then((files) => {
+    const json = '.json';
+    files.filter((f) => f.isFile() && f.name.endsWith(json)).forEach((f) => {
+        const tournament = f.name;
+        app.get(`/tournaments/${tournament}`, (req, res) => {
+            res.sendFile(path.join(tournamentDataDir, `${tournament}`));
+        })
+    })
+});
+
 // live-recording endpoints
 app.all("/get_config", (req, res) => {
     parseConfig()
@@ -94,7 +119,9 @@ DATA_FILES.forEach((f) => {
 
 app.post("/update", (req, res) => {
     const info = req.body;
-    check_set_start(info);
+    if(game_in_progress) {
+        check_set_start(info);
+    }
     writeData(INFO, info)
         .then(() => {
             res.sendStatus(200);
@@ -108,7 +135,21 @@ app.post("/update", (req, res) => {
 app.all("/save_recording", (req, res) => {
     if(manual_timecode == "") {
         manual_timecode = req.body.timecode
-        recordLive.takeScreenshot(req.body.timecode, "manual/", "1", "960x540")
+
+        fs.unlink('static/img/screenshots/manual/1.png')
+        .catch((e) => {
+            if(e.code === 'ENOENT') {
+                // file doens't exist
+            } else {
+                logging.error(e)
+            }
+        });
+
+        //delay taking screenshot
+        recordLive.takeScreenshot(req.body.timecode, "manual/", "1", "960x540").catch((e)=>{
+            logging.error(`Failed to create screenshot 1.png`)
+        })
+        
         fs.unlink('static/img/screenshots/manual/2.png')
             .catch((e) => {
                 if(e.code === 'ENOENT') {
@@ -121,7 +162,11 @@ app.all("/save_recording", (req, res) => {
     } else {
         recordLive.saveRecording("sets", manual_timecode, req.body.timecode)
             .then(() => {
-                recordLive.takeScreenshot(req.body.timecode, "manual/", "2", "960x540")
+                //delay taking screenshot
+                recordLive.takeScreenshot(req.body.timecode, "manual/", "2", "960x540").catch((e)=>{
+                    logging.error(`Failed to create screenshot 2.png`)
+                })
+
                 manual_timecode = ""
                 res.json({recording_status: m_recording_status});
             }).catch((f) => {
@@ -144,6 +189,11 @@ app.post("/save_clip", (req, res) => {
 app.get("/recording_status", (req, res) => {
     res.json({recording_status: recordLive.getRecordingStatus()});
 });
+
+app.get("/recording_timecode", (req, res) => {
+    const timecode = manual_timecode ? ms_to_hhmmss(manual_timecode) : "";
+    res.json({timecode: timecode})
+})
 
 // replay-recording endpoints
 app.all(`/${REPLAY_QUEUE}`, (req, res) => {

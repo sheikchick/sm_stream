@@ -257,6 +257,56 @@ function load_changes() {
 	if (obs !== null) {
 		getRecordStatus();
 	}
+	//update images
+	$.ajax({
+		url: "static/img/screenshots/auto/1.png",
+		type: "GET",
+		success: function () {
+			$("#screenshot-container-1").show()
+			$("#screenshot-1").attr("src", `static/img/screenshots/auto/1.png?${Date.now()}`)
+			try{
+				$.ajax({
+					url: "static/img/screenshots/auto/2.png",
+					type: "GET",
+					success: function () {
+						$("#screenshot-container-2").show()
+						$("#screenshot-2").attr("src", `static/img/screenshots/auto/2.png?${Date.now()}`)
+					},
+					error: function(e) {
+						$("#screenshot-container-2").hide()
+					},
+					timeout: 5000
+				});
+			} catch (e) {
+
+			}
+		},
+		error: function() {
+			$("#screenshot-container-1").hide()
+			$("#screenshot-container-2").hide()
+		},
+		timeout: 5000
+	  });
+	//update timecodes
+	$.ajax({
+		url: "/recording_timecode",
+		type: "GET",
+		success: function (data) {
+			if(data.timecode) {
+				if($("#timecode-1").attr("timecode") != data.timecode) {
+					console.log("changing timecode")
+					$("#timecode-1").attr("timecode", data.timecode);
+					$("#timecode-1").val(data.timecode);
+				}
+			}
+		},
+		error: function(response) {
+			$("#screenshot-container-1").hide()
+			$("#screenshot-container-2").hide()
+
+		},
+		timeout: 5000
+	  });
 	setTimeout(load_changes, 1000)
 }
 
@@ -293,8 +343,6 @@ function getRecordStatus() {
 				url: "/recording_status",
 				data: {},
 				success: function(response) {
-					console.log(outputActive)
-					console.log(response.recording_status)
 					if (outputActive && response.recording_status) {
 						$("#ffmpeg-record").text("Recording...");
 						$("#ffmpeg-record").css("background-color", "#9146FF");
@@ -320,7 +368,6 @@ function recordSet(offset_ms) {
 		'GetRecordStatus'
 	)
 	.then(function(status) {
-		console.log(status.outputDuration)
 		current_color = $("#ffmpeg-record").css("background-color");
 		current_status = $("#ffmpeg-record").text();
 		current_border = $("#ffmpeg-record").css("border-bottom");
@@ -527,8 +574,10 @@ function clip() {
 function change_best_of(value) {
 	$("#bo3").prop('disabled', value == 3 ? true : false);
 	$("#bo5").prop('disabled', value == 5 ? true : false);
-	if (value != 3 || value != 5){
-		console.log("ERROR: wrong best-of value provided")
+	if (value != 3 && value != 5){
+		console.log("ERROR: wrong best-of value provided - " + value)
+	} else {
+		best_of_value = value;
 	}
 }
 
@@ -936,3 +985,9 @@ function load_set(x) {
 	$("#p2d_pronouns").val(p2d_pronouns)
 	$("#round_change").val($("#set" + x + "_round").text())
 }
+
+async function reloadImg(url) {
+	await fetch(url, { cache: 'reload', mode: 'no-cors' })
+	document.body.querySelectorAll(`img[src='${url}']`)
+	  .forEach(img => img.src = url)
+  }

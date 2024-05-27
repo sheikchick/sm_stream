@@ -5,6 +5,8 @@ const ffmpeg = require("fluent-ffmpeg")
 const logging = require("./logging.js");
 const { readData, INFO } = require("./data.js");
 
+const { delayPromiseStart, ms_to_hhmmss } = require("./util.js")
+
 const FILE_NOT_FOUND = "FILE NOT FOUND";
 let setStartedAt = "";
 
@@ -15,7 +17,7 @@ exports.saveRecording = async (filename, start, end) => {
     const {recordDirectory} = await obs.call('GetRecordDirectory');
     const [data, vod] = await Promise.all([
         readData(INFO),
-        getLatestRecordingFile(recordDirectory)
+        this.getLatestRecordingFile(recordDirectory)
     ]);
 
     const videoName = `${data.Player1.name} vs ${data.Player2.name} - ${data.round}`.replace(/[/\\?%*:|"<>]/g, '');
@@ -43,7 +45,7 @@ exports.saveClip = async (filename, timecode) => {
         'clips'
     );
 
-    const vod = await getLatestRecordingFile(recordDirectory);
+    const vod = await this.getLatestRecordingFile(recordDirectory);
 
     const startMs = this.timecodeOffset(timecode, -(config.obs.clip_length*1000));
     const startTimestamp = ms_to_hhmmss(startMs);
@@ -62,55 +64,119 @@ exports.saveClip = async (filename, timecode) => {
     } 
 };
 
-exports.takeScreenshot = async (timecode, screenshot_dir, filename, dimensions) => {
-    await rejectIfObsNotRecording();
-
-    const {recordDirectory} = await obs.call('GetRecordDirectory');
-
-    const timestamp = ms_to_hhmmss(timecode-100);
-
-    const vod = await getLatestRecordingFile(recordDirectory);
-
-    const vod_dir = path.join(recordDirectory, vod)
-
-    if (vod === FILE_NOT_FOUND) {
-        const message = "Unable to find VoD. Command saved with placeholder filename";
-        logging.error(message)
-    }
-
-    ffmpeg(vod_dir)
-        .on('end', function(err, stdout, stderr) {
-            err ? logging.error(err) : null;
-            stderr ? logging.error(stderr) : null;
-            logging.log(`Screenshot produced for ${vod} at "static/img/screenshots/${filename}.png"`);
-        })
-        .screenshot({
-            timestamps: [timestamp],
-            folder: path.join("static/img/screenshots/", screenshot_dir),
-            filename: `${filename}.png`,
-            size: dimensions,
-            update: true
-        });
-}
-
-const ms_to_hhmmss = (ms) => {
-    let seconds = parseInt(ms / 1000);
+exports.takeScreenshot = (() => {
+    const attempt = async (timecode, screenshot_dir, filename, dimensions) => {
+        await rejectIfObsNotRecording();
     
-    const hours = parseInt(seconds / 3600);
-    seconds = seconds % 3600;
+        const {recordDirectory} = await obs.call('GetRecordDirectory');
+    
+        const timestamp = ms_to_hhmmss(timecode-100);
+    
+        const vod = await this.getLatestRecordingFile(recordDirectory);
+    
+        const vod_dir = path.join(recordDirectory, vod)
+    
+        if (vod === FILE_NOT_FOUND) {
+            // maybe put this in the onEnd() since it's talking past tense
+            const message = "Unable to find VoD. Command saved with placeholder filename";
+            logging.error(message)
+        }
+    
+        return new Promise((resolve, reject) => {
+            ffmpeg(vod_dir)
+                .on('end', function(err, stdout, stderr) {
+                    err && logging.error(`takeScreenshot(): ${err}`);
+                    stderr && logging.error(stderr);
+                    if(stdout.includes("File ended prematurely")) {
+                        reject();
+                    } else {
+                        logging.log(`Screenshot produced for ${vod} at "static/img/screenshots/${filename}.png"`);
+                        resolve();
+                    }
+                })
+                .screenshot({
+                    timestamps: [timestamp],
+                    folder: path.join("static/img/screenshots/", screenshot_dir),
+                    filename: `${filename}.png`,
+                    size: dimensions,
+                    update: true
+                });
+        });
+    };
+    
+    const tries = 20;
 
-    const minutes = parseInt(seconds / 60);
-    seconds = seconds % 60;
+    return (timecode, screenshot_dir, filename, dimensions) => {
+        let p = Promise.reject();
+        for(let i = 0; i < tries; i++) {
+            p = p.catch(() => delayPromiseStart(500, () => attempt(timecode, screenshot_dir, filename, dimensions)));
+        }
+        return p;
+    };
+})();
 
-    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-};
+/*exports.takeScreenshot3 = (() => {
+    const attempt = (timecode, screenshot_dir, filename, dimensions) => {
+        return rejectIfObsNotRecording().then(() => {
+            return obs.call('GetRecordDirectory').then(({recordDirectory}) => {
+                const timestamp = ms_to_hhmmss(timecode-100);
+                return this.getLatestRecordingFile(recordDirectory).then((vod) => {
+                    const vod_dir = path.join(recordDirectory, vod)
+                
+                    if (vod === FILE_NOT_FOUND) {
+                        // maybe put this in the onEnd() since it's talking past tense
+                        const message = "Unable to find VoD. Command saved with placeholder filename";
+                        logging.error(message)
+                    }
+                
+                    return new Promise((resolve, reject) => {
+                        ffmpeg(vod_dir)
+                            .on('end', function(err, stdout, stderr) {
+                                err && logging.error(err);
+                                stderr && logging.error(stderr);
+                                if(stdout.includes("File ended prematurely")) {
+                                    logging.debug("File ended prematurely");
+                                    reject();
+                                } else {
+                                    logging.log(`Screenshot produced for ${vod} at "static/img/screenshots/${filename}.png"`);
+                                    resolve();
+                                }
+                            })
+                            .screenshot({
+                                timestamps: [timestamp],
+                                folder: path.join("static/img/screenshots/", screenshot_dir),
+                                filename: `${filename}.png`,
+                                size: dimensions,
+                                update: true
+                            });
+                    });
+                });
+            });
+        });
+    };
 
+    return (timecode, screenshot_dir, filename, dimensions) => {
+        const tries = 5;
+        let p = Promise.reject();
+        for(let i=0; tries; i++) {
+            p = p.catch(() => delayPromiseStart(1000, () => attempt(timecode, screenshot_dir, filename, dimensions)));
+        }
+        return p;
+    };
+  })();*/
+
+/** Offset timecode value, capping at 0
+ * 
+ * @param {*} timecode  timecode value in ms
+ * @param {*} value     offset in ms
+ * @returns 
+ */
 exports.timecodeOffset = (timecode, value) => {
     return Math.max(0, timecode + value)
 }
 
 const rejectIfObsNotRecording = () => new Promise((resolve, reject) => {
-    obs.call('GetRecordStatus').then(({outputActive}) => {
+    obs?.call('GetRecordStatus').then(({outputActive}) => {
         outputActive
             ? resolve()
             : reject();
@@ -119,7 +185,7 @@ const rejectIfObsNotRecording = () => new Promise((resolve, reject) => {
 
 exports.getRecordingStatus = () => !!global.manual_timecode;
 
-const getLatestRecordingFile = (directory) => fs.mkdir(directory, {recursive: true})
+exports.getLatestRecordingFile = (directory) => fs.mkdir(directory, {recursive: true})
     .then(() => fs.readdir(directory))
     .then((files) => Promise.all(files.map(async (f) => [
         f,

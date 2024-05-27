@@ -7,11 +7,11 @@ exports.info = function(str) {
 }
 
 exports.warn = function(str) {
-    console.log(`${currentTime()} WARN: ${str}`);
+    console.error(`${currentTime()} WARN: ${str}`);
 }
 
 exports.error = function(str) {
-    console.log(`${currentTime()} ERROR: ${str}`);
+    console.error(`${currentTime()} ERROR: ${str}`);
 }
 
 exports.debug = function(str) {

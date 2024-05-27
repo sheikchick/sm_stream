@@ -1,4 +1,4 @@
-const {readFile, writeFile} = require("fs/promises");
+const { readFile, writeFile } = require("fs/promises");
 const logging = require("./logging");
 
 exports.INFO = 'info.json';
@@ -25,5 +25,5 @@ exports.writeData = async (file, data) => this.DATA_FILES.includes(file) &&
 exports.readData = async (file) => this.DATA_FILES.includes(file)
     ? readFile(this.DIRECTORY + file, FORMAT)
         .then((data) => JSON.parse(data))
-        .catch(() => logging.log(`Failed to open ${file}`))
+        .catch((e) => logging.log(`Failed to open ${file} - ${e}`))
     : {};

@@ -13,12 +13,12 @@ const { recordReplays } = require("./recordReplays.js");
 const charInfo = require("./charInfo.js");
 const { readData, writeData, updateTournament, INFO, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
 const { watch } = require("./slpWatch.js");
-const { start } = require("repl");
 const { check_set_start } = require("./processSlp.js");
 const { ms_to_hhmmss } = require("./util.js")
 
-const app = express();
 let server;
+
+global.app = express();
 
 global.game_in_progress = false;
 

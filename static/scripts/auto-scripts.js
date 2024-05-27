@@ -60,6 +60,7 @@ function update() {
 	player1dpronouns = $("#p1d_pronouns").val();
 
 	player1score = parseInt($("#p1_score_change").val());
+	player1entrant = $("#p1_entrant").val();
 
 	player2name = $("#p2_name").val();
 	player2char = $("#p2_character_actual").attr("character");
@@ -72,6 +73,8 @@ function update() {
 	player2dpronouns = $("#p2d_pronouns").val();
 
 	player2score = parseInt($("#p2_score_change").val());
+	player2entrant = $("#p2_entrant").val();
+
 	round = $("#round_change").val();
 	tournament = $("#tournament_change").val();
 	caster1 = "";
@@ -105,6 +108,7 @@ function update() {
 				colour_dubs: player1dcolour,
 				pronouns_dubs: player1dpronouns,
 				score: player1score,
+				startgg_entrant: player1entrant
 			},
 			Player2: {
 				name: player2name,
@@ -116,6 +120,7 @@ function update() {
 				colour_dubs: player2dcolour,
 				pronouns_dubs: player2dpronouns,
 				score: player2score,
+				startgg_entrant: player2entrant
 			},
 			round: round,
 			tournament,
@@ -589,33 +594,35 @@ function showSets(up) {
 		index = x + ((set_page-1)*5);
 		if (typeof(sets.length) != "undefined") {
 			if(sets.length == 0 || index >= sets.length) {
-				$("#set" + (x+1)).css("display", "none");
+				$(`#set${x+1}`).css("display", "none");
 			} else {
 				$("#right_wrapper").css("display", "flex")
 
-				$("#set" + (x+1)).css("display", "flex");
-				$("#set" + (x+1)).attr("match_id", sets[index]["id"])
+				$(`#set${x+1}`).css("display", "flex");
+				$(`#set${x+1}`).attr("match_id", sets[index]["id"])
 
-				if(sets[index]["player1_doubles"]["name"] != "") {
-					$("#set" + (x+1) + "_name1").text(sets[index]["player1"]["name"] + " / " + sets[index]["player1_doubles"]["name"])
+				if(sets[index]["player1"]["data"][1]["name"] != "") {
+					$(`#set${x+1}_name1`).text(`${sets[index]["player1"]["data"][0]["name"]} / ${sets[index]["player1"]["data"][1]["name"]}`)
 				} else {
-					$("#set" + (x+1) + "_name1").text(sets[index]["player1"]["name"])
+					$(`#set${x+1}_name1`).text(sets[index]["player1"]["data"][0]["name"])
 				}
-				$("#set" + (x+1) + "_name1").attr("p1_data", JSON.stringify(sets[index]["player1"]))
-				$("#set" + (x+1) + "_name1").attr("p2_data", JSON.stringify(sets[index]["player1_doubles"]))
+				$(`#set${x+1}_name1`).attr("data-p1", JSON.stringify(sets[index]["player1"]["data"][0]))
+				$(`#set${x+1}_name1`).attr("data-p2", JSON.stringify(sets[index]["player1"]["data"][1]))
+				$(`#set${x+1}_name1`).attr("data-entrant", JSON.stringify(sets[index]["player1"]["entrant_id"]))
 
-				if(sets[index]["player2_doubles"]["name"] != "") {
-					$("#set" + (x+1) + "_name2").text(sets[index]["player2"]["name"] + " / " + sets[index]["player2_doubles"]["name"])
+				if(sets[index]["player2"]["data"][1]["name"] != "") {
+					$(`#set${x+1}_name2`).text(`${sets[index]["player2"]["data"][0]["name"]} / ${sets[index]["player2"]["data"][1]["name"]}`)
 				} else {
-					$("#set" + (x+1) + "_name2").text(sets[index]["player2"]["name"])
+					$(`#set${x+1}_name2`).text(sets[index]["player2"]["data"][0]["name"])
 				}
-				$("#set" + (x+1) + "_name2").attr("p1_data", JSON.stringify(sets[index]["player2"]))
-				$("#set" + (x+1) + "_name2").attr("p2_data", JSON.stringify(sets[index]["player2_doubles"]))
+				$(`#set${x+1}_name2`).attr("data-p1", JSON.stringify(sets[index]["player2"]["data"][0]))
+				$(`#set${x+1}_name2`).attr("data-p2", JSON.stringify(sets[index]["player2"]["data"][1]))
+				$(`#set${x+1}_name2`).attr("data-entrant", JSON.stringify(sets[index]["player2"]["entrant_id"]))
 
-				$("#set" + (x+1) + "_round").text(sets[index]["round"])
+				$(`#set${x+1}_round`).text(sets[index]["round"])
 			}
 		} else {
-			$("#set" + (x+1)).css("display", "none");
+			$(`#set${x+1}`).css("display", "none");
 		}
 	}
 	if(sets.length == 0) {
@@ -636,324 +643,20 @@ function showSets(up) {
 	}
 }
 
-/**
- * STARTGG
- */
-
-/* GET EVENTS IN TOURNAMENT (Melee Singles, Melee Doubles, ...) */
-function getTournamentEvents() {
-	tournament_slug = $("#tournament_slug").val()
-	fetch('https://api.start.gg/gql/alpha', {
-		method: 'POST',
-		headers: {
-			'Authorization': 'Bearer ' + api_key,
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			query: `
-				query TournamentEvents($name:String!){
-					tournament(slug:$name){
-						id
-						name
-						events{
-							id
-							name
-						}
-					}
-				}
-			`,
-			variables: {
-				name: tournament_slug
-			},
-		}),
-	})
-	.then((res) => res.json())
-	.then((result) => {
-		$("#events").hide()
-		$("#phases").hide()
-		$("#phase_groups").hide()
-		$("#get_sets").hide()
-		if(result["data"]["tournament"] == null) {
-			$("#right_wrapper").css("display", "none")
-			return
-		}
-		$("#events").empty()
-		$("#events").append(new Option("Select...", 0));
-        for (let event of result["data"]["tournament"]["events"]) {
-			event_option = new Option(event["name"], event["id"]);
-			$("#events").append(event_option);
-			$("#events").show()
-		}
-	});
-}
-
-/* GET PHASES IN EVENT (Pools, Pro Bracket, ...) */
-function getEventPhases() {
-	event_id = $("#events :selected").val()
-
-	fetch('https://api.start.gg/gql/alpha', {
-		method: 'POST',
-		headers: {
-			'Authorization': 'Bearer ' + api_key,
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			query: `
-				query EventPhases($id:ID!){
-					event(id:$id){
-						phases{
-						  	id
-						  	name
-						  	phaseGroups{
-								nodes{
-									id
-									displayIdentifier
-								}
-							}
-						}
-					}
-				}
-			`,
-			variables: {
-				id: event_id
-			},
-		}),
-	})
-	.then((res) => res.json())
-	.then((result) => {
-		$("#phases").hide()
-		$("#phase_groups").hide()
-		$("#get_sets").hide()
-		if(result["data"]["event"]["phases"] == null) {
-			$("#right_wrapper").css("display", "none")
-			return
-		}
-		$("#phases").empty()
-		$("#phases").append(new Option("Select...", 0));
-        for (let phase of result["data"]["event"]["phases"]) {
-			phase_option = new Option(phase["name"], phase["id"]);
-			$("#phases").append(phase_option);
-			$("#phases").attr("tournament_slug", tournament_slug)
-			$("#phases").show()
-		}
-	});
-}
-
-/* GET PHASEGROUPS IN PHASE (Pool A1, Pool A2, ...) */
-function getPhaseGroups() {
-	phase_id = $("#phases :selected").val()
-	fetch('https://api.start.gg/gql/alpha', {
-		method: 'POST',
-		headers: {
-			'Authorization': 'Bearer ' + api_key,
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			query: `
-				query PhaseGroups($id:ID!){
-					phase(id:$id){
-				  		name
-				  		phaseGroups{
-							nodes{
-					  			id
-					  			displayIdentifier
-							}
-				  		}
-					}
-			  	}
-			`,
-			variables: {
-				id: phase_id
-			},
-		}),
-	})
-	.then((res) => res.json())
-	.then((result) => {
-		$("#phase_groups").hide()
-		$("#get_sets").hide()
-		if(result["data"]["phase"]["phaseGroups"] == null) {
-			$("#right_wrapper").css("display", "none")
-			return
-		}
-		$("#phase_groups").empty()
-		if (result["data"]["phase"]["phaseGroups"]["nodes"].length > 1) {
-			$("#phase_groups").append(new Option("Select...", 0));
-		}
-        for (let pg of result["data"]["phase"]["phaseGroups"]["nodes"]) {
-			pg_option = new Option(pg["displayIdentifier"], pg["id"]);
-			$("#phase_groups").append(pg_option);
-			$("#phase_groups").attr("tournament_slug", tournament_slug)
-		}
-		if (result["data"]["phase"]["phaseGroups"]["nodes"].length > 1) {
-			$("#phase_groups").show()
-		} else {
-			//for overloading - select the only available option and then hide the element for clarity
-			$("#phase_groups").val($("#phase_groups option:first").val());
-			$("#phase_groups").hide()
-			$("#get_sets").show()
-		}
-	});
-}
-
-function showGetSets() {
-	$("#get_sets").show()
-}
-
-/* GET AND LOAD SETS FOR A GIVEN PHASEGROUP */
-function getSets() {
-	phase_group = $("#phase_groups :selected").val();
-	fetch('https://api.start.gg/gql/alpha', {
-		method: 'POST',
-		headers: {
-			'Authorization': 'Bearer ' + api_key,
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			query: `
-				query GetSets($pgID:ID!, $page:Int!, $perPage:Int!){
-					phaseGroup(id:$pgID){
-						bracketType
-						displayIdentifier
-						phase {
-							name
-						}
-						sets(
-							page: $page
-							perPage: $perPage
-							sortType: STANDARD
-							filters: {
-								hideEmpty: false
-								state: [1,2,3,4,5,6,7]
-							}
-						){
-							nodes{
-								id
-								fullRoundText
-								slots{
-									entrant{
-										participants{
-											gamerTag
-											user{
-												discriminator
-												genderPronoun
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			`,
-			variables: {
-				pgID: phase_group,
-				page: 1,
-				perPage: 80
-			},
-		}),
-	})
-	.then((res) => res.json())
-	.then((result) => {
-		sets = []
-		phase_group = result["data"]["phaseGroup"]
-		for (let set of phase_group["sets"]["nodes"]) {
-			valid = true
-			for (let entrant of set["slots"]) {
-				if (!(entrant["entrant"])) {
-					valid = false
-				}
-			}
-			if (valid) {
-				match_id = set["id"]
-				if(phase_group["bracketType"] == "ROUND_ROBIN") {
-					match_round = phase_group["phase"]["name"] + " " + phase_group["displayIdentifier"]
-				} else {
-					match_round = set["fullRoundText"]
-				}
-				team1 = set["slots"][0]
-				team2 = set["slots"][1]
-				//player 1
-				p1_user_id = ""
-				p1_pronouns = ""
-				if (team1["entrant"]["participants"][0]["user"] != null) {
-					p1_user_id = team1["entrant"]["participants"][0]["user"]["discriminator"]
-					p1_pronouns = team1["entrant"]["participants"][0]["user"]["genderPronoun"]
-				}
-				p1_name = team1["entrant"]["participants"][0]["gamerTag"]
-				//player 1 doubles
-				p1_doubles_user_id = ""
-				p1_doubles_pronouns = ""
-				p1_doubles_name = ""
-				if(team1["entrant"]["participants"].length > 1) {
-					if (team1["entrant"]["participants"][1]["user"] != null) {
-						p1_doubles_user_id = team1["entrant"]["participants"][1]["user"]["discriminator"]
-						p1_doubles_pronouns = team1["entrant"]["participants"][1]["user"]["genderPronoun"]
-					}
-					p1_doubles_name = team1["entrant"]["participants"][1]["gamerTag"]
-				}
-
-				//player 2
-				p2_user_id = ""
-				p2_pronouns = ""
-				if (team2["entrant"]["participants"][0]["user"] != null) {
-					p2_user_id = team2["entrant"]["participants"][0]["user"]["discriminator"]
-					p2_pronouns = team2["entrant"]["participants"][0]["user"]["genderPronoun"]
-				}
-				p2_name = team2["entrant"]["participants"][0]["gamerTag"]
-				//player 2 doubles
-				p2_doubles_user_id = ""
-				p2_doubles_pronouns = ""
-				p2_doubles_name = ""
-				if(team2["entrant"]["participants"].length > 1) {
-					if (team2["entrant"]["participants"][1]["user"] != null) {
-						p2_doubles_user_id = team2["entrant"]["participants"][1]["user"]["discriminator"]
-						p2_doubles_pronouns = team2["entrant"]["participants"][1]["user"]["genderPronoun"]
-					}
-					p2_doubles_name = team2["entrant"]["participants"][1]["gamerTag"]
-				}
-				
-				match_data = {
-					"id": match_id,
-					"round": match_round,
-					"player1": {
-						"id": p1_user_id,
-						"name": p1_name,
-						"pronouns": p1_pronouns
-					},
-					"player1_doubles" : {
-						"id": p1_doubles_user_id,
-						"name": p1_doubles_name,
-						"pronouns": p1_doubles_pronouns
-					},
-					"player2": {
-						"id": p2_user_id,
-						"name": p2_name,
-						"pronouns": p2_pronouns
-					},
-					"player2_doubles" : {
-						"id": p2_doubles_user_id,
-						"name": p2_doubles_name,
-						"pronouns": p2_doubles_pronouns
-					}
-				}
-				sets.push(match_data)
-			}
-		}
-		set_page = 0;
-		showSets(true);
-	});
-}
-
 function load_set(x) {
-	p1_data = JSON.parse($("#set" + x + "_name1").attr("p1_data"))
-	p1d_data = JSON.parse($("#set" + x + "_name1").attr("p2_data"))
-	p2_data = JSON.parse($("#set" + x + "_name2").attr("p1_data"))
-	p2d_data = JSON.parse($("#set" + x + "_name2").attr("p2_data"))
+	p1_data = JSON.parse($(`#set${x}_name1`).attr("data-p1"))
+	p1d_data = JSON.parse($(`#set${x}_name1`).attr("data-p2"))
+	p2_data = JSON.parse($(`#set${x}_name2`).attr("data-p1"))
+	p2d_data = JSON.parse($(`#set${x}_name2`).attr("data-p2"))
 
 	$("#p1_name").val(p1_data["name"])
 	$("#p1d_name").val(p1d_data["name"])
 	$("#p2_name").val(p2_data["name"])
 	$("#p2d_name").val(p2d_data["name"])
+
+	$("#p1_entrant").val($(`#set${x}_name1`).attr("data-entrant"))
+	$("#p2_entrant").val($(`#set${x}_name2`).attr("data-entrant"))
+
 	p1_pronouns = p1_data["pronouns"]
 	p1d_pronouns = p1d_data["pronouns"]
 	p2_pronouns = p2_data["pronouns"]
@@ -965,11 +668,15 @@ function load_set(x) {
 	$("#round_change").val($("#set" + x + "_round").text())
 }
 
-async function reloadImg(url) {
+/*async function reloadImg(url) {
 	await fetch(url, { cache: 'reload', mode: 'no-cors' })
 	document.body.querySelectorAll(`img[src='${url}']`)
 	  .forEach(img => img.src = url)
 }
+
+probably delete this function*/
+
+/* SET DATA */
 
 function updateTournamentData(tournament) {
 	$("#tournament_data").empty()
@@ -988,8 +695,9 @@ function updateTournamentData(tournament) {
 						$("#tournament_data").append(new Option(`Select set`, -1));
 						var index = 0;
 						for(let set of response) {
+							console.log(set)
 							var option = $('<option />')
-								.text(`${set.tags[0]} vs ${set.tags[1]} - ${set.round}`)
+								.text(`${set.players[0].tag} vs ${set.players[1].tag} - ${set.round}`)
 								.val(index)
 								.attr("data-set", JSON.stringify(set))
 								.attr("data-tournament", tournament)
@@ -1001,8 +709,8 @@ function updateTournamentData(tournament) {
 						$("#set_update").hide()
 						$("#load_tournament_data").show()
 					},
-					error: function() {
-						console.log(`No valid tournament data found for ${tournamentUrl}`)
+					error: function(e) {
+						console.log(`No valid tournament data found for ${tournamentUrl} - ${e}`)
 						$("#load_tournament_data").hide()
 					},
 					timeout: 5000
@@ -1019,10 +727,20 @@ function updateTournamentData(tournament) {
 	})
 }
 
+//make this shit pretty then make it submit to start.gg
 function getTournamentSet() {
 	var set = JSON.parse($("#tournament_data :selected").attr("data-set"));
 	if(!set) {
 		return
+	}
+	$("#display_set_results").empty()
+	var player_names = $('<span />')
+		.text(`${set.players[0].tag} vs ${set.players[1].tag}`)
+	$("#display_set_results").append(player_names)
+	for(let game of set.games) {
+		var game_data = $('<span />')
+			.text(`${game.Player1.stocks} ${game.Player1.character} vs ${game.Player2.character} ${game.Player2.stocks}`)
+		$("#display_set_results").append(game_data);
 	}
 	index = 1;
 	$("#screenshot-container-1").hide()
@@ -1059,6 +777,10 @@ function takeScreenshot(timecode, index, vod) {
 		},
 		timeout: 5000
 	})
+}
+
+function showGetSets() {
+	$("#get_sets").show()
 }
 
 function updateSet() {

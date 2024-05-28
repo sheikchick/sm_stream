@@ -80,6 +80,7 @@ check_set_end = async (info) => {
         
                     //THE MOST IMPORTANT FUNCTION GOING FORWARD
                     const json_file = path.join("data/json/tournaments/", tournament_filename);
+                    const winner = info.Player1.score >= first_to ? 1 : info.Player2.score >= first_to ? 2 : 0 //0 should never occur
                     const data = {
                         players: [
                             {
@@ -93,7 +94,8 @@ check_set_end = async (info) => {
                         ],
                         round: info.round,
                         vod: vod,
-                        set_id: 0, //TODO: startgg set id
+                        set_id: info.setId, //TODO: startgg set id
+                        winner: winner,
                         timecodes: [auto_timecode, recordLive.timecodeOffset(timecode, 15000)],
                         games: current_set
                     }

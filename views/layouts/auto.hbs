@@ -63,9 +63,9 @@
 				</div>
 				<img id="p1_character_change" class="csp actual" src="csp">
 				<img id="p1d_character_change" class="csp actual" src="csp">
-				<div class="score_wrapper">
+				<div class="column">
 					<input type="number" id="p1_score_change" class="score change left" min="0" max="99" value="{{Player1.score}}">
-					<input type="text" id="p1_entrant" class="startgg display id" value="{{Player1.entrant}}" placeholder="start.gg Entrant">
+					<input type="text" id="p1_entrant" class="startgg display id" value="{{Player1.startgg_entrant}}" placeholder="start.gg Entrant">
 				</div>
 			</div>
 
@@ -85,15 +85,18 @@
 				</div>
 				<img id="p2_character_change" class="csp actual" src="csp">
 				<img id="p2d_character_change" class="csp actual" src="csp">
-				<div class="score_wrapper">
+				<div class="column">
 					<input type="number" id="p2_score_change" class="score change right" min="0" max="99" value="{{Player2.score}}">
-					<input type="text" id="p2_entrant" class="startgg display id" value="{{Player2.entrant}}" placeholder="start.gg Entrant">
+					<input type="text" id="p2_entrant" class="startgg display id" value="{{Player2.startgg_entrant}}" placeholder="start.gg Entrant">
 				</div>
 			</div>
 
 			<div id="data_wrapper" class="row">
 				<input type="text" id="tournament_change" value="{{tournament}}" placeholder="Tournament">
-				<input type="text" id="round_change" value="{{round}}" placeholder="Round">
+				<div class="column">
+					<input type="text" id="round_change" value="{{round}}" placeholder="Round">
+					<input type="text" id="set_id" class="startgg display setid" value="{{set_id}}" placeholder="start.gg Set ID">
+				</div>
 				<button type="button" class="best_of" id="bo3" onclick="change_best_of(3)">Best of 3</button>
 				<button type="button" class="best_of" id="bo5" onclick="change_best_of(5)">Best of 5</button>
 				<button type="button" class="toggle_doubles" onclick="toggle_doubles()" value="{{is_doubles}}"></button>
@@ -123,7 +126,10 @@
 			</div>
 
 			<div id="load_tournament_data" class="row">
-				<select id="tournament_data" tournament="" onchange="getTournamentSet()"></select>
+				<div class="column" id="tournament_wrapper">
+					<select id="tournament_data" tournament="" onchange="getTournamentSet()"></select>
+					<button type="button" id="set_update" onclick="updateSet()">Submit timestamps</button>
+				</div>
 				<div class="screenshot_container" id="screenshot-container-1">
 					<img class="screenshot" id="screenshot-1" src="">
 					<div class="timecode-wrapper" id="timecode-wrapper-1">
@@ -138,11 +144,10 @@
 						<button	id="timecode-2-update" class="timecode button" onclick="update_timecode(2)">Update</button>
 					</div>
 				</div>
-				<button type="button" id="set_update" onclick="updateSet()">Submit</button>
+				<div id="display_set_results">
+				</div>
 			</div>
 
-			<div id="display_set_results" class="row">
-			</div>
 		</div>
 		<div id="right_wrapper">
 			<div id="pages">

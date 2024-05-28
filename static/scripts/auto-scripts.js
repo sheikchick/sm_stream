@@ -76,6 +76,7 @@ function update() {
 	player2entrant = $("#p2_entrant").val();
 
 	round = $("#round_change").val();
+	set_id = $("#set_id").val()
 	tournament = $("#tournament_change").val();
 	caster1 = "";
 	caster2 = "";
@@ -123,6 +124,7 @@ function update() {
 				startgg_entrant: player2entrant
 			},
 			round: round,
+			set_id,
 			tournament,
 			caster1: caster1,
 			caster2: caster2,
@@ -419,66 +421,6 @@ function recordSet(offset_ms) {
 	})
 }
 
-function autoRecord(offset_ms) {
-	obs.call(
-		'GetRecordStatus'
-	)
-	.then(function(status) {
-		var timecode = status.outputDuration
-		if(!status.outputActive) {
-		} 
-
-		const record_controller = new AbortController()
-		const record_timeout = setTimeout(() => {
-			record_controller.abort()
-			$("auto-record").text("Failed")
-			setTimeout(function(){
-				$("auto-record").text("Record")
-			}, 2000);
-		}, 5000);
-		fetch("/save_auto_recording", {
-			method: 'POST',
-			headers: { "Content-Type": "application/json"},
-			body: JSON.stringify({
-				timecode: timecode
-			}),
-			signal: record_controller.signal
-		})
-		.then((response) => response.json())
-		.then((data) => {
-			clearTimeout(record_timeout)
-			if(!data.recording_status) {
-				record_controller.abort()
-				$("#auto-record").text("Recorded")
-				setTimeout(function(){
-					$("#auto-record").text("Record")
-				}, 2000);
-			} else {
-				$("#auto-record").text("Recording")
-			}
-		})
-	})
-}
-
-function getAutoStatus() {
-	obs.call('GetRecordStatus')
-		.catch(() => false)
-		.then(({outputActive}) => {
-			$.ajax({
-				type: 'GET',
-				url: "/recording_status_auto",
-				data: {},
-				success: function(response) {
-					console.log(response)
-				},
-				error: function(response) {
-					console.log(response)
-				},
-				timeout: 5000
-			})
-		});
-}
-
 function clip() {
 	obs.call(
 		'GetRecordStatus'
@@ -666,6 +608,7 @@ function load_set(x) {
 	$("#p2_pronouns").val(p2_pronouns)
 	$("#p2d_pronouns").val(p2d_pronouns)
 	$("#round_change").val($("#set" + x + "_round").text())
+	$("#set_id").val($(`#set${x}`).attr("match_id"))
 }
 
 /*async function reloadImg(url) {
@@ -681,6 +624,7 @@ probably delete this function*/
 function updateTournamentData(tournament) {
 	$("#tournament_data").empty()
 	const tournamentUrl = `${tournament.split(" ").join("_")}.json`
+	$("#display_set_results").hide()
 	$.ajax({
 		type: 'GET',
 		url: "/tournaments",
@@ -727,21 +671,44 @@ function updateTournamentData(tournament) {
 	})
 }
 
+function submitStartggSet() {
+	var set = JSON.parse($("#tournament_data :selected").attr("data-set"));
+	var startggSet = constructSet(set.players[0].entrant_id, set.players[1].entrant_id, set.games)
+	submitSet(set.set_id, set.players[set.winner-1].entrant_id, startggSet)
+}
+
 //make this shit pretty then make it submit to start.gg
 function getTournamentSet() {
+	const STOCK_ICON = `static/img/stock_icons`
+
 	var set = JSON.parse($("#tournament_data :selected").attr("data-set"));
 	if(!set) {
 		return
 	}
+	$("#display_set_results").show()
 	$("#display_set_results").empty()
 	var player_names = $('<span />')
 		.text(`${set.players[0].tag} vs ${set.players[1].tag}`)
 	$("#display_set_results").append(player_names)
 	for(let game of set.games) {
-		var game_data = $('<span />')
-			.text(`${game.Player1.stocks} ${game.Player1.character} vs ${game.Player2.character} ${game.Player2.stocks}`)
-		$("#display_set_results").append(game_data);
+		var game_row = $('<div />')
+		console.log(game.Player1.stocks)
+		for(x = 0 ; x < 4-game.Player1.stocks; x++) {
+			game_row.append($('<img />').attr("src", `${STOCK_ICON}/${getDefaultIcon(game.Player1.character)}`).attr("class", 'stock_icon dark'))
+		}
+		for(x = 0 ; x < game.Player1.stocks; x++) {
+			game_row.append($('<img />').attr("src", `${STOCK_ICON}/${getDefaultIcon(game.Player1.character)}`).attr("class", 'stock_icon'))
+		}
+		game_row.append($('<span />').attr("class", 'stage').text(` ${getStageShort(game.stage)} `))
+		for(x = 0 ; x < game.Player2.stocks; x++) {
+			game_row.append($('<img />').attr("src", `${STOCK_ICON}/${getDefaultIcon(game.Player2.character)}`).attr("class", 'stock_icon'))
+		}
+		for(x = 0 ; x < 4-game.Player2.stocks; x++) {
+			game_row.append($('<img />').attr("src", `${STOCK_ICON}/${getDefaultIcon(game.Player2.character)}`).attr("class", 'stock_icon dark'))
+		}
+		$("#display_set_results").append(game_row);
 	}
+	$("#display_set_results").append($('<button />').attr('id', 'submitStartggSet').attr('onClick', 'submitStartggSet()').text("Submit start.gg"));
 	index = 1;
 	$("#screenshot-container-1").hide()
 	$("#screenshot-container-2").hide()
@@ -807,7 +774,7 @@ function updateSet() {
 			setTimeout(function(){
 				$("#set_update").css("background-color", "#FFF");
 				$("#set_update").css("border-bottom", "3px solid #AAA");
-				$("#set_update").text("Submit");
+				$("#set_update").text("Submit timestamps");
 			}, 2000);
 			return true;
 		},
@@ -820,7 +787,7 @@ function updateSet() {
 			setTimeout(function(){
 				$("#set_update").css("background-color", "#FFF");
 				$("#set_update").css("border-bottom", "3px solid #AAA");
-				$("#set_update").text("Submit");
+				$("#set_update").text("Submit timestamps");
 			}, 2000);
 			return false;
 		},
@@ -860,3 +827,47 @@ function hhmmss_to_ms(input) {
 	
 	return ms;
 };
+
+function getDefaultIcon(character) {
+	switch(character) {
+		case "bowser":
+		case "link":
+		case "luigi":
+		case "yoshi":
+		case "younglink":
+			return `${character}/green.png`
+		case "iceclimbers":
+		case "marth":
+			return `${character}/blue.png`
+		case "kirby":
+		case "mario":
+		case "ness":
+		case "peach":
+		case "samus":
+			return `${character}/red.png`
+		default:
+			return `${character}/original.png`
+	}
+}
+
+function getStageShort(stage) {
+	switch(stage) {
+        case "Yoshi's Story":
+            return "YS"
+        case "Fountain of Dreams":
+            return "FoD"
+        case "Pokemon Stadium":
+        case "Pokémon Stadium":
+            return "PS"
+        case "Battlefield":
+            return "BF"
+        case "Final Destination":
+            return "FD"
+        case "Dream Land":
+        case "Dream Land 64":
+        case "Dream Land N64":
+            return "DL"
+        default:
+            return "VS"
+    }
+}

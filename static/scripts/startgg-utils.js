@@ -132,10 +132,10 @@ function resolveStartggStage(stage) {
     }
 }
 
-function constructSet(p1_id, p2_id, data) {
+function constructSet(p1_id, p2_id, games) {
     let index = 1;
     let set = []
-    for(let game of data.games) {
+    for(let game of games) {
         set.push(constructGame(index, p1_id, p2_id, game))
     }
     return set

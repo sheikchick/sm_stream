@@ -45,12 +45,12 @@ button {
 	flex-direction: row;
 }
 
-#left_wrapper {
+#left-wrapper {
   	display: flex;
 	flex-direction: column;
 }
 
-#right_wrapper {
+#right-wrapper {
 	display: flex;
 	flex-direction: column;
 }
@@ -86,7 +86,7 @@ button {
 	justify-content: flex-start;
 }
 
-#data_actual {
+#data-actual {
 	display: flex;
 	align-items: center;
     height: 70px !important;
@@ -196,38 +196,38 @@ button {
 	text-align: right;
 }
 
-#middle_row {
+#middle-row {
 	justify-content: center;
 }
-#middle_row button {
+#middle-row button {
 	margin: 10px;
 }
 
-#data_wrapper input, #data_wrapper button {
+#data-wrapper input, #data-wrapper button {
 	margin: 10px;
 }
 
-#outer_displayed {
+#outer-displayed {
 	text-align: center;
 	display: none;
 }
 
-#inner_change {
+#inner-change {
 	text-align: center;
 	color: #CBFFC7;
 }
 
-#outer_change {
+#outer-change {
 	text-align: center;
 	display: none;
 	color: #CBFFC7;
 }
 
-#p1_stock {
+#p1-stock {
 	display: none;
 }
 
-#p2_stock {
+#p2-stock {
 	display: none;
 }
 
@@ -235,13 +235,13 @@ button {
 	font-size: 24px;
 }
 
-.stock_icon.actual {
+.stock-icon.actual {
 	width: 32px;
 	height: 32px;
 	text-align: center;
 }
 
-.stock_icon.dark {
+.stock-icon.dark {
 	filter: opacity(15%)
 }
 
@@ -251,11 +251,11 @@ span.stage {
 	width: 2.5em;
 }
 
-.character_container.actual {
+.character-container.actual {
 	display: flex;
 }
 
-.character_container.change {
+.character-container.change {
 	display: flex;
 }
 
@@ -286,7 +286,7 @@ span.stage {
 	margin-bottom: 10px;
 }
 
-.csp_container {
+.csp-container {
 	border-radius: 5px;
 	background-color: #222;
 	margin-bottom: 10px;
@@ -300,7 +300,7 @@ span.stage {
 	margin: 0px 40px 0px 40px;
 }
 
-#doubles_info {
+#doubles-info {
 	opacity: 0;
 	letter-spacing: 1px;
 	margin-top: 10px;
@@ -368,11 +368,11 @@ button:focus {
 	outline: none;
 }
 
-.data_text.actual {
+.data-text.actual {
 	margin: 5px 10px 5px 10px;
 }
 
-#round_actual {
+#round-actual {
 	padding: 5px 5px 5px 5px;
 	width: 132px;
 	font-size: 16px;
@@ -383,7 +383,7 @@ button:focus {
 	text-align: center;
 }
 
-#best_of_actual {
+#best-of-actual {
 	padding: 5px 5px 5px 5px;
 	width: 80px;
 	font-size: 16px;
@@ -415,7 +415,7 @@ button:focus {
 
 }
 
-#scene_box {
+#scene-box {
 	display: flex;
 	align-items: center;
 	text-align: center;
@@ -433,19 +433,19 @@ button:focus {
 	background-color: #CCC;
 }
 
-#casters_wrapper {
+#casters-wrapper {
 	display: flex;
 	flex-direction: column;
 	align-items: center
 }
 
-#caster_box {
+#caster-box {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 }
 
-.doubles_wrapper {
+.doubles-wrapper {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -466,7 +466,7 @@ button:focus {
 	background-color: #CCC;
 }
 
-.swap_sides {
+.swap-sides {
 	font-size: 14px;
 	margin: 5px;
 	color: #323232;
@@ -476,7 +476,7 @@ button:focus {
 	height: 39px;
 }
 
-.swap_sides:hover {
+.swap-sides:hover {
 	background-color: #CCC;
 }
 
@@ -484,7 +484,7 @@ button:focus {
 	background-color: #CCC;
 }
 
-.toggle_doubles {
+.toggle-doubles {
 	font-size: 14px;
 	margin: 5px 5px 5px 5px;
 	color: #323232;
@@ -494,92 +494,92 @@ button:focus {
 	height: 39px;
 }
 
-.toggle_doubles:hover {
+.toggle-doubles:hover {
 	background-color: #CCC;
 }
 
 
-.name_container.actual {
+.name-container.actual {
 	display: flex;
 	flex-direction: column;
 	margin: 0px 10px 0px 10px;
 	width: 261px;
 }
 
-.name_container.change {
+.name-container.change {
 	display: flex;
 	flex-direction: column;
 }
 
-#p1_text_actual {
+#p1-text-actual {
 	margin-top: 0px !important;
 }
 
-#p1_character_actual {
+#p1-character-actual {
 }
 
-#p1d_character_actual {
+#p1d-character-actual {
 }
 
-#p1_score_actual {
+#p1-score-actual {
 }
 
-#p2_text_actual {
+#p2-text-actual {
 	margin-top: 0px !important;
 }
 
-#p1d_character_actual {
+#p1d-character-actual {
 }
 
-#p1_character_actual {
+#p1-character-actual {
 }
 
-#p1_text_change {
+#p1-text-change {
 }
 
-#p2_text_change {
+#p2-text-change {
 }
 
-#team1_swap {
+#team1-swap {
 }
 
-#team2_swap {
+#team2-swap {
 }
 
 .name.change {
 	box-shadow: 0px 4px 2px #000;
 }
 
-#p1_character_change {
+#p1-character-change {
 }
 
-#p2_character_change {
+#p2-character-change {
 }
 
-#p1d_character_change {
+#p1d-character-change {
 }
 
-#p2d_character_change {
+#p2d-character-change {
 }
 
-.doubles_colours {
+.doubles-colours {
 	margin: 0px 24px 0px 24px;
 	width: 320px;
 }
 
-#tournament_change {
+#tournament-change {
 	width: 132px;
 	height: 18px;
 	font-size: 16px;
 }
 
-#round_change {
+#round-change {
 	width: 132px;
 	height: 18px;
 	font-size: 16px;
 }
 
-.best_of {
+.best-of {
 	font-size: 14px;
 	margin: 5px 0px 5px 0px;
 	color: #323232;
@@ -600,18 +600,18 @@ button:focus {
 }
 
 /* OBS */
-#obs_wrapper {
+#obs-wrapper {
 	display: none;
 	align-items: center;
 	background-color: #333;
 	border-radius: 5px;
 }
 
-#obs_wrapper input, #obs_wrapper button {
+#obs-wrapper input, #obs-wrapper button {
 	margin: 10px;
 }
 
-#load_tournament_data {
+#load-tournament-data {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -619,7 +619,7 @@ button:focus {
 	border-radius: 5px;
 }
 
-#load_tournament_data > select {
+#load-tournament-data > select {
 	font-size: 14px;
 	padding: 5px;
 }
@@ -634,11 +634,11 @@ button.timecode {
 	padding: 5px;
 }
 
-#load_tournament_data > * {
+#load-tournament-data > * {
 	margin: 10px;
 }
 
-#obs_auto input, #obs_auto button {
+#obs-auto input, #obs-auto button {
 	margin: 10px;
 }
 
@@ -648,25 +648,25 @@ button:disabled {
 }
 
 /* START.GG */
-#startgg_wrapper {
+#startgg-wrapper {
 	align-items: center;
 	background-color: #333;
 	border-radius: 5px;
 }
 
-#startgg_wrapper input, #startgg_wrapper button {
+#startgg-wrapper input, #startgg-wrapper button {
 	margin: 10px;
 }
 
-#tournament_slug {
+#tournament-slug {
 	width: 120px;
 	height: 15px;
 }
 
-#tournament_slug_submit {
+#tournament-slug-submit {
 }
 
-.screenshot_container {
+.screenshot-container {
 	width: 12em;
 	display: flex;
 	align-items: center;
@@ -699,11 +699,11 @@ button:disabled {
 	margin: 5px;
 }
 
-#get_sets {
+#get-sets {
 	display: none;
 }
 
-#right_wrapper {
+#right-wrapper {
 	display: none;
 	flex-direction: column;
 	border-radius: 5px;
@@ -724,11 +724,11 @@ button:disabled {
 	margin: 0 10px;
 }
 
-#page_left {
+#page-left {
 	display: none;
 }
 
-#page_right {
+#page-right {
 	display: none;
 }
 
@@ -829,7 +829,7 @@ button:disabled {
 	margin: 0px 10px;
 }
 
-#phase_groups {
+#phase-groups {
 	width: 100px;
 }
 
@@ -865,15 +865,15 @@ input.right {
 	flex-direction: column;
 }
 
-#tournament_wrapper {
+#tournament-wrapper {
 	gap: 0.5em;
 }
 
-#set_update {
+#set-update {
 	padding: 3px;
 }
 
-#display_set_results {
+#display-set-results {
 	display: flex;
 	flex-direction: column;
 	align-items: center;

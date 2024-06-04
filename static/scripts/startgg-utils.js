@@ -64,14 +64,18 @@ function resolveStartggCharacter(character) {
 function resolveStartggStage(stage) {
     switch(stage) {
         case "Mushroom Kingdom":
+        case "Mushroom Kingdom I":
             return 1
+        case "Princess Peachs Castle":
         case "Princess Peach's Castle":
             return 2
         case "Rainbow Cruise":
             return 3
+        case "Yoshis Island":
         case "Yoshi's Island":
             return 4
         case "Yoshi's Story":       //LEGAL
+        case "Yoshis Story":
             return 5
         case "Kongo Jungle":
             return 6
@@ -132,32 +136,75 @@ function resolveStartggStage(stage) {
     }
 }
 
-function constructSet(p1_id, p2_id, games) {
+/*TODO: extra pretty for doubles, take average stocks of both players (Math.floor) on team, create list of characters and iterate through them for each team
+ie: team1 plays FOX/FALCO game 1 but plays SHEIK/FALCO game 2 and 3, on startgg display characters as g1 FOX g2 FALCO g3 SHEIK
+*/
+
+function constructSet(p1Id, p2Id, games) {
+    if(games[0].team1.length == 2) {
+        var chars = getDoublesCharactersArray(games)
+    }
     let index = 1;
     let set = []
+    let characterIndex = 0
     for(let game of games) {
-        set.push(constructGame(index, p1_id, p2_id, game))
+        let char1 = ""
+        let char2 = ""
+        if(games[0].team1.length == 1) {
+            char1 = game.team1[0].character
+            char2 = game.team2[0].character
+        } else {
+            char1 = chars[0][characterIndex % chars[0].length]
+            char2 = chars[1][characterIndex % chars[1].length]
+        }
+        set.push(constructGame(index, p1Id, p2Id, char1, char2, game))
+        characterIndex++;
     }
     return set
 }
 
-function constructGame(game_index, p1_id, p2_id, data) {
+function constructGame(gameIndex, p1Id, p2Id, p1Char, p2Char, data) {
     const game = {
         "winnerId": 16739083,
-        "gameNum": game_index,
-        "entrant1Score": data.Player1.stocks,
-        "entrant2Score": data.Player2.stocks,
+        "gameNum": gameIndex,
+        "entrant1Score": data.team1[0].stocks,
+        "entrant2Score": data.team2[0].stocks,
         "stageId": resolveStartggStage(data.stage),
         "selections": [
           {
-            "entrantId": p1_id,
-            "characterId": resolveStartggCharacter(data.Player1.character)
+            "entrantId": p1Id,
+            "characterId": resolveStartggCharacter(p1Char)
           },
           {
-            "entrantId": p2_id,
-            "characterId": resolveStartggCharacter(data.Player2.character)
+            "entrantId": p2Id,
+            "characterId": resolveStartggCharacter(p2Char)
           }
         ]
     }
     return game
+}
+
+function getDoublesCharactersArray(games) {
+    let charObj = [{},{}]
+    for(let game of games) {
+        for(x = 0; x < games[0].team1.length; x++) {
+            for(let player of game[`team${x}`]) {
+                if(charObj[x][player.character] !== undefined) {
+                    charObj[x][player.character]+=1
+                } else {
+                    charObj[x][player.character] = 1
+                }
+            }
+        }
+    }
+    let charArr = [[],[]]
+    for(x = 0; x < games[0].team1.length; x++) {
+        for (var char in charObj[x]) {
+            charArr[x].push([char, charObj[x][char]]);
+        }
+        charArr[x].sort(function(a, b) {
+            return a[1] - b[1];
+        });
+    }
+    return charArr;
 }

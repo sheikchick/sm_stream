@@ -4,7 +4,7 @@ exports.delayPromiseStart = (timeout, fn) => new Promise((resolve, reject) => {
     }, timeout);
 });
 
-exports.ms_to_hhmmss = (ms) => {
+exports.msToHHmmss = (ms) => {
     let seconds = parseInt(ms / 1000);
     
     const hours = parseInt(seconds / 3600);

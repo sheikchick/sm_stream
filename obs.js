@@ -3,14 +3,14 @@ const logging = require("./logging.js");
 
 exports.loadObs = async () => {
     const _obs = new OBSWebSocket();
-    const {host, port, password, browser_transition} = config.obs;
+    const {host, port, password, browserTransition} = config.obs;
     if(host && port) {
         unloadObs();
         return _obs.connect(`ws://${config.obs.host}:${config.obs.port}`, password).then(() => {
             logging.log("OBS web-socket connected");
             global.obs = _obs;
-            if (browser_transition) {
-                return refreshBrowserTransition(browser_transition);
+            if (browserTransition) {
+                return refreshBrowserTransition(browserTransition);
             }
         }).catch(() => {
             logging.error("Failed to connect to OBS, proceeding without.");
@@ -31,7 +31,7 @@ const refreshBrowserTransition = async (configTransition) => {
     const {transitions} = await obs.call('GetSceneTransitionList');
     const transition = transitions
         .find(({transitionName, transitionKind}) => transitionName === configTransition &&
-            transitionKind === 'browser_transition');
+            transitionKind === 'browserTransition');
 
     if (transition) {
         const {transitionName} = transition;

@@ -1,1 +1,36 @@
-{"tags":["c:leo","sky"],"games":[{"stage":"Final Destination","winner":1,"Player1":{"character":"sheik","colour":"original","stocks":3},"Player2":{"character":"captainfalcon","colour":"original","stocks":0}},{"stage":"Dream Land N64","winner":1,"Player1":{"character":"jigglypuff","colour":"original","stocks":4},"Player2":{"character":"captainfalcon","colour":"original","stocks":0}}]}
+{
+    "tags": [
+        "c:leo",
+        "sky"
+    ],
+    "games": [
+        {
+            "stage": "Final Destination",
+            "winner": 1,
+            "Player1": {
+                "character": "sheik",
+                "colour": "original",
+                "stocks": 3
+            },
+            "Player2": {
+                "character": "captainfalcon",
+                "colour": "original",
+                "stocks": 0
+            }
+        },
+        {
+            "stage": "Dream Land N64",
+            "winner": 1,
+            "Player1": {
+                "character": "jigglypuff",
+                "colour": "original",
+                "stocks": 4
+            },
+            "Player2": {
+                "character": "captainfalcon",
+                "colour": "original",
+                "stocks": 0
+            }
+        }
+    ]
+}

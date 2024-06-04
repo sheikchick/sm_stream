@@ -13,24 +13,24 @@ const { recordReplays } = require("./recordReplays.js");
 const charInfo = require("./charInfo.js");
 const { readData, writeData, updateTournament, INFO, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
 const { watch } = require("./slpWatch.js");
-const { check_set_start } = require("./processSlp.js");
-const { ms_to_hhmmss } = require("./util.js")
+const { checkSetStart } = require("./processSlp.js");
+const { msToHHmmss } = require("./util.js")
 
 let server;
 
 global.app = express();
 
-global.game_in_progress = false;
+global.gameInProgress = false;
 
 global.config;
 
-global.m_recording_status = false;
-global.manual_timecode = "";
+global.recordingStatusManual = false;
+global.timecodeManual = "";
 
-global.a_recording_status = false;
-global.auto_timecode = "";
+global.recordingStatusAuto = false;
+global.timecodeAuto = "";
 
-global.current_set = [];
+global.currentSet = [];
 
 const layoutsDir = path.join(__dirname, 'views', 'layouts');
 
@@ -56,7 +56,22 @@ app.all("/favicon.ico", (req, res) => {
     });
 });
 
+app.post("/update", (req, res) => {
+    const info = req.body;
+    if(gameInProgress) {
+        checkSetStart(info);
+    }
+    writeData(INFO, info)
+        .then(() => {
+            res.sendStatus(200);
+        })
+        .catch(() => {
+            res.sendStatus(500);
+        });
+});
+
 // Endpoints for files in /views/layouts
+
 fs.readdir(layoutsDir, {withFileTypes: true}).then((files) => {
     const hbs = '.hbs';
     files.filter((f) => f.isFile() && f.name.endsWith(hbs)).forEach((f) => {
@@ -65,14 +80,47 @@ fs.readdir(layoutsDir, {withFileTypes: true}).then((files) => {
             readData(INFO).then((data) => {
                 res.render(layout, {
                     ...data,
-                    api_key: config.startgg.key,
-                    obs_port: config.obs.port,
-                    obs_password: config.obs.password
+                    apiKey: config.startgg.key,
+                    obsPort: config.obs.port,
+                    obsPassword: config.obs.password
                 });
             });
         })
     })
 });
+
+// endpoints for overlays in /views/overlay
+
+const overlayDir = path.join(__dirname, 'views', 'overlay');
+fs.readdir(overlayDir, {withFileTypes: true}).then((overlays) => {
+    const html = '.html'
+    overlays
+        .filter((f) => f.isDirectory())
+        .forEach(({name}) => {
+            const currentOverlay = `overlay/${name}`;
+            const currentDir = path.join(overlayDir, name);
+            fs.readdir(currentDir, {withFileTypes: true}).then((f) => {
+                f
+                    .filter((f) => f.isFile() && f.name.endsWith(html))
+                    .forEach((f) => {
+                        const name = f.name.replace(html, '');
+                        const filePath = path.join(currentDir, f.name);
+                        app.get(`/${currentOverlay}/${name}`, (req, res) => {
+                            res.sendFile(filePath);
+                        });
+                    })
+            });
+})});
+
+// endpoints for data in /data/json
+
+DATA_FILES.forEach((f) => {
+    app.get(`/${f}`, (req, res) => {
+        res.sendFile(path.join(__dirname, DIRECTORY + f));
+    });
+});
+
+/* TOURNAMENT SET DATA */
 
 app.get(`/tournaments`, (req, res) => {
     fs.readdir(tournamentDataDir, {withFileTypes: true}).then((files) => {
@@ -86,7 +134,6 @@ app.get(`/tournaments`, (req, res) => {
     });
 })
 
-// Endpoints for tournament JSON files
 fs.readdir(tournamentDataDir, {withFileTypes: true}).then((files) => {
     const json = '.json';
     files.filter((f) => f.isFile() && f.name.endsWith(json)).forEach((f) => {
@@ -97,7 +144,8 @@ fs.readdir(tournamentDataDir, {withFileTypes: true}).then((files) => {
     })
 });
 
-// live-recording endpoints
+/* CONFIG ENDPOINTS */
+
 app.all("/get_config", (req, res) => {
     parseConfig()
         .then(() => {
@@ -116,30 +164,11 @@ app.all("/write_config", (req, res) => {
         });
 });
 
-DATA_FILES.forEach((f) => {
-    app.get(`/${f}`, (req, res) => {
-        res.sendFile(path.join(__dirname, DIRECTORY + f));
-    });
-});
+/* lIVE-RECORDING ENDPOINTS */
 
-app.post("/update", (req, res) => {
-    const info = req.body;
-    if(game_in_progress) {
-        check_set_start(info);
-    }
-    writeData(INFO, info)
-        .then(() => {
-            res.sendStatus(200);
-        })
-        .catch(() => {
-            res.sendStatus(500);
-        });
-});
-
-// live-recording endpoints
 app.all("/save_recording", (req, res) => {
-    if(manual_timecode == "") {
-        manual_timecode = req.body.timecode
+    if(timecodeManual == "") {
+        timecodeManual = req.body.timecode
 
         fs.unlink('static/img/screenshots/manual/1.png')
         .catch((e) => {
@@ -150,7 +179,6 @@ app.all("/save_recording", (req, res) => {
             }
         });
 
-        //delay taking screenshot
         recordLive.takeScreenshot(req.body.timecode, "manual/", "1", "960x540").catch((e)=>{
             logging.error(`Failed to create screenshot 1.png`)
         })
@@ -165,40 +193,18 @@ app.all("/save_recording", (req, res) => {
             });
         res.json({recording_status : true});
     } else {
-        recordLive.saveRecording("sets", manual_timecode, req.body.timecode)
+        recordLive.saveRecording("sets", timecodeManual, req.body.timecode)
             .then(() => {
-                //delay taking screenshot
                 recordLive.takeScreenshot(req.body.timecode, "manual/", "2", "960x540").catch((e)=>{
                     logging.error(`Failed to create screenshot 2.png`)
                 })
-
-                manual_timecode = ""
-                res.json({recording_status: m_recording_status});
+                timecodeManual = ""
+                res.json({recordingStatus: recordingStatusManual});
             }).catch((f) => {
                 console.error(f)
                 res.sendStatus(500);
             });
     }
-});
-
-app.all("/take_screenshot", (req, res) => {
-    recordLive.takeVodScreenshot(req.body.timecode, "set/", req.body.index, "960x540", req.body.vod)
-        .then(() => {
-            res.sendStatus(200);
-        }).catch((e)=>{
-            logging.error(`Failed to create screenshot - ${e}`)
-            res.sendStatus(500);
-        })
-});
-
-app.all("/update_set", (req, res) => {
-    updateTournament(req.body.data, req.body.index, req.body.tournament)
-        .then(() => {
-            res.sendStatus(200);
-        }).catch((e)=>{
-            logging.error(`Failed to update set - ${e}`)
-            res.sendStatus(500);
-        })
 });
 
 app.post("/save_clip", (req, res) => {
@@ -216,11 +222,22 @@ app.get("/recording_status", (req, res) => {
 });
 
 app.get("/recording_timecode", (req, res) => {
-    const timecode = manual_timecode ? ms_to_hhmmss(manual_timecode) : "";
+    const timecode = timecodeManual ? msToHHmmss(timecodeManual) : "";
     res.json({timecode: timecode})
 })
 
-// replay-recording endpoints
+app.all("/take_screenshot", (req, res) => {
+    recordLive.takeVodScreenshot(req.body.timecode, "set/", req.body.index, "960x540", req.body.vod)
+        .then(() => {
+            res.sendStatus(200);
+        }).catch((e)=>{
+            logging.error(`Failed to create screenshot - ${e}`)
+            res.sendStatus(500);
+        })
+});
+
+/* RECORDING SET ENDPOINTS */
+
 app.all(`/${REPLAY_QUEUE}`, (req, res) => {
     readData(REPLAY_QUEUE)
         .then((queue) => res.json(queue))
@@ -243,29 +260,20 @@ app.post("/replay-record", (req, res) => {
     });
 });
 
-// endpoints for overlays in /views/overlay
-const overlayDir = path.join(__dirname, 'views', 'overlay');
-fs.readdir(overlayDir, {withFileTypes: true}).then((overlays) => {
-    const html = '.html'
-    overlays
-        .filter((f) => f.isDirectory())
-        .forEach(({name}) => {
-            const currentOverlay = `overlay/${name}`;
-            const currentDir = path.join(overlayDir, name);
-            fs.readdir(currentDir, {withFileTypes: true}).then((f) => {
-                f
-                    .filter((f) => f.isFile() && f.name.endsWith(html))
-                    .forEach((f) => {
-                        const name = f.name.replace(html, '');
-                        const filePath = path.join(currentDir, f.name);
-                        app.get(`/${currentOverlay}/${name}`, (req, res) => {
-                            res.sendFile(filePath);
-                        });
-                    })
-            });
-})});
+/* START.GG SETS */
 
-// character info endpoints
+app.all("/update_set", (req, res) => {
+    updateTournament(req.body.data, req.body.index, req.body.tournament)
+        .then(() => {
+            res.sendStatus(200);
+        }).catch((e)=>{
+            logging.error(`Failed to update set - ${e}`)
+            res.sendStatus(500);
+        })
+});
+
+/* CHARACTER INFO ENDPOINTS */
+
 app.get("/character/:characterName", (req, res) => {
     res.json(charInfo.getCharacterByName(req.params.characterName));
 });
@@ -292,6 +300,8 @@ app.get(`/vs`, (req, res) => {
     const {query: {character, colour, side}} = req;
     res.sendFile(charInfo.getVs(character, colour, side));
 });
+
+/* START APP */
 
 async function startApp() {
     server?.close();

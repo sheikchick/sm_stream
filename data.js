@@ -29,23 +29,23 @@ exports.readData = async (file) => this.DATA_FILES.includes(file)
         .catch((e) => logging.log(`Failed to open ${file} - ${e}`))
     : {};
 
-exports.updateTournament = async (data, index, tournament_filename) => {
-    const json_file = path.join("data/json/tournaments/", tournament_filename);
-    readFile(json_file, FORMAT)
-        .then((read_file) => {
-            var parsed_file = JSON.parse(read_file)
-            parsed_file[index] = (data)
-            writeFile(json_file, JSON.stringify(parsed_file), FORMAT).then(() => {
-                logging.log(`Modified match data "${data.player[0].tag} vs ${data.player[1].tag}" to ${tournament_filename}`)
+exports.updateTournament = async (data, index, tournamentFilename) => {
+    const jsonFile = path.join("data/json/tournaments/", tournamentFilename);
+    readFile(jsonFile, FORMAT)
+        .then((readFile) => {
+            var parsedFile = JSON.parse(readFile)
+            parsedFile[index] = (data)
+            writeFile(jsonFile, JSON.stringify(parsedFile), FORMAT).then(() => {
+                logging.log(`Modified match data "${data.player[0].tag} vs ${data.player[1].tag}" to ${tournamentFilename}`)
             })
             .catch((e) => {
-                const message = `Failed to write ${json_file}: ${e}`;
+                const message = `Failed to write ${jsonFile}: ${e}`;
                 logging.error(message)
                 throw new Error(message);
             });
         })
         .catch(() => {
-            const message = `File ${json_file} doesn't exist`;
+            const message = `File ${jsonFile} doesn't exist`;
             logging.error(message)
             throw new Error(message);
         });

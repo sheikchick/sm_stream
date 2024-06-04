@@ -61,12 +61,12 @@ const loadSet = (() => {
         tournament,
         round,
         date,
-        is_doubles
+        isDoubles
     }) => [
         date,
         tournament,
         round,
-        is_doubles
+        isDoubles
             ? `${Player1.name} & ${Player1.name_dubs} vs ${Player2.name} & ${Player2.name_dubs}`
             : `${Player1.name} vs ${Player2.name}`
     ].filter(x => x).join(' - ');

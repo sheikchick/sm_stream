@@ -99,12 +99,12 @@ getSinglesWinner = function(game) {
     const {players} = game.getSettings();
     const playersLatestFrame = game.getLatestFrame().players;
 
-    const [p1_data, p2_data] = players.map(({playerIndex}) => {
-        const p_data = playersLatestFrame[playerIndex]?.post || {stocksRemaining: 0, percent: 0};
-        return {stocks: p_data.stocksRemaining, damage: p_data.percent};
+    const [p1Data, p2Data] = players.map(({playerIndex}) => {
+        const pData = playersLatestFrame[playerIndex]?.post || {stocksRemaining: 0, percent: 0};
+        return {stocks: pData.stocksRemaining, damage: pData.percent};
     });
 
-    const winner = getWinner(p1_data, p2_data);
+    const winner = getWinner(p1Data, p2Data);
     return winner
         ? [players[winner - 1]].map(({playerIndex}) => ({playerIndex, position: 0}))
         : [];
@@ -126,7 +126,7 @@ getDoublesWinner = function(game) {
 
     const playersLatestFrame = game.getLatestFrame().players;
 
-    const [t1_data, t2_data] = teams.reduce((acc, team) => {
+    const [t1Data, t2Data] = teams.reduce((acc, team) => {
         acc.push(team.reduce((acc, player) => {
             const {stocksRemaining, percent} = playersLatestFrame[player]?.post || 
                 {stocksRemaining: 0, percent: 0};
@@ -138,7 +138,7 @@ getDoublesWinner = function(game) {
         return acc;
     }, []);
 
-    const winner = getWinner(t1_data, t2_data);
+    const winner = getWinner(t1Data, t2Data);
     return winner
         ? teams[winner - 1].map(playerIndex => ({playerIndex, position: 0}))
         : [];
@@ -509,32 +509,32 @@ exports.characterRandom = {
 };
 
 const charactersByExternalId = [
-    2, // captainfalcon
-    3, // donkeykong
-    1, // fox
+    2,  // captainfalcon
+    3,  // donkeykong
+    1,  // fox
     24, // gameandwatch
-    4, // kirby
-    5, // bowser
-    6, // link
+    4,  // kirby
+    5,  // bowser
+    6,  // link
     17, // luigi
-    0, // mario
+    0,  // mario
     18, // marth
     16, // mewtwo
-    8, // ness
-    9, // peach
+    8,  // ness
+    9,  // peach
     12, // pikachu
     10, // iceclimbers
     15, // jigglypuff
     13, // samus
     14, // yoshi
     19, // zelda
-    7, // sheik
+    7,  // sheik
     22, // falco
     20, // younglink
     21, // drmario
     26, // roy
     23, // pichu
-    25 // ganondorf
+    25  // ganondorf
 ].map((id) => characters[id]);
 
 

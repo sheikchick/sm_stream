@@ -1,19 +1,21 @@
 [
     {
-        "players": [
-            {
-                "tag": "c:leo",
-                "entrant_id": "16739083"
-            },
-            {
-                "tag": "sky",
-                "entrant_id": "16739085"
-            }
-        ],
-        "round": "Winners Final",
-        "vod": "2024-05-27_23-33-33.mkv",
+        "team1": {
+            "entrantId": "16739083",
+            "names": [
+                "c:leo"
+            ]
+        },
+        "team2": {
+            "entrantId": "16748917",
+            "names": [
+                "Glaikit"
+            ]
+        },
+        "round": "Winners Semi-Final",
+        "vod": "",
         "winner": 1,
-        "set_id": 75245494,
+        "setId": 75267599,
         "timecodes": [
             16983,
             167049
@@ -22,30 +24,1784 @@
             {
                 "stage": "Final Destination",
                 "winner": 1,
-                "Player1": {
-                    "character": "sheik",
-                    "colour": "original",
-                    "stocks": 3
-                },
-                "Player2": {
-                    "character": "captainfalcon",
-                    "colour": "original",
-                    "stocks": 0
-                }
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
             },
             {
-                "stage": "Dream Land N64",
+                "stage": "Final Destination",
                 "winner": 1,
-                "Player1": {
-                    "character": "jigglypuff",
-                    "colour": "original",
-                    "stocks": 4
-                },
-                "Player2": {
-                    "character": "captainfalcon",
-                    "colour": "original",
-                    "stocks": 0
-                }
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 4
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "falco",
+                        "colour": "original",
+                        "stocks": 0
+                    }
+                ]
             }
         ]
     }

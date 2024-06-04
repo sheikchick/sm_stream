@@ -1,11 +1,11 @@
 # sm_stream_application
 automatic melee stream application using slippi, startgg, qr codes
 
-1. Install Python 3.10+, NodeJS
+1. Install NodeJS, ffmpeg, and set up PATH environment variables for each
 
-2. Install requirements.txt and node modules
+2. Run setup.bat
 
-3. Fill out config.ini as necessary
+3. Fill out config.toml as necessary
 
 4. Start run.bat
 

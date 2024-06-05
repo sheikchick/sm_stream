@@ -1,37 +1,25 @@
 {
     "team1": {
-        "players" : [
+        "players": [
             {
                 "name": "c:leo",
-                "character": "jigglypuff",
-                "colour": "original",
-                "pronouns": "She/Her"
-            },
-            {
-                "name": "",
-                "character": "jigglypuff",
-                "colour": "original",
-                "pronouns": ""
-                
+                "character": "iceclimbers",
+                "colour": "blue",
+                "pronouns": "She/Her",
+                "port": 1
             }
         ],
         "score": 0,
         "startggEntrant": "16739083"
     },
     "team2": {
-        "players" : [
+        "players": [
             {
                 "name": "sky",
-                "character": "captainfalcon",
+                "character": "zelda",
                 "colour": "original",
-                "pronouns": "She/Her"
-            },
-            {
-                "name": "",
-                "character": "jigglypuff",
-                "colour": "original",
-                "pronouns": ""
-                
+                "pronouns": "She/Her",
+                "port": 2
             }
         ],
         "score": 0,
@@ -43,5 +31,9 @@
     "caster1": "",
     "caster2": "",
     "is_doubles": false,
-    "best_of": "3"
+    "best_of": "3",
+    "activePlayers": [
+        "team1",
+        "team2"
+    ]
 }

@@ -259,20 +259,25 @@ function loadChanges() {
 		url: "/info.json",
 		data: {},
 		success: function (response) {
+			//load team1 data
 			$("#p1-name-actual").attr("value", response.team1.players[0].name)
-			$("#p1d-name-actual").attr("value", response.team1.players[1].name)
 			$("#p1-score-actual").attr("value", response.team1.score)
-
+			loadCharActual("1", response.team1.players[0].character, response.team1.players[0].colour)
+			if (response.team1.players.length >= 2) {
+				$("#p1d-name-actual").attr("value", response.team1.players[1].name)
+				loadCharActual("1d", response.team1.players[1].character, response.team1.players[1].colour)
+			}
+			//load team2 data
 			$("#p2-name-actual").attr("value", response.team2.players[0].name)
-			$("#p2d-name-actual").attr("value", response.team2.players[1].name)
 			$("#p2-score-actual").attr("value", response.team2.score)
-
+			loadCharActual("2", response.team2.players[0].character, response.team2.players[0].colour)
+			if (response.team2.players.length >= 2) {
+				$("#p2d-name-actual").attr("value", response.team2.players[1].name)
+				loadCharActual("2d", response.team2.players[1].character, response.team2.players[1].colour)
+			}
+			//load
 			$("#round-actual").attr("value", response.round)
 			$("#best-of-actual").attr("value", "Best of " + response.bestOf)
-			loadCharActual("1", response.team1.players[0].character, response.team1.players[0].colour)
-			loadCharActual("1d", response.team1.players[1].character, response.team1.players[1].colour)
-			loadCharActual("2", response.team2.players[0].character, response.team2.players[0].colour)
-			loadCharActual("2d", response.team2.players[1].character, response.team2.players[1].colour)
 		},
 		error: function (response) {
 			console.log(response)
@@ -646,7 +651,6 @@ function updateTournamentData(tournament) {
 						$("#tournament-data").append(new Option(`Select set`, -1));
 						var index = 0;
 						for (let set of response) {
-							console.log(set)
 							var option = $('<option />')
 								.text(`${set.team1.names[0]} vs ${set.team2.names[0]} - ${set.round}`)
 								.val(index)
@@ -808,7 +812,6 @@ function updateTimecode(index) {
 }
 
 function msToHHmmss(ms) {
-	console.log(ms)
 	let seconds = parseInt(ms / 1000);
 
 	const minutes = parseInt(seconds / 60);

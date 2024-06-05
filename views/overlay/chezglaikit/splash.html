@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>chez glaikit: splash</title>
+	<script src="/static/scripts/jquery-3.4.1.min.js"></script>
+	<script src="/static/scripts/overlay/common.js"></script>
+    <script src="/static/scripts/overlay/stpl/index.js"></script>
+	<script src="/static/scripts/overlay/splash.js"></script>
+	<link rel="stylesheet" href="/static/css/overlay/chezglaikit/index.css">
+	<link rel="stylesheet" href="/static/css/overlay/chezglaikit/splash.css">
+</head>
+<body>
+<div class="main">
+	<div id="players">
+		<div class="team player1">
+			<div class="player player1">
+				<span id="player1-name" class="player-name"></span>
+				<span id="player1-pronouns" class="pronouns"></span>
+			</div>
+			<div class="player player-doubles player1d">
+				<span id="player1d-name" class="player-name"></span>
+				<span id="player1d-pronouns" class="pronouns"></span>
+			</div>
+		</div>
+		<div class="team player2">
+			<div class="player player2">
+				<span id="player2-name" class="player-name"></span>
+				<span id="player2-pronouns" class="pronouns"></span>
+			</div>
+			<div class="player player-doubles player2d">
+				<span id="player2d-name" class="player-name"></span>
+				<span id="player2d-pronouns" class="pronouns"></span>
+			</div>
+		</div>
+		<div class="player player3">
+			<a id="player3-name" class="player-name"></a>
+			<a id="player3-pronouns" class="pronouns"></a>
+		</div>
+		<div class="player player4">
+			<a id="player4-name" class="player-name"></a>
+			<a id="player4-pronouns" class="pronouns"></a>
+		</div>
+	</div>
+
+	<div class="bottom">
+		<a id="round" class="round"></a>
+		<div class="logo">
+			<div class="logo-text-container">
+				<div class="logo-text logo-text-main">
+					<span>Chez</span><span>Glaikit</span>
+				</div>
+				<div id="date" class="logo-text"></div>
+			</div>
+			<div class="stock_icon-container">
+				<img id="player1-character" class="stock_icon" src="/stock?overlay=stpl">
+				<img id="player2-character" class="stock_icon" src="/stock?overlay=stpl">
+			</div>
+		</div>
+		<div class="link round">
+			<svg class="link-icon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg"><path d="M15,10 L15,14 C15,15.1045695 14.1045695,16 13,16 L2,16 C0.8954305,16 0,15.1045695 0,14 L0,3 C0,1.8954305 0.8954305,1 2,1 L6,1 L6,3 L2,3 L2,14 L13,14 L13,10 L15,10 Z M13.9971001,3.41421356 L7.70420685,9.70710678 L6.28999329,8.29289322 L12.5828865,2 L8.99710007,2 L8.99710007,0 L15.9971001,0 L15.9971001,7 L13.9971001,7 L13.9971001,3.41421356 Z" fill-rule="evenodd"/></svg>
+			<span class="link-text">scotland.melee.uk</span>
+		</div>
+	</div>
+</div>
+</body>

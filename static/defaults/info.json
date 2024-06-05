@@ -1,1 +1,41 @@
-{"Player1":{"name":"P1","character":"fox","colour":"red","pronouns":"","name_dubs":"P1 Doubles","character_dubs":"falco","colour_dubs":"red","pronouns_dubs":"","score":0},"Player2":{"name":"P2","character":"sheik","colour":"blue","pronouns":"","name_dubs":"P2 Doubles","character_dubs":"peach","colour_dubs":"blue","pronouns_dubs":"","score":0},"round":"Winners Round 1","caster1":"","caster2":"","is_doubles":false,"best_of":3}
+{
+    "team1": {
+        "players": [
+            {
+                "name": "Player 1",
+                "character": "fox",
+                "colour": "original",
+                "pronouns": ""
+            },
+            {
+                "name": "Player 1 Doubles",
+                "pronouns": ""
+            }
+        ],
+        "score": 0,
+        "startggEntrant": ""
+    },
+    "team2": {
+        "players": [
+            {
+                "name": "Player 2",
+                "character": "falco",
+                "colour": "original",
+                "pronouns": ""
+            },
+            {
+                "name": "Player 2 Doubles",
+                "pronouns": ""
+            }
+        ],
+        "score": 0,
+        "startggEntrant": ""
+    },
+    "round": "",
+    "setId": "",
+    "tournament": "",
+    "caster1": "",
+    "caster2": "",
+    "isDoubles": false,
+    "bestOf": 5
+}

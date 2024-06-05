@@ -1,6 +1,6 @@
 const path = require("path");
 
-const slpTools = require("./slp_tools.js");
+const slpTools = require("./slpTools.js");
 const logging = require("./logging.js");
 const { SlippiGame } = require("@slippi/slippi-js");
 const { readData, writeData, INFO, MATCH_RESULT } = require("./data.js");
@@ -23,20 +23,20 @@ exports.checkSetStart = (() => {
         if (!round.includes(FRIENDLIES)) {
             const firstTo = getFirstTo
                 (info.bestOf);
-            const p1Score = info.Player1.score;
-            const p2Score = info.Player2.score;
+            const p1Score = info.team1.score;
+            const p2Score = info.team2.score;
             const totalScore = p1Score + p2Score;
 
             if (p1Score >= firstTo || p2Score >= firstTo || totalScore === 0) {
                 logging.log('New set detected');
                 if (round.includes(gf) && totalScore) {
                     logging.log('Grand Final reset detected. Both players now in losers')
-                    info.Player1.name = info.Player1.name.replace(lRegex, l);
-                    info.Player2.name = info.Player2.name.replace(lRegex, l);
+                    info.team1.player[0].name = info.team1.player[0].name.replace(lRegex, l);
+                    info.team2.player[0].name = info.team2.player[0].name.replace(lRegex, l);
                 }
 
-                info.Player1.score = 0;
-                info.Player2.score = 0;
+                info.team1.score = 0;
+                info.team2.score = 0;
                 currentSet = [];
 
 
@@ -57,7 +57,7 @@ exports.checkSetStart = (() => {
 
 checkSetEnd = async (info) => {
     const firstTo = getFirstTo(info.bestOf);
-    if (info.Player1.score >= firstTo || info.Player2.score >= firstTo) {
+    if (info.team1.score >= firstTo || info.team2.score >= firstTo) {
         //need to tidy up with .catch() for each
         getTimecode().then((timecode) => {
             getDirectory().then((directory) => {
@@ -66,7 +66,7 @@ checkSetEnd = async (info) => {
                         .then(() => global.timecodeAuto = "")
 
                     writeData(MATCH_RESULT, {
-                        names: [info.Player1.name, info.Player2.name],
+                        names: [info.team1.name, info.team2.name],
                         games: currentSet
                     }).then(() => {
                         logging.log(`Wrote match data to match_result.json`)
@@ -79,21 +79,21 @@ checkSetEnd = async (info) => {
 
                     //THE MOST IMPORTANT FUNCTION GOING FORWARD
                     const jsonFile = path.join("data/json/tournaments/", tournamentFilename);
-                    const winner = info.Player1.score >= firstTo ? 1 : info.Player2.score >= firstTo ? 2 : 0 //0 should never occur
+                    const winner = info.team1.score >= firstTo ? 1 : info.team2.score >= firstTo ? 2 : 0 //0 should never occur
                     const data = {
                         team1: {
-                            entrantId: info.Player1.startggEntrant,
+                            entrantId: info.team1.startggEntrant,
                             names: [
-                                info.Team1.players[0].name,
-                                info.Team1.players[1].name //change
+                                info.team1.players[0].name,
+                                info.team1.players[1].name //change
                             ]
 
                         },
                         team2: {
-                            entrantId: info.Player2.startggEntrant,
+                            entrantId: info.team2.startggEntrant,
                             names: [
-                                info.Team2.players[0].name,
-                                info.Team2.players[1].name
+                                info.team2.players[0].name,
+                                info.team2.players[1].name
                             ]
 
                         },
@@ -109,7 +109,7 @@ checkSetEnd = async (info) => {
                             var parsedFile = JSON.parse(readFile)
                             parsedFile.push(data)
                             writeFile(jsonFile, JSON.stringify(parsedFile), FORMAT).then(() => {
-                                logging.log(`Appended match data "${info.Player1.name} vs ${info.Player2.name}" to ${tournamentFilename}`)
+                                logging.log(`Appended match data "${info.team1.players[0].name} vs ${info.team2.players[0].name}" to ${tournamentFilename}`)
                             })
                                 .catch((e) =>
                                     logging.error(`Failed to write ${jsonFile}: ${e}`
@@ -118,7 +118,7 @@ checkSetEnd = async (info) => {
                         .catch(() => {
                             logging.log(`File ${jsonFile} doesn't exist yet, creating...`);
                             writeFile(jsonFile, `[${JSON.stringify(data)}]`, FORMAT).then(() => {
-                                logging.log(`Match data "${info.Player1.name} vs ${info.Player2.name}" written to file ${tournamentFilename}`)
+                                logging.log(`Match data "${info.team1.players[0].name} vs ${info.team2.players[0].name}" written to file ${tournamentFilename}`)
                                 //MAY BE INCORRECT
                                 app.get(`/tournaments/${tournamentFilename}`, (req, res) => {
                                     res.sendFile(jsonFile);
@@ -140,7 +140,7 @@ const getActiveRotationPlayers = (info, players) => (Object.keys(info)
     .length === 2
     ? [1, 2]
     : [players[0].port, players[1].port]
-).map(p => `Player${p}`);
+).map(p => `team${p}`);
 
 exports.gameStart = async (path) => {
     const game = new SlippiGame(path, { processOnTheFly: true });
@@ -154,22 +154,23 @@ exports.gameStart = async (path) => {
         const activePlayers = getActiveRotationPlayers(info, settings.players);
         info.activePlayers = activePlayers;
 
-        teams.forEach(([p, pd = {}], index) => {
-            pData = slpTools.getCharacter(p);
-
-            const {
-                character: characterDubs,
-                colour: colourDubs
-            } = slpTools.getCharacter(pd);
+        teams.forEach(([p1, p2 = {}], index) => {
+            p1Data = slpTools.getCharacter(p1);
+            p2Data = slpTools.getCharacter(p1);
 
             const key = activePlayers[index];
-            info[key] = {
-                ...info[key],
-                ...pData,
-                characterDubs,
-                colourDubs,
-                port: p.port
+            info[key].players[0] = {
+                ...info[key].players[0],
+                ...p1Data,
+                port: p1.port
             };
+            if (teams.length === 4) {
+                info[key].players[1] = {
+                    ...info[key].players[1],
+                    ...p2Data,
+                    port: p2.port
+                };
+            }
         });
     }
 
@@ -226,7 +227,7 @@ exports.gameEnd = async ({ game, settings, teams }) => {
     logging.log(`Team ${winnerPlayerNumber} wins game.`);
 
     const info = await readData(INFO);
-    const winnerKey = `Player${winnerPlayerNumber}`;
+    const winnerKey = `team${winnerPlayerNumber}`;
     info[winnerKey].score = (info[winnerKey].score || 0) + 1;
 
     const writeInfoPromise = writeData(INFO, info);
@@ -242,7 +243,7 @@ exports.gameEnd = async ({ game, settings, teams }) => {
                 ...slpTools.getCharacter(player),
                 stocks: playersLatestFrame[player.playerIndex]?.post.stocksRemaining || 0
             },
-            ...(settings.players.length === 4
+            (settings.players.length === 4
                 ? {
                     ...slpTools.getCharacter(playerDoubles),
                     stocks: playersLatestFrame[playerDoubles.playerIndex]?.post.stocksRemaining || 0

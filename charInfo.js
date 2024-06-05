@@ -1,6 +1,6 @@
 const path = require("path");
 
-const {charactersByName, characterRandom} = require("./slp_tools.js");
+const {charactersByName, characterRandom} = require("./slpTools.js");
 
 const sagaDir = path.join(__dirname, 'static', 'img', 'saga_icons');
 const cssDir = path.join(__dirname, 'static', 'img', 'css_icons');

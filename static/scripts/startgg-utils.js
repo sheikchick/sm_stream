@@ -195,7 +195,7 @@ function constructSet(p1Id, p2Id, games) {
 
 function constructGame(gameIndex, p1Id, p2Id, p1Char, p2Char, data) {
     const game = {
-        "winnerId": data.winner === 1 ? p1Id : p2Id,
+        "winnerId": data.winner == 1 ? p1Id : p2Id,
         "gameNum": gameIndex,
         "entrant1Score": data.team1[0].stocks,
         "entrant2Score": data.team2[0].stocks,

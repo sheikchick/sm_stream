@@ -698,7 +698,7 @@ function updateTournamentData(tournament) {
 	})
 }
 
-function submitStartggSet() {
+function submitSet() {
 	var set = JSON.parse($("#tournament-data :selected").attr("data-set"));
 	var startggSet = constructSet($("#p1-entrant-input").val(), $("#p2-entrant-input").val(), set.games)
 	submitStartggSet($(`#setID-input`).val(), $(`#p${set.winner}-entrant-input`).val(), startggSet)
@@ -750,7 +750,7 @@ function getTournamentSet() {
 		}
 		$("#display-set-results").append(gameRow);
 	}
-	$("#display-set-results").append($('<button />').attr('id', 'submit-startgg-set').attr('onClick', 'submitStartggSet()').text("Submit start.gg"));
+	$("#display-set-results").append($('<button />').attr('id', 'submit-startgg-set').attr('onClick', 'submitSet()').text("Submit start.gg"));
 	index = 1;
 	$("#screenshot-container-1").hide()
 	$("#screenshot-container-2").hide()

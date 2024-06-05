@@ -359,7 +359,7 @@ function submitStartggSet(setId, winnerId, gameData) {
 			if(typeof result.errors !== "undefined") {
 				console.error(result.errors[0].message)
 				console.error({setId, winnerId, gameData})
-				updateSet(setId, winnerId, gameData)
+				updateStartggSet(setId, winnerId, gameData)
 			} else {
 				$("#submit-startgg-set").css("background-color", "#55F76B");
 				$("#submit-startgg-set").css("border-bottom", "3px solid #349641");

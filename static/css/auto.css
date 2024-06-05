@@ -214,7 +214,7 @@ button:disabled {
 
 input.startgg.display {
 	background-color: #fff;
-	color: #333;
+	color: #332233;
 	font-size: 11px;
 	height: 16px;
 	width: 80px;
@@ -301,6 +301,7 @@ input.pronouns {
 	display: flex;
 	flex-direction: row;
 	border-radius: 5px;
+	align-items: center;
 }
 
 .name.change {
@@ -418,7 +419,7 @@ input.pronouns {
 #obs-wrapper {
 	display: none;
 	align-items: center;
-	background-color: #333;
+	background-color: #332233;
 	border-radius: 5px;
 }
 
@@ -439,7 +440,7 @@ input.pronouns {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: #666;
+	background-color: #6d4f6d;
 	border-radius: 5px;
 }
 
@@ -466,7 +467,7 @@ button.timecode {
 
 #startgg-wrapper {
 	align-items: center;
-	background-color: #333;
+	background-color: #332233;
 	border-radius: 5px;
 }
 
@@ -538,7 +539,14 @@ button.timecode {
 	margin: 5px;
 }
 
-#get-sets {
+#get-unfinished-sets {
+	display: none;
+}
+
+#get-all-sets {
+	width: 100px;
+	background-color: #FF9999;
+	border-bottom: 2px solid #AA4444;
 	display: none;
 }
 
@@ -560,7 +568,14 @@ button.timecode {
 	border-radius: 5px;
 }
 
-#submitStartggSet {
+.startgg.entrant.swap {
+	font-size: 10px;
+	padding: 2px;
+	height: 25px;
+	width: 25px;
+}
+
+#submit-startgg-set {
 	margin: 5px;
 	padding: 3px;
 	width: 120px;
@@ -635,7 +650,7 @@ span.stage {
 }
 
 .set.wrapper.right {
-	width: 120px;
+	width: 160px;
 	display: flex;
 	padding: 0px;
 }
@@ -658,14 +673,37 @@ span.stage {
 	color: #AAA;
 }
 
+.startgg.name.display {
+	width: 120px;
+}
+
+.startgg.name.display.left {
+	text-align: right;
+}
+
+.startgg.name.display.right {
+	text-align: left;
+}
+
+#startgg-names {
+	gap: 0.5em;
+}
+
+
 .startgg.round {
 	width: 120px;
 	text-align: center;
 	font-size: 14px;
 }
 
-.startgg.button.load {
+.startgg.button {
 	height: 30px;
-	width: 70px;
+	width: 80px;
 	padding: 2px;
+	font-size: 10px;
+}
+
+.startgg.button.save {
+	background-color: #FF9999;
+	border-bottom: 2px solid #AA4444;
 }

@@ -36,17 +36,17 @@ exports.updateTournament = async (data, index, tournamentFilename) => {
             var parsedFile = JSON.parse(readFile)
             parsedFile[index] = (data)
             writeFile(jsonFile, JSON.stringify(parsedFile), FORMAT).then(() => {
-                logging.log(`Modified match data "${data.player[0].tag} vs ${data.player[1].tag}" to ${tournamentFilename}`)
+                logging.log(`Modified match data "${data.team1.names[0]} vs ${data.team2.names[0]}" to ${tournamentFilename}`)
             })
             .catch((e) => {
                 const message = `Failed to write ${jsonFile}: ${e}`;
-                logging.error(message)
+                console.error(message)
                 throw new Error(message);
             });
         })
         .catch(() => {
             const message = `File ${jsonFile} doesn't exist`;
-            logging.error(message)
+            console.error(message)
             throw new Error(message);
         });
 };

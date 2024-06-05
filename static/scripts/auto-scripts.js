@@ -12,6 +12,7 @@ $(document).ready(function () {
 	changeBestOf(bestOfValue);
 	toggleDoubles();
 	updateTournamentData(tournament);
+	//GQLscript()
 });
 
 function obsConnect() {
@@ -529,7 +530,12 @@ function changeBestOf(value) {
 /**
  * up : direction of page (true/false)
  */
-function showSets(up) {
+function showSets(up, showButtons) {
+	if (showButtons) {
+		$(".startgg.button.save").show()
+	} else {
+		$(".startgg.button.save").hide()
+	}
 	const MAX_PER_PAGE = 5;
 	if (up) {
 		//check if going over the amount
@@ -631,6 +637,16 @@ function loadSet(x) {
 	$("#set-id").val($(`#set${x}`).attr("data-id"))
 }
 
+function saveSet(x) {
+	$("#p1-entrant-input").val($(`#set${x}-name1`).attr("data-entrant"))
+	$("#p1-entrant-name").text($(`#set${x}-name1`).text())
+	
+	$("#p2-entrant-input").val($(`#set${x}-name2`).attr("data-entrant"))
+	$("#p2-entrant-name").text($(`#set${x}-name2`).text())
+	
+	$("#setID-input").val($(`#set${x}`).attr("data-id"))
+}
+
 /* SET DATA */
 
 function updateTournamentData(tournament) {
@@ -684,8 +700,8 @@ function updateTournamentData(tournament) {
 
 function submitStartggSet() {
 	var set = JSON.parse($("#tournament-data :selected").attr("data-set"));
-	var startggSet = constructSet(set.team1.entrantId, set.team2.entrantId, set.games)
-	submitSet(set.setId, set[`team${set.winner}`].entrantId, startggSet)
+	var startggSet = constructSet($("#p1-entrant-input").val(), $("#p2-entrant-input").val(), set.games)
+	submitStartggSet($(`#setID-input`).val(), $(`#p${set.winner}-entrant-input`).val(), startggSet)
 }
 
 //make this shit pretty then make it submit to start.gg
@@ -698,9 +714,25 @@ function getTournamentSet() {
 	}
 	$("#display-set-results").empty()
 	$("#display-set-results").show()
-	var playerNames = $('<span />')
-		.text(`${set.team1.names[0]} vs ${set.team1.names[0]}`)
+
+	var entrantIds = $('<div />')
+		.attr('class', 'row')
+	$(entrantIds).append($('<input />').val(`${set.team1.entrantId}`).attr('class', 'startgg display id').attr('id', 'p1-entrant-input'))
+	$(entrantIds).append($('<button />').attr('onclick', 'swapEntrants()').attr('class', 'startgg entrant swap').attr('id', 'entrant-swap').append(`<i class="fa-solid fa-arrow-right-arrow-left"></i>`))
+	$(entrantIds).append($('<input />').val(`${set.team2.entrantId}`).attr('class', 'startgg display id').attr('id', 'p2-entrant-input'))
+
+	$("#display-set-results").append($('<input />').val(`${set.setId}`).attr('class', 'startgg display id').attr('id', 'setID-input'))
+	$("#display-set-results").append(entrantIds)
+
+	var playerNames = $('<div />')
+		.attr('class', 'row')
+		.attr('id', 'startgg-names')
+	$(playerNames).append($('<span />').text(set.team1.names[0]).attr('class', 'startgg display name left').attr('id', 'p1-entrant-name'))
+	$(playerNames).append($('<span />').text("vs").attr('class', 'startgg'))
+	$(playerNames).append($('<span />').text(set.team2.names[0]).attr('class', 'startgg display name right').attr('id', 'p2-entrant-name'))
+
 	$("#display-set-results").append(playerNames)
+
 	for (let game of set.games) {
 		var gameRow = $('<div />')
 		for (x = 0; x < 4 - game.team1[0].stocks; x++) {
@@ -718,7 +750,7 @@ function getTournamentSet() {
 		}
 		$("#display-set-results").append(gameRow);
 	}
-	$("#display-set-results").append($('<button />').attr('id', 'submitStartggSet').attr('onClick', 'submitStartggSet()').text("Submit start.gg"));
+	$("#display-set-results").append($('<button />').attr('id', 'submit-startgg-set').attr('onClick', 'submitStartggSet()').text("Submit start.gg"));
 	index = 1;
 	$("#screenshot-container-1").hide()
 	$("#screenshot-container-2").hide()
@@ -732,6 +764,20 @@ function getTournamentSet() {
 	}
 	$(".screenshot-container").show()
 	$("#set-update").show()
+}
+
+function swapEntrants() {
+	p1Entrant = $("#p1-entrant-input").val()
+	p1Name = $("#p1-entrant-name").text()
+
+	p2Entrant = $("#p2-entrant-input").val()
+	p2Name = $("#p2-entrant-name").text()
+
+	$("#p1-entrant-input").val(p2Entrant)
+	$("#p1-entrant-name").text(p2Name)
+
+	$("#p2-entrant-input").val(p1Entrant)
+	$("#p2-entrant-name").text(p1Name)
 }
 
 function takeScreenshot(timecode, index, vod) {
@@ -757,7 +803,8 @@ function takeScreenshot(timecode, index, vod) {
 }
 
 function showGetSets() {
-	$("#get-sets").show()
+	$("#get-unfinished-sets").show()
+	$("#get-all-sets").show()
 }
 
 function updateSet() {
@@ -862,6 +909,7 @@ function getDefaultIcon(character) {
 function getStageShort(stage) {
 	switch (stage) {
 		case "Yoshi's Story":
+		case "Yoshis Story":
 			return "YS"
 		case "Fountain of Dreams":
 			return "FoD"

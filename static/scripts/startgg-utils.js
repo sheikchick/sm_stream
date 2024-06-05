@@ -136,27 +136,57 @@ function resolveStartggStage(stage) {
     }
 }
 
+function startggState(int) {
+    switch(int) {
+        case 1:
+            return "CREATED"
+        case 2:
+            return "ACTIVE"
+        case 3:
+            return "COMPLETED"
+        case 4:
+            return "READY"
+        case 5:
+            return "INVALID"
+        case 6:
+            return "CALLED"
+        case 7:
+            return "QUEUED"
+        default:
+            return null
+    }   
+}
+
 /*TODO: extra pretty for doubles, take average stocks of both players (Math.floor) on team, create list of characters and iterate through them for each team
 ie: team1 plays FOX/FALCO game 1 but plays SHEIK/FALCO game 2 and 3, on startgg display characters as g1 FOX g2 FALCO g3 SHEIK
 */
 
 function constructSet(p1Id, p2Id, games) {
-    if(games[0].team1.length == 2) {
-        var chars = getDoublesCharactersArray(games)
-    }
+    /*
+    if(games[0].team1.length > 1) {
+        if(games[0].team1[1] != {}) {
+            var chars = getDoublesCharactersArray(games)
+        }
+    }*/
     let index = 1;
     let set = []
     let characterIndex = 0
     for(let game of games) {
         let char1 = ""
         let char2 = ""
-        if(games[0].team1.length == 1) {
+        /*
+        if(games[0].team1.length > 1) {
+            if(games[0].team1[1] != {}) {
+                char1 = chars[0][characterIndex % chars[0].length]
+                char2 = chars[1][characterIndex % chars[1].length]
+            } else {
+                char1 = game.team1[0].character
+                char2 = game.team2[0].character
+            }
+        } else {*/
             char1 = game.team1[0].character
             char2 = game.team2[0].character
-        } else {
-            char1 = chars[0][characterIndex % chars[0].length]
-            char2 = chars[1][characterIndex % chars[1].length]
-        }
+        //}
         set.push(constructGame(index, p1Id, p2Id, char1, char2, game))
         characterIndex++;
     }
@@ -165,7 +195,7 @@ function constructSet(p1Id, p2Id, games) {
 
 function constructGame(gameIndex, p1Id, p2Id, p1Char, p2Char, data) {
     const game = {
-        "winnerId": 16739083,
+        "winnerId": data.winner === 1 ? p1Id : p2Id,
         "gameNum": gameIndex,
         "entrant1Score": data.team1[0].stocks,
         "entrant2Score": data.team2[0].stocks,
@@ -188,7 +218,7 @@ function getDoublesCharactersArray(games) {
     let charObj = [{},{}]
     for(let game of games) {
         for(x = 0; x < games[0].team1.length; x++) {
-            for(let player of game[`team${x}`]) {
+            for(let player of game[`team${x}`].players) {
                 if(charObj[x][player.character] !== undefined) {
                     charObj[x][player.character]+=1
                 } else {

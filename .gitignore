@@ -26,6 +26,11 @@
 *.sql
 *.sqlite
 
+# BIG FILES #
+#############
+*.webm
+*.psd
+
 # OS generated files #
 ######################
 .DS_Store

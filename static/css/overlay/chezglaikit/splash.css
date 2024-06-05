@@ -1,0 +1,133 @@
+.main {
+	z-index: -10;
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	align-items: stretch;
+	font-family: 'Les Bouquinistes';
+	font-size: 36px;
+	color: white;
+	box-sizing: border-box;
+	padding: 0.25em;
+	background-color: rgba(0,0,0,0);
+}
+
+#players {
+	display: flex;
+	justify-content: space-around;
+	gap: 3em;
+}
+
+.team {
+	width: 100%;
+	overflow-x: clip;
+	display: flex;
+	justify-content: center;
+	gap: 1em;
+}
+
+.player {
+	font-family: "Hey Comic";
+    color: #fff;
+    font-size: 48px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	box-sizing: border-box;
+	overflow-x: clip;
+}
+
+.player-name {
+	-webkit-text-stroke: 2px black;
+}
+
+.pronouns {
+	-webkit-text-stroke: 0.75px black;
+	font-size: 0.6em;
+}
+
+.bottom {
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+	gap: 1em;
+}
+
+.logo {
+	flex-shrink: 0;
+	height: 250px;
+	aspect-ratio: 2 / 1;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+	position: relative;
+}
+
+.logo-text-container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	font-size: 108px;
+}
+
+.logo-text-main {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-shadow: 0 0 0.1em rgba(0, 0, 0, 0.85);
+}
+
+.logo-text {
+	font-family: 'Les Bouquinistes';
+	color: white;
+	line-height: 1em;
+	transform: translateY(0.22em);
+}
+
+.stock_icon-container {
+	position: absolute;
+	z-index: -8;
+	display: flex;
+	width: 100%;
+}
+
+.stock_icon {
+	width: 50%;
+	aspect-ratio: 1 / 1;
+	object-fit: cover;
+	object-position: bottom;
+}
+
+.round {
+	flex: 1 1 0;
+	font-family: "Hey Comic";
+	font-size: 36px;
+	white-space: nowrap;
+	color: #fff;
+	-webkit-text-stroke: 1.5px black;
+	line-height: 1em;
+}
+
+#round {
+	text-align: right;
+}
+
+.link {
+    display: flex;
+    gap: 0.25em;
+    align-items: flex-end;
+    line-height: 1em;
+    color: #fff;
+}
+.link-icon {
+    fill: #fff;
+    width: 0.9em;
+}
+
+#date {
+	font-size: 0.3em;
+	text-shadow: 0 0 0.2em rgba(0, 0, 0, 0.85);
+}

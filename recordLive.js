@@ -20,7 +20,15 @@ exports.saveRecording = async (filename, start, end) => {
         this.getLatestRecordingFile(recordDirectory)
     ]);
 
-    const videoName = `${data.Player1.name} vs ${data.Player2.name} - ${data.round}`.replace(/[/\\?%*:|"<>]/g, '');
+    let p1Name = data.team1.players[0].name
+    let p2Name = data.team2.players[0].name
+
+    if(data.isDoubles && data.team1.players.length >= 2 && data.team2.players.length >= 2) {
+        p1Name = p1Name.concat("/", data.team1.players[1].name)
+        p2Name = p2Name.concat("/", data.team2.players[1].name)
+    }
+
+    const videoName = `${p1Name} vs ${p2Name} - ${data.round}`.replace(/[/\\?%*:|"<>]/g, '');
     const command = `ffmpeg -i "${vod}" -ss ${msToHHmmss(start)} -to ${msToHHmmss(end)} -c copy "${videoName}.mp4"\n`; //put -ss before -i to speed up ffmpeg
     const batFile = path.join(recordDirectory, filename + '.bat');
 

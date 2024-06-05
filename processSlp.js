@@ -235,7 +235,6 @@ exports.gameEnd = async ({ game, settings, teams }) => {
     // Update match_data and/or match_result.json
     const { players: playersLatestFrame } = game.getLatestFrame();
 
-    // TODO: cleo is very confused about how to change this function to work with the new info.json
     const gameData = teams.reduce((acc, [player, playerDoubles], index) => {
         const key = `team${index + 1}`;
         acc[key] = [

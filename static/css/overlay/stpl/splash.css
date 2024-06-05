@@ -1,0 +1,241 @@
+html {
+	font-size: 40px;
+}
+
+.main {
+	z-index: -10;
+	position: fixed;
+	width: 1920px;
+	bottom: 0;
+	display: flex;
+	align-items: flex-end;
+	line-height: 1.0;
+	font-family: "Hey Comic";
+	color: #fff;
+	-webkit-text-stroke: 0.05em black;
+	line-height: 1.0;
+}
+
+.top {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.right-column {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.score {
+	font-family: "Happy School";
+    color: #fff;
+	-webkit-text-stroke: 1.5px black;
+    white-space: initial;
+	font-weight: bold;
+	text-align: center;
+	width: 1em;
+}
+
+.l {
+	position: absolute;
+	font-size: 0.4em;
+}
+
+#player1-l {
+	transform: translate(38px, 32px);
+}
+
+#player2-l {
+	transform: translate(-36px, 32px);
+}
+
+.score-background-container {
+	overflow: hidden;
+	height: 100%;
+	position: absolute;
+}
+
+.score-container {
+	font-size: 108px;
+	width: 150px;
+	height: 175px;
+	flex-shrink: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+}
+
+#player1-score-background-container {
+	width: 133px;
+}
+
+#player2-score-background-container {
+	width: 114px;
+}
+
+.score-background {
+	position: absolute;
+	margin-top: -108px;
+	z-index: -9;
+}
+
+#player1-score-background {
+	margin-left: -169px;
+}
+
+#player2-score-background {
+	margin-left: -304px;
+}
+
+.middle {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding-bottom: 10px;
+	background-color: rgb(94, 235, 177);
+	z-index: -8;
+	position: relative;
+	border-radius: 30px 30px 0 0;
+}
+
+.logo {
+	flex-shrink: 0;
+	height: 255px;
+	aspect-ratio: 2050 / 1085;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+	position: relative;
+	width: 100%;
+}
+
+.logo-text {
+	display: flex;
+	flex-direction: column-reverse;
+	align-items: flex-end;
+	height: 100%;
+	width: 85%;
+	overflow: hidden;
+}
+
+#date {
+	padding-right: 5%;
+	text-align: right;
+	font-size: 1.3em;
+	font-family: "Happy School";
+	-webkit-text-fill-color: rgba(94, 235, 177, 0.5);
+	-webkit-text-stroke: 0.07em white;
+	letter-spacing: 0.02em;
+}
+
+.stpl-container {
+	position: relative;
+	z-index: -7;
+	flex: 1 1 0;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+}
+
+.stpl {
+	position: absolute;
+	max-width: 100%;
+	transform: translateY(8%);
+}
+
+.round {
+	white-space: nowrap;
+}
+
+.stock_icon-container {
+	position: absolute;
+	z-index: -8;
+	display: flex;
+	height: 100%;
+}
+
+.stock_icon {
+	height: 100%;
+	aspect-ratio: 1025 / 1085;
+	object-fit: cover;
+	object-position: bottom;
+}
+
+.player-container {
+	background-color: rgb(94, 235, 177);
+	z-index: -9;
+	flex: 1 1 50%;
+	display: flex;
+	overflow: hidden;
+}
+
+#player2-container {
+	flex-direction: row-reverse;
+}
+
+.player {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding-top: 1.2em;
+	padding-bottom: 10px;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.player-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.player-text.player2 {
+	align-items: flex-end;
+}
+
+
+#player2-name {
+	text-align: right;
+}
+
+.pronouns {
+	font-size: 0.8em;
+	height: 1em;
+	white-space: nowrap;
+}
+
+.link {
+	height: 1em;
+	display: flex;
+	align-items: center;
+}
+
+svg {
+	fill: white;
+}
+
+.link-icon {
+    transform: translateY(0.07em);
+}
+
+.icon {
+	height: 100%;
+}
+
+.link-text {
+	height: 100%;
+	letter-spacing: 0.03em;
+}
+
+.location {
+	align-self: flex-end;
+	padding-right: 0.05em;
+}
+
+.location-text {
+	height: 100%;
+}

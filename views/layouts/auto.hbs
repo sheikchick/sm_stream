@@ -44,7 +44,7 @@
 				<input type="text" id="p2d-name-actual" class="name actual right doubles" value="{{team2.players.[1].name}}" placeholder="Player 2 name" readonly="true">
 			</div>
 		</div>
-		<div id="data-actual" class="data">
+		<div id="data-actual" class="data actual">
 			<input type="text" id="round-actual" class="data-text actual" value="{{round}}" placeholder="Round" readonly="true">
 			<input id="best-of-actual" class="data-text actual" best-of="{{bestOf}}" value="Best of {{bestOf}}" readonly="true">
 		</div>
@@ -114,13 +114,15 @@
 			</div>
 
 			<div id="obs-wrapper" class="row">
-				<img class="icon" id="startgg-icon" src="static/img/obs.svg" alt="OBS"/>
-				<button type="button" id="ffmpeg-record" onclick="recordSet(0)">Record</button>
-				<button type="button" id="ffmpeg-clip" onclick="clip()">Clip</button>
-				<div id="scene-box">
-					<select id="scenes"></select>
-					<div>
-						<button id="update-scene" class="scene" onclick="updateScene()">Change Scene</button>
+				<img class="icon" id="obs-icon" src="static/img/obs.svg" alt="OBS"/>
+				<div class="row" id="obs-load">
+					<button type="button" id="ffmpeg-record" onclick="recordSet(0)">Record</button>
+					<button type="button" id="ffmpeg-clip" onclick="clip()">Clip</button>
+					<div id="scene-box">
+						<select id="scenes"></select>
+						<div>
+							<button id="update-scene" class="scene" onclick="updateScene()">Change Scene</button>
+						</div>
 					</div>
 				</div>
 			</div>

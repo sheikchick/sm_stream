@@ -382,7 +382,7 @@ button:disabled {
 }
 
 #startgg_wrapper input, #startgg_wrapper button {
-	margin: 10px;
+	margin: 5px 10px;
 }
 
 #tournament_slug {
@@ -391,6 +391,7 @@ button:disabled {
 }
 
 #tournament_slug_submit {
+	width: 70px;
 }
 
 .seed {
@@ -421,7 +422,7 @@ button:disabled {
 	max-width: 30px;
 }
 
-#get_sets {
+#get-seeds {
 	display: none;
 }
 
@@ -463,7 +464,7 @@ button:disabled {
 
 .startgg.bottom.button {
 	height: 30px;
-	width: 70px;
+	min-width: 70px;
 	padding: 4px 5px 1px 5px;
 	margin: 0px 10px;
 }

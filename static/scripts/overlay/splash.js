@@ -7,6 +7,7 @@ const PLAYERS = ['Player1', 'Player2', 'Player3', 'Player4'];
 const update = () => new Promise((resolve) => {
 	commonUpdate()
 		.then((json) => {
+			fitPlayerTags(true);
 			const players = [1,2];
 		
 			players

@@ -74,6 +74,7 @@ html {
 	justify-content: center;
 	align-items: center;
 	position: relative;
+	align-self: flex-end;
 }
 
 #player1-score-background-container {
@@ -196,11 +197,17 @@ html {
 .player-text {
 	display: flex;
 	align-items: flex-end;
+	align-self: flex-end;
 	flex-direction: column;
+	text-align: right;
+	font-size: 80px;
+	width: 60%;
 }
 
 .player-text.player2 {
+	align-self: flex-start;
 	align-items: flex-start;
+	text-align: left;
 }
 
 
@@ -209,7 +216,7 @@ html {
 }
 
 .pronouns {
-	font-size: 0.8em;
+	font-size: 40px;
 	height: 1em;
 	white-space: nowrap;
 }

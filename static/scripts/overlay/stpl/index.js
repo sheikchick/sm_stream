@@ -6,7 +6,7 @@ specificUpdate = (() => {
     return () => {
         const stockIcons = $('.stock_icon:not(.hidden)');
 
-        fitPlayerTags();
+        fitPlayerTags(false);
 
         stockIcons.toArray()
             .slice(Math.ceil(stockIcons.length / 2))

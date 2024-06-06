@@ -29,12 +29,14 @@ function swapSrc(element, new_src) {
 	}
 }
 
-const fitPlayerTags = () => {
+const fitPlayerTags = (useTooTall = false) => {
 	const nameTooBig = (el) => el.clientWidth > el.parentElement.clientWidth;
+	const nameTooTall = (el) => el.clientHeight/1.3 > parseInt($(el.parentElement).css('font-size'));
 	$('.player-name').each(function(i, obj) {
 		var size = parseInt($(obj.parentElement).css('font-size'))
 		$(obj).css('font-size', size)
-		while(nameTooBig(obj) && size > 0) {
+		while((nameTooBig(obj) || (useTooTall && nameTooTall(obj))) && size > 0) {
+			console.log(nameTooBig(obj))
 			size = size - 1;
 			console.log(size)
 			$(obj).css('font-size', size)
@@ -89,6 +91,6 @@ const getDoublesPlayers = () => [...document.getElementsByClassName('player-doub
 
 const scoresNumerical = (player, score, firstTo, l) => {
 	$(`#${player}-score`).text(score);
-	$(`#${player}-l`).text(firstTo);
+	$(`#${player}-l`).text("L");
 	$(`#${player}-l`).attr('class', l ? 'l' : 'hidden');
 };

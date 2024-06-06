@@ -7,18 +7,13 @@ const PLAYERS = ['Player1', 'Player2', 'Player3', 'Player4'];
 const update = () => new Promise((resolve) => {
 	commonUpdate()
 		.then((json) => {
-			const players = Object.keys(json)
-				.filter(k => k.startsWith(PLAYER));
+			const players = [1,2];
 		
-			PLAYERS
-				.forEach((key) => setPlayer(key, json[key]));
-		
-			if(json.is_doubles) {
+			players
+				.forEach((key) => setPlayer(`player${key}`, json[`team${key}`], 0, json.bestOf));
+			if(json.isDoubles) {
 				players
-					.forEach((key) => setDoublesPlayer(key, json[key]));
-			} else {
-				players
-					.forEach(setDoublesPlayer);
+					.forEach((key) => setPlayer(`player${key}d`, json[`team${key}`], 1, json.bestOf));
 			}
 		})
 		.catch((e) => {

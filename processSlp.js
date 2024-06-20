@@ -18,7 +18,7 @@ exports.checkSetStart = (() => {
     const l = " (L)";
     const lRegex = /\s*(?:\(L\))?$/;
 
-    return (info) => {
+    return (info, isGameStart) => {
         const round = info.round?.toLowerCase();
         if (!round.includes(FRIENDLIES)) {
             const firstTo = getFirstTo
@@ -40,7 +40,7 @@ exports.checkSetStart = (() => {
                 currentSet = [];
 
 
-                if (!global.timecodeAuto) {
+                if (isGameStart || !global.timecodeAuto) {
                     getTimecode().then((timecode) => {
                         global.timecodeAuto = recordLive.timecodeOffset(timecode, -5000); //start the auto recording 10 seconds earlier
                         recordLive.takeScreenshot(timecode, "auto", "1", "960x540")
@@ -149,7 +149,7 @@ exports.gameStart = async (path) => {
 
     const info = await readData(INFO);
 
-    this.checkSetStart(info);
+    this.checkSetStart(info, true);
     if (teams.length === 2) {
         const activePlayers = getActiveRotationPlayers(info, settings.players);
         info.activePlayers = activePlayers;

@@ -3,6 +3,7 @@ const express = require("express");
 const hbs = require("hbs");
 const cors = require('cors');
 const path = require("path");
+const open = require('open');
 const fs = require("fs/promises");
 
 const logging = require("./logging.js");
@@ -15,6 +16,12 @@ const { readData, writeData, updateTournament, INFO, DATA_FILES, REPLAY_QUEUE, D
 const { watch } = require("./slpWatch.js");
 const { checkSetStart } = require("./processSlp.js");
 const { msToHHmmss } = require("./util.js")
+
+const { trayIcon, mainWindow } = require("./gui.js")
+
+const tray = trayIcon();
+tray.show();
+global.tray = tray;
 
 let server;
 
@@ -308,6 +315,7 @@ async function startApp() {
     await loadObs();
     server = app.listen(config.web.port, () => {
         logging.log("Web application listening on port " + config.web.port)
+        open(`http://127.0.0.1:${config.web.port}`)
     });
     watch(config.slippi.directory);
 }

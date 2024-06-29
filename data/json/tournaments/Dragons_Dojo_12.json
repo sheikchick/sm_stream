@@ -1,0 +1,1626 @@
+[
+    {
+        "team1": {
+            "entrantId": "16972319",
+            "names": [
+                "joessbm",
+                "Jinx"
+            ]
+        },
+        "team2": {
+            "entrantId": "16988920",
+            "names": [
+                "Wilde",
+                "Ribz"
+            ]
+        },
+        "round": "Bracket 1",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "preview_2489327_1_0",
+        "winner": 1,
+        "timecodes": [
+            481149,
+            865966
+        ],
+        "games": [
+            {
+                "stage": "Battlefield",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 1
+                    },
+                    {
+                        "character": "peach",
+                        "colour": "blue",
+                        "stocks": 2
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "peach",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {
+                        "character": "sheik",
+                        "colour": "red",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Battlefield",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 2
+                    },
+                    {
+                        "character": "peach",
+                        "colour": "blue",
+                        "stocks": 2
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "peach",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {
+                        "character": "zelda",
+                        "colour": "red",
+                        "stocks": 0
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16988920",
+            "names": [
+                "Reversii",
+                "Buckly"
+            ]
+        },
+        "team2": {
+            "entrantId": "16970377",
+            "names": [
+                "Ribz",
+                "Wilde"
+            ]
+        },
+        "round": "Bracket 1",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "76208320",
+        "winner": 1,
+        "timecodes": [
+            "",
+            1836416
+        ],
+        "games": [
+            {
+                "stage": "Yoshis Story",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "blue",
+                        "stocks": 1
+                    },
+                    {
+                        "character": "peach",
+                        "colour": "blue",
+                        "stocks": 1
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "sheik",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {
+                        "character": "peach",
+                        "colour": "red",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Yoshis Story",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "blue",
+                        "stocks": 1
+                    },
+                    {
+                        "character": "peach",
+                        "colour": "blue",
+                        "stocks": 1
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {
+                        "character": "peach",
+                        "colour": "red",
+                        "stocks": 0
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16972319",
+            "names": [
+                "joessbm",
+                "Jinx"
+            ]
+        },
+        "team2": {
+            "entrantId": "16970377",
+            "names": [
+                "Buckly",
+                "Reversii"
+            ]
+        },
+        "round": "Bracket 1",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "76208321",
+        "winner": 1,
+        "timecodes": [
+            2071166,
+            2736916
+        ],
+        "games": [
+            {
+                "stage": "Dream Land N64",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 2
+                    },
+                    {
+                        "character": "peach",
+                        "colour": "blue",
+                        "stocks": 2
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "peach",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Battlefield",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 0
+                    },
+                    {
+                        "character": "peach",
+                        "colour": "blue",
+                        "stocks": 1
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "sheik",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    }
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 2
+                    },
+                    {
+                        "character": "peach",
+                        "colour": "blue",
+                        "stocks": 2
+                    }
+                ],
+                "team2": [
+                    {
+                        "character": "zelda",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16964119",
+            "names": [
+                "Josh97",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16972458",
+            "names": [
+                "Wilde",
+                ""
+            ]
+        },
+        "round": "Pools MA1",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "preview_2489320_1_2",
+        "winner": 2,
+        "timecodes": [
+            4644149,
+            5350366
+        ],
+        "games": [
+            {
+                "stage": "Battlefield",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "peach",
+                        "colour": "green",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 1
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Fountain of Dreams",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "peach",
+                        "colour": "green",
+                        "stocks": 1
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Pokemon Stadium",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "peach",
+                        "colour": "green",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "sheik",
+                        "colour": "original",
+                        "stocks": 1
+                    },
+                    {}
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16871173",
+            "names": [
+                "Ev4n",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16859559",
+            "names": [
+                "Ribz",
+                ""
+            ]
+        },
+        "round": "Pools MA2",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "preview_2489321_7_3",
+        "winner": 1,
+        "timecodes": [
+            5606266,
+            6241083
+        ],
+        "games": [
+            {
+                "stage": "Yoshis Story",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "captainfalcon",
+                        "colour": "blue",
+                        "stocks": 2
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "peach",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Dream Land N64",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "captainfalcon",
+                        "colour": "blue",
+                        "stocks": 2
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "peach",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16964119",
+            "names": [
+                "Josh97",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16972619",
+            "names": [
+                "Panama Quest",
+                ""
+            ]
+        },
+        "round": "Pools MA1",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "preview_2489320_7_2",
+        "winner": 1,
+        "timecodes": [
+            6303899,
+            6632516
+        ],
+        "games": [
+            {
+                "stage": "Battlefield",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "peach",
+                        "colour": "green",
+                        "stocks": 2
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "green",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Pokemon Stadium",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "peach",
+                        "colour": "green",
+                        "stocks": 4
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "green",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16972257",
+            "names": [
+                "c:leo",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16888920",
+            "names": [
+                "AJD",
+                ""
+            ]
+        },
+        "round": "Pools MA1",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "preview_2489320_3_2",
+        "winner": 1,
+        "timecodes": [
+            6776516,
+            7355499
+        ],
+        "games": [
+            {
+                "stage": "Battlefield",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 2
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "captainfalcon",
+                        "colour": "original",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Dream Land N64",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 1
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "captainfalcon",
+                        "colour": "original",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16972257",
+            "names": [
+                "c:leo",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16862211",
+            "names": [
+                "Pi",
+                ""
+            ]
+        },
+        "round": "Pools MA1",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "preview_2489320_7_0",
+        "winner": 1,
+        "timecodes": [
+            7455099,
+            7916733
+        ],
+        "games": [
+            {
+                "stage": "Yoshis Story",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "red",
+                        "stocks": 3
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Battlefield",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 2
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Pokemon Stadium",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 1
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16966316",
+            "names": [
+                "Reversii",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16972369",
+            "names": [
+                "joessbm",
+                ""
+            ]
+        },
+        "round": "Pools MA2",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "preview_2489321_3_3",
+        "winner": 2,
+        "timecodes": [
+            8137633,
+            8511532
+        ],
+        "games": [
+            {
+                "stage": "Battlefield",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 2
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 1
+                    },
+                    {}
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16871173",
+            "names": [
+                "Ev4n",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16923332",
+            "names": [
+                "Jinx",
+                ""
+            ]
+        },
+        "round": "Pools MA2",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "preview_2489321_4_1",
+        "winner": 2,
+        "timecodes": [
+            9414116,
+            10096866
+        ],
+        "games": [
+            {
+                "stage": "Yoshis Story",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "captainfalcon",
+                        "colour": "blue",
+                        "stocks": 3
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "peach",
+                        "colour": "white",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Fountain of Dreams",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "captainfalcon",
+                        "colour": "blue",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "peach",
+                        "colour": "white",
+                        "stocks": 1
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Battlefield",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "captainfalcon",
+                        "colour": "blue",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "peach",
+                        "colour": "white",
+                        "stocks": 2
+                    },
+                    {}
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16966316",
+            "names": [
+                "Reversii",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16888920",
+            "names": [
+                "AJD",
+                ""
+            ]
+        },
+        "round": "Winners Round 1",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "preview_2489326_1_1",
+        "winner": 1,
+        "timecodes": [
+            11251782,
+            12353182
+        ],
+        "games": [
+            {
+                "stage": "Battlefield",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "captainfalcon",
+                        "colour": "original",
+                        "stocks": 1
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Fountain of Dreams",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 1
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "captainfalcon",
+                        "colour": "original",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Pokemon Stadium",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "captainfalcon",
+                        "colour": "original",
+                        "stocks": 1
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 1
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "captainfalcon",
+                        "colour": "original",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Yoshis Story",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 2
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "captainfalcon",
+                        "colour": "original",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16972369",
+            "names": [
+                "joessbm",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16862211",
+            "names": [
+                "Pi",
+                ""
+            ]
+        },
+        "round": "Winners Semi-Final",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "76213881",
+        "winner": 2,
+        "timecodes": [
+            12738366,
+            13149399
+        ],
+        "games": [
+            {
+                "stage": "Battlefield",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "red",
+                        "stocks": 3
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Yoshis Story",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "red",
+                        "stocks": 3
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "red",
+                        "stocks": 2
+                    },
+                    {}
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16966316",
+            "names": [
+                "Reversii",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16972257",
+            "names": [
+                "c:leo",
+                ""
+            ]
+        },
+        "round": "Winners Semi-Final",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "76213880",
+        "winner": 2,
+        "timecodes": [
+            13228216,
+            13877132
+        ],
+        "games": [
+            {
+                "stage": "Battlefield",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 1
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 2
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Fountain of Dreams",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 1
+                    },
+                    {}
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16966316",
+            "names": [
+                "Reversii",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16923332",
+            "names": [
+                "Jinx",
+                ""
+            ]
+        },
+        "round": "Losers Quarter-Final",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "76213896",
+        "winner": 1,
+        "timecodes": [
+            13980616,
+            15246182
+        ],
+        "games": [
+            {
+                "stage": "Battlefield",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "peach",
+                        "colour": "white",
+                        "stocks": 2
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Pokemon Stadium",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "peach",
+                        "colour": "white",
+                        "stocks": 1
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Pokemon Stadium",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 1
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "peach",
+                        "colour": "white",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Yoshis Story",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 1
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "peach",
+                        "colour": "white",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Dream Land N64",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 2
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "peach",
+                        "colour": "white",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16972257",
+            "names": [
+                "c:leo",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16862211",
+            "names": [
+                "Pi",
+                ""
+            ]
+        },
+        "round": "Winners Final",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "76213882",
+        "winner": 2,
+        "timecodes": [
+            15281749,
+            15713616
+        ],
+        "games": [
+            {
+                "stage": "Dream Land N64",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "red",
+                        "stocks": 2
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Battlefield",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "red",
+                        "stocks": 2
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Battlefield",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "red",
+                        "stocks": 1
+                    },
+                    {}
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16966316",
+            "names": [
+                "Reversii",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16972369",
+            "names": [
+                "joessbm",
+                ""
+            ]
+        },
+        "round": "Losers Semi-Final",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "76213897",
+        "winner": 2,
+        "timecodes": [
+            15801716,
+            16557332
+        ],
+        "games": [
+            {
+                "stage": "Battlefield",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 1
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Yoshis Story",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 1
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Fountain of Dreams",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 3
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "luigi",
+                        "colour": "red",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 2
+                    },
+                    {}
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16972257",
+            "names": [
+                "c:leo",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16972369",
+            "names": [
+                "joessbm",
+                ""
+            ]
+        },
+        "round": "Losers Final",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "76213898",
+        "winner": 1,
+        "timecodes": [
+            16670349,
+            17681832
+        ],
+        "games": [
+            {
+                "stage": "Yoshis Story",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 1
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Battlefield",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 2
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Final Destination",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 1
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Dream Land N64",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 1
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Pokemon Stadium",
+                "winner": 1,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 1
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "blue",
+                        "stocks": 0
+                    },
+                    {}
+                ]
+            }
+        ]
+    },
+    {
+        "team1": {
+            "entrantId": "16972257",
+            "names": [
+                "c:leo",
+                ""
+            ]
+        },
+        "team2": {
+            "entrantId": "16862211",
+            "names": [
+                "Pi",
+                ""
+            ]
+        },
+        "round": "Grand Final",
+        "vod": "2024-06-22 13-00-56.mkv",
+        "setId": "76213883",
+        "winner": 2,
+        "timecodes": [
+            17723632,
+            18127015
+        ],
+        "games": [
+            {
+                "stage": "Dream Land N64",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "red",
+                        "stocks": 4
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Battlefield",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "red",
+                        "stocks": 3
+                    },
+                    {}
+                ]
+            },
+            {
+                "stage": "Fountain of Dreams",
+                "winner": 2,
+                "team1": [
+                    {
+                        "character": "sheik",
+                        "colour": "white",
+                        "stocks": 0
+                    },
+                    {}
+                ],
+                "team2": [
+                    {
+                        "character": "fox",
+                        "colour": "red",
+                        "stocks": 1
+                    },
+                    {}
+                ]
+            }
+        ]
+    }
+]

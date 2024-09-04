@@ -27,18 +27,22 @@ exports.writeData = async (file, data) => this.DATA_FILES.includes(file) &&
 
 exports.readData = async (file) => this.DATA_FILES.includes(file)
     ? readFile(this.DIRECTORY + file, FORMAT)
-        .then((data) => JSON.parse(data))
+        .then((data) => JSON.parse(data))   //TODO; IMPLEMENT DEFAULT INFO.JSON LOADING SEAMLESSLY IN CASE OF ERROR
         .catch((e) => logging.log(`Failed to open ${file} - ${e}`))
     : {};
 
 exports.updateTournament = async (data, index, tournamentFilename) => {
-    const jsonFile = path.join("data/json/tournaments/", tournamentFilename);
+    const tournamentPath = path.join("data/json/tournaments/", tournamentFilename);
+    if (!fs.existsSync(tournamentPath)){
+        fs.mkdirSync(tournamentPath);
+    }
+    const jsonFile = path.join("data/json/tournaments/", tournamentPath, "set_data.json");
     readFile(jsonFile, FORMAT)
         .then((readFile) => {
             var parsedFile = JSON.parse(readFile)
             parsedFile[index] = (data)
             writeFile(jsonFile, JSON.stringify(parsedFile), FORMAT).then(() => {
-                logging.log(`Modified match data "${data.team1.names[0]} vs ${data.team2.names[0]}" to ${tournamentFilename}`)
+                logging.log(`Modified match data "${data.team1.names[0]} vs ${data.team2.names[0]}" in /${tournamentPath}/`)
             })
             .catch((e) => {
                 const message = `Failed to write ${jsonFile}: ${e}`;

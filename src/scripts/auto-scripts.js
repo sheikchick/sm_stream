@@ -896,7 +896,7 @@ function updateSet() {
 	data.timecodes[1] = HHmmssToMs($("#timecode-2").val())
 
 	let index = $('#tournament-data :selected').val()
-	let tournament = `${$('#tournament-data :selected').attr("data-tournament")}.json`
+	let tournament = `${$('#tournament-data :selected').attr("data-tournament")}`
 
 	$.ajax({
 		type: 'POST',

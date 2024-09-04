@@ -21,7 +21,7 @@ exports.saveClip = async (filename, timecode) => {
 
     const vod = await this.getLatestRecordingFile(recordDirectory);
 
-    const startMs = this.timecodeOffset(timecode, -(parseInt(config["OBS"]["Clip Length"])*1000));
+    const startMs = this.timecodeOffset(timecode, -(parseInt(config["OBS"]["Clip Length"]) * 1000));
     const startTimestamp = msToHHmmss(startMs);
     const endTimestamp = msToHHmmss(timecode);
 
@@ -35,7 +35,7 @@ exports.saveClip = async (filename, timecode) => {
         const message = "Unable to find VoD. Command saved with placeholder filename";
         logging.error(message)
         //throw new Error(message); // Throw simply to return a 500
-    } 
+    }
 };
 
 /** Offset timecode value, capping at 0
@@ -49,7 +49,7 @@ exports.timecodeOffset = (timecode, value) => {
 }
 
 const rejectIfObsNotRecording = () => new Promise((resolve, reject) => {
-    obs?.call('GetRecordStatus').then(({outputActive}) => {
+    obs?.call('GetRecordStatus').then(({ outputActive }) => {
         outputActive
             ? resolve()
             : reject();
@@ -58,15 +58,24 @@ const rejectIfObsNotRecording = () => new Promise((resolve, reject) => {
 
 exports.getRecordingStatus = () => !!global.timecodeManual;
 
-exports.getLatestRecordingFile = (directory) => fs.mkdir(directory, {recursive: true})
-    .then(() => fs.readdir(directory))
-    .then((files) => Promise.all(files.map(async (f) => [
-        f,
-        (await fs.stat(path.join(directory, f))).mtimeMs
-    ])))
-    .then((files) => files.reduce(
-        (acc, cur) => (cur[0].endsWith('.mkv') && cur[1] > acc[1])
-            ? cur
-            : acc
-        , [FILE_NOT_FOUND, 0]
-    )[0]);
+exports.getLatestRecordingFile = (directory) => new Promise((resolve, reject) => {
+    if(directory) {
+        fs.mkdir(directory, { recursive: true })
+        .then(() => fs.readdir(directory))
+        .then((files) => Promise.all(files.map(async (f) => [
+                f,
+                (await fs.stat(path.join(directory, f))).mtimeMs
+        ])))
+        .then((files) => {
+            latestFile = files.reduce(
+                (acc, cur) => (cur[0].endsWith('.mkv') && cur[1] > acc[1])
+                    ? cur
+                    : acc
+                , [FILE_NOT_FOUND, 0]
+            )[0];
+            resolve(latestFile)
+        })
+    } else {
+        resolve("PLACEHOLDER")
+    }
+})

@@ -4,7 +4,8 @@ const slpTools = require("./slpTools.js");
 const logging = require("./logging.js");
 const { SlippiGame } = require("@slippi/slippi-js");
 const { readData, writeData, INFO, MATCH_RESULT } = require("./data.js");
-const { readFile, writeFile } = require("fs/promises");
+const fs = require("fs");
+const { appendFile, readFile, writeFile, mkdir } = require("fs/promises");
 const { getTimecode, getDirectory } = require("./obs.js");
 const recordLive = require("./recordLive.js");
 const startgg = require("./startgg.js")
@@ -70,17 +71,54 @@ exports.checkSetStart = (() => {
 })();
 
 checkSetEnd = async (info) => {
+    const createFile = (jsonFile, data, info, tournamentName) => {
+        appendFile(jsonFile, "", FORMAT)
+        .then(() => {
+            readFile(jsonFile, FORMAT)
+            .then((readFile) => {
+                var parsedFile
+                try {
+                    parsedFile = JSON.parse(readFile)
+                } catch (e) {
+                    parsedFile = []
+                }
+                parsedFile.push(data)
+                //write to tournament json file
+                writeFile(jsonFile, JSON.stringify(parsedFile), FORMAT)
+                .then(() => {
+                    logging.log(`Match data "${info.team1.players[0].name} vs ${info.team2.players[0].name}" written to /${tournamentName}/`)
+                    global.timecodeAuto = ""
+                    //submit data to start.gg
+                    if(config["start.gg"]["Auto-Submit sets"] === "true") {
+                        startgg.submitStartggSet(data)
+                    }
+                    //write to match_result for data purposes
+                    writeData(MATCH_RESULT, data)
+                    .then(() => {
+                        logging.log(`Wrote match data to match_result.json`)
+                    })
+                    .catch((e) => {
+                        logging.error(`Failed to write match_result.json: ${e}`);
+                    });
+                })
+            })
+        })
+        .catch((e) =>
+            logging.error(`Failed to write ${jsonFile}: ${e}`
+        ));
+    }
+
     const firstTo = getFirstTo(info.bestOf);
     if (info.team1.score >= firstTo || info.team2.score >= firstTo) {
-        //need to tidy up with .catch() for each
         getTimecode()
         .then((timecode) => {
             getDirectory()
             .then((directory) => {
                 recordLive.getLatestRecordingFile(directory)
                 .then((vod) => {
-                    const tournamentFilename = `${info.tournament ? info.tournament.replace(/ /g, "_") : 'default'}.json`;
-                    const jsonFile = path.join("data/json/tournaments/", tournamentFilename);
+                    const tournamentName = info.tournament ? info.tournament.replace(/ /g, "_") : 'default'
+                    const tournamentPath = path.join("data/json/tournaments/", tournamentName);
+                    const jsonFile = path.join("data/json/tournaments/", tournamentName, "set_data.json");
                     const winner = info.team1.score >= firstTo ? 1 : info.team2.score >= firstTo ? 2 : 0 //0 should never occur
                     const data = {
                         team1: {
@@ -105,73 +143,17 @@ checkSetEnd = async (info) => {
                         timecodes: [timecodeAuto, recordLive.timecodeOffset(timecode, 15000)],
                         games: currentSet
                     }
-                    readFile(jsonFile, FORMAT)
-                        .then((readFile) => {
-                            var parsedFile = JSON.parse(readFile)
-                            parsedFile.push(data)
-                            //write to tournament json file
-                            if (!fs.existsSync(dir)){
-                                fs.mkdirSync(dir);
-                            }
-                            writeFile(jsonFile, JSON.stringify(parsedFile), FORMAT)
-                            .then(() => {
-                                logging.log(`Appended match data "${info.team1.players[0].name} vs ${info.team2.players[0].name}" to ${tournamentFilename}`)
-                                global.timecodeAuto = ""
-                                //submit data to start.gg
-                                if(config["start.gg"]["Auto-Submit sets"] === "true") {
-                                    startgg.submitStartggSet(data)
-                                }
-                                //write to match_result for data purposes
-                                writeData(MATCH_RESULT, data)
-                                .then(() => {
-                                    logging.log(`Wrote match data to match_result.json`)
-                                })
-                                .catch((e) => {
-                                    logging.error(`Failed to write match_result.json: ${e}`);
-                                });
-                            })
-                            .catch((e) =>
-                                logging.error(`Failed to write ${jsonFile}: ${e}`
-                                ));
-                        })
-                        .catch(() => {
-                            logging.log(`File ${jsonFile} doesn't exist yet, creating...`);
-                            writeFile(jsonFile, `[${JSON.stringify(data)}]`, FORMAT)
-                            .then(() => {
-                                logging.log(`Match data "${info.team1.players[0].name} vs ${info.team2.players[0].name}" written to file ${tournamentFilename}`)
-                                global.timecodeAuto = ""
-                                //submit data to start.gg
-                                if(config["start.gg"]["Auto-Submit sets"] === "true") {
-                                    startgg.submitStartggSet(data)
-                                }
-                                //write to match_result for data purposes
-                                writeData(MATCH_RESULT, data)
-                                .then(() => {
-                                    logging.log(`Wrote match data to match_result.json`)
-                                })
-                                .catch((e) => {
-                                    logging.error(`Failed to write match_result.json: ${e}`);
-                                });
-                            })
-                            .catch((e) =>
-                                logging.error(`Failed to write ${jsonFile}: ${e}`
-                                ));
-                        });
+                    //create directory if not exists
+                    mkdir(tournamentPath)
+                    .then(() => {
+                        createFile(jsonFile, data, info, tournamentName)
+                    })
+                    .catch(() => {
+                        createFile(jsonFile, data, info, tournamentName)
+                    })
                 })
-                .catch((e) => {
-                    logging.error("Error in checkSetEnd > getLatestRecordingFile")
-                    logging.error(e)
-                });
             })
-            .catch((e) => {
-                logging.error("Error in checkSetEnd > getDirectory")
-                logging.error(e)
-            });;
         })
-        .catch((e) => {
-            logging.error("Error in checkSetEnd > getTimecode")
-            logging.error(e)
-        });
     }
 };
 

@@ -4,7 +4,7 @@
   "description": "automatic melee stream application using slippi, startgg, qr codes",
   "main": "server.js",
   "scripts": {
-    "start": "qode server.js"
+    "start": "node src/server.js"
   },
   "repository": {
     "type": "git",
@@ -17,9 +17,8 @@
   },
   "homepage": "https://github.com/a-cleo/sm_stream_application#readme",
   "dependencies": {
-    "@nodegui/nodegui": "^0.67.0",
-    "@slippi/slippi-js": "^6.6.1",
-    "@vinceau/slp-realtime": "4.0.0",
+    "@slippi/slippi-js": "^6.7.0",
+    "@vinceau/slp-realtime": "^4.0.0",
     "config": "^3.3.9",
     "cors": "^2.8.5",
     "express": "^4.18.2",
@@ -27,6 +26,9 @@
     "hbs": "^4.2.0",
     "obs-websocket-js": "^5.0.2",
     "open": "8.4.2",
-    "toml": "^3.0.0"
+    "rxjs": "^6.6.7",
+    "serve-favicon": "^2.5.0",
+    "toml": "^3.0.0",
+    "underscore": "^1.13.6"
   }
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<title>Smash Bros. Melee Overlay Config</title>
+	<script src="static/scripts/jquery-3.4.1.min.js"></script>
+
+	<script src="static/scripts/startgg-seeding.js"></script>
+	<script src="static/scripts/startgg-scripts.js"></script>
+	<script src="static/scripts/startgg-utils.js"></script>
+
+	<script src="scripts/fontawesome.min.js"></script>
+	<script src="scripts/solid.min.js"></script>
+	<script src="scripts/brands.min.js"></script>
+	<script>
+		var bestOfValue = "{{bestOf}}"
+		var apiKey = "{{apiKey}}"
+	</script>
+	<link rel="stylesheet" type="text/css" href="static/css/startgg-seeding.css">
+	<link rel="icon" href="static/favicon.ico">
+</head>
+
+<body>
+	{{> footer}}
+	<div id="left_wrapper">
+		<div id="startgg_wrapper" class="row">
+			<img class="icon" id="startgg_icon" src="static/img/startgg.svg" alt="SGG"/>
+			<div class="column">
+				<input type="text" id="tournament_slug" class="startgg tournament input" placeholder="startgg slug">
+				<button type="button" id="tournament_slug_submit" class="startgg bottom button" onclick="getTournamentEvents()">Submit</button>
+			</div>
+			<select class="startgg input c" id="events" onchange="getEventPhases()"></select>
+			<select class="startgg input c" id="phases" onchange="showGetSeeds()"></select>
+			<button type="button" id="get-seeds" class="startgg bottom button" onclick="getSeeds()">Get seeds</button>
+		</div>
+	</div>
+	<div id="right_wrapper">
+	</div>
+</body>

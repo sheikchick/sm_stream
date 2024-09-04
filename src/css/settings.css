@@ -1,0 +1,85 @@
+body {
+	display: grid;
+	background-color: #443344;
+	font-family: sans-serif;
+	color: white;
+	margin-left: 100px;
+}
+
+#left_wrapper {
+  	display: flex;
+	flex-direction: column;
+	max-width: 50%;
+}
+
+.title {
+	display: inline-block;
+}
+
+.title.section {
+	color: #fff;
+	font-size: 24px;
+	padding: 10px 0px;
+}
+
+.title.item {
+	width: 10em;
+}
+
+input {
+	padding: 5px 5px 5px 5px;
+	display: inline-block;
+	background: #fafafa;
+	color: #323232;
+	border: none;
+	border-radius: 5px;
+	box-shadow: 0px 4px 2px #000;
+	width: 20em;
+}
+
+input.checkbox {
+	width: 1.2em;
+	height: 1.2em;
+	margin: 0 0 0 0;
+}
+
+
+div.section {
+	margin: 0.35em;
+}
+
+div.item {
+	margin: 5px 20px;
+}
+
+button {
+	width: 8em;
+	padding: 5px 0px;
+	cursor: pointer;
+	box-shadow: 0px 4px 2px #222;
+	border-radius: 5px;
+	line-height: 20px;
+	-webkit-font-smoothing: antialiased;
+	text-align: center;
+	letter-spacing: 1px;
+	vertical-align: middle;
+	border: none;
+	border-bottom: 3px solid #AAA;
+}
+
+button:focus {
+	outline: none;
+}
+
+#right_wrapper {
+	display: none;
+}
+
+div.section.d2 {
+	margin-left: 20px;
+	margin-bottom: 20px;
+}
+
+.title.d2 {
+	font-size: 20px;
+}

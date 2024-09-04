@@ -1,0 +1,67 @@
+{
+    "team1": {
+        "players": [
+            {
+                "name": "Player 1",
+                "character": "fox",
+                "colour": "red",
+                "pronouns": "",
+                "port": 1
+            },
+            {
+                "name": "P1 Teammate",
+                "character": "falco",
+                "colour": "red",
+                "pronouns": "",
+                "port": 4
+            }
+        ],
+        "score": 0,
+        "startggEntrant": ""
+    },
+    "team2": {
+        "players": [
+            {
+                "name": "Player 2",
+                "character": "peach",
+                "colour": "blue",
+                "pronouns": "",
+                "port": 2
+            },
+            {
+                "name": "P2 Teammate",
+                "character": "sheik",
+                "colour": "blue",
+                "pronouns": "",
+                "port": 3
+            }
+        ],
+        "score": 0,
+        "startggEntrant": ""
+    },
+    "casters": [
+        {
+            "name": "",
+            "pronouns": ""
+        },
+        {
+            "name": "",
+            "pronouns": ""
+        }
+    ],
+    "seatOrdering": [
+        "1",
+        "2",
+        "3",
+        "4"
+    ],
+    "round": "Grand Final",
+    "startggGetId": "",
+    "tournament": "test",
+    "isDoubles": false,
+    "bestOf": 3,
+    "activePlayers": [
+        1,
+        2
+    ]
+}

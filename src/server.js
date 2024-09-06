@@ -14,7 +14,7 @@ const { loadObs } = require("./obs.js");
 const recordLive = require("./recordLive.js");
 const { recordReplays } = require("./recordReplays.js");
 const charInfo = require("./charInfo.js");
-const { readData, writeData, updateTournament, INFO, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
+const { readData, writeData, updateTournament, fixInfo, INFO, CHARACTER_DATA, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
 const { watch } = require("./slpWatch.js");
 const { checkSetStart } = require("./processSlp.js");
 const { msToHHmmss } = require("./util.js")
@@ -223,6 +223,23 @@ app.all("/update_set", (req, res) => {
             logging.error(`Failed to update set - ${e}`)
             res.sendStatus(500);
         })
+});
+
+app.all("/player_character", (req, res) => {
+    readData(CHARACTER_DATA)
+        .then((data) => {
+            if(data.hasOwnProperty(req.body.id)) {
+                res.json({
+                    "name": data[req.body.id].name || "",
+                    "character": data[req.body.id].character || "",
+                    "colour": data[req.body.id].colour || "",
+                })
+            } else {
+                console.log(req.body)
+                res.sendStatus(404)
+            }
+        })
+        .catch(() => res.sendStatus(500));
 });
 
 /* CHARACTER INFO ENDPOINTS */

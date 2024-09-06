@@ -7,6 +7,7 @@
 	<script src="scripts/jquery-3.4.1.min.js"></script>
 
 	<script src="scripts/auto-scripts.js"></script>
+	<script src="scripts/default-character.js"></script>
 	<script src="scripts/startgg-scripts.js"></script>
 	<script src="scripts/startgg-utils.js"></script>
 
@@ -206,9 +207,9 @@
 				<select class="startgg input c" id="phase-groups" onchange="showGetSets()"></select>
 				<div class="startgg-submit column">
 					<button type="button" id="get-unfinished-sets" class="startgg bottom button"
-						onclick="getSets('[1,2,4,5,6,7]', false)">Get sets</button>
+						onclick="getSets('[1,2,4,5,6,7]', true, false)">Get sets</button>
 					<button type="button" id="get-all-sets" class="startgg bottom button"
-						onclick="getSets('[1,2,3,4,5,6,7]', true)">Get all sets</button>
+						onclick="getSets('[1,2,3,4,5,6,7]', false, true)">Get all sets</button>
 				</div>
 			</div>
 

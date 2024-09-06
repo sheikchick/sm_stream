@@ -50,11 +50,7 @@ __pycache__/
 
 # OTHER #
 #########
-startgg.bat
 static/img/vs_icons
-
-/static/img/screenshots/auto
-/static/img/screenshots/manual
-
-/static/img/overlay/**/stock_icons
-/static/img/overlay/**/*.png
+static/img/overlay/**
+data/json/tournaments/**
+!data/json/tournaments/sm-test/

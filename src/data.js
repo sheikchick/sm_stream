@@ -8,6 +8,7 @@ exports.DOLPHIN = 'dolphin.json';
 exports.REPLAY_QUEUE = 'replay-queue.json';
 exports.TOP_8 = 'top_8.json';
 exports.REGIONS = 'regions.json';
+exports.CHARACTER_DATA = 'character-data.json';
 
 exports.DATA_FILES = [
     this.INFO,
@@ -15,7 +16,8 @@ exports.DATA_FILES = [
     this.DOLPHIN,
     this.REPLAY_QUEUE,
     this.TOP_8,
-    this.REGIONS
+    this.REGIONS,
+    this.CHARACTER_DATA
 ];
 
 exports.DIRECTORY = "data/json/";
@@ -23,11 +25,11 @@ exports.DIRECTORY = "data/json/";
 const FORMAT = "utf8";
 
 exports.writeData = async (file, data) => this.DATA_FILES.includes(file) &&
-    writeFile(this.DIRECTORY + file, JSON.stringify(data), FORMAT);
+    writeFile(this.DIRECTORY + file, file === this.INFO ? JSON.stringify(this.fixInfo(data)) : JSON.stingify(data), FORMAT);
 
 exports.readData = async (file) => this.DATA_FILES.includes(file)
     ? readFile(this.DIRECTORY + file, FORMAT)
-        .then((data) => JSON.parse(data))   //TODO; IMPLEMENT DEFAULT INFO.JSON LOADING SEAMLESSLY IN CASE OF ERROR
+        .then((data) => file === this.INFO ? this.fixInfo(JSON.parse(data)) : JSON.parse(data))  //TODO; IMPLEMENT DEFAULT INFO.JSON LOADING SEAMLESSLY IN CASE OF ERROR
         .catch((e) => logging.log(`Failed to open ${file} - ${e}`))
     : {};
 
@@ -56,3 +58,66 @@ exports.updateTournament = async (data, index, tournamentFilename) => {
             throw new Error(message);
         });
 };
+
+exports.fixInfo = (info) => {
+    let newInfo = {
+        "team1": {
+            "players": [
+                {
+                    "name": info?.team1?.players?.[0]?.name || "Player 1",
+                    "character": info?.team1?.players?.[0]?.character || "fox",
+                    "colour": info?.team1?.players?.[0]?.colour || "red",
+                    "pronouns": info?.team1?.players?.[0]?.pronouns || "",
+                    "port": info?.team1?.players?.[0]?.port || 1
+                },
+                {
+                    "name": info?.team1?.players?.[1]?.name || "Player 4",
+                    "character": info?.team1?.players?.[1]?.character || "falco",
+                    "colour": info?.team1?.players?.[1]?.colour || "red",
+                    "pronouns": info?.team1?.players?.[1]?.pronouns || "",
+                    "port": info?.team1?.players?.[1]?.port || 2
+                }
+            ],
+            "score": info?.team1?.score || 0,
+            "startggEntrant": info?.team1?.startggEntrant || "",
+        },
+        "team2": {
+            "players": [
+                {
+                    "name": info?.team2?.players?.[0]?.name || "Player 2",
+                    "character": info?.team2?.players?.[0]?.character || "sheik",
+                    "colour": info?.team2?.players?.[0]?.colour || "blue",
+                    "pronouns": info?.team2?.players?.[0]?.pronouns || "",
+                    "port": info?.team2?.players?.[0]?.port || 1
+                },
+                {
+                    "name": info?.team2?.players?.[1]?.name || "Player 3",
+                    "character": info?.team2?.players?.[1]?.character || "peach",
+                    "colour": info?.team2?.players?.[1]?.colour || "blue",
+                    "pronouns": info?.team2?.players?.[1]?.pronouns || "",
+                    "port": info?.team2?.players?.[1]?.port || 2
+                }
+            ],
+            "score": info?.team2?.score || 0,
+            "startggEntrant": info?.team2?.startggEntrant || "",
+        },
+        "casters": [
+            {
+                "name": info?.casters?.[0].name || "",
+                "pronouns": info?.casters?.[0].pronouns || "",
+            },
+            {
+                "name": info?.casters?.[1].name || "",
+                "pronouns": info?.casters?.[1].pronouns || "",
+            }
+        ],
+        "seatOrdering": info?.seatOrdering || [ "1","2","3","4" ],
+        "round": info?.round || "",
+        "startggGetId": info?.startggGetId || "",
+        "tournament": info?.tournament || "",
+        "isDoubles": info?.isDoubles || false,
+        "bestOf": info?.bestOf || 5,
+        "activePlayers": info?.activePlayers || [ 1,2 ]
+    }
+    return newInfo;
+}

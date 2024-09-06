@@ -226,7 +226,7 @@ function getStreamQueue() {
 
 
 /* GET AND LOAD SETS FOR A GIVEN PHASEGROUP */
-function getSets(stateArray, showButtons) {
+function getSets(stateArray, hideEmpty, showButtons) {
 	phaseGroup = $("#phase-groups :selected").val();
 	fetch('https://api.start.gg/gql/alpha', {
 		method: 'POST',
@@ -248,7 +248,7 @@ function getSets(stateArray, showButtons) {
 							perPage: $perPage
 							sortType: STANDARD
 							filters: {
-								hideEmpty: false
+								hideEmpty: ${hideEmpty}
 								state: ${stateArray}
 							}
 						){
@@ -260,7 +260,7 @@ function getSets(stateArray, showButtons) {
                                         id
 										participants{
 											gamerTag
-											user{
+											user {
 												discriminator
 												genderPronoun
 											}
@@ -307,6 +307,7 @@ function constructSetObject(set, matchRound) {
 		//players
 		team1 = set["slots"][0]
 		team2 = set["slots"][1]
+
 		//player 1
 		p1Entrant = team1["entrant"]["id"]
 		p1UserId = ""
@@ -316,6 +317,7 @@ function constructSetObject(set, matchRound) {
 			p1Pronouns = team1["entrant"]["participants"][0]["user"]["genderPronoun"]
 		}
 		p1Name = team1["entrant"]["participants"][0]["gamerTag"]
+
 		//player 1 doubles
 		p1DoublesUserId = ""
 		p1DoublesPronouns = ""
@@ -337,6 +339,7 @@ function constructSetObject(set, matchRound) {
 			p2Pronouns = team2["entrant"]["participants"][0]["user"]["genderPronoun"]
 		}
 		p2Name = team2["entrant"]["participants"][0]["gamerTag"]
+
 		//player 2 doubles
 		p2DoublesUserId = ""
 		p2DoublesPronouns = ""
@@ -383,6 +386,7 @@ function constructSetObject(set, matchRound) {
 				]
 			}
 		}
+		console.log(matchData)
 		return(matchData)
 	}
 }

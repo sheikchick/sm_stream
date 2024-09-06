@@ -274,45 +274,45 @@ function loadChanges() {
 		url: "/info.json",
 		data: {},
 		success: function (response) {
-			info = response;
+			info = fixInfo(response);
 			//load team1 data
-			$("#p1-name-actual").attr("value", response.team1.players[0].name)
-			loadCharActual("1", response.team1.players[0].character, response.team1.players[0].colour)
-			if (response.team1.players.length >= 2) {
-				$("#p1d-name-actual").attr("value", response.team1.players[1].name)
-				loadCharActual("1d", response.team1.players[1].character, response.team1.players[1].colour)
+			$("#p1-name-actual").attr("value", info.team1.players[0].name)
+			loadCharActual("1", info.team1.players[0].character, info.team1.players[0].colour)
+			if (info.team1.players.length >= 2) {
+				$("#p1d-name-actual").attr("value", info.team1.players[1].name)
+				loadCharActual("1d", info.team1.players[1].character, info.team1.players[1].colour)
 			}
 
-			if(document.getElementById("p1-score-actual").value != response.team1.score) {
-				document.getElementById("p1-score-actual").value = response.team1.score
-				document.getElementById("p1-score-change").value = response.team1.score
+			if(document.getElementById("p1-score-actual").value != info.team1.score) {
+				document.getElementById("p1-score-actual").value = info.team1.score
+				document.getElementById("p1-score-change").value = info.team1.score
 			}
 
 
 			//load team2 data
-			$("#p2-name-actual").attr("value", response.team2.players[0].name)
-			loadCharActual("2", response.team2.players[0].character, response.team2.players[0].colour)
-			if (response.team2.players.length >= 2) {
-				$("#p2d-name-actual").attr("value", response.team2.players[1].name)
-				loadCharActual("2d", response.team2.players[1].character, response.team2.players[1].colour)
+			$("#p2-name-actual").attr("value", info.team2.players[0].name)
+			loadCharActual("2", info.team2.players[0].character, response.team2.players[0].colour)
+			if (info.team2.players.length >= 2) {
+				$("#p2d-name-actual").attr("value", info.team2.players[1].name)
+				loadCharActual("2d", info.team2.players[1].character, response.team2.players[1].colour)
 			}
 
-			if(document.getElementById("p2-score-actual").value != response.team2.score) {
-				document.getElementById("p2-score-actual").value = response.team2.score
-				document.getElementById("p2-score-change").value = response.team2.score
+			if(document.getElementById("p2-score-actual").value != info.team2.score) {
+				document.getElementById("p2-score-actual").value = info.team2.score
+				document.getElementById("p2-score-change").value = info.team2.score
 			}
 
 			//fixPlayerColours()
 
 			//casters
-			$("#caster1-name").attr("value", response.casters[0].name)
-			$("#caster1-pronouns").attr("value", response.casters[0].pronouns)
-			$("#caster2-name").attr("value", response.casters[1].name)
-			$("#caster2-pronouns").attr("value", response.casters[1].pronouns)
+			$("#caster1-name").attr("value", info.casters[0].name)
+			$("#caster1-pronouns").attr("value", info.casters[0].pronouns)
+			$("#caster2-name").attr("value", info.casters[1].name)
+			$("#caster2-pronouns").attr("value", info.casters[1].pronouns)
 
 			//load
-			$("#round-actual").attr("value", response.round)
-			$("#best-of-actual").attr("value", "Bo" + response.bestOf)
+			$("#round-actual").attr("value", info.round)
+			$("#best-of-actual").attr("value", "Bo" + info.bestOf)
 		},
 		error: function (response) {
 			console.log(response)
@@ -323,6 +323,69 @@ function loadChanges() {
 		getRecordStatus();
 	}
 	setTimeout(loadChanges, 1000)
+}
+
+function fixInfo(info) {
+    let newInfo = {
+        "team1": {
+            "players": [
+                {
+                    "name": info?.team1?.players?.[0]?.name || "Player 1",
+                    "character": info?.team1?.players?.[0]?.character || "fox",
+                    "colour": info?.team1?.players?.[0]?.colour || "red",
+                    "pronouns": info?.team1?.players?.[0]?.pronouns || "",
+                    "port": info?.team1?.players?.[0]?.port || 1
+                },
+                {
+                    "name": info?.team1?.players?.[1]?.name || "Player 4",
+                    "character": info?.team1?.players?.[1]?.character || "falco",
+                    "colour": info?.team1?.players?.[1]?.colour || "red",
+                    "pronouns": info?.team1?.players?.[1]?.pronouns || "",
+                    "port": info?.team1?.players?.[1]?.port || 2
+                }
+            ],
+            "score": info?.team1?.score || 0,
+            "startggEntrant": info?.team1?.startggEntrant || "",
+        },
+        "team2": {
+            "players": [
+                {
+                    "name": info?.team2?.players?.[0]?.name || "Player 2",
+                    "character": info?.team2?.players?.[0]?.character || "sheik",
+                    "colour": info?.team2?.players?.[0]?.colour || "blue",
+                    "pronouns": info?.team2?.players?.[0]?.pronouns || "",
+                    "port": info?.team2?.players?.[0]?.port || 1
+                },
+                {
+                    "name": info?.team2?.players?.[1]?.name || "Player 3",
+                    "character": info?.team2?.players?.[1]?.character || "peach",
+                    "colour": info?.team2?.players?.[1]?.colour || "blue",
+                    "pronouns": info?.team2?.players?.[1]?.pronouns || "",
+                    "port": info?.team2?.players?.[1]?.port || 2
+                }
+            ],
+            "score": info?.team2?.score || 0,
+            "startggEntrant": info?.team2?.startggEntrant || "",
+        },
+        "casters": [
+            {
+                "name": info?.casters?.[0].name || "",
+                "pronouns": info?.casters?.[0].pronouns || "",
+            },
+            {
+                "name": info?.casters?.[1].name || "",
+                "pronouns": info?.casters?.[1].pronouns || "",
+            }
+        ],
+        "seatOrdering": info?.seatOrdering || [ "1","2","3","4" ],
+        "round": info?.round || "",
+        "startggGetId": info?.startggGetId || "",
+        "tournament": info?.tournament || "",
+        "isDoubles": info?.isDoubles || false,
+        "bestOf": info?.bestOf || 5,
+        "activePlayers": info?.activePlayers || [ 1,2 ]
+    }
+    return newInfo;
 }
 
 function updateSeatsLoop() {
@@ -485,6 +548,12 @@ function toggleDoubles() {
 	}
 }
 
+/**
+ * Load character into slot
+ * @param {String} player 1, 1d, 2, 2d
+ * @param {*} character character
+ * @param {*} colour colour
+ */
 function loadCharActual(player, character="empty", colour) {
 	const characterActual = $(`#p${player}-character-actual`);
 	const characterChange = $(`#p${player}-character-change`)
@@ -498,6 +567,21 @@ function loadCharActual(player, character="empty", colour) {
 		characterChange.attr("src", `static/img/csp_icons/${character}/${colour}.png`);
 	}
 }
+
+/**
+ * Load character into slot for changing - use when not updating
+ * @param {String} player 1, 1d, 2, 2d
+ * @param {*} character character
+ * @param {*} colour colour
+ */
+function loadCharChange(player, character="empty", colour) {
+	const characterChange = $(`#p${player}-character-change`)
+	characterChange.attr("character", character);
+	characterChange.attr("colour", colour);
+	characterChange.attr("src", `static/img/csp_icons/${character}/${colour}.png`);
+}
+
+
 
 function updateScene() {
 	newScene = $("#scenes :selected").text();
@@ -723,21 +807,53 @@ function loadSet(x) {
 	$("#p1-name").val(p1Data["name"])
 	p1pronouns = p1Data["pronouns"]
 	$("#p1-pronouns").val(p1pronouns)
+	getCharacterInfo(p1Data.id)
+	.then((charInfo) => {
+		console.log("Setting character info")
+		loadCharChange("1", charInfo.character, charInfo.colour)
+	})
+	.catch(() => {
+		console.log("Error fetching P1 character info")
+	})
 
 	p1dData = JSON.parse($(`#set${x}-name1`).attr("data-p2"))
 	$("#p1d-name").val(p1dData["name"])
 	p1dpronouns = p1dData["pronouns"]
 	$("#p1d-pronouns").val(p1dpronouns)
+	getCharacterInfo(p1dData.id)
+	.then((charInfo) => {
+		console.log("Setting character info")
+		loadCharChange("1d", charInfo.character, charInfo.colour)
+	})
+	.catch(() => {
+		console.log("Error fetching P1d character info")
+	})
 
 	p2Data = JSON.parse($(`#set${x}-name2`).attr("data-p1"))
 	$("#p2-name").val(p2Data["name"])
 	p2pronouns = p2Data["pronouns"]
 	$("#p2-pronouns").val(p2pronouns)
+	getCharacterInfo(p2Data.id)
+	.then((charInfo) => {
+		console.log("Setting character info")
+		loadCharChange("2", charInfo.character, charInfo.colour)
+	})
+	.catch(() => {
+		console.log("Error fetching P2 character info")
+	})
 
 	p2dData = JSON.parse($(`#set${x}-name2`).attr("data-p2"))
 	$("#p2d-name").val(p2dData["name"])
 	p2dpronouns = p2dData["pronouns"]
 	$("#p2d-pronouns").val(p2dpronouns)
+	getCharacterInfo(p2dData.id)
+	.then((charInfo) => {
+		console.log("Setting character info")
+		loadCharChange("2d", charInfo.character, charInfo.colour)
+	})
+	.catch(() => {
+		console.log("Error fetching P2d character info")
+	})
 
 
 	$("#p1-entrant").val($(`#set${x}-name1`).attr("data-entrant"))

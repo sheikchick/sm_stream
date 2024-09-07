@@ -8,7 +8,7 @@ This application assumes you have a distribution of ffmpeg installed. Please ins
 2. Run `sm_stream.exe`
 3. Navigate to `127.0.0.1:5000` (or whatever port you are using instead)
 
-Edit the config by pressing the cog in the top right.
+Edit the config by pressing the cog in the top LEFT.
 
 # Building and running
 

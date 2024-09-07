@@ -67,9 +67,29 @@ function submitChanges(element) {
 		url: "/write_config",
 		data: data,
 		success: function(response) {
+			$(".submit").css("background-color", "#55F76B");
+			$(".submit").css("border-bottom", "3px solid #349641");
+			$(".submit").text("Submitted ");
+			$(".submit").append('<i class="fa-solid fa-thumbs-up"></i>')
+			setTimeout(function () {
+				$(".submit").css("background-color", "#FFF");
+				$(".submit").css("border-bottom", "3px solid #AAA");
+				$(".submit").text("Submit ");
+				$(".submit").append(`<i class='fa fa-arrow-up'></i>`)
+			}, 2000);
 			console.log(response)
 		},
 		error: function(response) {
+			$(".submit").css("background-color", "#F56262");
+			$(".submit").css("border-bottom", "3px solid #F53535");
+			$(".submit").text("Error ");
+			$(".submit").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+			setTimeout(function () {
+				$(".submit").css("background-color", "#FFF");
+				$(".submit").css("border-bottom", "3px solid #AAA");
+				$(".submit").text("Submit ");
+				$(".submit").append(`<i class='fa fa-arrow-up'></i>`)
+			}, 2000);
 			console.log(response)
 		},
 		timeout: 5000

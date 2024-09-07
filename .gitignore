@@ -50,7 +50,8 @@ __pycache__/
 
 # OTHER #
 #########
-static/img/vs_icons
-static/img/overlay/**
+dist/**
+static/img/vs_icons/**
+static/overlay/**
 data/json/tournaments/**
 !data/json/tournaments/sm-test/

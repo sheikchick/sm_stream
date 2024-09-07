@@ -5,7 +5,6 @@ var favicon = require('serve-favicon');
 const hbs = require("hbs");
 const cors = require('cors');
 const path = require("path");
-const open = require('open');
 const fs = require("fs/promises");
 
 const logging = require("./logging.js");
@@ -35,21 +34,21 @@ global.timecodeAuto = "";
 
 global.currentSet = [];
 
-const layoutsDir = path.join(__dirname, 'views', 'layouts');
+const layoutsDir = path.join(__dirname, 'views/layouts');
 
 app.set('views', layoutsDir);
 app.set('view engine', 'hbs');
 hbs.registerPartials(path.join(__dirname, 'views/partials'));
 
-app.use("/static", express.static("static"));
-app.use("/scripts", express.static('src/scripts'));
-app.use("/css", express.static('src/css'));
+app.use("/static", express.static(path.join(__dirname,  "../static")));
+app.use("/scripts", express.static(path.join(__dirname, "scripts")));
+app.use("/css", express.static(path.join(__dirname, "css")));
 
 app.use(express.json());
 app.use(cors())
 app.use(express.urlencoded({extended: true}));
 
-app.use(favicon(__dirname + '/../static/favicon.ico'));
+app.use(favicon(path.join(__dirname, '../static/favicon.ico')));
 
 app.get("/", (req, res) => {
     res.redirect('/auto');
@@ -115,11 +114,13 @@ fs.readdir(overlayDir, {withFileTypes: true}).then((overlays) => {
 
 DATA_FILES.forEach((f) => {
     app.get(`/${f}`, (req, res) => {
-        res.sendFile(path.join(__dirname, '..', DIRECTORY + f), (error) => {
+        res.sendFile(path.join(process.cwd(), DIRECTORY + f), (error) => {
             if(error) {
+                console.log(error)
                 if(f === "info.json") {
-                    res.sendFile(path.join(__dirname, DIRECTORY + "info-default.json"), (error) => {
+                    res.sendFile(path.join(process.cwd(), DIRECTORY + "info-default.json"), (error) => {
                         if(error) {
+                            console.log(error)
                             logging.error(`Error serving info.json`)
                             res.send(`Error serving info.json`)
                         }
@@ -135,7 +136,7 @@ DATA_FILES.forEach((f) => {
 /* TOURNAMENT SET DATA */
 
 app.get(`/tournaments`, (req, res) => {
-    fs.readdir(path.join(DIRECTORY, "tournaments"), {withFileTypes: true}).then((files) => {
+    fs.readdir(path.join(process.cwd(), DIRECTORY, "tournaments"), {withFileTypes: true}).then((files) => {
         const json = '.json';
         const data = files.filter((f) => f.isFile() && f.name.endsWith(json));
         const output = []
@@ -147,7 +148,7 @@ app.get(`/tournaments`, (req, res) => {
 })
 
 app.get(`/tournaments/*`, (req, res) => {
-    res.sendFile(path.join(__dirname, "..", DIRECTORY, `${req.path}`), (error) => {
+    res.sendFile(path.join(process.cwd(), DIRECTORY, `${req.path}`), (error) => {
         if (error) {
             res.sendStatus(404);
         }

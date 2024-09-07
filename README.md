@@ -10,11 +10,11 @@ This application assumes you have a distribution of ffmpeg installed. Please ins
 
 Edit the config by pressing the cog in the top right.
 
-# Building and running from source
+# Building and running
 
 Install Node.js (ver 20 or above), ffmpeg, and set up PATH environment variables for each as detailed above
 
-## Running from source
+## Building from source
 1. Download the source code for the latest version
 2. Install `pkg` by doing
 ```npm install -g @yao-pkg/pkg```

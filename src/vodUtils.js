@@ -7,7 +7,6 @@ var _ = require("underscore")._;
 
 async function main() {
     try {
-        const capture = await import('capture-website');
         if(process.argv.length < 4) {
             console.log("USAGE: node vodUtils.js [vods | thumbnails] [tournament_file.json] [webpage_url]")
             process.exit()
@@ -16,7 +15,7 @@ async function main() {
         switch(process.argv[2]) {
             case "vods":
                 console.log("Creating VOD commands:")
-                createVods(`${__dirname}/../data/json/tournaments/${process.argv[3]}`)
+                createVods(path.join(process.cwd(), "data/json/tournaments", process.argv[3]));
                 break;
             case "thumbnails":
                 console.log("Creating thumbnails:")
@@ -24,7 +23,6 @@ async function main() {
                     console.log("USAGE: node vodUtils.js [vods | thumbnails] [tournament_file.json] [webpage_url]")
                     process.exit()
                 }
-                createThumbnails(process.argv[3], process.argv[4], capture)
                 break;
             case "timestamps":
                 console.log("Creating YouTube timestamps:")

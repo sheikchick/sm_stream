@@ -25,7 +25,7 @@ exports.DIRECTORY = "data/json/";
 const FORMAT = "utf8";
 
 exports.writeData = async (file, data) => this.DATA_FILES.includes(file) &&
-    writeFile(this.DIRECTORY + file, file === this.INFO ? JSON.stringify(this.fixInfo(data)) : JSON.stingify(data), FORMAT);
+    writeFile(this.DIRECTORY + file, file === this.INFO ? JSON.stringify(this.fixInfo(data)) : JSON.stringify(data), FORMAT);
 
 exports.readData = async (file) => this.DATA_FILES.includes(file)
     ? readFile(this.DIRECTORY + file, FORMAT)

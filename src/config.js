@@ -27,5 +27,8 @@ exports.write = async (data) => {
             if(ws !== data['Slippi']['Directory']) {
                 watch(config['Slippi']['Directory']);
             }
+        })
+        .catch((e) => {
+            logging.error("Error writing config - " + e)
         });
 }

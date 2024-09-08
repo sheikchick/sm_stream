@@ -18,7 +18,11 @@
             "Game end scene": "",
             "Set end scene": ""
         },
-        "Clip Length": "30"
+        "Clip Length": "30",
+        "VODs": {
+            "Auto-record": "false",
+            "Output path": ""
+        }
     },
     "start.gg": {
         "API key": "",

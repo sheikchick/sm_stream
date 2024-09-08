@@ -172,11 +172,16 @@ app.all("/write_config", (req, res) => {
 
 /* lIVE-RECORDING ENDPOINTS */
 app.post("/save_clip", (req, res) => {
-    recordLive.saveClip("clips", req.body.timecode)
+    //save horizontal clip
+    recordLive.saveClip("", req.body.timecode, req.body?.tournament || "default")
         .then(() => {
-            res.sendStatus(200);
+            recordLive.saveClip("vertical", req.body.timecode, req.body?.tournament || "default")
+            .then(() => {
+                res.sendStatus(200);
+            }).catch((e) => {
+                res.sendStatus(207);
+            });
         }).catch((e) => {
-            logging.error(e);
             res.sendStatus(500);
         });
 });
@@ -284,6 +289,33 @@ async function startApp() {
     logging.log("Starting app")
     server?.close();
     await loadObs()
+    /*recordLive.createVod(
+        {
+            "team1": {
+                "entrantId": "",
+                "names": [
+                    "Aiken",
+                    "Player 4"
+                ]
+            },
+            "team2": {
+                "entrantId": "",
+                "names": [
+                    "throni",
+                    "Player 3"
+                ]
+            },
+            "round": "Pools B2",
+            "vod": "D:/OBS/2024-09-08_12-48-59.mkv",
+            "winner": 1,
+            "timecodes": [
+                277278,
+                472198
+            ]
+        }
+        ,
+        "In the Valleys"
+    )*/
     server = app.listen(config.Web.Port, () => {
         logging.log("Web application listening on port " + config.Web.Port)
         //open(`http://127.0.0.1:${config.web.port}`)

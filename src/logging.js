@@ -15,10 +15,18 @@ exports.error = function(str) {
     console.error(`${currentTime()} ERROR: ${str}`);
 }
 
+exports.debugLog = function(str) {
+    if(config["Slippi"]["Debug Mode"] === "true") {
+        console.log(`${currentTime()} DEBUG: ${str}`);
+    }
+}
+
 exports.debug = function(str) {
-    e = new Error
-    console.log(`${currentTime()} DEBUG: ${str}`);
-    console.error(e.stack)  //to print the stack trace to get line numbers
+    if(config["Slippi"]["Debug Mode"] === "true") {
+        e = new Error
+        console.log(`${currentTime()} DEBUG: ${str}`);
+        console.error(e.stack)  //to print the stack trace to get line numbers
+    }
 }
 
 function currentTime() {

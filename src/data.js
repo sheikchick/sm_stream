@@ -35,9 +35,6 @@ exports.readData = async (file) => this.DATA_FILES.includes(file)
 
 exports.updateTournament = async (data, index, tournamentFilename) => {
     const tournamentPath = path.join("data/json/tournaments/", tournamentFilename);
-    if (!fs.existsSync(tournamentPath)){
-        fs.mkdirSync(tournamentPath);
-    }
     const jsonFile = path.join("data/json/tournaments/", tournamentPath, "set_data.json");
     readFile(jsonFile, FORMAT)
         .then((readFile) => {

@@ -13,9 +13,9 @@ const FILE_NOT_FOUND = "FILE NOT FOUND";
 
 exports.createVod = (data, tournamentName) => {
     try {
-        logging.debugLog(data)
+        const outputPath = config?.["OBS"]?.["VODs"]?.["Output path"] || path.join(process.cwd(), "vods")
         const tournamentFolder = tournamentName ? tournamentName.replace(/ /g, "_") : 'default'
-        const tournamentDir = path.join(config["OBS"]["VODs"]["Output path"], tournamentFolder)
+        const tournamentDir = path.join(outputPath, tournamentFolder)
         p1Name = `${data.team1.names[0]}${data.isDoubles || false ? ` & ${data.team1.names[1]}` : ""}`
         p2Name = `${data.team2.names[0]}${data.isDoubles || false ? ` & ${data.team2.names[1]}` : ""}`
         setName = `${p1Name} vs ${p2Name} – ${tournamentName} – ${data.round.startsWith("Pools") ? "Pools" : data.round}.mp4`
@@ -29,7 +29,7 @@ exports.createVod = (data, tournamentName) => {
             //ensure bat is processed using utf8, repeated codes don't matter
             fs.appendFile(batFile, "chcp 65001\n", "utf8").then(() => {
                 fs.appendFile(batFile, command, "utf8").then(() => {
-                    outputPath = path.join(config["OBS"]["VODs"]["Output path"], tournamentFolder, setName) || path.join(process.cwd(), "VODs", tournamentFolder, setName)
+                    outputPath = path.join(tournamentDir, setName)
                     saveVodFile(data.vod, startTimestamp, msToHHmmss(data.timecodes[1] - data.timecodes[0]), outputPath)
                 })
             })
@@ -76,8 +76,9 @@ const saveVodFile = (vod, startTimestamp, videoLength, outputPath) => new Promis
 exports.saveClip = (folderName, timecode, tournamentName) => new Promise((resolve, reject) => {
     rejectIfObsNotRecording()
     .then(() => {
+        const outputPath = config?.["OBS"]?.["VODs"]?.["Output path"] || path.join(process.cwd(), "vods")
         const tournamentFolder = tournamentName ? tournamentName.replace(/ /g, "_") : 'default'
-        const tournamentDir = path.join(config["OBS"]["VODs"]["Output path"], tournamentFolder)
+        const tournamentDir = path.join(outputPath, tournamentFolder)
         obs.call('GetRecordDirectory')
         .then((response) => {
             const recordDirectory = path.join(response.recordDirectory, folderName);

@@ -134,22 +134,30 @@ checkSetEnd = async (info) => {
                                 info.team2.players[0].name,
                                 info.team2.players[1].name
                             ]
-
                         },
                         round: info.round,
-                        vod: vod,
+                        vod: path.join(directory, vod),
                         setId: info.startggSetId,
                         winner: winner,
                         timecodes: [timecodeAuto, recordLive.timecodeOffset(timecode, 15000)],
+                        isDoubles: info.isDoubles,
                         games: currentSet
                     }
                     //create directory if not exists
                     mkdir(tournamentPath)
                     .then(() => {
                         createFile(jsonFile, data, info, tournamentName)
+                        if(config["OBS"]["VODs"]["Auto-record"] === "true") {
+                            logging.log("Saving VOD in 20s")
+                            setTimeout(() => {recordLive.createVod(data, info.tournament)}, 20000)
+                        }
                     })
                     .catch(() => {
                         createFile(jsonFile, data, info, tournamentName)
+                        if(config["OBS"]["VODs"]["Auto-record"] === "true") {
+                            logging.log("Saving VOD in 20s")
+                            setTimeout(() => {recordLive.createVod(data, info.tournament)}, 20000)
+                        }
                     })
                 })
             })

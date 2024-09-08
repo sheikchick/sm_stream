@@ -632,15 +632,13 @@ function clip() {
 			currentBorder = $("#ffmpeg-clip").css("border-bottom");
 
 			if (!status.outputActive) {
+				console.log("OBS not recording")
 				$("#ffmpeg-clip").css("background-color", "#F56262");
 				$("#ffmpeg-clip").css("border-bottom", "3px solid #F53535");
-				$("#ffmpeg-clip").text("OBS not recording");
-				$("#ffmpeg-clip").append('<i class="fa-solid fa-triangle-exclamation"></i>')
-
 				setTimeout(function () {
-					$("#ffmpeg-clip").css("background-color", currentColor);
-					$("#ffmpeg-clip").css("border-bottom", currentBorder);
-					$("#ffmpeg-clip").text(currentStatus);
+					$(".clip").attr("src", "static/img/clip.svg");
+					$("#ffmpeg-clip").css("background-color", "#FFFFFF");
+					$("#ffmpeg-clip").css("border-bottom", "3px solid #AAA");
 				}, 2000);
 				return;
 			}
@@ -648,20 +646,16 @@ function clip() {
 			const recordController = new AbortController()
 			const recordTimeout = setTimeout(() => {
 				recordController.abort()
-
-				currentColor = $("#ffmpeg-clip").css("background-color");
-				currentStatus = $("#ffmpeg-clip").text();
-
+				console.log("Horizontal clip: ERROR")
+				console.log("Vertical clip  : ERROR")
 				$("#ffmpeg-clip").css("background-color", "#F56262");
 				$("#ffmpeg-clip").css("border-bottom", "3px solid #F53535");
-				$("#ffmpeg-clip").html("Error");
-				$("#ffmpeg-clip").append('<i class="fa-solid fa-triangle-exclamation"></i>')
-
 				setTimeout(function () {
-					$("#ffmpeg-clip").css("background-color", currentColor);
-					$("#ffmpeg-clip").css("border-bottom", currentBorder);
-					$("#ffmpeg-clip").html('<img class="clip" src="static/img/clip.svg"/>');
+					$(".clip").attr("src", "static/img/clip.svg");
+					$("#ffmpeg-clip").css("background-color", "#FFFFFF");
+					$("#ffmpeg-clip").css("border-bottom", "3px solid #AAA");
 				}, 2000);
+				return;
 			}, 5000);
 
 			$("#ffmpeg-clip").css("background-color", "#9146FF");
@@ -671,13 +665,17 @@ function clip() {
 				method: 'POST',
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					timecode: status.outputDuration
+					timecode: status.outputDuration,
+					tournament: info?.tournament || "default",
 				}),
 				signal: recordController.signal
 			})
 				.then((response) => {
 					clearTimeout(recordTimeout)
-					if (`${response.status}`.startsWith(2)) {
+					console.log(response.status)
+					if (response.status === 200) {
+						console.log("Horizontal clip: SAVED")
+						console.log("Vertical clip  : SAVED")
 						$(".clip").attr("src", "static/img/clip_shut.svg");
 						$("#ffmpeg-clip").css("background-color", "#55F76B");
 						$("#ffmpeg-clip").css("border-bottom", "3px solid #349641");
@@ -686,11 +684,27 @@ function clip() {
 							$("#ffmpeg-clip").css("background-color", "#FFFFFF");
 							$("#ffmpeg-clip").css("border-bottom", "3px solid #AAA");
 						}, 2000);
+					} else if (response.status === 207) {
+						console.log("Horizontal clip: SAVED")
+						console.log("Vertical clip  : ERROR")
+						$(".clip").attr("src", "static/img/clip_shut.svg");
+						$("#ffmpeg-clip").css("background-color", "#f7a655");
+						$("#ffmpeg-clip").css("border-bottom", "3px solid #965b34");
+						setTimeout(function () {
+							$(".clip").attr("src", "static/img/clip.svg");
+							$("#ffmpeg-clip").css("background-color", "#FFFFFF");
+							$("#ffmpeg-clip").css("border-bottom", "3px solid #AAA");
+						}, 2000);
 					} else {
+						console.log("Horizontal clip: ERROR")
+						console.log("Vertical clip  : ERROR")
 						$("#ffmpeg-clip").css("background-color", "#F56262");
-						$(".ffmpeg-clip").css("border-bottom", "3px solid #F53535");
-						$("#ffmpeg-clip").text("Error");
-						$("#ffmpeg-clip").append('<i class="fa-solid fa-triangle-exclamation"></i>')
+						$("#ffmpeg-clip").css("border-bottom", "3px solid #F53535");
+						setTimeout(function () {
+							$(".clip").attr("src", "static/img/clip.svg");
+							$("#ffmpeg-clip").css("background-color", "#FFFFFF");
+							$("#ffmpeg-clip").css("border-bottom", "3px solid #AAA");
+						}, 2000);
 					}
 				})
 		})

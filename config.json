@@ -1,1 +1,27 @@
-{"Web":{"Port":"5000"},"Slippi":{"Directory":"D:\\SSBM\\Slippi","Debug Mode":"true"},"OBS":{"Websocket":{"Host":"127.0.0.1","Port":"4455","Password":"cleostream"},"Scenes":{"Auto-swap Scenes":"true","Game scene":"Game","Game end scene":"End of Game","Set end scene":"End of Set"},"Clip Length":"30"},"start.gg":{"API key":"4aa6ebf62beb0f51f93e50532d6c599f","Auto-submit sets":"true"}}
+{
+    "Web": {
+        "Port": "5000"
+    },
+    "Slippi": {
+        "Directory": "",
+        "Debug Mode": "false"
+    },
+    "OBS": {
+        "Websocket": {
+            "Host": "127.0.0.1",
+            "Port": "4455",
+            "Password": ""
+        },
+        "Scenes": {
+            "Auto-swap Scenes": "false",
+            "Game scene": "",
+            "Game end scene": "",
+            "Set end scene": ""
+        },
+        "Clip Length": "30"
+    },
+    "start.gg": {
+        "API key": "",
+        "Auto-submit sets": "true"
+    }
+}

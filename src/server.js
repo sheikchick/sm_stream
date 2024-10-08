@@ -15,6 +15,7 @@ const { recordReplays } = require("./recordReplays.js");
 const charInfo = require("./charInfo.js");
 const { readData, writeData, updateTournament, fixInfo, INFO, CHARACTER_DATA, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
 const { watch } = require("./slpWatch.js");
+const { getGames } = require("./slpResults.js");
 const { checkSetStart } = require("./processSlp.js");
 const { msToHHmmss } = require("./util.js")
 
@@ -241,11 +242,21 @@ app.all("/player_character", (req, res) => {
                     "colour": data[req.body.id].colour || "",
                 })
             } else {
-                console.log(req.body)
                 res.sendStatus(404)
             }
         })
         .catch(() => res.sendStatus(500));
+});
+
+/* MULTI-SET REPORTING ENDPOINTS */
+app.all("/get-wii-games", (req, res) => {
+    getGames(req.body.directory, req.body.index, req.body.amount)
+    .then((games) => {
+        res.json(games)
+    })
+    .catch(() => {
+        res.sendStatus(500)
+    })
 });
 
 /* CHARACTER INFO ENDPOINTS */
@@ -272,6 +283,18 @@ app.get(`/stock`, (req, res) => {
     res.sendFile(charInfo.getStock(character, colour, overlay));
 });
 
+app.get(`/pm/css`, (req, res) => {
+    res.sendFile(charInfo.getPMCss(req.query.character));
+});
+
+app.get(`/pm/csp`, (req, res) => {
+    res.sendFile(charInfo.getPMCsp(req.query.character));
+});
+
+app.get(`/pm/stock`, (req, res) => {
+    res.sendFile(charInfo.getPMStock(req.query.character));
+});
+
 //fete stock icons
 app.get(`/fete`, (req, res) => {
     const {query: {character, colour, overlay}} = req;
@@ -289,38 +312,11 @@ async function startApp() {
     logging.log("Starting app")
     server?.close();
     await loadObs()
-    /*recordLive.createVod(
-        {
-            "team1": {
-                "entrantId": "",
-                "names": [
-                    "Aiken",
-                    "Player 4"
-                ]
-            },
-            "team2": {
-                "entrantId": "",
-                "names": [
-                    "throni",
-                    "Player 3"
-                ]
-            },
-            "round": "Pools B2",
-            "vod": "D:/OBS/2024-09-08_12-48-59.mkv",
-            "winner": 1,
-            "timecodes": [
-                277278,
-                472198
-            ]
-        }
-        ,
-        "In the Valleys"
-    )*/
     server = app.listen(config.Web.Port, () => {
         logging.log("Web application listening on port " + config.Web.Port)
-        //open(`http://127.0.0.1:${config.web.port}`)
+        //open(`http://127.0.0.1:${config.web.port}`) //open is no longer used due to concerns, keeping this here to find a better alternative 
     });
-    watch(config['Slippi']['Directory']);
+    watch(config['Slippi']['Directory'], true);
 }
 
 process.on('exit', function () {

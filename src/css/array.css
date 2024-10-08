@@ -25,6 +25,111 @@
 .stroke {
 }
 
+/* NEW STUFF */
+
+.setup {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	background-color: #332233;
+	border-radius: 5px;
+	justify-content: center;
+	align-items: center;
+	padding: 15px;
+	width: 300px;
+}
+
+.wii-wrapper {
+	display: flex;
+	flex-direction: row;
+	width: 200px;
+	gap: 10px;
+	padding: 5px;
+}
+
+.player-wrapper {
+	display: flex;
+	flex-direction: row;
+	width: 300px;
+	gap: 10px;
+	padding: 5px;
+	height: 30px;
+	justify-content: center;
+	align-items: center;
+	color: #FFF;
+	text-align: center;
+}
+
+
+.tag {
+	width: 120px;
+}
+#p1tag {
+	text-align: right;
+}
+#p2tag {
+	text-align: left;
+}
+.score {
+	font-size: 20px;
+	width: 30px;
+}
+.divider {
+	width: 20px;
+}
+
+.game {
+	display: flex;
+	flex-direction: row;
+	height: 36px;
+	gap: 10px;
+	background-color: #443344;
+	border-radius: 5px;
+	justify-content: center;
+	align-items: center;
+	padding: 5px;
+	color: #FFF;
+}
+
+.game.selected {
+	background-color: #886688;
+}
+
+.stock-icon {
+	width: 30px;
+	height: 30px;
+	text-align: center;
+}
+
+.stock-icon.loser {
+	filter: opacity(15%)
+}
+
+span.stage {
+	text-align: center;
+	display: inline-block;
+	width: 100px;
+}
+
+.swap {
+	font-size: 12px;
+	color: #323232;
+	background-color: #FFF;
+	border: none;
+	border-bottom: 3px solid #AAA;
+	height: 27px;
+	width: 30px;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.swap:hover {
+	background-color: #CCC;
+}
+
+
 /* GENERAL */
 body {
 	display: flex;
@@ -252,11 +357,7 @@ button:disabled {
 	text-align: left;
 }
 
-.stock-icon.actual {
-	width: 30px;
-	height: 30px;
-	text-align: center;
-}
+
 
 .score.actual {
 	font-size: 32px;
@@ -293,7 +394,7 @@ input.startgg.display {
 	display: flex;
 	flex-direction: row;
 	color: #323232;
-	gap: 10px;
+	gap: 20px;
 }
 
 #left-wrapper {
@@ -301,6 +402,7 @@ input.startgg.display {
 	flex-direction: column;
 	gap: 0.5em;
 	min-width: 750px;
+	align-items: center;
 }
 
 #right-wrapper {
@@ -329,19 +431,7 @@ input.startgg.display {
 	padding: 10px;
 }
 
-.swap {
-	font-size: 20px;
-	color: #323232;
-	background-color: #FFF;
-	border: none;
-	border-bottom: 3px solid #AAA;
-	height: 39px;
-	width: 30px
-}
 
-.swap:hover {
-	background-color: #CCC;
-}
 
 .pronouns.wrapper {
 	display: flex;
@@ -355,32 +445,6 @@ input.pronouns {
 	width: 70px;
 	padding: 5px;
 	text-align: right;
-}
-
-.flag.wrapper {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: flex-start;
-	gap: 10px;
-}
-
-select.flag {
-	font-size: 28px;
-	width: 50px;
-	padding: 0 5px;
-	text-align: left;
-	color: #FFF;
-	border: none;
-}
-
-select.flag>option {
-	font-size: 16px;
-	color: #000;
-}
-
-select.flag>option:disabled {
-	background-color: #ffdbdb;
 }
 
 .row {
@@ -408,14 +472,6 @@ select.flag>option:disabled {
 .csp.change {
 	width: 68px;
 	height: 93px;
-}
-
-.score {
-	font-size: 50px;
-	width: 55px;
-	text-align: center;
-	border-radius: 5px;
-	padding-right: 32px;
 }
 
 .swap-sides {
@@ -609,6 +665,7 @@ button.timecode {
 	background-color: #332233;
 	border-radius: 5px;
 	gap: 0.5em;
+	width: 100%;
 }
 
 #tournament-slug {
@@ -705,16 +762,6 @@ button.timecode {
 	width: 120px;
 }
 
-span.stage {
-	text-align: center;
-	display: inline-block;
-	width: 2.5em;
-}
-
-.stock-icon.dark {
-	filter: opacity(15%)
-}
-
 /* Right wrapper stuff */
 
 .load {
@@ -774,7 +821,7 @@ span.stage {
 }
 
 .set.wrapper.right {
-	width: 160px;
+	width: 80px;
 	display: flex;
 	padding: 0px;
 }

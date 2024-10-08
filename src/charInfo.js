@@ -7,6 +7,8 @@ const cssDir = path.join(__dirname, '..', 'static', 'img', 'css_icons');
 const cspDir = path.join(__dirname, '..', 'static', 'img', 'csp_icons');
 const vsDir = path.join(__dirname, '..', 'static', 'img', 'vs_icons');
 
+const pmDir = path.join(__dirname, '..', 'static', 'img', 'pm');
+
 const stockIcons = 'stock_icons';
 const stockDir = path.join(__dirname, '..', 'static', 'img', stockIcons);
 const feteStockDir = path.join(__dirname, '..', 'static', 'img', 'fete_icons');
@@ -47,6 +49,18 @@ exports.getFeteStock = (characterName, colour) => {
         ...([feteStockDir]),
         `${stock || path.join(character, getColourSafe(colours, colour))}.png`
     );
+};
+
+exports.getPMCss = (characterName) => {
+    return path.join(pmDir, "css_icons", `${characterName}.png`);
+};
+
+exports.getPMCsp = (characterName) => {
+    return path.join(pmDir, "csp_icons", `${characterName}.png`);
+}
+
+exports.getPMStock = (characterName) => {
+    return path.join(pmDir, "stock_icons", `${characterName}.png`);
 };
 
 exports.getVs = (characterName, colour, side) => {

@@ -4,7 +4,6 @@ const slpTools = require("./slpTools.js");
 const logging = require("./logging.js");
 const { SlippiGame } = require("@slippi/slippi-js");
 const { readData, writeData, INFO, MATCH_RESULT } = require("./data.js");
-const fs = require("fs");
 const { appendFile, readFile, writeFile, mkdir } = require("fs/promises");
 const { getTimecode, getDirectory } = require("./obs.js");
 const recordLive = require("./recordLive.js");
@@ -17,12 +16,15 @@ const FORMAT = "utf8";
 
 const getFirstTo = (bestOf) => Math.ceil((bestOf || 3) / 2);
 
-/*Hacky solution for getting most played between Sheik and Zelda per person*/
+//Hacky solution for getting most played between Sheik and Zelda per person
 var sheikZeldaPlaytime = {
     team1: [{"zelda": 0, "sheik": 0},{"zelda": 0, "sheik": 0}],
     team2: [{"zelda": 0, "sheik": 0},{"zelda": 0, "sheik": 0}]
 }
 
+/**
+ * Check if a new set has started and set up the info.json file appropriately
+ */
 exports.checkSetStart = (() => {
     const FRIENDLIES = 'friendlies';
     const gf = "grand final";
@@ -44,10 +46,6 @@ exports.checkSetStart = (() => {
                     logging.log('Grand Final reset detected. Both players now in losers')
                     info.team1.players[0].name = info.team1.players[0].name.replace(lRegex, l);
                     info.team2.players[0].name = info.team2.players[0].name.replace(lRegex, l);
-                } else {
-                    info.team1.startggEntrant = ""
-                    info.team2.startggEntrant = ""
-                    info.startggSetId = ""
                 }
 
                 info.team1.score = 0;
@@ -70,6 +68,11 @@ exports.checkSetStart = (() => {
     };
 })();
 
+/**
+ * Used to ascertain whether or not a set has ended.
+ * On a set end will write the set information to match_result.json; to /data/json/{tournamentName}/set_data.json;
+ * and if enabled in the config, will create the output .mp4 file corresponding to the set.
+ */
 checkSetEnd = async (info) => {
     const createFile = (jsonFile, data, info, tournamentName) => {
         appendFile(jsonFile, "", FORMAT)
@@ -89,8 +92,8 @@ checkSetEnd = async (info) => {
                     logging.log(`Match data "${info.team1.players[0].name} vs ${info.team2.players[0].name}" written to /${tournamentName}/`)
                     global.timecodeAuto = ""
                     //submit data to start.gg
-                    if(config["start.gg"]["Auto-Submit sets"] === "true") {
-                        startgg.submitStartggSet(data)
+                    if(config["start.gg"]["Auto-submit sets"] === "true") {
+                        startgg.submitStartggSet(data, info.startggSwapped)
                     }
                     //write to match_result for data purposes
                     writeData(MATCH_RESULT, data)
@@ -136,7 +139,7 @@ checkSetEnd = async (info) => {
                             ]
                         },
                         round: info.round,
-                        vod: path.join(directory, vod),
+                        vod: directory ? path.join(directory, vod) : vod,
                         setId: info.startggSetId,
                         winner: winner,
                         timecodes: [timecodeAuto, recordLive.timecodeOffset(timecode, 15000)],
@@ -165,11 +168,19 @@ checkSetEnd = async (info) => {
     }
 };
 
-
+/**
+ * Used to get the active ports on the rotation, but currently doesn't work and isn't required so just returns [1,2]
+ * @returns [1,2]
+ */
 const getActiveRotationPlayers = () => {
-    return [1,2]  //i fucked this up bad a long time ago and i dont rlly need to fix it so im sorry gregor
+    return [1,2]
 }
 
+/**
+ * Executed on game start
+ * @param {*} path  Path to the .slp file
+ * @returns         Write output to info.json
+ */
 exports.gameStart = async (path) => {
     const game = new SlippiGame(path, { processOnTheFly: true });
     const settings = game.getSettings();
@@ -214,6 +225,10 @@ exports.gameStart = async (path) => {
  * Literally only used so that the overlay updates when Zelda/Sheik transforms mid-game.
  * Character info in game.getSettings() does not update when Zelda/Sheik transforms, so we instead
  * get this info from game.getLatestFrame().
+ * @param {SlippiGame} game                 Slippi game object
+ * @param {*} settings                      Settings of the slippi game
+ * @param {slpTools.getSlippiTeams} teams   Teams in play
+ * @returns         Write output to info.json
  */
 exports.gameMid = async ({ game, settings, teams }) => {
     if (teams.length === 2) {
@@ -239,6 +254,13 @@ exports.gameMid = async ({ game, settings, teams }) => {
     }
 };
 
+/**
+ * Executes on the end of a game
+ * @param {SlippiGame} game                 Slippi game object
+ * @param {*} settings                      Settings of the slippi game
+ * @param {slpTools.getSlippiTeams} teams   Teams in play
+ * @returns                                 Promise to write output to info.json
+ */
 exports.gameEnd = async ({ game, settings, teams }) => {
     global.gameInProgress = false;
     //if debug mode disabled and if the game is not valid

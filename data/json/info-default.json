@@ -56,7 +56,8 @@
         "4"
     ],
     "round": "Grand Final",
-    "startggGetId": "",
+    "startggSetId": "",
+    "startggSwapped": false,
     "tournament": "test",
     "isDoubles": false,
     "bestOf": 3,

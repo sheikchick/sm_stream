@@ -195,6 +195,9 @@ function getStreamQueue() {
                                         user {
 											discriminator
                                             genderPronoun
+											location {
+													country
+												}
                                         }
                                     }
                                 }
@@ -263,6 +266,9 @@ function getSets(stateArray, hideEmpty, showButtons) {
 											user {
 												discriminator
 												genderPronoun
+												location {
+													country
+												}
 											}
 										}
 									}
@@ -312,9 +318,11 @@ function constructSetObject(set, matchRound) {
 		p1Entrant = team1["entrant"]["id"]
 		p1UserId = ""
 		p1Pronouns = ""
+		p1Country = ""
 		if (team1["entrant"]["participants"][0]["user"] != null) {
 			p1UserId = team1["entrant"]["participants"][0]["user"]["discriminator"]
 			p1Pronouns = team1["entrant"]["participants"][0]["user"]["genderPronoun"]
+			p1Country = getCountry(p1UserId) || team1["entrant"]["participants"][0]["user"]["location"]["country"]
 		}
 		p1Name = team1["entrant"]["participants"][0]["gamerTag"]
 
@@ -322,10 +330,12 @@ function constructSetObject(set, matchRound) {
 		p1DoublesUserId = ""
 		p1DoublesPronouns = ""
 		p1DoublesName = ""
+		p1DoublesCountry = ""
 		if (team1["entrant"]["participants"].length > 1) {
 			if (team1["entrant"]["participants"][1]["user"] != null) {
 				p1DoublesUserId = team1["entrant"]["participants"][1]["user"]["discriminator"]
 				p1DoublesPronouns = team1["entrant"]["participants"][1]["user"]["genderPronoun"]
+				p1DoublesCountry = getCountry(p1DoublesUserId) || team1["entrant"]["participants"][1]["user"]["location"]["country"]
 			}
 			p1DoublesName = team1["entrant"]["participants"][1]["gamerTag"]
 		}
@@ -334,9 +344,11 @@ function constructSetObject(set, matchRound) {
 		p2Entrant = team2["entrant"]["id"]
 		p2UserId = ""
 		p2Pronouns = ""
+		p2Country = ""
 		if (team2["entrant"]["participants"][0]["user"] != null) {
 			p2UserId = team2["entrant"]["participants"][0]["user"]["discriminator"]
 			p2Pronouns = team2["entrant"]["participants"][0]["user"]["genderPronoun"]
+			p2Country = getCountry(p2UserId) || team2["entrant"]["participants"][0]["user"]["location"]["country"]
 		}
 		p2Name = team2["entrant"]["participants"][0]["gamerTag"]
 
@@ -344,10 +356,12 @@ function constructSetObject(set, matchRound) {
 		p2DoublesUserId = ""
 		p2DoublesPronouns = ""
 		p2DoublesName = ""
+		p2DoublesCountry = ""
 		if (team2["entrant"]["participants"].length > 1) {
 			if (team2["entrant"]["participants"][1]["user"] != null) {
 				p2DoublesUserId = team2["entrant"]["participants"][1]["user"]["discriminator"]
 				p2DoublesPronouns = team2["entrant"]["participants"][1]["user"]["genderPronoun"]
+				p2DoublesCountry = getCountry(p2DoublesUserId) || team2["entrant"]["participants"][1]["user"]["location"]["country"]
 			}
 			p2DoublesName = team2["entrant"]["participants"][1]["gamerTag"]
 		}
@@ -361,12 +375,14 @@ function constructSetObject(set, matchRound) {
 					{
 						"id": p1UserId,
 						"name": p1Name,
-						"pronouns": p1Pronouns
+						"pronouns": p1Pronouns,
+						"country": p1Country
 					},
 					{
 						"id": p1DoublesUserId,
 						"name": p1DoublesName,
-						"pronouns": p1DoublesPronouns
+						"pronouns": p1DoublesPronouns,
+						"country": p1DoublesCountry
 					}
 				]
 			},
@@ -376,12 +392,14 @@ function constructSetObject(set, matchRound) {
 					{
 						"id": p2UserId,
 						"name": p2Name,
-						"pronouns": p2Pronouns
+						"pronouns": p2Pronouns,
+						"country": p2Country
 					},
 					{
 						"id": p2DoublesUserId,
 						"name": p2DoublesName,
-						"pronouns": p2DoublesPronouns
+						"pronouns": p2DoublesPronouns,
+						"country": p2DoublesCountry
 					}
 				]
 			}

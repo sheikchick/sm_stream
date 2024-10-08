@@ -65,6 +65,7 @@ exports.fixInfo = (info) => {
                     "character": info?.team1?.players?.[0]?.character || "fox",
                     "colour": info?.team1?.players?.[0]?.colour || "red",
                     "pronouns": info?.team1?.players?.[0]?.pronouns || "",
+                    "country": info?.team1?.players?.[0]?.country || "EU",
                     "port": info?.team1?.players?.[0]?.port || 1
                 },
                 {
@@ -72,6 +73,7 @@ exports.fixInfo = (info) => {
                     "character": info?.team1?.players?.[1]?.character || "falco",
                     "colour": info?.team1?.players?.[1]?.colour || "red",
                     "pronouns": info?.team1?.players?.[1]?.pronouns || "",
+                    "country": info?.team1?.players?.[1]?.country || "EU",
                     "port": info?.team1?.players?.[1]?.port || 2
                 }
             ],
@@ -85,6 +87,7 @@ exports.fixInfo = (info) => {
                     "character": info?.team2?.players?.[0]?.character || "sheik",
                     "colour": info?.team2?.players?.[0]?.colour || "blue",
                     "pronouns": info?.team2?.players?.[0]?.pronouns || "",
+                    "country": info?.team2?.players?.[0]?.country || "EU",
                     "port": info?.team2?.players?.[0]?.port || 1
                 },
                 {
@@ -92,6 +95,7 @@ exports.fixInfo = (info) => {
                     "character": info?.team2?.players?.[1]?.character || "peach",
                     "colour": info?.team2?.players?.[1]?.colour || "blue",
                     "pronouns": info?.team2?.players?.[1]?.pronouns || "",
+                    "country": info?.team2?.players?.[1]?.country || "EU",
                     "port": info?.team2?.players?.[1]?.port || 2
                 }
             ],
@@ -110,7 +114,8 @@ exports.fixInfo = (info) => {
         ],
         "seatOrdering": info?.seatOrdering || [ "1","2","3","4" ],
         "round": info?.round || "",
-        "startggGetId": info?.startggGetId || "",
+        "startggSetId": info?.startggSetId || "",
+        "startggSwapped": info?.startggSwapped || false,
         "tournament": info?.tournament || "",
         "isDoubles": info?.isDoubles || false,
         "bestOf": info?.bestOf || 5,

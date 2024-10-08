@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>Smash Bros. Melee - Slippi array processing</title>
+	<script src="scripts/jquery-3.4.1.min.js"></script>
+
+	<script src="scripts/array-scripts.js"></script>
+	<script src="scripts/default-character.js"></script>
+	<script src="scripts/startgg-scripts.js"></script>
+	<script src="scripts/startgg-utils.js"></script>
+
+	<script src="scripts/obs-ws.min.js"></script>
+
+	<script src="scripts/fontawesome.min.js"></script>
+	<script src="scripts/solid.min.js"></script>
+	<script src="scripts/brands.min.js"></script>
+	<script>
+		var tournament = "{{tournament}}"
+		var apiKey = "{{apiKey}}"
+		var obsPort = "{{obsPort}}"
+		var obsPassword = "{{obsPassword}}"
+	</script>
+	<link rel="stylesheet" type="text/css" href="css/array.css">
+	<link rel="icon" href="favicon.ico">
+</head>
+
+<body>
+	{{> footer}}
+	<div id="main">
+		<div id="left-wrapper">
+			<div id="startgg-wrapper" class="row">
+				<img class="icon" id="startgg-icon" src="static/img/startgg.svg" alt="SGG" />
+				<input type="text" id="tournament-slug" class="startgg tournament input" placeholder="startgg slug">
+				<div class="startgg-submit column">
+					<button type="button" id="load-sets" class="startgg bottom button submit"
+						onclick="getStreamQueue()">Stream q.</button>
+					<button type="button" id="load-sets" class="startgg bottom button submit"
+						onclick="getTournamentEvents()">Bracket sets</button>
+				</div>
+				<select class="startgg input c" id="events" onchange="getEventPhases()"></select>
+				<select class="startgg input c" id="phases" onchange="getPhaseGroups()"></select>
+				<select class="startgg input c" id="phase-groups" onchange="showGetSets()"></select>
+				<div class="startgg-submit column">
+					<button type="button" id="get-unfinished-sets" class="startgg bottom button"
+						onclick="getSets('[1,2,4,5,6,7]', true, false)">Get sets</button>
+					<button type="button" id="get-all-sets" class="startgg bottom button"
+						onclick="getSets('[1,2,3,4,5,6,7]', false, true)">Get all sets</button>
+				</div>
+			</div>
+			<div class="setup">
+				<div class="wii-wrapper">
+					<input type="text" class="wii-name" value="" placeholder="Wii name">
+					<button type="button" class="submit-name" onclick="loadGames()">Load games</button>
+				</div>
+				<div class="player-wrapper">
+					<span class="tag" id="p1tag"></span>
+					<span class="score" id="p1score"></span>
+					<button type="button" class="swap" onclick="swap()"><i class="fa-solid fa-left-right"></i></button>
+					<span class="score" id="p2score"></span>
+					<span class="tag" id="p2tag"></span>
+				</div>
+				<button type="button" class="submit-name" onclick="submitSet()">Submit</button>
+			</div>
+		</div>
+		<div id="right-wrapper">
+			<div id="pages">
+				<button id="page-left" class="page-button" onclick="showSets(false)"><i
+						class="fa-solid fa-arrow-left"></i></button>
+				<button id="page-right" class="page-button" onclick="showSets(true)"><i
+						class="fa-solid fa-arrow-right"></i></button>
+			</div>
+			<div id="set1" class="set" index="1">
+				<div id="set1-wrapperL" class="set wrapper left">
+					<label id="set1-name1" class="startgg name left"></label>
+					<label id="set1-vs" class="startgg name vs">vs</label>
+					<label id="set1-name2" class="startgg name right"></label>
+				</div>
+				<div id="set1-wrapperR" class="set wrapper right">
+					<label id="set1-round" class="startgg round"></label>
+				</div>
+
+			</div>
+			<div id="set2" class="set" index="2">
+				<div id="set2-wrapperL" class="set wrapper left">
+					<label id="set2-name1" class="startgg name left"></label>
+					<label id="set2-vs" class="startgg name vs">vs</label>
+					<label id="set2-name2" class="startgg name right"></label>
+				</div>
+				<div id="set2-wrapperR" class="set wrapper right">
+					<label id="set2-round" class="startgg round"></label>
+				</div>
+			</div>
+			<div id="set3" class="set" index="3">
+				<div id="set3-wrapperL" class="set wrapper left">
+					<label id="set3-name1" class="startgg name left"></label>
+					<label id="set3-vs" class="startgg name vs">vs</label>
+					<label id="set3-name2" class="startgg name right"></label>
+				</div>
+				<div id="set3-wrapperR" class="set wrapper right">
+					<label id="set3-round" class="startgg round"></label>
+				</div>
+			</div>
+			<div id="set4" class="set" index="4">
+				<div id="set4-wrapperL" class="set wrapper left">
+					<label id="set4-name1" class="startgg name left"></label>
+					<label id="set4-vs" class="startgg name vs">vs</label>
+					<label id="set4-name2" class="startgg name right"></label>
+				</div>
+				<div id="set4-wrapperR" class="set wrapper right">
+					<label id="set4-round" class="startgg round"></label>
+				</div>
+			</div>
+			<div id="set5" class="set" index="5">
+				<div id="set5-wrapperL" class="set wrapper left">
+					<label id="set5-name1" class="startgg name left"></label>
+					<label id="set5-vs" class="startgg name vs">vs</label>
+					<label id="set5-name2" class="startgg name right"></label>
+				</div>
+				<div id="set5-wrapperR" class="set wrapper right">
+					<label id="set5-round" class="startgg round"></label>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>

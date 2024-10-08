@@ -1,6 +1,10 @@
 const { SlippiGame } = require("@slippi/slippi-js");
 const logging = require("./logging");
 
+/**
+ * Check if a given Melee game is deemed a valid game, or a handwarmer/has CPU players
+ * @returns {Boolean}
+ */
 exports.isValidGame = (() => {
     const VALID_DAMAGE = 120;
 
@@ -79,6 +83,12 @@ exports.getSlippiTeams = (players) => {
     ).sort((a, b) => a[0].playerIndex > b[0].playerIndex ? 1 : -1)
 };
 
+/**
+ * Get the winner of a given .slp file
+ * Has fallbacks on game.getWinners() in case of failure
+ * @param {*} game  Slippi game instance
+ * @returns {Array}        Player object of the game winner, or []
+ */
 exports.getWinner = (game) => {
     const winner = game.getWinners();
     if(winner.length === 0) {
@@ -91,7 +101,7 @@ exports.getWinner = (game) => {
 };
 
 /**
- * Get winner of a game of singles. Likely deprecated by next slippi-js update
+ * Get winner of a game of singles. Likely already deprecated by the latest slippi-js update
  * @param {SlippiGame} game 
  * @returns winner and position
  */
@@ -110,6 +120,11 @@ getSinglesWinner = function(game) {
         : [];
 }
 
+/**
+ * Get winner of a game of doubles. Likely already deprecated by the latest slippi-js update
+ * @param {SlippiGame} game 
+ * @returns winner and position
+ */
 getDoublesWinner = function(game) {
     const {players} = game.getSettings();
 
@@ -144,6 +159,12 @@ getDoublesWinner = function(game) {
         : [];
 }
 
+/**
+ * Simple way to determine winner between two players
+ * @param {*} p1 
+ * @param {*} p2 
+ * @returns {number} 1 if P1, 2 if P2, 0 if neither
+ */
 function getWinner(p1, p2) {
     if (p1.stocks > p2.stocks) {return 1}
     else if (p2.stocks > p1.stocks) {return 2}
@@ -154,6 +175,11 @@ function getWinner(p1, p2) {
     }
 }
 
+/**
+ * Match the slippi stage numbers to a formatted string of the stage name
+ * @param {number} id   Stage id
+ * @returns {string}    Stage name
+ */
 exports.matchStage = function(id) {
     switch(id) {
         case 2: //LEGAL
@@ -219,6 +245,11 @@ exports.matchStage = function(id) {
     }
 }
 
+/**
+ * Match the slippi character numbers to an object with the string of the character name and available colours
+ * @param {number} id   Character id
+ * @returns {object}    Object with character name, and available colours
+ */
 const characters = {
     0: {
         character: "mario",
@@ -508,6 +539,9 @@ exports.characterRandom = {
     ]
 };
 
+/**
+ * Character ID's formatted alphabetically
+ */
 const charactersByExternalId = [
     2,  // captainfalcon
     3,  // donkeykong

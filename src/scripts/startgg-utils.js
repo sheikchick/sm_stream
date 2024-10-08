@@ -172,6 +172,7 @@ function constructSet(p1Id, p2Id, games, swapped) {
     let set = []
     let characterIndex = 0
     for(let game of games) {
+        console.log(game)
         let char1 = ""
         let char2 = ""
         /*
@@ -189,13 +190,14 @@ function constructSet(p1Id, p2Id, games, swapped) {
         //}
         set.push(constructGame(index, p1Id, p2Id, char1, char2, game, swapped))
         characterIndex++;
+        index++;
     }
     return set
 }
 
-function constructGame(gameIndex, p1Id, p2Id, p1Char, p2Char, data) {
+function constructGame(gameIndex, p1Id, p2Id, p1Char, p2Char, data, swapped) {
     const game = {
-        "winnerId": data.winner == 1 ? p1Id : p2Id,
+        "winnerId": data.winner == 1 ? (swapped ? p2Id : p1Id) : (swapped ? p1Id : p2Id),
         "gameNum": gameIndex,
         "entrant1Score": swapped ? data.team2[0].stocks : data.team1[0].stocks,
         "entrant2Score": swapped ? data.team1[0].stocks : data.team2[0].stocks,

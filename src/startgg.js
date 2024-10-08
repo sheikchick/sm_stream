@@ -1,12 +1,14 @@
 const logging = require("./logging.js");
 
-exports.submitStartggSet = async (data) => {
-    const setData = constructGQLSet(data)
+exports.submitStartggSet = async (data, swapped) => {
+    const setData = constructGQLSet(data, swapped)
     let winnerId = data.winner === 1 ? data.team1.entrantId : data.team2.entrantId;
+    logging.log(`Attempting to submit set to start.gg`)
     GQLSubmit("reportBracketSet", data.setId, winnerId, setData)
         .then(() => {
             logging.log(`Submitted set to start.gg -  ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
         }).catch((e) => {
+            logging.error(e)
             logging.error(`Failed to submit set to start.gg -    ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
             return;
             //return due to issues with updating a set that has already been reported, likely not ever needed anyway
@@ -50,41 +52,43 @@ const GQLSubmit = (type, setId, winnerId, gameData) => new Promise((resolve, rej
         .then((result) => {
             clearTimeout(submitTimeout)
             if (typeof result.errors !== "undefined") {
-                reject();
+                console.error(result.errors)
+                reject(result.errors);
             } else {
                 resolve();
             }
         })
 });
 
-function constructGQLSet(data) {
+function constructGQLSet(data, swapped) {
     let index = 1;
     let set = []
     for (let game of data.games) {
-        set.push(constructGQLGame(index, game, data))
+        set.push(constructGQLGame(index, game, data, swapped))
+        index++;
     }
     return set
 }
 
-function constructGQLGame(gameIndex, data, info) {
-    const game = {
-        "winnerId": data.winner == 1 ? info.team1.entrantId : info.team2.entrantId,
-        "gameNum": gameIndex,
-        "entrant1Score": data.team1[0].stocks,
-        "entrant2Score": data.team2[0].stocks,
-        "stageId": resolveStartggStage(data.stage),
+function constructGQLGame(index, game, data, swapped) {
+    const gameData = {
+        "winnerId": game.winner == 1 ? data.team1.entrantId : data.team2.entrantId,
+        "gameNum": index,
+        "entrant1Score": swapped ? game.team2[0].stocks : game.team1[0].stocks,
+        "entrant2Score": swapped ? game.team1[0].stocks : game.team2[0].stocks,
+        "stageId": resolveStartggStage(game.stage),
         "selections": [
             {
-                "entrantId": info.team1.entrantId,
-                "characterId": resolveStartggCharacter(data.team1[0].character)
+                "entrantId": data.team1.entrantId,
+                "characterId": resolveStartggCharacter(data?.isDoubles === true ? game.team1[1-(index%2)].character: game.team1[0].character)
             },
             {
-                "entrantId": info.team2.entrantId,
-                "characterId": resolveStartggCharacter(data.team2[0].character)
+                "entrantId": data.team2.entrantId,
+                "characterId": resolveStartggCharacter(data?.isDoubles === true ? game.team2[1-(index%2)].character: game.team2[0].character)
             }
         ]
     }
-    return game
+    return gameData
 }
 
 /* start.gg has different character indices than we use */

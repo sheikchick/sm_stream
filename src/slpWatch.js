@@ -9,6 +9,10 @@ const pending = 'pending';
 
 let watcher;
 
+/**
+ * Search for .slp file changes in a directory and track their data
+ * @param {string} dir  Directory to search in
+ */
 exports.watch = (dir) => {
     logging.log(`Searching for files in '${dir}'`)
     watcher?.close();
@@ -72,6 +76,7 @@ exports.watch = (dir) => {
         // complete one at a time, delaying the eventual gameEnd() call.
         // So unlike usual where we would do lastUpdate = lastUpdate.then(gameMid_delayed), we don't even want to
         // queue the next gameMid_delayed() in the first place if lastUpdate is not complete.
+        /*
         Promise.race([gameObj.lastUpdate, pending]).then((promise) => {
             if (promise !== pending) {
                 games[path].lastUpdate = new Promise((resolve) => 
@@ -80,6 +85,6 @@ exports.watch = (dir) => {
                     ), 500)
                 );
             }
-        });
+        });*/
     });
 };

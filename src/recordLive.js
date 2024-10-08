@@ -29,8 +29,8 @@ exports.createVod = (data, tournamentName) => {
             //ensure bat is processed using utf8, repeated codes don't matter
             fs.appendFile(batFile, "chcp 65001\n", "utf8").then(() => {
                 fs.appendFile(batFile, command, "utf8").then(() => {
-                    outputPath = path.join(tournamentDir, setName)
-                    saveVodFile(data.vod, startTimestamp, msToHHmmss(data.timecodes[1] - data.timecodes[0]), outputPath)
+                    vodOutputPath = path.join(tournamentDir, setName)
+                    saveVodFile(data.vod, startTimestamp, msToHHmmss(data.timecodes[1] - data.timecodes[0]), vodOutputPath)
                 })
             })
         })

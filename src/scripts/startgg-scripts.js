@@ -31,6 +31,7 @@ function getTournamentEvents() {
 	})
 		.then((res) => res.json())
 		.then((result) => {
+			$("#streams").hide()
 			$("#events").hide()
 			$("#phases").hide()
 			$("#phase-groups").hide()
@@ -83,6 +84,7 @@ function getEventPhases() {
 	})
 		.then((res) => res.json())
 		.then((result) => {
+			$("#streams").hide()
 			$("#phases").hide()
 			$("#phase-groups").hide()
 			$("#get-sets").hide()
@@ -131,6 +133,7 @@ function getPhaseGroups() {
 	})
 		.then((res) => res.json())
 		.then((result) => {
+			$("#streams").hide()
 			$("#phase-groups").hide()
 			$("#get-sets").hide()
 			if (result["data"]["phase"]["phaseGroups"] == null) {
@@ -158,8 +161,61 @@ function getPhaseGroups() {
 }
 
 /* GET AND LOAD SETS FROM THE STREAMQUEUE */
-function getStreamQueue() {
+function getStreamQueues() {
 	tournamentSlug = $("#tournament-slug").val()
+	fetch('https://api.start.gg/gql/alpha', {
+		method: 'POST',
+		headers: {
+			'Authorization': 'Bearer ' + apiKey,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			query: `
+            query StreamQueueOnTournament($tourneySlug: String!) {
+                tournament(slug: $tourneySlug) {
+                    id
+                    name
+                    streamQueue {
+                        stream {
+                            streamSource
+                            streamName
+                        }
+                    }
+                }
+            }
+			`,
+			variables: {
+				tourneySlug: tournamentSlug
+			},
+		}),
+	})
+	.then((res) => res.json())
+	.then((result) => {
+		$("#streams").hide()
+		$("#events").hide()
+		$("#phases").hide()
+		$("#phase-groups").hide()
+		$("#get-sets").hide()
+		$("#streams").empty()
+		streamQueue = result.data.tournament.streamQueue
+		if(streamQueue.length === 1) {
+			getStreamQueue(tournamentSlug, streamQueue[0].stream.streamName)
+		} else {
+			for (let stream of streamQueue) {
+				streamOption = new Option(stream.stream["streamName"], stream.stream["streamName"], false, false);
+				$("#streams").append(streamOption);
+				$("#streams").attr("tournament-slug", tournamentSlug)
+				$("#streams").show()
+			}
+		}
+	});
+}
+
+/* GET AND LOAD SETS FROM THE STREAMQUEUE */
+function getStreamQueue(tournamentSlug, streamName) {
+	console.log("getStreamQueue")
+	tournamentSlug ? "" : tournamentSlug = $("#streams").attr("tournament-slug")
+	streamName ? "" : streamName = $("#streams :selected").val()
 	fetch('https://api.start.gg/gql/alpha', {
 		method: 'POST',
 		headers: {
@@ -214,8 +270,9 @@ function getStreamQueue() {
 	})
 	.then((res) => res.json())
 	.then((result) => {
+		console.log(result.data.tournament.streamQueue)
 		sets = []
-		streamQueue = result.data.tournament.streamQueue[0] //get the first streamqueue, might fix for more than 1 stream
+		streamQueue = result.data.tournament.streamQueue.find((element) => (element))
 		for (let set of streamQueue.sets) {
 			matchRound = set.phaseGroup["bracketType"] == "ROUND_ROBIN"
 							? set.phaseGroup["phase"]["name"] + " " + set.phaseGroup["displayIdentifier"]
@@ -263,6 +320,9 @@ function getSets(stateArray, hideEmpty, showButtons) {
                                         id
 										participants{
 											gamerTag
+											contactInfo{
+												country
+											}
 											user {
 												discriminator
 												genderPronoun
@@ -322,7 +382,8 @@ function constructSetObject(set, matchRound) {
 		if (team1["entrant"]["participants"][0]["user"] != null) {
 			p1UserId = team1["entrant"]["participants"][0]["user"]["discriminator"]
 			p1Pronouns = team1["entrant"]["participants"][0]["user"]["genderPronoun"]
-			p1Country = getCountry(p1UserId) || team1["entrant"]["participants"][0]["user"]["location"]["country"]
+			p1Country = getCountry(p1UserId) || 
+				(team1["entrant"]["participants"][0]["user"]["location"]["country"] || team1["entrant"]["participants"][0]["contactInfo"]["country"])
 		}
 		p1Name = team1["entrant"]["participants"][0]["gamerTag"]
 
@@ -335,7 +396,8 @@ function constructSetObject(set, matchRound) {
 			if (team1["entrant"]["participants"][1]["user"] != null) {
 				p1DoublesUserId = team1["entrant"]["participants"][1]["user"]["discriminator"]
 				p1DoublesPronouns = team1["entrant"]["participants"][1]["user"]["genderPronoun"]
-				p1DoublesCountry = getCountry(p1DoublesUserId) || team1["entrant"]["participants"][1]["user"]["location"]["country"]
+				p1DoublesCountry = getCountry(p1DoublesUserId) || 
+					(team1["entrant"]["participants"][1]["user"]["location"]["country"] || team1["entrant"]["participants"][1]["contactInfo"]["country"])
 			}
 			p1DoublesName = team1["entrant"]["participants"][1]["gamerTag"]
 		}
@@ -348,7 +410,8 @@ function constructSetObject(set, matchRound) {
 		if (team2["entrant"]["participants"][0]["user"] != null) {
 			p2UserId = team2["entrant"]["participants"][0]["user"]["discriminator"]
 			p2Pronouns = team2["entrant"]["participants"][0]["user"]["genderPronoun"]
-			p2Country = getCountry(p2UserId) || team2["entrant"]["participants"][0]["user"]["location"]["country"]
+			p2Country = getCountry(p2UserId) || 
+				(team2["entrant"]["participants"][0]["user"]["location"]["country"] || team2["entrant"]["participants"][0]["contactInfo"]["country"])
 		}
 		p2Name = team2["entrant"]["participants"][0]["gamerTag"]
 
@@ -361,7 +424,8 @@ function constructSetObject(set, matchRound) {
 			if (team2["entrant"]["participants"][1]["user"] != null) {
 				p2DoublesUserId = team2["entrant"]["participants"][1]["user"]["discriminator"]
 				p2DoublesPronouns = team2["entrant"]["participants"][1]["user"]["genderPronoun"]
-				p2DoublesCountry = getCountry(p2DoublesUserId) || team2["entrant"]["participants"][1]["user"]["location"]["country"]
+				p2DoublesCountry = getCountry(p2DoublesUserId) || 
+					(team2["entrant"]["participants"][1]["user"]["location"]["country"] || team2["entrant"]["participants"][1]["contactInfo"]["country"])
 			}
 			p2DoublesName = team2["entrant"]["participants"][1]["gamerTag"]
 		}
@@ -404,7 +468,8 @@ function constructSetObject(set, matchRound) {
 				]
 			}
 		}
-		console.log(matchData)
+		console.log(`${p1Country}`)
+		console.log(`${p2Country}`)
 		return(matchData)
 	}
 }
@@ -532,4 +597,55 @@ function updateStartggSet(setId, winnerId, gameData) {
 			}
 			
 		})
+}
+
+//misc
+function getCountryInformation(tournamentSlug) {
+	fetch('https://api.start.gg/gql/alpha', {
+		method: 'POST',
+		headers: {
+			'Authorization': 'Bearer ' + apiKey,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			query: `
+				query tournamentCountry($name:String!){
+					tournament(slug: $name){
+						participants(
+							query:{
+								page: 1,
+								perPage: 500
+							}
+						){
+							nodes {
+								gamerTag
+								contactInfo{
+									country
+								}
+								user {
+									location {
+										country
+									}
+										
+								}
+							}
+						}
+					}
+				}
+			`,
+			variables: {
+				name: tournamentSlug
+			},
+		}),
+	})
+	.then((res) => res.json())
+	.then((result) => {
+		let countries = new Map()
+		for(let participant of result.data.tournament.participants.nodes) {
+			country = participant.contactInfo.country || participant.user.location.country;
+			value = countries.has(country) ? countries.get(country)+1 : 1;
+			countries.set(country, value)
+		}
+		console.log(countries)
+	});
 }

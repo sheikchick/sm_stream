@@ -66,9 +66,19 @@ continents = {
             "emoji": "🇬🇷"
         },
         {
+            "country": "Hungary",
+            "shortcode": "HU",
+            "emoji": "🇭🇺"
+        },
+        {
             "country": "Italy",
             "shortcode": "IT",
             "emoji": "🇮🇹"
+        },
+        {
+            "country": "Jersey",
+            "shortcode": "JE",
+            "emoji": "🇯🇪"
         },
         {
             "country": "Netherlands",
@@ -128,6 +138,15 @@ continents = {
             "emoji": "🇲🇽"
         },
         {
+            "country": "Brazil",
+            "shortcode": "BR",
+            "emoji": "🇧🇷"
+        },{
+            "country": "Argentina",
+            "shortcode": "AR",
+            "emoji": "🇦🇷"
+        },
+        {
             "country": "Peru",
             "shortcode": "PE",
             "emoji": "🇵🇪"
@@ -168,6 +187,11 @@ continents = {
             "country": "Hong Kong",
             "shortcode": "HK",
             "emoji": "🇭🇰"
+        },
+        {
+            "country": "Iran",
+            "shortcode": "IR",
+            "emoji": "🇮🇷"
         },
         {
             "country": "Palestine",
@@ -243,6 +267,8 @@ function fixCountry(country) {
         case "United States":
         case "Canada":
         case "Mexico":
+        case "Brazil":
+        case "Argentina":
         case "Peru":
         case "Nicaragua":
         case "Japan":
@@ -251,6 +277,7 @@ function fixCountry(country) {
         case "Indonesia":
         case "China":
         case "Hong Kong":
+        case "Iran":
         case "Palestine":
         case "Algeria":
         case "Morocco":
@@ -296,11 +323,6 @@ function fixCountry(country) {
  */
 function getCountry(id) {
     switch(id) {
-        case "125fd3ea": //Jamie
-        case "1c2ebf44": //Unity
-        case "b3be0e59": //Okameed
-        case "33948520": //wil
-            return "England"
         case "4d748723": //Rain
         case "d631c836": //Pedlar
             return "Wales"

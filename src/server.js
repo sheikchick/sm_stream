@@ -13,7 +13,7 @@ const { loadObs } = require("./obs.js");
 const recordLive = require("./recordLive.js");
 const { recordReplays } = require("./recordReplays.js");
 const charInfo = require("./charInfo.js");
-const { readData, writeData, updateTournament, fixInfo, INFO, CHARACTER_DATA, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
+const { readData, writeData, updateTournament, fixInfo, fixCrews, INFO, CREWS, CHARACTER_DATA, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
 const { watch } = require("./slpWatch.js");
 const { getGames } = require("./slpResults.js");
 const { checkSetStart } = require("./processSlp.js");
@@ -69,6 +69,17 @@ app.post("/update", (req, res) => {
         });
 });
 
+app.post("/update-crews", (req, res) => {
+    const info = req.body;
+    writeData(CREWS, info)
+        .then(() => {
+            res.sendStatus(200);
+        })
+        .catch(() => {
+            res.sendStatus(500);
+        });
+});
+
 // Endpoints for files in /views/layouts
 
 fs.readdir(layoutsDir, {withFileTypes: true}).then((files) => {
@@ -76,14 +87,25 @@ fs.readdir(layoutsDir, {withFileTypes: true}).then((files) => {
     files.filter((f) => f.isFile() && f.name.endsWith(hbs)).forEach((f) => {
         const layout = f.name.replace(hbs, '');
         app.get(`/${layout}`, (req, res) => {
-            readData(INFO).then((data) => {
-                res.render(layout, {
-                    ...data,
-                    apiKey: config["start.gg"]["API key"],
-                    obsPort: config["OBS"]["Websocket"]["Port"],
-                    obsPassword: config["OBS"]["Websocket"]["Password"],
+            if(layout === "crews") {
+                readData(CREWS).then((data) => {
+                    res.render(layout, {
+                        ...data,
+                        apiKey: config["start.gg"]["API key"],
+                        obsPort: config["OBS"]["Websocket"]["Port"],
+                        obsPassword: config["OBS"]["Websocket"]["Password"],
+                    });
                 });
-            });
+            } else {
+                readData(INFO).then((data) => {
+                    res.render(layout, {
+                        ...data,
+                        apiKey: config["start.gg"]["API key"],
+                        obsPort: config["OBS"]["Websocket"]["Port"],
+                        obsPassword: config["OBS"]["Websocket"]["Password"],
+                    });
+                });
+            }
         })
     })
 });

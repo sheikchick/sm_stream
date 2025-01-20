@@ -1,2 +1,157 @@
 {
+    "0d9591cf": {
+        "name" : "c:leo",
+        "character" : "sheik",
+        "colour" : "blue"
+    },
+    "4dbeb506": {
+        "name" : "Glaikit",
+        "character" : "falco",
+        "colour" : "original"
+    },
+    "4d748723": {
+        "name" : "Rain",
+        "character" : "marth",
+        "colour" : "black"
+    },
+    "a613019a": {
+        "name" : "sky",
+        "character" : "peach",
+        "colour" : "blue"
+    },
+    "de35cad8": {
+        "name" : "ECS",
+        "character" : "captainfalcon",
+        "colour" : "white"
+    },
+    "86ac7ae6": {
+        "name" : "Aiken",
+        "character" : "marth",
+        "colour" : "black"
+    },
+    "92a01072": {
+        "name" : "Josh97",
+        "character" : "peach",
+        "colour" : "blue"
+    },
+    "d6847ed7": {
+        "name" : "Lima Bean",
+        "character" : "falco",
+        "colour" : "green"
+    },
+    "cf1e1438": {
+        "name" : "CanD",
+        "character" : "bowser",
+        "colour" : "blue"
+    },
+    "6381f928": {
+        "name" : "xychojack",
+        "character" : "yoshi",
+        "colour" : "blue"
+    },
+    "6d400b9a": {
+        "name" : "SHIP",
+        "character" : "iceclimbers",
+        "colour" : "yellow"
+    },
+    "5bbd0daa": {
+        "name" : "joessbm",
+        "character" : "fox",
+        "colour" : "blue"
+    },
+    "1b024a33": {
+        "name" : "Coral",
+        "character" : "falco",
+        "colour" : "green"
+    },
+    "001fc1de": {
+        "name" : "Chaler",
+        "character" : "falco",
+        "colour" : "original"
+    },
+    "8d41834d": {
+        "name" : "Callie",
+        "character" : "captainfalcon",
+        "colour" : "black"
+    },
+    "b08ab36b": {
+        "name" : "Biss",
+        "character" : "donkeykong",
+        "colour" : "dark"
+    },
+    "67dce43c": {
+        "name" : "Ev4n",
+        "character" : "captainfalcon",
+        "colour" : "blue"
+    },
+    "0224e642": {
+        "name" : "harry",
+        "character" : "falco",
+        "colour" : "original"
+    },
+    "c19dc06f": {
+        "name" : "adil",
+        "character" : "fox",
+        "colour" : "red"
+    },
+    "2ceada47": {
+        "name" : "Ayda Fox",
+        "character" : "falco",
+        "colour" : "blue"
+    },
+    "5fad316d": {
+        "name" : "throni",
+        "character" : "captainfalcon",
+        "colour" : "red"
+    },
+    "d78633c5": {
+        "name" : "Buckly",
+        "character" : "peach",
+        "colour" : "green"
+    },
+    "bba61b17": {
+        "name" : "Atlos",
+        "character" : "sheik",
+        "colour" : "blue"
+    },
+    "838f0aa3": {
+        "name" : "Reversii",
+        "character" : "luigi",
+        "colour" : "red"
+    },
+    "1721b809": {
+        "name" : "WizardExMachina",
+        "character" : "peach",
+        "colour" : "green"
+    },
+    "3f203de6": {
+        "name" : "bouncyshield",
+        "character" : "peach",
+        "colour" : "white"
+    },
+    "7f420ba3": {
+        "name" : "zondy",
+        "character" : "fox",
+        "colour" : "original"
+    },
+    "61156e23": {
+        "name" : "Gorillionaire",
+        "character" : "donkeykong",
+        "colour" : "green"
+    },
+    "9f213ad0": {
+        "name" : "Ruu",
+        "character" : "marth",
+        "colour" : "black"
+    },
+    "b3be0e59": {
+        "name" : "Okameed",
+        "character" : "Pikachu",
+        "colour" : "red"
+    },
+    "": {
+        "name" : "",
+        "character" : "",
+        "colour" : ""
+    }
 }

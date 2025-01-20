@@ -3,6 +3,7 @@ const { readFile, writeFile } = require("fs/promises");
 const logging = require("./logging");
 
 exports.INFO = 'info.json';
+exports.CREWS = 'crews.json';
 exports.MATCH_RESULT = 'match_result.json';
 exports.DOLPHIN = 'dolphin.json';
 exports.REPLAY_QUEUE = 'replay-queue.json';
@@ -12,6 +13,7 @@ exports.CHARACTER_DATA = 'character-data.json';
 
 exports.DATA_FILES = [
     this.INFO,
+    this.CREWS,
     this.MATCH_RESULT,
     this.DOLPHIN,
     this.REPLAY_QUEUE,
@@ -122,4 +124,92 @@ exports.fixInfo = (info) => {
         "activePlayers": info?.activePlayers || [ 1,2 ]
     }
     return newInfo;
+}
+
+exports.fixCrews = (crew) => {
+    let newCrews = {
+        "crew1": {
+			"name": crew?.crew1?.name || "Crew 1",
+			"activePlayer": {
+				"name": crew?.crew1?.activePlayer?.name || "Player 1",
+				"character": crew?.crew1?.activePlayer?.character || "fox",
+				"colour": crew?.crew1?.activePlayer?.colour || "red",
+				"pronouns": crew?.crew1?.activePlayer?.pronouns || "",
+				"country": crew?.crew1?.activePlayer?.country || "UK",
+				"port": crew?.crew1?.activePlayer?.port || 1
+			},
+            "players": [
+                {
+                    "name": crew?.crew1?.players?.[0]?.name || "Player 1",
+                    "alive": crew?.crew1?.players?.[0]?.alive || true
+                },
+				{
+                    "name": crew?.crew1?.players?.[1]?.name || "Player 2",
+                    "alive": crew?.crew1?.players?.[1]?.alive || true
+                },
+				{
+                    "name": crew?.crew1?.players?.[2]?.name || "Player 3",
+                    "alive": crew?.crew1?.players?.[2]?.alive || true
+                },
+				{
+                    "name": crew?.crew1?.players?.[3]?.name || "Player 4",
+                    "alive": crew?.crew1?.players?.[3]?.alive || true
+                },
+				{
+                    "name": crew?.crew1?.players?.[4]?.name || "Player 5",
+                    "alive": crew?.crew1?.players?.[4]?.alive || true
+                }
+            ],
+            "score": crew?.crew1?.score || 0,
+        },
+        "crew2": {
+			"name": crew?.crew2?.name || "Crew 2",
+			"activePlayer": {
+				"name": crew?.crew2?.activePlayer?.name || "Player 1",
+				"character": crew?.crew2?.activePlayer?.character || "fox",
+				"colour": crew?.crew2?.activePlayer?.colour || "red",
+				"pronouns": crew?.crew2?.activePlayer?.pronouns || "",
+				"country": crew?.crew2?.activePlayer?.country || "UK",
+				"port": crew?.crew2?.activePlayer?.port || 1
+			},
+            "players": [
+                {
+                    "name": crew?.crew2?.players?.[0]?.name || "Player 1",
+                    "alive": crew?.crew2?.players?.[0]?.alive || true
+                },
+				{
+                    "name": crew?.crew2?.players?.[1]?.name || "Player 2",
+                    "alive": crew?.crew2?.players?.[1]?.alive || true
+                },
+				{
+                    "name": crew?.crew2?.players?.[2]?.name || "Player 3",
+                    "alive": crew?.crew2?.players?.[2]?.alive || true
+                },
+				{
+                    "name": crew?.crew2?.players?.[3]?.name || "Player 4",
+                    "alive": crew?.crew2?.players?.[3]?.alive || true
+                },
+				{
+                    "name": crew?.crew2?.players?.[4]?.name || "Player 5",
+                    "alive": crew?.crew2?.players?.[4]?.alive || true
+                }
+            ],
+            "score": crew?.crew2?.score || 0,
+        },
+        "casters": [
+            {
+                "name": crew?.casters?.[0].name || "",
+                "pronouns": crew?.casters?.[0].pronouns || "",
+            },
+            {
+                "name": crew?.casters?.[1].name || "",
+                "pronouns": crew?.casters?.[1].pronouns || "",
+            }
+        ],
+        "seatOrdering": info?.seatOrdering || [ "1","2","3","4" ],
+        "round": info?.round || "",
+        "tournament": info?.tournament || "",
+        "activePlayers": info?.activePlayers || [ 1,2 ]
+    }
+    return newCrews;
 }

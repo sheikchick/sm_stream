@@ -88,8 +88,7 @@ function constructSetGames() {
 }
 
 function showGetSets() {
-	$("#get-unfinished-sets").show()
-	$("#get-all-sets").show()
+	$("#get-sets").show()
 }
 
 function showSets(up, showButtons) {

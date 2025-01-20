@@ -3,7 +3,7 @@
 <html>
 
 <head>
-	<title>Smash Bros. Melee Overlay Config</title>
+	<title>sm-stream - Overlay configure</title>
 	<script src="scripts/jquery-3.4.1.min.js"></script>
 
 	<script src="scripts/auto-scripts.js"></script>
@@ -39,7 +39,7 @@
 				<input type="text" id="p1d-name-actual" class="name actual left doubles" tabindex="-1"
 					value="{{team1.players.[1].name}}" placeholder="Player 2 name" readonly="true">
 			</div>
-			<div class="column">
+			<div class="column stock">
 				<img id="p1-character-actual" class="stock-icon actual" src="stock">
 				<img id="p1d-character-actual" class="stock-icon actual doubles" src="stock">
 			</div>
@@ -50,7 +50,7 @@
 		<div id="p2-info-actual" class="info actual">
 			<input id="p2-score-actual" class="score actual" min="0" max="99" value="{{team2.score}}" readonly="true"
 				tabindex="-1">
-			<div class="column">
+			<div class="column stock">
 				<img id="p2-character-actual" class="stock-icon actual" src="stock">
 				<img id="p2d-character-actual" class="stock-icon actual doubles" src="stock">
 			</div>
@@ -102,8 +102,14 @@
 			</div>
 
 			<div id="middle-row" class="row">
-				<button type="button" class="swap-sides" onclick="swapSides()">
-					Swap names <i class="fa-solid fa-arrows-up-down"></i>
+				<button type="button" id="swap-info" class="swap-sides" onclick="swapSides(true, false)">
+					Swap info <i class="fa-solid fa-arrows-up-down"></i>
+				</button>
+				<button type="button" id="swap-all" class="swap-sides" onclick="swapSides(true, true)">
+					Swap all <i class="fa-solid fa-arrows-up-down"></i>
+				</button>
+				<button type="button" id="swap-chars" class="swap-sides" onclick="swapSides(false, true)">
+					Swap chars. <i class="fa-solid fa-arrows-up-down"></i>
 				</button>
 			</div>
 			<div id="p2-info-change" class="info change right">
@@ -146,6 +152,7 @@
 						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
 					</span>
 					<span class="name" tabindex="-1">{{team1.players.[0].name}}</span>
+					<img class="stock-icon" src="static/img/stock_icons/smash.png">
 				</div>
 				<button class="seat-changer side" id="left-seat-changer" onclick="swapSeatTeam(1)"><i class="fa-solid fa-left-right"></i></button>
 				<div class="seat p1 right column" id="p1-right-seat" index="{{seatOrdering.[1]}}">
@@ -156,6 +163,7 @@
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 					</span>
 					<span class="name" tabindex="-1">{{team1.players.[1].name}}</span>
+					<img class="stock-icon" src="static/img/stock_icons/smash.png">
 				</div>
 				<button class="seat-changer" onclick="swapSeatSides()">Swap sides<br/><i class="fa-solid fa-left-right"></i></button>
 				<div class="seat p2 left column" id="p2-left-seat" index="{{seatOrdering.[2]}}">
@@ -166,6 +174,7 @@
 						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
 					</span>
 					<span class="name" tabindex="-1">{{team2.players.[0].name}}</span>
+					<img class="stock-icon" src="static/img/stock_icons/smash.png">
 				</div>
 				<button class="seat-changer side" id="right-seat-changer" onclick="swapSeatTeam(2)"><i class="fa-solid fa-left-right"></i></button>
 				<div class="seat p2 right column" id="p2-right-seat" index="{{seatOrdering.[3]}}">
@@ -176,6 +185,7 @@
 						<i class="fas fa-chair" style="opacity: 100%;"></i>
 					</span>
 					<span class="name" tabindex="-1">{{team2.players.[1].name}}</span>
+					<img class="stock-icon" src="static/img/stock_icons/smash.png">
 				</div>
 			</div>
 
@@ -208,18 +218,14 @@
 				<img class="icon" id="startgg-icon" src="static/img/startgg.svg" alt="SGG" />
 				<input type="text" id="tournament-slug" class="startgg tournament input" placeholder="startgg slug">
 				<div class="startgg-submit column">
-					<button type="button" id="load-sets" class="startgg bottom button submit" onclick="getStreamQueue()">Stream q.</button>
+					<button type="button" id="load-sets" class="startgg bottom button submit" onclick="getStreamQueues()">Stream q.</button>
 					<button type="button" id="load-sets" class="startgg bottom button submit" onclick="getTournamentEvents()">Bracket sets</button>
 				</div>
+				<select class="startgg input c" id="streams" onchange="getStreamQueue()"></select>
 				<select class="startgg input c" id="events" onchange="getEventPhases()"></select>
 				<select class="startgg input c" id="phases" onchange="getPhaseGroups()"></select>
 				<select class="startgg input c" id="phase-groups" onchange="showGetSets()"></select>
-				<div class="startgg-submit column">
-					<button type="button" id="get-unfinished-sets" class="startgg bottom button"
-						onclick="getSets('[1,2,4,5,6,7]', true, false)">Get sets</button>
-					<button type="button" id="get-all-sets" class="startgg bottom button"
-						onclick="getSets('[1,2,3,4,5,6,7]', false, true)">Get all sets</button>
-				</div>
+				<button type="button" id="get-sets" class="startgg bottom button" onclick="getSets('[1,2,4,5,6,7]', true, false)">Get sets</button>
 			</div>
 
 			<div id="startgg-entrants" class="row">
@@ -239,15 +245,6 @@
 							<button id="update-scene" class="scene" onclick="updateScene()">Change Scene</button>
 						</div>
 					</div>
-				</div>
-			</div>
-
-			<div id="load-tournament-data" class="row">
-				<div class="column" id="tournament-wrapper">
-					<select id="tournament-data" tournament="" onchange="getTournamentSet()"></select>
-					<button type="button" id="set-update" onclick="updateSet()">Submit timestamps</button>
-				</div>
-				<div id="display-set-results">
 				</div>
 			</div>
 

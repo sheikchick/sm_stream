@@ -11,6 +11,20 @@ const { msToHHmmss: msToHHmmss } = require("./util.js")
 
 const FILE_NOT_FOUND = "FILE NOT FOUND";
 
+const createFfmpeg = () => {
+    let path = config?.["OBS"]?.["ffmpeg Path"]
+    let ffmpegInstance = new ffmpeg()
+    logging.debugLog(path)
+    console.log(config)
+    if(typeof path !== "undefined") {
+        if(path !== "") {
+            logging.debugLog("Using custom ffmpeg path")
+            ffmpegInstance.setFfmpegPath(path)
+        }
+    }
+    return ffmpegInstance
+}
+
 exports.createVod = (data, tournamentName) => {
     try {
         const outputPath = config?.["OBS"]?.["VODs"]?.["Output path"] || path.join(process.cwd(), "vods")
@@ -45,7 +59,7 @@ const saveVodFile = (vod, startTimestamp, videoLength, outputPath) => new Promis
         logging.debugLog(`Auto-record disabled, not saving VOD`);
         resolve();
     }
-    var command = new ffmpeg();
+    var command = createFfmpeg();
     command
         .input(vod)
         .setStartTime(startTimestamp)
@@ -102,6 +116,7 @@ exports.saveClip = (folderName, timecode, tournamentName) => new Promise((resolv
                                 logging.error(message)
                                 //throw new Error(message); // Throw simply to return a 500
                             } else {
+                                logging.debugLog("Attempting to saveClipFile")
                                 saveClipFile(path.join(recordDirectory, vod), startTimestamp, clipLength, path.join(tournamentDir, "clips", folderName, `${timecode}.mp4`))
                                 .then(() => {
                                     resolve();
@@ -123,7 +138,7 @@ const saveClipFile = (vod, startTimestamp, videoLength, outputPath) => new Promi
         logging.debugLog(`Auto-record disabled, not saving clip`);
         resolve();
     }
-    var command = new ffmpeg();
+    var command = createFfmpeg();
     command
         .input(vod)
         .setStartTime(startTimestamp)

@@ -1,188 +1,243 @@
 <!DOCTYPE html>
 
 <html>
+
 <head>
-	<title>Smash Bros. Melee Overlay Config</title>
-	<script src="static/scripts/jquery-3.4.1.min.js"></script>
-	<script src="static/scripts/auto-scripts.js"></script>
-	<script src="static/scripts/obs-ws.min.js"></script>
+	<title>sm-stream - Crews</title>
+	<script src="scripts/jquery-3.4.1.min.js"></script>
+
+	<script src="scripts/crews.js"></script>
+	<script src="scripts/default-character.js"></script>
+	<script src="scripts/startgg-scripts.js"></script>
+	<script src="scripts/startgg-utils.js"></script>
+	<script src="scripts/flags.js"></script>
+
+	<script src="scripts/obs-ws.min.js"></script>
 
 	<script src="scripts/fontawesome.min.js"></script>
 	<script src="scripts/solid.min.js"></script>
 	<script src="scripts/brands.min.js"></script>
-	
 	<script>
-		var best_of_value = "{{best_of}}"
-		var api_key = "{{api_key}}"
-		var obs_port = "{{obs_port}}"
-		var obs_password = "{{obs_password}}"
+		var bestOfValue = "{{bestOf}}"
+		var tournament = "{{tournament}}"
+		var apiKey = "{{apiKey}}"
+		var obsPort = "{{obsPort}}"
+		var obsPassword = "{{obsPassword}}"
 	</script>
-	<link rel="stylesheet" type="text/css" href="static/css/auto.css">
-	<link rel="icon" href="static/favicon.ico">
+	<link rel="stylesheet" type="text/css" href="css/crews.css">
+	<link rel="icon" href="favicon.ico">
 </head>
 
 <body>
 	{{> footer}}
-	<h1 style="position: absolute; color: red;">PLACEHOLDER. NOT IMPLEMENTED</h1>
-	<div id="left_wrapper">
-		<div id="row1" class="row">
-			<div id="p1_info_actual" class="info actual">
-				<div id="p1_text_actual" class="name_container actual">
-					<input type="text" id="p1_name_actual" class="name actual left" value="{{Player1.name}}" placeholder="Player 1 name" readonly="true">
-					<input type="text" id="p1d_name_actual" class="name actual left doubles" value="{{Player1.name_dubs}}" placeholder="Player 2 name" readonly="true">
-				</div>
-				<img id="p1_character_actual" class="stock_icon actual" src="stock">
-				<img id="p1d_character_actual" class="stock_icon actual" src="stock">
-				<input id="p1_score_actual" class="score actual" min="0" max="99" value="{{Player1.score}}" readonly="true">
+	<span class="label" id="top-label">Currently displayed on stream</span>
+	<div id="header">
+		<div id="p1-info-actual" class="info actual">
+			<div id="p1-text-actual" class="name-container actual">
+				<input type="text" id="p1-name-actual" class="name actual left" value="{{crew1.activePlayer.name}}"
+					tabindex="-1" placeholder="Player 1 name" readonly="true">
 			</div>
-
-			<div id="p2_info_actual" class="info actual">
-				<input id="p2_score_actual" class="score actual" min="0" max="99" value="{{Player2.score}}" readonly="true">
-				<img id="p2_character_actual" class="stock_icon actual" src="stock">
-				<img id="p2d_character_actual" class="stock_icon actual" src="stock">
-				<div id="p2_text_actual" class="name_container actual">
-					<input type="text" id="p2_name_actual" class="name actual right" value="{{Player2.name}}" placeholder="Player 1 name" readonly="true">
-					<input type="text" id="p2d_name_actual" class="name actual right doubles" value="{{Player2.name_dubs}}" placeholder="Player 2 name" readonly="true">
-				</div>
+			<div class="column stock">
+				<img id="p1-character-actual" class="stock-icon actual" src="stock">
+				<img id="p1d-character-actual" class="stock-icon actual doubles" src="stock">
 			</div>
+			<input id="p1-score-actual" class="score actual" min="0" max="99" value="{{crew1.score}}" readonly="true"
+				tabindex="-1">
 		</div>
-		
-		<div id="row2" class="row">
-			<div id="p1_info_change" class="info change">
-				<button type="button" id="team1_swap" class="swap" onclick="swap_team(1)"><i class="fa-solid fa-arrows-up-down"></i></button>
-				<div id="p1_pronouns_change" class="pronouns_container change">
-					<input type="text" id="p1_pronouns" class="pronouns change left" value="{{Player1.pronouns}}" placeholder="Pronouns">
-					<input type="text" id="p1d_pronouns" class="pronouns change left doubles" value="{{Player1.pronouns_dubs}}" placeholder="Pronouns">
-				</div>
-				<div id="p1_text_change" class="name_container change">
-					<input type="text" id="p1_name" class="name change left" value="{{Player1.name}}" placeholder="Player 1 name">
-					<input type="text" id="p1d_name" class="name change left doubles" value="{{Player1.name_dubs}}" placeholder="Player 2 name">
-				</div>
-				<img id="p1_character_change" class="csp actual" src="csp">
-				<img id="p1d_character_change" class="csp actual" src="csp">
-				<input type="number" id="p1_score_change" class="score change" min="0" max="99" value="{{Player1.score}}">
+
+		<div id="p2-info-actual" class="info actual">
+			<input id="p2-score-actual" class="score actual" min="0" max="99" value="{{crew1.score}}" readonly="true"
+				tabindex="-1">
+			<div class="column stock">
+				<img id="p2-character-actual" class="stock-icon actual" src="stock">
+				<img id="p2d-character-actual" class="stock-icon actual doubles" src="stock">
+			</div>
+			<div id="p2-text-actual" class="name-container actual">
+				<input type="text" id="p2-name-actual" class="name actual right" value="{{crew2.activePlayer.name}}"
+					tabindex="-1" placeholder="Player 1 name" readonly="true">
+				<input type="text" id="p2d-name-actual" class="name actual right doubles" tabindex="-1"
+					value="{{crew2.activePlayer.name}}" placeholder="Player 2 name" readonly="true">
 			</div>
 		</div>
-
-		<div id="row3" class="row">
-			<button type="button" class="swap_sides" onclick="swap_sides()">Swap <i class="fa-solid fa-arrows-up-down"></i></button>
-		</div>
-
-		<div id="row4" class="row">
-			<div id="p2_info_change" class="info change">
-				<button type="button" id="team2_swap" class="swap" onclick="swap_team(2)"><i class="fa-solid fa-arrows-up-down"></i></button>
-				<div id="p2_pronouns_change" class="pronouns_container change">
-					<input type="text" id="p2_pronouns" class="pronouns change right" value="{{Player2.pronouns}}" placeholder="Pronouns">
-					<input type="text" id="p2d_pronouns" class="pronouns change right doubles" value="{{Player2.pronouns_dubs}}" placeholder="Pronouns">
-				</div>
-				<div id="p2_text_change" class="name_container change">
-					<input type="text" id="p2_name" class="name change right" value="{{Player2.name}}" placeholder="Player 1 name">
-					<input type="text" id="p2d_name" class="name change right doubles" value="{{Player2.name_dubs}}" placeholder="Player 2 name">
-				</div>
-				<img id="p2_character_change" class="csp actual" src="csp">
-				<img id="p2d_character_change" class="csp actual" src="csp">
-				<input type="number" id="p2_score_change" class="score change" min="0" max="99" value="{{Player2.score}}">
-			</div>
-		</div>
-
-		<div id="row5" class="row">
-			<input type="text" id="tournament_change" value="{{tournament}}" placeholder="Tournament">
-			<input type="text" id="round_change" value="{{round}}" placeholder="Round">
-			<button type="button" class="best_of" id="bo3" onclick="change_best_of(3)">Best of 3</button>
-			<button type="button" class="best_of" id="bo5" onclick="change_best_of(5)">Best of 5</button>
-			<button type="button" class="toggle_doubles" onclick="toggle_doubles()" value="{{is_doubles}}"></button>
-			<button type="button" class="update" onclick="update()">Update <i class="fa fa-sync"></i></button>
-		</div>
-
-		<div id="row6" class="row">
-			<input type="text" id="tournament_slug" class="startgg tournament input" placeholder="startgg tournament slug">
-			<button type="button" id="tournament_slug_submit" class="startgg bottom button" onclick="getTournament()">Submit</button>
-			<select id="event"></select>
-			<button type="button" id="event_submit" class="startgg bottom button" onclick="getEvent()">Submit</button>
-		</div>
-
-		<div id="row7" class="row">
-			<button type="button" id="record_set" onclick="recordSet()" style="display:none;">Record</button>
-			<button type="button" id="clip" onclick="clip()" disabled="true" style="display:none;">Clip</button>
-			<button type="button" id="ffmpeg" onclick="ffmpeg()">Record</button>
-			<button type="button" id="ffmpeg-clip" onclick="ffmpegClip()">Clip</button>
-			
-			<div id="scene_box">
-				<select id="scenes"></select>
-				<div>
-					<button id="update_scene" class="scene" onclick="update_scene()">Change Scene</button>
-				</div>
-			</div>
+		<div id="data-actual" class="data actual column">
+			<input type="text" id="round-actual" class="data-text actual" value="{{round}}" placeholder="Round"
+				tabindex="-1" readonly="true">
 		</div>
 	</div>
-	<div id="right_wrapper">
-		<div id="row1r" class="row right">
-			<div id="data_actual" class="data">
-				<input type="text" id="round_actual" class="data_text actual" value="{{round}}" placeholder="Round" readonly="true">
-				<input id="best_of_actual" class="data_text actual" best_of="{{best_of}}" value="Best of {{best_of}}" readonly="true">
-			</div>
-		</div>
-		<div id="row2r" class="row right">
-			<div id="pages">
-				<button	id="page_left" class="page_button" onclick="showSets(false)"><i class="fa-solid fa-arrow-left"></i></button>
-				<button	id="page_right" class="page_button" onclick="showSets(true)"><i class="fa-solid fa-arrow-right"></i></button>
-			</div>
-			<div id="set1" class="set">
-				<div id="set1_wrapperL" class="set wrapper left">
-					<label id="set1_name1" class="startgg name left"></label>
-					<label id="set1_vs" class="startgg name vs">vs</label>
-					<label id="set1_name2" class="startgg name right"></label>
+	<div id="main">
+		<div id="left-wrapper">
+			<div id="p1-info-change" class="info change left">
+				<div id="p1-pronouns-wrapper" class="pronouns wrapper change">
+					<input type="text" id="p1-pronouns" class="pronouns change left"
+						value="{{crew1.activePlayer.pronouns}}" placeholder="Pronouns">
 				</div>
-				<div id="set1_wrapperR" class="set wrapper right">
-					<label id="set1_round" class="startgg round"></label>
-					<button	id="set_button" class="startgg button load" onclick="load_set(1)">Load</button>
+				<div id="p1-flag-wrapper" class="flag wrapper change">
+					<select class="flag change left" id="p1-flag"></select>
 				</div>
+				<div id="p1-text-change" class="name-container change">
+					<input type="text" id="p1-name" class="name change left" value="{{crew1.activePlayer.name}}"
+						placeholder="Player 1 name">
+				</div>
+				<img id="p1-character-change" class="csp change" src="csp" onclick="swapCharacter(1,1)">
+				<div class="column">
+					<input type="number" id="p1-score-change" class="score change left" pattern="[0-9]"
+						value="{{crew1.score}}">
+				</div>
+				<div class="column changer">
+					<button class="score-changer" onclick="changeScore(1,1)">+</button>
+					<button class="score-changer" onclick="changeScore(-1,1)">-</button>
+				</div>
+				<div class="column crew">
+					<input type="text" id="crew1-name" class="crew name left" value="{{crew1.name}}" placeholder="Crew Name">
+					<div class="crew row">
+						<button type="button" class="load-crew" onclick="loadCrew(1,1)" value="">Load</button>
+						<input type="text" id="t1-crew1" class="crew left" value="{{crew1.players.[0].name}}" placeholder="Player 1">
+						<button type="button" id="t1-crew1-toggle" class="toggle-crew" onclick="toggleCrew(1,1)" value=""></button>
+					</div>
+					<div class="crew row">
+						<button type="button" class="load-crew" onclick="loadCrew(1,2)" value="">Load</button>
+						<input type="text" id="t1-crew2" class="crew left" value="{{crew1.players.[1].name}}" placeholder="Player 2">
+						<button type="button" id="t1-crew2-toggle" class="toggle-crew" onclick="toggleCrew(1,2)" value=""></button>
+					</div>
+					<div class="crew row">
+						<button type="button" class="load-crew" onclick="loadCrew(1,3)" value="">Load</button>
+						<input type="text" id="t1-crew3" class="crew left" value="{{crew1.players.[2].name}}" placeholder="Player 3">
+						<button type="button" id="t1-crew3-toggle" class="toggle-crew" onclick="toggleCrew(1,3)" value=""></button>
+					</div>
+					<div class="crew row">
+						<button type="button" class="load-crew" onclick="loadCrew(1,4)" value="">Load</button>
+						<input type="text" id="t1-crew4" class="crew left" value="{{crew1.players.[3].name}}" placeholder="Player 4">
+						<button type="button" id="t1-crew4-toggle" class="toggle-crew" onclick="toggleCrew(1,4)" value=""></button>
+					</div>
+					<div class="crew row">
+						<button type="button" class="load-crew" onclick="loadCrew(1,5)" value="">Load</button>
+						<input type="text" id="t1-crew5" class="crew left" value="{{crew1.players.[4].name}}" placeholder="Player 5">
+						<button type="button" id="t1-crew5-toggle" class="toggle-crew" onclick="toggleCrew(1,5)" value=""></button>
+					</div>
+				</div>
+			</div>
 
+			<div id="middle-row" class="row">
+				<button type="button" id="swap-info" class="swap-sides" onclick="swapSides(true, false)">
+					Swap info <i class="fa-solid fa-arrows-up-down"></i>
+				</button>
+				<button type="button" id="swap-all" class="swap-sides" onclick="swapSides(true, true)">
+					Swap all <i class="fa-solid fa-arrows-up-down"></i>
+				</button>
+				<button type="button" id="swap-chars" class="swap-sides" onclick="swapSides(false, true)">
+					Swap chars. <i class="fa-solid fa-arrows-up-down"></i>
+				</button>
 			</div>
-			<div id="set2" class="set">
-				<div id="set2_wrapperL" class="set wrapper left">
-					<label id="set2_name1" class="startgg name left"></label>
-					<label id="set2_vs" class="startgg name vs">vs</label>
-					<label id="set2_name2" class="startgg name right"></label>
+			<div id="p2-info-change" class="info change right">
+				<div id="p2-pronouns-wrapper" class="pronouns wrapper change">
+					<input type="text" id="p2-pronouns" class="pronouns change right"
+						value="{{crew2.activePlayer.pronouns}}" placeholder="Pronouns">
 				</div>
-				<div id="set2_wrapperR" class="set wrapper right">
-					<label id="set2_round" class="startgg round"></label>
-					<button	id="set2_button" class="startgg button load" onclick="load_set(2)">Load</button>
+				<div id="p2-flag-wrapper" class="flag wrapper change">
+					<select class="flag change right" id="p2-flag"></select>
+				</div>
+				<div id="p2-text-change" class="name-container change">
+					<input type="text" id="p2-name" class="name change right" value="{{crew2.activePlayer.name}}"
+						placeholder="Player 1 name">
+				</div>
+				<img id="p2-character-change" class="csp change" src="csp" onclick="swapCharacter(2,1)">
+					<input type="number" id="p2-score-change" class="score change right" min="0" max="99"
+						value="{{crew2.score}}">
+				<div class="column changer">
+					<button class="score-changer" onclick="changeScore(1,2)">+</button>
+					<button class="score-changer" onclick="changeScore(-1,2)">-</button>
+				</div>
+				<div class="column crew">
+					<input type="text" id="crew2-name" class="crew name right" value="{{crew2.name}}" placeholder="Crew Name">
+					<div class="crew row">
+						<button type="button" class="load-crew" onclick="loadCrew(2,1)" value="">Load</button>
+						<input type="text" id="t2-crew1" class="crew right" value="{{crew2.players.[0].name}}" placeholder="Player 1">
+						<button type="button" id="t2-crew1-toggle" class="toggle-crew" onclick="toggleCrew(2,1)" value=""></button>
+					</div>
+					<div class="crew row">
+						<button type="button" class="load-crew" onclick="loadCrew(2,2)" value="">Load</button>
+						<input type="text" id="t2-crew2" class="crew right" value="{{crew2.players.[1].name}}" placeholder="Player 2">
+						<button type="button" id="t2-crew2-toggle" class="toggle-crew" onclick="toggleCrew(2,2)" value=""></button>
+					</div>
+					<div class="crew row">
+						<button type="button" class="load-crew" onclick="loadCrew(2,3)" value="">Load</button>
+						<input type="text" id="t2-crew3" class="crew right" value="{{crew2.players.[2].name}}" placeholder="Player 3">
+						<button type="button" id="t2-crew3-toggle" class="toggle-crew" onclick="toggleCrew(2,3)" value=""></button>
+					</div>
+					<div class="crew row">
+						<button type="button" class="load-crew" onclick="loadCrew(2,4)" value="">Load</button>
+						<input type="text" id="t2-crew4" class="crew right" value="{{crew2.players.[3].name}}" placeholder="Player 4">
+						<button type="button" id="t2-crew4-toggle" class="toggle-crew" onclick="toggleCrew(2,4)" value=""></button>
+					</div>
+					<div class="crew row">
+						<button type="button" class="load-crew" onclick="loadCrew(2,5)" value="">Load</button>
+						<input type="text" id="t2-crew5" class="crew right" value="{{crew2.players.[4].name}}" placeholder="Player 5">
+						<button type="button" id="t2-crew5-toggle" class="toggle-crew" onclick="toggleCrew(2,5)" value=""></button>
+					</div>
 				</div>
 			</div>
-			<div id="set3" class="set">
-				<div id="set3_wrapperL" class="set wrapper left">
-					<label id="set3_name1" class="startgg name left"></label>
-					<label id="set3_vs" class="startgg name vs">vs</label>
-					<label id="set3_name2" class="startgg name right"></label>
+			<div id="seat-wrapper" class="row">
+				<button id="seat-reset" onclick="resetSeats()"><i class="fa-solid fa-rotate-left"></i></button>
+				<div class="seat p1 left column" id="p1-left-seat" index="{{seatOrdering.[0]}}">
+					<span class="header">
+						<i class="fas fa-chair" style="opacity: 100%;"></i>
+						<i class="fas fa-chair" style="opacity: 15%;"></i>
+						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
+						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
+					</span>
+					<span class="name" tabindex="-1">{{crew1.activePlayer.name}}</span>
+					<img class="stock-icon" src="static/img/stock_icons/smash.png">
 				</div>
-				<div id="set3_wrapperR" class="set wrapper right">
-					<label id="set3_round" class="startgg round"></label>
-					<button	id="set3_button" class="startgg button load" onclick="load_set(3)">Load</button>
-				</div>
-			</div>
-			<div id="set4" class="set">
-				<div id="set4_wrapperL" class="set wrapper left">
-					<label id="set4_name1" class="startgg name left"></label>
-					<label id="set4_vs" class="startgg name vs">vs</label>
-					<label id="set4_name2" class="startgg name right"></label>
-				</div>
-				<div id="set4_wrapperR" class="set wrapper right">
-					<label id="set4_round" class="startgg round"></label>
-					<button	id="set4_button" class="startgg button load" onclick="load_set(4)">Load</button>
-				</div>
-			</div>
-			<div id="set5" class="set">
-				<div id="set5_wrapperL" class="set wrapper left">
-					<label id="set5_name1" class="startgg name left"></label>
-					<label id="set5_vs" class="startgg name vs">vs</label>
-					<label id="set5_name2" class="startgg name right"></label>
-				</div>
-				<div id="set5_wrapperR" class="set wrapper right">
-					<label id="set5_round" class="startgg round"></label>
-					<button	id="set5_button" class="startgg button load" onclick="load_set(5)">Load</button>
+				<button class="seat-changer" onclick="swapSeatSides()">Swap sides<br/><i class="fa-solid fa-left-right"></i></button>
+				<div class="seat p2 left column" id="p2-left-seat" index="{{seatOrdering.[2]}}">
+					<span class="header">
+						<i class="fas fa-chair" style="opacity: 15%;"></i>
+						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
+						<i class="fas fa-chair" style="opacity: 100%;"></i>
+						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
+					</span>
+					<span class="name" tabindex="-1">{{crew2.activePlayer.name}}</span>
+					<img class="stock-icon" src="static/img/stock_icons/smash.png">
 				</div>
 			</div>
+
+			<div id="data-wrapper" class="row">
+				<input type="text" id="tournament-change" value="{{tournament}}" placeholder="Tournament">
+				<div class="column">
+					<input type="text" id="round-change" value="{{round}}" placeholder="Round">
+				</div>
+				<button type="button" class="update" onclick="update()">Update <i class="fa fa-sync"></i></button>
+			</div>
+
+			<div id="caster-wrapper" class="row">
+				<img class="icon" id="caster-icon" src="static/img/microphone.svg" alt="Mic" />
+				<div class="caster row">
+					<input type="text" id="caster1-name" value="" class="caster-name" placeholder="Caster 1 name">
+					<input type="text" id="caster1-pronouns" value="" class="caster-pronouns" placeholder="Pronouns">
+				</div>
+				<div class="caster row">
+					<input type="text" id="caster2-name" value="" class="caster-name" placeholder="Caster 2 name">
+					<input type="text" id="caster2-pronouns" value="" class="caster-pronouns" placeholder="Pronouns">
+				</div>
+			</div>
+
+			<div id="obs-wrapper" class="row">
+				<img class="icon" id="obs-icon" src="static/img/obs.svg" alt="OBS" />
+				<div class="row" id="obs-load">
+					<button type="button" id="ffmpeg-clip" onclick="clip()"><img class="clip"
+							src="static/img/clip.svg" /></button>
+					<div id="scene-box">
+						<select id="scenes"></select>
+						<div>
+							<button id="update-scene" class="scene" onclick="updateScene()">Change Scene</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
 		</div>
+	</div>
+	<div id="characterSelect">
+		{{> characterChange}}
 	</div>
 </body>

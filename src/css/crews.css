@@ -71,17 +71,20 @@ button:focus {
 	box-shadow: 0px 1px 2px #222 !important;
 }
 
-input {
+input[type=text], input[type=number] {
 	padding: 10px 10px 10px 10px;
 	appearance: none;
 	-webkit-appearance: none;
 	display: inline-block;
 	background: #fafafa;
 	color: #323232;
-	width: 100%;
 	border: none;
 	border-radius: 5px;
 	box-shadow: 0px 4px 2px #222;
+}
+
+input[type=text] {
+    width: 100%;
 }
 
 input:focus {
@@ -204,6 +207,7 @@ button:disabled {
 	padding: 0.5em;
 	display: flex;
 	align-items: center;
+    justify-content: center;
 	background-color: var(--element-bg-color);
 	border-radius: 5px;
 	gap: 0.5em;
@@ -430,7 +434,10 @@ select.flag>option:disabled {
 	width: 55px;
 	text-align: center;
 	border-radius: 5px;
-	padding-right: 32px;
+}
+
+.score.change {
+    padding-right: 32px !important;
 }
 
 .swap-sides {
@@ -563,8 +570,8 @@ select.flag>option:disabled {
 }
 
 .caster-pronouns {
-	padding: 5px;
-	width: 65px;
+	padding: 5px!important;
+	width: 65px!important;
 }
 
 /* OBS */
@@ -810,4 +817,48 @@ span.stage {
 .startgg.button.save {
 	background-color: #FF9999;
 	border-bottom: 2px solid #AA4444;
+}
+
+.crew.column {
+    gap: 2px;
+}
+
+.crew.row {
+    gap: 4px;
+}
+
+input.crew[type=text] {
+    height: 10px;
+    padding: 5px;
+    width: 100px;
+}
+
+.crew.name {
+	width: 164px!important;
+	height: 16px!important;
+	font-size: 14px!important;
+	margin-bottom: 3px;
+}
+
+.load-crew {
+    font-size: 9px;
+    padding: 0px;
+    width: 40px;
+    height: 20px;
+}
+
+.toggle-crew {
+    font-size: 9px;
+    padding: 0px;
+    width: 20px;
+    height: 20px;
+	background-color: #CBFFC7;
+	border: none;
+	border-bottom: 3px solid #64B55E;
+}
+
+.toggle-crew.defeated {
+	background-color: #FF9999;
+	border: none;
+	border-bottom: 3px solid #AA4444;
 }

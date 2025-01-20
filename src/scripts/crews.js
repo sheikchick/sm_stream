@@ -10,6 +10,10 @@ var swapped = false;
 
 const phoneAspect = window.matchMedia("(max-aspect-ratio: 1/1), (max-width: 1000px)");
 
+var crew1 = []
+
+var crew2 = []
+
 $(document).ready(function () {
 	populateFlags();
 	obsConnect();
@@ -73,6 +77,7 @@ function clearChars() {
 
 function populateFlags() {
 	$("select.flag").each((key, select) => {
+		console.log(select)
 		//from flags.js
 		for(let [key, value] of Object.entries(continents)) {
 			$(select).append(`<option disabled>${key}</option>`)
@@ -117,20 +122,17 @@ function resetBackground(player) {
 }
 
 function update() {
+	crew1name = $("#crew1-name").val();
+
 	player1name = $("#p1-name").val();
 	player1char = $("#p1-character-change").attr("character");
 	player1colour = $("#p1-character-change").attr("colour");
 	player1pronouns = $("#p1-pronouns").val();
 	player1country = $("#p1-flag").find(":selected").val();
 
-	player1dname = $("#p1d-name").val();
-	player1dchar = $("#p1d-character-change").attr("character");
-	player1dcolour = $("#p1d-character-change").attr("colour");
-	player1dpronouns = $("#p1d-pronouns").val();
-	player1dcountry = $("#p1d-flag").find(":selected").val();
+	crew1score = parseInt($("#p1-score-change").val());
 
-	player1score = parseInt($("#p1-score-change").val());
-	player1entrant = $("#p1-entrant").val();
+	crew2name = $("#crew2-name").val();
 
 	player2name = $("#p2-name").val();
 	player2char = $("#p2-character-change").attr("character");
@@ -138,17 +140,9 @@ function update() {
 	player2pronouns = $("#p2-pronouns").val();
 	player2country = $("#p2-flag").find(":selected").val();
 
-	player2dname = $("#p2d-name").val();
-	player2dchar = $("#p2d-character-change").attr("character");
-	player2dcolour = $("#p2d-character-change").attr("colour");
-	player2dpronouns = $("#p2d-pronouns").val();
-	player2dcountry = $("#p2d-flag").find(":selected").val();
-
-	player2score = parseInt($("#p2-score-change").val());
-	player2entrant = $("#p2-entrant").val();
+	crew2score = parseInt($("#p2-score-change").val());
 
 	round = $("#round-change").val();
-	setId = $("#set-id").val()
 	tournament = $("#tournament-change").val();
 
 	caster1name = $("#caster1-name").val();
@@ -178,53 +172,77 @@ function update() {
 			$(".update").append('<i class="fa fa-sync"></i>')
 		}, 2000);
 	}, 5000);
-	fetch("/update", {
+	fetch("/update-crews", {
 		method: 'POST',
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({
-			team1: {
+			crew1: {
+				name: crew1name,
+				activePlayer: {
+					name: player1name,
+					character: player1char,
+					colour: player1colour,
+					pronouns: player1pronouns,
+					country: player1country,
+					port: info.crew1.activePlayer.port || 1
+				},
 				players: [
 					{
-						name: player1name,
-						character: player1char,
-						colour: player1colour,
-						pronouns: player1pronouns,
-						country: player1country,
-						port: info.team1.players[0].port || 1
+						name: $("#t1-crew1").val(),
+						alive: !$("#t1-crew1-toggle").hasClass("defeated")
 					},
 					{
-						name: player1dname,
-						character: player1dchar,
-						colour: player1dcolour,
-						pronouns: player1dpronouns,
-						country: player1dcountry,
-						port: info.team1.players[1].port || 2
+						name: $("#t1-crew2").val(),
+						alive: !$("#t1-crew2-toggle").hasClass("defeated")
+					},
+					{
+						name: $("#t1-crew3").val(),
+						alive: !$("#t1-crew3-toggle").hasClass("defeated")
+					},
+					{
+						name: $("#t1-crew4").val(),
+						alive: !$("#t1-crew4-toggle").hasClass("defeated")
+					},
+					{
+						name: $("#t1-crew5").val(),
+						alive: !$("#t1-crew5-toggle").hasClass("defeated")
 					}
 				],
-				score: player1score,
-				startggEntrant: player1entrant
+				score: crew1score,
 			},
-			team2: {
+			crew2: {
+				name: crew2name,
+				activePlayer: {
+					name: player2name,
+					character: player2char,
+					colour: player2colour,
+					pronouns: player2pronouns,
+					country: player2country,
+					port: info.crew2.activePlayer.port || 1
+				},
 				players: [
 					{
-						name: player2name,
-						character: player2char,
-						colour: player2colour,
-						pronouns: player2pronouns,
-						country: player2country,
-						port: info.team2.players[0].port || 3
+						name: $("#t2-crew1").val(),
+						alive: !$("#t2-crew1-toggle").hasClass("defeated")
 					},
 					{
-						name: player2dname,
-						character: player2dchar,
-						colour: player2dcolour,
-						pronouns: player2dpronouns,
-						country: player2dcountry,
-						port: info.team2.players[1].port || 4
+						name: $("#t2-crew2").val(),
+						alive: !$("#t2-crew2-toggle").hasClass("defeated")
 					},
+					{
+						name: $("#t2-crew3").val(),
+						alive: !$("#t2-crew3-toggle").hasClass("defeated")
+					},
+					{
+						name: $("#t2-crew4").val(),
+						alive: !$("#t2-crew4-toggle").hasClass("defeated")
+					},
+					{
+						name: $("#t2-crew5").val(),
+						alive: !$("#t2-crew5-toggle").hasClass("defeated")
+					}
 				],
-				score: player2score,
-				startggEntrant: player2entrant
+				score: crew2score,
 			},
 			casters: [
 				{
@@ -238,11 +256,7 @@ function update() {
 			],
 			seatOrdering,
 			round,
-			startggSetId: setId,
-			startggSwapped: swapped,
 			tournament,
-			isDoubles,
-			bestOf: bestOfValue
 		}),
 		signal: updateController.signal
 	}).then(() => {
@@ -293,12 +307,12 @@ function fixPlayerColours() {
 	}
 	//background colours
 	if(isDoubles) {
-		p1ColourIndex = resolveTeamColour(info.team1.players[0].colour)
-		p2ColourIndex = resolveTeamColour(info.team2.players[0].colour)
+		p1ColourIndex = resolveTeamColour(info.crew1.activePlayer.colour)
+		p2ColourIndex = resolveTeamColour(info.crew2.activePlayer.colour)
 
 	} else {
-		p1ColourIndex = Math.min(info.team1.players[0].port-1, 3)
-		p2ColourIndex = Math.min(info.team2.players[0].port-1, 3)
+		p1ColourIndex = Math.min(info.crew1.activePlayer.port-1, 3)
+		p2ColourIndex = Math.min(info.crew2.activePlayer.port-1, 3)
 	}
 	$("#p1-info-change").css("background-color", bgColours[p1ColourIndex])
 	$("input.left").css("border-bottom", `2px solid ${accentColours[p1ColourIndex]}`)
@@ -357,20 +371,32 @@ function fixSeatAccent(index) {
 }
 
 function loadInitialChanges() {
-	$("#tournament-slug").text(localStorage.getItem("startggSlug"))
 	$.ajax({
 		type: 'GET',
-		url: "/info.json",
+		url: "/crews.json",
 		data: {},
 		success: function (response) {
-			info = fixInfo(response);
-			swapped = info.startggSwapped
-
+			console.log(response)
+			info = fixCrews(response);
+			console.log(info)
 			//flags
-			$("#p1-flag").val(info.team1.players[0].country)
-			$("#p1d-flag").val(info.team1.players[1].country)
-			$("#p2-flag").val(info.team2.players[0].country)
-			$("#p2d-flag").val(info.team2.players[1].country)
+			$("#p1-flag").val(info.crew1.activePlayer.country)
+			$("#p2-flag").val(info.crew2.activePlayer.country)
+			//player states
+			let index = 1;
+			for(let player of info.crew1.players) {
+				if(player.alive === false) {
+					toggleCrew(1,index)
+				}
+				index++;
+			}
+			index = 1;
+			for(let player of info.crew2.players) {
+				if(player.alive === false) {
+					toggleCrew(2,index)
+				}
+				index++;
+			}
 		},
 		error: function (response) {
 			console.log(response)
@@ -382,36 +408,24 @@ function loadInitialChanges() {
 function loadChanges() {
 	$.ajax({
 		type: 'GET',
-		url: "/info.json",
+		url: "/crews.json",
 		data: {},
 		success: function (response) {
-			info = fixInfo(response);
-			swapped = info.startggSwapped
+			info = fixCrews(response);
 			//load team1 data
-			$("#p1-name-actual").attr("value", info.team1.players[0].name)
-			loadCharActual("1", info.team1.players[0].character, info.team1.players[0].colour)
-			if (info.team1.players.length >= 2) {
-				$("#p1d-name-actual").attr("value", info.team1.players[1].name)
-				loadCharActual("1d", info.team1.players[1].character, info.team1.players[1].colour)
+			$("#p1-name-actual").attr("value", info.crew1.activePlayer.name)
+			loadCharActual("1", info.crew1.activePlayer.character, info.crew1.activePlayer.colour)
+			if(document.getElementById("p1-score-actual").value != info.crew1.score) {
+				document.getElementById("p1-score-actual").value = info.crew1.score
+				document.getElementById("p1-score-change").value = info.crew1.score
 			}
-
-			if(document.getElementById("p1-score-actual").value != info.team1.score) {
-				document.getElementById("p1-score-actual").value = info.team1.score
-				document.getElementById("p1-score-change").value = info.team1.score
-			}
-
 
 			//load team2 data
-			$("#p2-name-actual").attr("value", info.team2.players[0].name)
-			loadCharActual("2", info.team2.players[0].character, response.team2.players[0].colour)
-			if (info.team2.players.length >= 2) {
-				$("#p2d-name-actual").attr("value", info.team2.players[1].name)
-				loadCharActual("2d", info.team2.players[1].character, response.team2.players[1].colour)
-			}
-
-			if(document.getElementById("p2-score-actual").value != info.team2.score) {
-				document.getElementById("p2-score-actual").value = info.team2.score
-				document.getElementById("p2-score-change").value = info.team2.score
+			$("#p2-name-actual").attr("value", info.crew2.activePlayer.name)
+			loadCharActual("2", info.crew2.activePlayer.character, info.crew2.activePlayer.colour)
+			if(document.getElementById("p2-score-actual").value != info.crew2.score) {
+				document.getElementById("p2-score-actual").value = info.crew2.score
+				document.getElementById("p2-score-change").value = info.crew2.score
 			}
 
 			//fixPlayerColours()
@@ -424,7 +438,6 @@ function loadChanges() {
 
 			//load
 			$("#round-actual").attr("value", info.round)
-			$("#best-of-actual").attr("value", "Bo" + info.bestOf)
 		},
 		error: function (response) {
 			console.log(response)
@@ -437,76 +450,94 @@ function loadChanges() {
 	setTimeout(loadChanges, 1000)
 }
 
-function fixInfo(info) {
-    let newInfo = {
-        "team1": {
+function fixCrews(crew) {
+    let newCrews = {
+        "crew1": {
+			"name": crew?.crew1?.name || "Crew 1",
+			"activePlayer": {
+				"name": crew?.crew1?.activePlayer?.name || "Player 1",
+				"character": crew?.crew1?.activePlayer?.character || "fox",
+				"colour": crew?.crew1?.activePlayer?.colour || "red",
+				"pronouns": crew?.crew1?.activePlayer?.pronouns || "",
+				"country": crew?.crew1?.activePlayer?.country || "UK",
+				"port": crew?.crew1?.activePlayer?.port || 1
+			},
             "players": [
                 {
-                    "name": info?.team1?.players?.[0]?.name || "Player 1",
-                    "character": info?.team1?.players?.[0]?.character || "fox",
-                    "colour": info?.team1?.players?.[0]?.colour || "red",
-                    "pronouns": info?.team1?.players?.[0]?.pronouns || "",
-					"country": info?.team1?.players?.[0]?.country || "EU",
-                    "port": info?.team1?.players?.[0]?.port || 1
+                    "name": crew?.crew1?.players?.[0]?.name || "Player 1",
+                    "alive": crew?.crew1?.players?.[0]?.alive
                 },
-                {
-                    "name": info?.team1?.players?.[1]?.name || "Player 4",
-                    "character": info?.team1?.players?.[1]?.character || "falco",
-                    "colour": info?.team1?.players?.[1]?.colour || "red",
-                    "pronouns": info?.team1?.players?.[1]?.pronouns || "",
-					"country": info?.team1?.players?.[1]?.country || "EU",
-                    "port": info?.team1?.players?.[1]?.port || 2
+				{
+                    "name": crew?.crew1?.players?.[1]?.name || "Player 2",
+                    "alive": crew?.crew1?.players?.[1]?.alive
+                },
+				{
+                    "name": crew?.crew1?.players?.[2]?.name || "Player 3",
+                    "alive": crew?.crew1?.players?.[2]?.alive
+                },
+				{
+                    "name": crew?.crew1?.players?.[3]?.name || "Player 4",
+                    "alive": crew?.crew1?.players?.[3]?.alive
+                },
+				{
+                    "name": crew?.crew1?.players?.[4]?.name || "Player 5",
+                    "alive": crew?.crew1?.players?.[4]?.alive
                 }
             ],
-            "score": info?.team1?.score || 0,
-            "startggEntrant": info?.team1?.startggEntrant || "",
+            "score": crew?.crew1?.score || 0,
         },
-        "team2": {
+        "crew2": {
+			"name": crew?.crew2?.name || "Crew 2",
+			"activePlayer": {
+				"name": crew?.crew2?.activePlayer?.name || "Player 1",
+				"character": crew?.crew2?.activePlayer?.character || "fox",
+				"colour": crew?.crew2?.activePlayer?.colour || "red",
+				"pronouns": crew?.crew2?.activePlayer?.pronouns || "",
+				"country": crew?.crew2?.activePlayer?.country || "UK",
+				"port": crew?.crew2?.activePlayer?.port || 1
+			},
             "players": [
                 {
-                    "name": info?.team2?.players?.[0]?.name || "Player 2",
-                    "character": info?.team2?.players?.[0]?.character || "sheik",
-                    "colour": info?.team2?.players?.[0]?.colour || "blue",
-                    "pronouns": info?.team2?.players?.[0]?.pronouns || "",
-					"country": info?.team2?.players?.[0]?.country || "EU",
-                    "port": info?.team2?.players?.[0]?.port || 1
+                    "name": crew?.crew2?.players?.[0]?.name || "Player 1",
+                    "alive": crew?.crew2?.players?.[0]?.alive
                 },
-                {
-                    "name": info?.team2?.players?.[1]?.name || "Player 3",
-                    "character": info?.team2?.players?.[1]?.character || "peach",
-                    "colour": info?.team2?.players?.[1]?.colour || "blue",
-                    "pronouns": info?.team2?.players?.[1]?.pronouns || "",
-					"country": info?.team2?.players?.[1]?.country || "EU",
-                    "port": info?.team2?.players?.[1]?.port || 2
+				{
+                    "name": crew?.crew2?.players?.[1]?.name || "Player 2",
+                    "alive": crew?.crew2?.players?.[1]?.alive
+                },
+				{
+                    "name": crew?.crew2?.players?.[2]?.name || "Player 3",
+                    "alive": crew?.crew2?.players?.[2]?.alive
+                },
+				{
+                    "name": crew?.crew2?.players?.[3]?.name || "Player 4",
+                    "alive": crew?.crew2?.players?.[3]?.alive
+                },
+				{
+                    "name": crew?.crew2?.players?.[4]?.name || "Player 5",
+                    "alive": crew?.crew2?.players?.[4]?.alive
                 }
             ],
-            "score": info?.team2?.score || 0,
-            "startggEntrant": info?.team2?.startggEntrant || "",
+            "score": crew?.crew2?.score || 0,
         },
         "casters": [
             {
-                "name": info?.casters?.[0].name || "",
-                "pronouns": info?.casters?.[0].pronouns || "",
+                "name": crew?.casters?.[0].name || "",
+                "pronouns": crew?.casters?.[0].pronouns || "",
             },
             {
-                "name": info?.casters?.[1].name || "",
-                "pronouns": info?.casters?.[1].pronouns || "",
+                "name": crew?.casters?.[1].name || "",
+                "pronouns": crew?.casters?.[1].pronouns || "",
             }
         ],
-        "seatOrdering": info?.seatOrdering || [ "1","2","3","4" ],
-        "round": info?.round || "",
-        "startggSetId": info?.startggSetId || "",
-		"startggSwapped": swapped || false,
-        "tournament": info?.tournament || "",
-        "isDoubles": info?.isDoubles || false,
-        "bestOf": info?.bestOf || 5,
-        "activePlayers": info?.activePlayers || [ 1,2 ]
+        "seatOrdering": crew?.seatOrdering || [ "1","2","3","4" ],
+        "round": crew?.round || "",
+        "tournament": crew?.tournament || ""
     }
-    return newInfo;
+    return newCrews;
 }
 
 function updateSeatsLoop() {
-	localStorage.setItem("startggSlug", $("#tournament-slug").text())
 	$(".seat").each((index, seat) => {
 		player = getSeatPlayer($(seat).attr("index"))
 		$(seat).find(".name").text(player.name)
@@ -531,20 +562,10 @@ function getSeatPlayer(index) {
 			name = $("#p1-name").val();
 			character = $("#p1-character-change");
 			break;
-		case "2":
-		case 2:
-			name = $("#p1d-name").val();
-			character = $("#p1d-character-change");
-			break;
 		case "3":
 		case 3:
 			name = $("#p2-name").val();
 			character = $("#p2-character-change");
-			break;
-		case "4":
-		case 4:
-			name = $("#p2d-name").val();
-			character = $("#p2d-character-change");
 			break;
 		default:
 			return ""
@@ -595,76 +616,42 @@ function swapSides(info, characters) {
 	if(info) {
 		swapped = !swapped
 		player1name = $("#p1-name").val();
-		player1dname = $("#p1d-name").val();
 		player2name = $("#p2-name").val();
-		player2dname = $("#p2d-name").val();
-	
-		team1entrant = $("#p1-entrant").val();
 	
 		player1pronouns = $("#p1-pronouns").val();
-		player1dpronouns = $("#p1d-pronouns").val();
 		player2pronouns = $("#p2-pronouns").val();
-		player2dpronouns = $("#p2d-pronouns").val();
 	
-		team2entrant = $("#p2-entrant").val();
 	
 		player1flag = $("#p1-flag").val();
-		player1dflag = $("#p1d-flag").val();
 		player2flag = $("#p2-flag").val();
-		player2dflag = $("#p2d-flag").val();
 	
 		$("#p1-name").val(player2name);
-		$("#p1d-name").val(player2dname);
 		$("#p2-name").val(player1name);
-		$("#p2d-name").val(player1dname);
 	
-		$("#p1-entrant").val(team2entrant);
 	
 		$("#p1-pronouns").val(player2pronouns);
-		$("#p1d-pronouns").val(player2dpronouns);
 		$("#p2-pronouns").val(player1pronouns);
-		$("#p2d-pronouns").val(player1dpronouns);
-	
-		$("#p2-entrant").val(team1entrant);
-	
+		
 		$("#p1-flag").val(player2flag).change();
-		$("#p1d-flag").val(player2dflag).change();
 		$("#p2-flag").val(player1flag).change();
-		$("#p2d-flag").val(player1dflag).change();
 	}
 	if (characters) {
 		p1 = {
 			character: $("#p1-character-change").attr("character"),
 			colour: $("#p1-character-change").attr("colour")
 		};
-		p1d = {
-			character: $("#p1d-character-change").attr("character"),
-			colour: $("#p1d-character-change").attr("colour")
-		};
 		p2 = {
 			character: $("#p2-character-change").attr("character"),
 			colour: $("#p2-character-change").attr("colour")
-		};
-		p2d = {
-			character: $("#p2d-character-change").attr("character"),
-			colour: $("#p2d-character-change").attr("colour")
 		};
 
 		$("#p1-character-change").attr("character", p2.character);
 		$("#p1-character-change").attr("colour", p2.colour);
 		$("#p1-character-change").attr("src", `static/img/csp_icons/${p2.character}/${p2.colour}.png`);
 
-		$("#p1d-character-change").attr("character", p2d.character);
-		$("#p1d-character-change").attr("colour", p2d.colour);
-		$("#p1d-character-change").attr("src", `static/img/csp_icons/${p2d.character}/${p2d.colour}.png`);
-
 		$("#p2-character-change").attr("character", p1.character);
 		$("#p2-character-change").attr("colour", p1.colour);
 		$("#p2-character-change").attr("src", `static/img/csp_icons/${p1.character}/${p1.colour}.png`);
-
-		$("#p2d-character-change").attr("character", p1d.character);
-		$("#p2d-character-change").attr("colour", p1d.colour);
-		$("#p2d-character-change").attr("src", `static/img/csp_icons/${p1d.character}/${p1d.colour}.png`);
 	}
 }
 
@@ -686,6 +673,18 @@ function swapTeam(n) {
 
 	$(`#p${n}-flag`).val(player2flag).change();
 	$(`#p${n}d-flag`).val(player1flag).change();
+}
+
+function loadCrew(crewIndex, memberIndex) {
+	$(`#p${crewIndex}-name`).val($(`#t${crewIndex}-crew${memberIndex}`).val())
+}
+
+function toggleCrew(crewIndex, memberIndex) {
+	if($(`#t${crewIndex}-crew${memberIndex}-toggle`).hasClass("defeated")) {
+		$(`#t${crewIndex}-crew${memberIndex}-toggle`).removeClass("defeated")
+	} else {
+		$(`#t${crewIndex}-crew${memberIndex}-toggle`).addClass("defeated")
+	}
 }
 
 function toggleDoubles() {

@@ -47,6 +47,7 @@ venv/
 node_modules/
 slp/
 __pycache__/
+ffmpeg/
 
 # OTHER #
 #########
@@ -54,6 +55,7 @@ desktop.ini
 overlay/**
 dist/**
 static/img/vs_icons/**
+static/img/stock_icons/!characters/**
 static/overlay/**
 data/json/tournaments/**
 !data/json/tournaments/sm-test/

@@ -236,11 +236,9 @@ continents = {
 }
 
 function fixCountry(country) {
-    console.log()
     if (!country) {
         return("United Kingdom")
     }
-    console.log(country)
     switch(country) {
         case "United Kingdom":
         case "Scotland":
@@ -314,27 +312,5 @@ function fixCountry(country) {
             return("Europe")
         default:
             return("United Kingdom") //should represent as a generic 'World' but its funny
-    }
-}
-
-/**
- * Country overrides for start.gg
- * @param {string} id 
- */
-function getCountry(id) {
-    switch(id) {
-        case "4d748723": //Rain
-        case "d631c836": //Pedlar
-            return "Wales"
-        case "f825129b": //TTS
-        case "a6b8165f": //stylo
-        case "ae822819": //Sho
-        case "84930fa2": //Fenrir
-        case "97843dde": //Socks
-        case "b81e0517": //Pyros
-        case "3e83f059": //GROM
-            return "Scotland"
-        default:
-            return null;
     }
 }

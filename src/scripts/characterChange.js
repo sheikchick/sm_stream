@@ -1,58 +1,58 @@
 var shown = false;
 
-function swapCharacter(player, slot) {
+function swapCharacter(id, index = 0) {
 	shown = true;
-	$("#characterSelect").attr("player", player)
-	$("#characterSelect").attr("slot", slot)
-	switch(player) {
+	$("#characterSelect").attr("imgId", id)
+	switch (index) {
 		case 1:
 			$("#characterSelect").css("margin-top", "120px")
 			break;
 		case 2:
 			$("#characterSelect").css("margin-top", "378px")
 			break;
+		default:
+			$("#characterSelect").css("margin-top", "200px")
+			$("#characterSelect").css("transform", "scale(100%)")
 	}
-	for(i = 0; i<=5; i++) {
-		$(`#colour${i+1}`).attr('src', `static/img/stock_icons/empty.png`)
+	for (i = 0; i <= 5; i++) {
+		$(`#colour${i + 1}`).attr('src', `static/img/stock_icons/empty.png`)
 	}
 	$("#characterSelect").show()
 	$("#main").css("opacity", "0.25")
 }
 
-$("body").on("click", function(el) {
-	if(el.target.id.includes('character-change') || el.target.className === "css-character") {
-		""
-	} else {
+
+$("body").on("click", function (el) {
+	if (!el.target.id.includes('character-change') && el.target.className !== "css-character") {
 		shown = false;
 		$("#characterSelect").hide()
 		$("#main").css("opacity", "1")
 	}
 });
 
-$(".css-character").on("click", function(el) {
+$(".css-character").on("click", function (el) {
+	$(".css-character").css("background-color", "transparent")
+	$(el.target).css("background-color", "rgba(255,255,255,0.5)")
 	$.ajax({
 		type: 'GET',
 		url: "/character/" + el.target.id,
 		data: {},
 		success: function (response) {
-			for(i = 0; i<=5; i++) {
+			for (i = 0; i <= 5; i++) {
 				let img = ""
 				if (i < response.colours.length) {
 					img = `${el.target.id}/${response.colours[i]}.png`
-					$(`#colour${i+1}`).attr('character', el.target.id)
-					$(`#colour${i+1}`).attr('colour', response.colours[i])
-					$(`#colour${i+1}`).show()
+					$(`#colour${i + 1}`).attr('character', el.target.id)
+					$(`#colour${i + 1}`).attr('colour', response.colours[i])
+					$(`#colour${i + 1}`).show()
 				} else {
 					img = "empty.png"
-					$(`#colour${i+1}`).attr('character', "")
-					$(`#colour${i+1}`).attr('colour', "")
-					$(`#colour${i+1}`).hide()
+					$(`#colour${i + 1}`).attr('character', "")
+					$(`#colour${i + 1}`).attr('colour', "")
+					$(`#colour${i + 1}`).hide()
 				}
-				$(`#colour${i+1}`).attr('src', `static/img/stock_icons/${img}`)
+				$(`#colour${i + 1}`).attr('src', `static/img/stock_icons/${img}`)
 			}
-			response.colours.forEach(element => {
-				console.log(element)
-			});
 		},
 		error: function (response) {
 			console.log(response)
@@ -61,15 +61,27 @@ $(".css-character").on("click", function(el) {
 	})
 });
 
-$(".char-colour").on("click", function(el) {
-	player = $("#characterSelect").attr("player")
-	slot = $("#characterSelect").attr("slot")
+$('.css-character').on('dragstart', function (event) { event.preventDefault(); });
+
+$(".char-colour").on("click", function (el) {
+	let iconType = "stock_icons"
+	switch (window.location.pathname) {
+		case "/auto":
+			iconType = "csp_icons";
+			break;
+		case "/database":
+			iconType = "stock_icons"
+			break;
+	}
+	imgId = $("#characterSelect").attr("imgId")
 	character = $(el.target).attr("character")
 	colour = $(el.target).attr("colour")
-	$(`#p${player}${slot === "2" ? "d" : ""}-character-change`).attr("src", `static/img/csp_icons/${character}/${colour}.png`)
-	$(`#p${player}${slot === "2" ? "d" : ""}-character-change`).attr("character", character)
-	$(`#p${player}${slot === "2" ? "d" : ""}-character-change`).attr("colour", colour)
+	$(`#${imgId}`).attr("src", `static/img/${iconType}/${character}/${colour}.png`)
+	$(`#${imgId}`).attr("character", character)
+	$(`#${imgId}`).attr("colour", colour)
 });
+
+$('.char-colour').on('dragstart', function (event) { event.preventDefault(); });
 
 function initCharSelectors() {
 	const getColours = (e) => {
@@ -77,7 +89,7 @@ function initCharSelectors() {
 		const [player, character] = e.target.id.split("_");
 
 		fetch(`/character/${character}`).then((response) => response.json()
-			.then(({colours}) => {
+			.then(({ colours }) => {
 				const buttons = $(`#${player}_csp`).children();
 
 				let i = 0
@@ -103,7 +115,7 @@ function initCharSelectors() {
 		e.preventDefault();
 		const character = e.target.getAttribute("character");
 		const colour = e.target.getAttribute("colour");
-		
+
 		const player = e.target.id.replace(/_.*/, e.type === "contextmenu" ? "d" : "");
 		load_char_change(player, character, colour);
 	}
@@ -143,7 +155,7 @@ function hideColour(player, slot) {
 }
 
 function empty(player, port) {
-	if(port == 2 && is_doubles) {
+	if (port == 2 && is_doubles) {
 		$("#p" + player + "d_character_change").attr("src", "csp");
 		$("#p" + player + "d_character_change").attr("character", "")
 		$("#p" + player + "d_character_change").attr("colour", "")

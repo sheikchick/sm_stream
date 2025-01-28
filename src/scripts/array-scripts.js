@@ -91,14 +91,9 @@ function showGetSets() {
 	$("#get-sets").show()
 }
 
-function showSets(up, showButtons) {
-	$("#page-left").attr("onclick", `showSets(false, ${showButtons})`)
-	$("#page-right").attr("onclick", `showSets(true, ${showButtons})`)
-	if (showButtons) {
-		$(".startgg.button.save").show()
-	} else {
-		$(".startgg.button.save").hide()
-	}
+function showSets(up) {
+	$("#page-left").attr("onclick", `showSets(false)`)
+	$("#page-right").attr("onclick", `showSets(true)`)
 	const MAX_PER_PAGE = 5;
 	if (up) {
 		//check if going over the amount

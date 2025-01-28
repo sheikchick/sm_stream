@@ -3,7 +3,7 @@
 	flex-direction: column;
 	gap: 10px;
 
-	position: absolute;
+	position: fixed;
 	left: 16px;
 	top: 16px;
 }

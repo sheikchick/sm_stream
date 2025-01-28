@@ -17,6 +17,14 @@ function getTournamentEvents() {
 					tournament(slug:$name){
 						id
 						name
+						images {
+							id
+							height
+							ratio
+							type
+							url
+							width
+						}
 						events{
 							id
 							name
@@ -31,15 +39,25 @@ function getTournamentEvents() {
 	})
 		.then((res) => res.json())
 		.then((result) => {
+			//clear up
 			$("#streams").hide()
 			$("#events").hide()
 			$("#phases").hide()
 			$("#phase-groups").hide()
 			$("#get-sets").hide()
 			if (result["data"]["tournament"] == null) {
-				$("#right-wrapper").css("display", "none")
+				
 				return
 			}
+			//proceed
+			//set image
+			image = result.data.tournament.images.find((el) => {
+				return el.type === "profile";
+			})
+			$("#tournament-image").attr("src", image.url)
+			//set up autocomplete
+			getDBAutocompleteSlug(tournamentSlug)
+			//add new events
 			$("#events").empty()
 			$("#events").append(new Option("Select...", 0));
 			for (let event of result["data"]["tournament"]["events"]) {
@@ -79,7 +97,7 @@ function getEventPhases() {
 			`,
 			variables: {
 				id: eventId
-			},
+			}, getSets
 		}),
 	})
 		.then((res) => res.json())
@@ -95,8 +113,13 @@ function getEventPhases() {
 			$("#phases").empty()
 			$("#phases").append(new Option("Select...", 0));
 			for (let phase of result["data"]["event"]["phases"]) {
-				phaseOption = new Option(phase["name"], phase["id"]);
+				phaseOption = `<option value="${phase.id}" disabled>${phase.name}</option>`;
 				$("#phases").append(phaseOption);
+				console.log(phase)
+				for (let phaseGroup of phase.phaseGroups.nodes) {
+					phaseGroupOption = `<option value="${phaseGroup.id}">${phase.name} ${phaseGroup.displayIdentifier}</option>`;
+					$("#phases").append(phaseGroupOption);
+				}
 				$("#phases").attr("tournament-slug", tournamentSlug)
 				$("#phases").show()
 			}
@@ -189,26 +212,26 @@ function getStreamQueues() {
 			},
 		}),
 	})
-	.then((res) => res.json())
-	.then((result) => {
-		$("#streams").hide()
-		$("#events").hide()
-		$("#phases").hide()
-		$("#phase-groups").hide()
-		$("#get-sets").hide()
-		$("#streams").empty()
-		streamQueue = result.data.tournament.streamQueue
-		if(streamQueue.length === 1) {
-			getStreamQueue(tournamentSlug, streamQueue[0].stream.streamName)
-		} else {
-			for (let stream of streamQueue) {
-				streamOption = new Option(stream.stream["streamName"], stream.stream["streamName"], false, false);
-				$("#streams").append(streamOption);
-				$("#streams").attr("tournament-slug", tournamentSlug)
-				$("#streams").show()
+		.then((res) => res.json())
+		.then((result) => {
+			$("#streams").hide()
+			$("#events").hide()
+			$("#phases").hide()
+			$("#phase-groups").hide()
+			$("#get-sets").hide()
+			$("#streams").empty()
+			streamQueue = result.data.tournament.streamQueue
+			if (streamQueue.length === 1) {
+				getStreamQueue(tournamentSlug, streamQueue[0].stream.streamName)
+			} else {
+				for (let stream of streamQueue) {
+					streamOption = new Option(stream.stream["streamName"], stream.stream["streamName"], false, false);
+					$("#streams").append(streamOption);
+					$("#streams").attr("tournament-slug", tournamentSlug)
+					$("#streams").show()
+				}
 			}
-		}
-	});
+		});
 }
 
 /* GET AND LOAD SETS FROM THE STREAMQUEUE */
@@ -268,26 +291,26 @@ function getStreamQueue(tournamentSlug, streamName) {
 			},
 		}),
 	})
-	.then((res) => res.json())
-	.then((result) => {
-		console.log(result.data.tournament.streamQueue)
-		sets = []
-		streamQueue = result.data.tournament.streamQueue.find((element) => (element))
-		for (let set of streamQueue.sets) {
-			matchRound = set.phaseGroup["bracketType"] == "ROUND_ROBIN"
-							? set.phaseGroup["phase"]["name"] + " " + set.phaseGroup["displayIdentifier"]
-							: set["fullRoundText"]
-			sets.push(constructSetObject(set, matchRound))
-		}
-		setPage = 0;
-		showSets(true, false);
-	});
+		.then((res) => res.json())
+		.then((result) => {
+			console.log(result.data.tournament.streamQueue)
+			sets = []
+			streamQueue = result.data.tournament.streamQueue.find((element) => (element))
+			for (let set of streamQueue.sets) {
+				matchRound = set.phaseGroup["bracketType"] == "ROUND_ROBIN"
+					? set.phaseGroup["phase"]["name"] + " " + set.phaseGroup["displayIdentifier"]
+					: set["fullRoundText"]
+				sets.push(constructSetObject(set, matchRound))
+			}
+			setPage = 0;
+			showSets(true, false);
+		});
 }
 
 
 /* GET AND LOAD SETS FOR A GIVEN PHASEGROUP */
 function getSets(stateArray, hideEmpty, showButtons) {
-	phaseGroup = $("#phase-groups :selected").val();
+	phaseGroup = $("#phases :selected").val();
 	fetch('https://api.start.gg/gql/alpha', {
 		method: 'POST',
 		headers: {
@@ -345,19 +368,22 @@ function getSets(stateArray, hideEmpty, showButtons) {
 			},
 		}),
 	})
-	.then((res) => res.json())
-	.then((result) => {
-		sets = []
-		phaseGroup = result["data"]["phaseGroup"]
-		for (let set of phaseGroup["sets"]["nodes"]) {
-			matchRound = phaseGroup["bracketType"] == "ROUND_ROBIN"
-							? phaseGroup["phase"]["name"] + " " + phaseGroup["displayIdentifier"]
-							: set["fullRoundText"]
-			sets.push(constructSetObject(set, matchRound))
-		}
-		setPage = 0;
-		showSets(true, showButtons);
-	});
+		.then((res) => res.json())
+		.then((result) => {
+			sets = []
+			phaseGroup = result["data"]["phaseGroup"]
+			for (let set of phaseGroup["sets"]["nodes"]) {
+				matchRound = phaseGroup["bracketType"] == "ROUND_ROBIN"
+					? phaseGroup["phase"]["name"] + " " + phaseGroup["displayIdentifier"]
+					: set["fullRoundText"]
+				set = constructSetObject(set, matchRound)
+				if (set !== null) {
+					sets.push(set)
+				}
+			}
+			setPage = 0;
+			showSets(true, showButtons);
+		});
 }
 
 function constructSetObject(set, matchRound) {
@@ -374,61 +400,35 @@ function constructSetObject(set, matchRound) {
 		team1 = set["slots"][0]
 		team2 = set["slots"][1]
 
-		//player 1
+		setIsDoubles = team1["entrant"]["participants"].length > 1
+
+		//team1
 		p1Entrant = team1["entrant"]["id"]
-		p1UserId = ""
-		p1Pronouns = ""
-		p1Country = ""
-		if (team1["entrant"]["participants"][0]["user"] != null) {
-			p1UserId = team1["entrant"]["participants"][0]["user"]["discriminator"]
-			p1Pronouns = team1["entrant"]["participants"][0]["user"]["genderPronoun"]
-			p1Country = getCountry(p1UserId) || 
-				(team1["entrant"]["participants"][0]["user"]["location"]["country"] || team1["entrant"]["participants"][0]["contactInfo"]["country"])
-		}
-		p1Name = team1["entrant"]["participants"][0]["gamerTag"]
+
+		p1Slug = team1.entrant.participants[0].user?.discriminator || ""
+		p1Name = team1.entrant.participants[0].gamerTag || ""
+		p1Pronouns = team1.entrant.participants[0].user?.genderPronoun || ""
+		p1Country = team1.entrant.participants[0].user?.location?.country || team1.entrant.participants[0].contactInfo?.country || ""
 
 		//player 1 doubles
-		p1DoublesUserId = ""
-		p1DoublesPronouns = ""
-		p1DoublesName = ""
-		p1DoublesCountry = ""
-		if (team1["entrant"]["participants"].length > 1) {
-			if (team1["entrant"]["participants"][1]["user"] != null) {
-				p1DoublesUserId = team1["entrant"]["participants"][1]["user"]["discriminator"]
-				p1DoublesPronouns = team1["entrant"]["participants"][1]["user"]["genderPronoun"]
-				p1DoublesCountry = getCountry(p1DoublesUserId) || 
-					(team1["entrant"]["participants"][1]["user"]["location"]["country"] || team1["entrant"]["participants"][1]["contactInfo"]["country"])
-			}
-			p1DoublesName = team1["entrant"]["participants"][1]["gamerTag"]
-		}
+		p1dSlug = setIsDoubles ? team1.entrant.participants[1].user?.discriminator || "" : ""
+		p1dName = setIsDoubles ? team1.entrant.participants[1].gamerTag || "" : ""
+		p1dPronouns = setIsDoubles ? team1.entrant.participants[1].user?.genderPronoun || "" : ""
+		p1dCountry = setIsDoubles ? team1.entrant.participants[1].user?.location?.country || team1.entrant.participants[1].contactInfo?.country || "" || "" : ""
 
-		//player 2
+		//team2
 		p2Entrant = team2["entrant"]["id"]
-		p2UserId = ""
-		p2Pronouns = ""
-		p2Country = ""
-		if (team2["entrant"]["participants"][0]["user"] != null) {
-			p2UserId = team2["entrant"]["participants"][0]["user"]["discriminator"]
-			p2Pronouns = team2["entrant"]["participants"][0]["user"]["genderPronoun"]
-			p2Country = getCountry(p2UserId) || 
-				(team2["entrant"]["participants"][0]["user"]["location"]["country"] || team2["entrant"]["participants"][0]["contactInfo"]["country"])
-		}
-		p2Name = team2["entrant"]["participants"][0]["gamerTag"]
 
-		//player 2 doubles
-		p2DoublesUserId = ""
-		p2DoublesPronouns = ""
-		p2DoublesName = ""
-		p2DoublesCountry = ""
-		if (team2["entrant"]["participants"].length > 1) {
-			if (team2["entrant"]["participants"][1]["user"] != null) {
-				p2DoublesUserId = team2["entrant"]["participants"][1]["user"]["discriminator"]
-				p2DoublesPronouns = team2["entrant"]["participants"][1]["user"]["genderPronoun"]
-				p2DoublesCountry = getCountry(p2DoublesUserId) || 
-					(team2["entrant"]["participants"][1]["user"]["location"]["country"] || team2["entrant"]["participants"][1]["contactInfo"]["country"])
-			}
-			p2DoublesName = team2["entrant"]["participants"][1]["gamerTag"]
-		}
+		p2Slug = team2.entrant.participants[0].user?.discriminator || ""
+		p2Name = team2.entrant.participants[0].gamerTag || ""
+		p2Pronouns = team2.entrant.participants[0].user?.genderPronoun || ""
+		p2Country = team2.entrant.participants[0].user?.location?.country || team2.entrant.participants[0].contactInfo?.country || ""
+
+		//player 1 doubles
+		p2dSlug = setIsDoubles ? team2.entrant.participants[1].user?.discriminator || "" : ""
+		p2dName = setIsDoubles ? team2.entrant.participants[1].gamerTag || "" : ""
+		p2dPronouns = setIsDoubles ? team2.entrant.participants[1].user?.genderPronoun || "" : ""
+		p2dCountry = setIsDoubles ? team2.entrant.participants[1].user?.location?.country || team2.entrant.participants[1].contactInfo?.country || "" || "" : ""
 
 		matchData = {
 			"id": set["id"],
@@ -437,16 +437,16 @@ function constructSetObject(set, matchRound) {
 				"entrantId": p1Entrant,
 				"data": [
 					{
-						"id": p1UserId,
+						"slug": p1Slug,
 						"name": p1Name,
 						"pronouns": p1Pronouns,
 						"country": p1Country
 					},
 					{
-						"id": p1DoublesUserId,
-						"name": p1DoublesName,
-						"pronouns": p1DoublesPronouns,
-						"country": p1DoublesCountry
+						"slug": p1dSlug,
+						"name": p1dName,
+						"pronouns": p1dPronouns,
+						"country": p1dCountry
 					}
 				]
 			},
@@ -454,24 +454,23 @@ function constructSetObject(set, matchRound) {
 				"entrantId": p2Entrant,
 				"data": [
 					{
-						"id": p2UserId,
+						"slug": p2Slug,
 						"name": p2Name,
 						"pronouns": p2Pronouns,
 						"country": p2Country
 					},
 					{
-						"id": p2DoublesUserId,
-						"name": p2DoublesName,
-						"pronouns": p2DoublesPronouns,
-						"country": p2DoublesCountry
+						"slug": p2dSlug,
+						"name": p2dName,
+						"pronouns": p2dPronouns,
+						"country": p2dCountry
 					}
 				]
 			}
 		}
-		console.log(`${p1Country}`)
-		console.log(`${p2Country}`)
-		return(matchData)
+		return (matchData)
 	}
+	return null;
 }
 
 /* Submit first, if error try to update, if error give up */
@@ -514,9 +513,9 @@ function submitStartggSet(setId, winnerId, gameData) {
 	}).then((res) => res.json())
 		.then((result) => {
 			clearTimeout(submitTimeout)
-			if(typeof result.errors !== "undefined") {
+			if (typeof result.errors !== "undefined") {
 				console.error(result.errors[0].message)
-				console.error({setId, winnerId, gameData})
+				console.error({ setId, winnerId, gameData })
 				updateStartggSet(setId, winnerId, gameData)
 			} else {
 				$("#submit-startgg-set").css("background-color", "#55F76B");
@@ -529,7 +528,7 @@ function submitStartggSet(setId, winnerId, gameData) {
 					$("#submit-startgg-set").text("Submit start.gg");
 				}, 2000);
 			}
-			
+
 		})
 }
 
@@ -573,7 +572,7 @@ function updateStartggSet(setId, winnerId, gameData) {
 	}).then((res) => res.json())
 		.then((result) => {
 			clearTimeout(submitTimeout)
-			if(typeof result.errors !== "undefined") {
+			if (typeof result.errors !== "undefined") {
 				console.error(result.errors[0].message)
 				$("#submit-startgg-set").css("background-color", "#F56262");
 				$("#submit-startgg-set").css("border-bottom", "3px solid #F53535");
@@ -595,9 +594,12 @@ function updateStartggSet(setId, winnerId, gameData) {
 					$("#submit-startgg-set").text("Submit start.gg");
 				}, 2000);
 			}
-			
+
 		})
 }
+
+//database
+//misc
 
 //misc
 function getCountryInformation(tournamentSlug) {
@@ -638,14 +640,14 @@ function getCountryInformation(tournamentSlug) {
 			},
 		}),
 	})
-	.then((res) => res.json())
-	.then((result) => {
-		let countries = new Map()
-		for(let participant of result.data.tournament.participants.nodes) {
-			country = participant.contactInfo.country || participant.user.location.country;
-			value = countries.has(country) ? countries.get(country)+1 : 1;
-			countries.set(country, value)
-		}
-		console.log(countries)
-	});
+		.then((res) => res.json())
+		.then((result) => {
+			let countries = new Map()
+			for (let participant of result.data.tournament.participants.nodes) {
+				country = participant.contactInfo.country || participant.user.location.country;
+				value = countries.has(country) ? countries.get(country) + 1 : 1;
+				countries.set(country, value)
+			}
+			console.log(countries)
+		});
 }

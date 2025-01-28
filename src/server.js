@@ -7,13 +7,17 @@ const cors = require('cors');
 const path = require("path");
 const fs = require("fs/promises");
 
+const { Ports } = require('@slippi/slippi-js')
+
 const logging = require("./logging.js");
+const realtime = require("./realtime.js")
 const serverConfig = require("./config.js");
+const playerDB = require("./database.js")
 const { loadObs } = require("./obs.js");
 const recordLive = require("./recordLive.js");
 const { recordReplays } = require("./recordReplays.js");
 const charInfo = require("./charInfo.js");
-const { readData, writeData, updateTournament, fixInfo, fixCrews, INFO, CREWS, CHARACTER_DATA, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
+const { readData, writeData, updateTournament, INFO, CREWS, CHARACTER_DATA, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
 const { watch } = require("./slpWatch.js");
 const { getGames } = require("./slpResults.js");
 const { checkSetStart } = require("./processSlp.js");
@@ -22,17 +26,12 @@ const { msToHHmmss } = require("./util.js")
 let server;
 
 global.app = express();
+global.config;
+global.livestream;
+global.realtime;
 
 global.gameInProgress = false;
-
-global.config;
-
-global.recordingStatusManual = false;
-global.timecodeManual = "";
-
-global.recordingStatusAuto = false;
-global.timecodeAuto = "";
-
+global.timecode = "";
 global.currentSet = [];
 
 const layoutsDir = path.join(__dirname, 'views/layouts');
@@ -156,6 +155,90 @@ DATA_FILES.forEach((f) => {
     });
 });
 
+/* PLAYER DATABASE */
+
+app.post("/database.db", (req, res) => {
+    if(!!req.body.players) {
+        res.json(playerDB.getDBFromList(req.body.players))
+    } else {
+        playerDB.getDB((db) => {
+            res.json(db)
+        })
+    }
+});
+
+
+app.post("/deletePlayer", (req, res) => {
+    if(!!req.body.player) {
+        playerDB.removePlayer(req.body.player.slug, (err) => {
+            if(err) {
+                res.sendStatus(200)
+            } else {
+                logging.log(`Removed player '${req.body.player.name}' from database.`)
+                res.sendStatus(200)
+            }
+        })
+    } else {
+        res.sendStatus(400);
+    }
+});
+
+app.post("/updatePlayer", (req, res) => {
+    if(!!req.body.player) {
+        playerDB.addPlayer(req.body.player, (err, data, updated) => {
+            if(err) {
+                res.sendStatus(200)
+            } else {
+                updated ? 
+                    logging.log(`Updated player '${data}' in database.`)
+                :
+                    logging.log(`Added player '${data}' to database.`)
+                res.sendStatus(200)
+            }
+        })
+    } else {
+        res.sendStatus(400);
+    }
+});
+
+app.post("/addPlayers", (req, res) => {
+    if(!!req.body.players) {
+        count = 0;
+        promises = []
+        for(let player of req.body.players) {
+            promises.push(new Promise((res, rej) => {
+                playerDB.addIfNotExists(player, (err, data) => {
+                    if(!err) {
+                        count++;
+                    }
+                })
+            }))
+        }
+        Promise.all(promises).then(() => {
+            logging.log(`Added ${count} players to the database.`)
+            res.sendStatus(200)
+        })
+    } else {
+        res.sendStatus(400);
+    }
+});
+
+app.post("/addPlayer", (req, res) => {
+    if(!!req.body.player) {
+        playerDB.addPlayer(req.body.player, (err, data) => {
+            if(err) {
+                logging.error(err)
+                res.sendStatus(500)
+            } else {
+                logging.log(`Added player '${data}' to database.`)
+                res.sendStatus(200)
+            }
+        })
+    } else {
+        res.sendStatus(400);
+    }
+});
+
 /* TOURNAMENT SET DATA */
 
 app.get(`/tournaments`, (req, res) => {
@@ -212,11 +295,6 @@ app.post("/save_clip", (req, res) => {
 app.get("/recording_status", (req, res) => {
     res.json({recording_status: recordLive.getRecordingStatus()});
 });
-
-app.get("/recording_timecode", (req, res) => {
-    const timecode = timecodeManual ? msToHHmmss(timecodeManual) : "";
-    res.json({timecode: timecode})
-})
 
 /* RECORDING SET ENDPOINTS */
 
@@ -336,9 +414,12 @@ async function startApp() {
     await loadObs()
     server = app.listen(config.Web.Port, () => {
         logging.log("Web application listening on port " + config.Web.Port)
-        //open(`http://127.0.0.1:${config.web.port}`) //open is no longer used due to concerns, keeping this here to find a better alternative 
     });
+    //file read
     watch(config['Slippi']['Directory'], true);
+    //realtime
+    //realtime.start("127.0.0.1", Ports.DEFAULT);
+
 }
 
 process.on('exit', function () {

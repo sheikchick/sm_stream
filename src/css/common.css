@@ -1,0 +1,215 @@
+@font-face {
+	font-family: 'Noto Color Emoji';
+	src: url('fonts/NotoColorEmoji.ttf');
+}
+
+/* Gilroy */
+
+@font-face {
+	font-family: 'Gilroy';
+	src: url('fonts/Gilroy/Gilroy-Thin.ttf');
+	font-weight: 100;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gilroy';
+	src: url('fonts/Gilroy/Gilroy-UltraLight.ttf');
+	font-weight: 200;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gilroy';
+	src: url('fonts/Gilroy/Gilroy-Light.ttf');
+	font-weight: 300;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gilroy';
+	src: url('fonts/Gilroy/Gilroy-Regular.ttf');
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gilroy';
+	src: url('fonts/Gilroy/Gilroy-Medium.ttf');
+	font-weight: 500;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gilroy';
+	src: url('fonts/Gilroy/Gilroy-SemiBold.ttf');
+	font-weight: 600;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gilroy';
+	src: url('fonts/Gilroy/Gilroy-Bold.ttf');
+	font-weight: 700;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gilroy';
+	src: url('fonts/Gilroy/Gilroy-ExtraBold.ttf');
+	font-weight: 800;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Gilroy';
+	src: url('fonts/Gilroy/Gilroy-Black.ttf');
+	font-weight: 900;
+	font-style: normal;
+}
+
+:root {
+	--main-bg-color: #443344;
+	--element-bg-color: #332233;
+	--startgg-set-bg-color: #336;
+}
+
+.stroke {}
+
+/* GENERAL */
+html {
+	height: 100%;
+	font-family: 'Gilroy';
+	font-weight: 400;
+}
+body {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.5em;
+	background-color: var(--main-bg-color);
+	color: white;
+	height: 100%;
+}
+
+input, select, textarea, button, option {
+	font: inherit;
+}
+
+button {
+	width: 116px;
+	padding: 10px 0px;
+	text-align: center;
+	letter-spacing: 1px;
+	vertical-align: middle;
+	line-height: 18px;
+	color: #323232;
+	cursor: pointer;
+	border: none;
+	border-radius: 5px;
+	border-bottom: 3px solid #AAA;
+	transition: background 0.3s ease, border 0.3s ease;
+	letter-spacing: 0.04em;
+	font-weight: 600;
+}
+
+button:focus {
+	outline: none;
+}
+
+input {
+	padding: 10px 10px 10px 10px;
+	appearance: none;
+	-webkit-appearance: none;
+	display: inline-block;
+	background: #fafafa;
+	color: #323232;
+	width: 100%;
+	border: none;
+	border-radius: 5px;
+	transition: background 0.3s ease, border 0.3s ease;
+}
+
+input:focus {
+	outline: none;
+}
+
+select {
+	display: none;
+	font-size: 14px;
+	width: 160px;
+	appearance: none;
+	-webkit-appearance: none;
+	padding: 10px 25px 10px 10px;
+	display: inline-block;
+	background: #fafafa;
+	color: #323232;
+	border-radius: 5px;
+	background-position: right 50%;
+	background-repeat: no-repeat;
+	background-image: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="12" version="1"><path d="M4 8L0 4h8z"/></svg>');
+	transition: background 0.3s ease, border 0.3s ease;
+}
+
+select:focus {
+	outline: none;
+}
+
+
+.red {
+	border-bottom: 2px solid rgb(245, 98, 98)!important;
+}
+
+.blue {
+	border-bottom: 2px solid rgb(98, 98, 245)!important;
+}
+
+.yellow {
+	border-bottom: 2px solid rgb(226, 210, 63)!important;
+}
+
+.green {
+	border-bottom: 2px solid rgb(98, 245, 98)!important;
+}
+
+.red-bg {
+	background-color: rgb(68, 34, 34)!important;
+}
+
+.blue-bg {
+	background-color: rgb(34, 34, 68)!important;
+}
+
+.yellow-bg {
+	background-color: rgb(102, 102, 34)!important;
+}
+
+.green-bg {
+	background-color: rgb(34, 68, 34)!important;
+}
+
+.icon {
+	width: 2em;
+	height: 2em;
+	margin: 10px;
+}
+
+.stock-icon {
+	image-rendering: pixelated;
+}
+
+select.flag {
+	background: white;
+	color: #FFF;
+	border: none;
+	font-family: sans-serif, 'Noto Color Emoji';
+}
+
+select.flag>option {
+	font-size: 16px;
+	color: #000;
+}
+
+select.flag>option:disabled {
+	background-color: #ffdbdb;
+}

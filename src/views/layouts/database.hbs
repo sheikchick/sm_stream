@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+	<title>sm-stream - Database editor</title>
+	<script src="scripts/jquery-3.4.1.min.js"></script>
+	<script src="scripts/common.js"></script>
+
+	<script src="scripts/database.js"></script>
+	<script src="scripts/flags.js"></script>
+	<script src="scripts/startgg-scripts.js"></script>
+
+	<script src="scripts/obs-ws.min.js"></script>
+
+	<script src="scripts/fontawesome.min.js"></script>
+	<script src="scripts/solid.min.js"></script>
+	<script src="scripts/brands.min.js"></script>
+	<script>
+		var bestOfValue = "{{bestOf}}"
+		var tournament = "{{tournament}}"
+		var apiKey = "{{apiKey}}"
+		var obsPort = "{{obsPort}}"
+		var obsPassword = "{{obsPassword}}"
+		$(document).ready(function () {
+			getDB();
+		});
+	</script>
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+	<link rel="stylesheet" type="text/css" href="css/database.css">
+	<link rel="icon" href="favicon.ico">
+</head>
+
+<body>
+	{{> footer}}
+    <div id="main">
+        <div class="database" id="database">
+            <div class="entry template">
+				<div id="trash-spacer" style="width:40px"></div>
+                <span class="slug">Slug</span>
+                <span class="name"></spanclass>Name</span>
+                <span class="country">Country</span>
+                <span class="pronouns">Pronouns</span>
+                <span id="character">🦊</span>
+				<button class="submit">Submit all</button>
+            </div>
+        </div>
+		<div class="startgg" id="startgg">
+			<img class="icon" id="startgg-icon" src="static/img/startgg.svg" alt="SGG" />
+			<input id="tournament-slug" placeholder="start.gg slug"></input>
+			<button class="startgg-button" onclick="load()">Load players</button>
+			<div id="startgg-load-wrapper" class="row">
+				<button id="add" class="startgg-button" onclick="addToDB(this.id)">Add</button>
+				<button id="bin" class="startgg-button" onclick="clearList()"><i class="fa-solid fa-trash"></i></button>
+			</div>
+			<span id="list"></span>
+		</div>
+    </div>
+	<div id="characterSelect">
+		{{> characterChange}}
+	</div>
+</body>

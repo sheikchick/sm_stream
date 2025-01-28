@@ -187,7 +187,7 @@ const rejectIfObsNotRecording = () => new Promise((resolve, reject) => {
     });
 });
 
-exports.getRecordingStatus = () => !!global.timecodeManual;
+exports.getRecordingStatus = () => !!global.timecode;
 
 exports.getLatestRecordingFile = (directory) => new Promise((resolve, reject) => {
     if(directory) {

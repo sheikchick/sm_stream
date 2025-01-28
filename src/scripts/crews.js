@@ -414,7 +414,7 @@ function loadChanges() {
 			info = fixCrews(response);
 			//load team1 data
 			$("#p1-name-actual").attr("value", info.crew1.activePlayer.name)
-			loadCharActual("1", info.crew1.activePlayer.character, info.crew1.activePlayer.colour)
+			loadCharActual("p1", info.crew1.activePlayer.character, info.crew1.activePlayer.colour)
 			if(document.getElementById("p1-score-actual").value != info.crew1.score) {
 				document.getElementById("p1-score-actual").value = info.crew1.score
 				document.getElementById("p1-score-change").value = info.crew1.score
@@ -422,7 +422,7 @@ function loadChanges() {
 
 			//load team2 data
 			$("#p2-name-actual").attr("value", info.crew2.activePlayer.name)
-			loadCharActual("2", info.crew2.activePlayer.character, info.crew2.activePlayer.colour)
+			loadCharActual("p2", info.crew2.activePlayer.character, info.crew2.activePlayer.colour)
 			if(document.getElementById("p2-score-actual").value != info.crew2.score) {
 				document.getElementById("p2-score-actual").value = info.crew2.score
 				document.getElementById("p2-score-change").value = info.crew2.score
@@ -756,8 +756,8 @@ function toggleDoubles() {
  * @param {*} colour colour
  */
 function loadCharActual(player, character="empty", colour) {
-	const characterActual = $(`#p${player}-character-actual`);
-	const characterChange = $(`#p${player}-character-change`)
+	const characterActual = $(`#${player}-character-actual`);
+	const characterChange = $(`#${player}-character-change`)
 	if(characterActual.attr("character") !== character || characterActual.attr("colour") !== colour) {
 		characterActual.attr("character", character);
 		characterActual.attr("colour", colour);
@@ -776,7 +776,7 @@ function loadCharActual(player, character="empty", colour) {
  * @param {*} colour colour
  */
 function loadCharChange(player, character="empty", colour) {
-	const characterChange = $(`#p${player}-character-change`)
+	const characterChange = $(`#${player}-character-change`)
 	characterChange.attr("character", character);
 	characterChange.attr("colour", colour);
 	characterChange.attr("src", `static/img/csp_icons/${character}/${colour}.png`);
@@ -1041,7 +1041,7 @@ function loadSet(x) {
 	getCharacterInfo(p1Data.id)
 	.then((charInfo) => {
 		console.log("Setting character info")
-		loadCharChange("1", charInfo.character, charInfo.colour)
+		loadCharChange("p1", charInfo.character, charInfo.colour)
 	})
 	.catch(() => {
 		console.log("Error fetching P1 character info")
@@ -1057,7 +1057,7 @@ function loadSet(x) {
 	getCharacterInfo(p1dData.id)
 	.then((charInfo) => {
 		console.log("Setting character info")
-		loadCharChange("1d", charInfo.character, charInfo.colour)
+		loadCharChange("p1d", charInfo.character, charInfo.colour)
 	})
 	.catch(() => {
 		console.log("Error fetching P1d character info")
@@ -1073,7 +1073,7 @@ function loadSet(x) {
 	getCharacterInfo(p2Data.id)
 	.then((charInfo) => {
 		console.log("Setting character info")
-		loadCharChange("2", charInfo.character, charInfo.colour)
+		loadCharChange("p2", charInfo.character, charInfo.colour)
 	})
 	.catch(() => {
 		console.log("Error fetching P2 character info")
@@ -1089,7 +1089,7 @@ function loadSet(x) {
 	getCharacterInfo(p2dData.id)
 	.then((charInfo) => {
 		console.log("Setting character info")
-		loadCharChange("2d", charInfo.character, charInfo.colour)
+		loadCharChange("p2d", charInfo.character, charInfo.colour)
 	})
 	.catch(() => {
 		console.log("Error fetching P2d character info")

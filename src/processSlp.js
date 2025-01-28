@@ -18,8 +18,8 @@ const getFirstTo = (bestOf) => Math.ceil((bestOf || 3) / 2);
 
 //Hacky solution for getting most played between Sheik and Zelda per person
 var sheikZeldaPlaytime = {
-    team1: [{"zelda": 0, "sheik": 0},{"zelda": 0, "sheik": 0}],
-    team2: [{"zelda": 0, "sheik": 0},{"zelda": 0, "sheik": 0}]
+    team1: [{ "zelda": 0, "sheik": 0 }, { "zelda": 0, "sheik": 0 }],
+    team2: [{ "zelda": 0, "sheik": 0 }, { "zelda": 0, "sheik": 0 }]
 }
 
 /**
@@ -33,9 +33,8 @@ exports.checkSetStart = (() => {
 
     return (info, isGameStart) => {
         const round = info.round?.toLowerCase();
-        if (!round.includes(FRIENDLIES)) {
-            const firstTo = getFirstTo
-                (info.bestOf);
+        if (!round.includes(FRIENDLIES) && info.bestOf !== 0) {
+            const firstTo = getFirstTo(info.bestOf);
             const p1Score = info.team1.score;
             const p2Score = info.team2.score;
             const totalScore = p1Score + p2Score;
@@ -53,14 +52,14 @@ exports.checkSetStart = (() => {
                 currentSet = [];
 
                 sheikZeldaPlaytime = {
-                    team1: [{"zelda": 0, "sheik": 0},{"zelda": 0, "sheik": 0}],
-                    team2: [{"zelda": 0, "sheik": 0},{"zelda": 0, "sheik": 0}]
+                    team1: [{ "zelda": 0, "sheik": 0 }, { "zelda": 0, "sheik": 0 }],
+                    team2: [{ "zelda": 0, "sheik": 0 }, { "zelda": 0, "sheik": 0 }]
                 }
 
 
-                if (isGameStart || !global.timecodeAuto) {
+                if (isGameStart || !global.timecode) {
                     getTimecode().then((timecode) => {
-                        global.timecodeAuto = recordLive.timecodeOffset(timecode, -5000); //start the auto recording 5 seconds earlier
+                        global.timecode = recordLive.timecodeOffset(timecode, -5000); //start the auto recording 5 seconds earlier
                     });
                 }
             }
@@ -76,105 +75,97 @@ exports.checkSetStart = (() => {
 checkSetEnd = async (info) => {
     const createFile = (jsonFile, data, info, tournamentName) => {
         appendFile(jsonFile, "", FORMAT)
-        .then(() => {
-            readFile(jsonFile, FORMAT)
-            .then((readFile) => {
-                var parsedFile
-                try {
-                    parsedFile = JSON.parse(readFile)
-                } catch (e) {
-                    parsedFile = []
-                }
-                parsedFile.push(data)
-                //write to tournament json file
-                writeFile(jsonFile, JSON.stringify(parsedFile), FORMAT)
-                .then(() => {
-                    logging.log(`Match data "${info.team1.players[0].name} vs ${info.team2.players[0].name}" written to /${tournamentName}/`)
-                    global.timecodeAuto = ""
-                    //submit data to start.gg
-                    if(config["start.gg"]["Auto-submit sets"] === "true") {
-                        startgg.submitStartggSet(data, info.startggSwapped)
-                    }
-                    //write to match_result for data purposes
-                    writeData(MATCH_RESULT, data)
-                    .then(() => {
-                        logging.log(`Wrote match data to match_result.json`)
+            .then(() => {
+                readFile(jsonFile, FORMAT)
+                    .then((readFile) => {
+                        var parsedFile
+                        try {
+                            parsedFile = JSON.parse(readFile)
+                        } catch (e) {
+                            parsedFile = []
+                        }
+                        parsedFile.push(data)
+                        //write to tournament json file
+                        writeFile(jsonFile, JSON.stringify(parsedFile), FORMAT)
+                            .then(() => {
+                                logging.log(`Match data "${info.team1.players[0].name} vs ${info.team2.players[0].name}" written to /${tournamentName}/`)
+                                global.timecode = ""
+                                //submit data to start.gg
+                                if (config["start.gg"]["Auto-submit sets"] === "true") {
+                                    startgg.submitStartggSet(data, info.startggSwapped)
+                                }
+                                //write to match_result for data purposes
+                                writeData(MATCH_RESULT, data)
+                                    .then(() => {
+                                        logging.log(`Wrote match data to match_result.json`)
+                                    })
+                                    .catch((e) => {
+                                        logging.error(`Failed to write match_result.json: ${e}`);
+                                    });
+                            })
                     })
-                    .catch((e) => {
-                        logging.error(`Failed to write match_result.json: ${e}`);
-                    });
-                })
             })
-        })
-        .catch((e) =>
-            logging.error(`Failed to write ${jsonFile}: ${e}`
-        ));
+            .catch((e) =>
+                logging.error(`Failed to write ${jsonFile}: ${e}`
+                ));
     }
 
     const firstTo = getFirstTo(info.bestOf);
     if (info.team1.score >= firstTo || info.team2.score >= firstTo) {
         getTimecode()
-        .then((timecode) => {
-            getDirectory()
-            .then((directory) => {
-                recordLive.getLatestRecordingFile(directory)
-                .then((vod) => {
-                    const tournamentName = info.tournament ? info.tournament.replace(/ /g, "_") : 'default'
-                    const tournamentPath = path.join("data/json/tournaments/", tournamentName);
-                    const jsonFile = path.join("data/json/tournaments/", tournamentName, "set_data.json");
-                    const winner = info.team1.score >= firstTo ? 1 : info.team2.score >= firstTo ? 2 : 0 //0 should never occur
-                    const data = {
-                        team1: {
-                            entrantId: info.team1.startggEntrant,
-                            names: [
-                                info.team1.players[0].name,
-                                info.team1.players[1].name
-                            ]
-                        },
-                        team2: {
-                            entrantId: info.team2.startggEntrant,
-                            names: [
-                                info.team2.players[0].name,
-                                info.team2.players[1].name
-                            ]
-                        },
-                        round: info.round,
-                        vod: directory ? path.join(directory, vod) : vod,
-                        setId: info.startggSetId,
-                        winner: winner,
-                        timecodes: [timecodeAuto, recordLive.timecodeOffset(timecode, 15000)],
-                        isDoubles: info.isDoubles,
-                        games: currentSet
-                    }
-                    //create directory if not exists
-                    mkdir(tournamentPath)
-                    .then(() => {
-                        createFile(jsonFile, data, info, tournamentName)
-                        if(config["OBS"]["VODs"]["Auto-record"] === "true") {
-                            logging.log("Saving VOD in 20s")
-                            setTimeout(() => {recordLive.createVod(data, info.tournament)}, 20000)
-                        }
+            .then((timecode) => {
+                getDirectory()
+                    .then((directory) => {
+                        recordLive.getLatestRecordingFile(directory)
+                            .then((vod) => {
+                                const tournamentName = info.tournament ? info.tournament.replace(/ /g, "_") : 'default'
+                                const tournamentPath = path.join("data/json/tournaments/", tournamentName);
+                                const jsonFile = path.join("data/json/tournaments/", tournamentName, "set_data.json");
+                                const winner = info.team1.score >= firstTo ? 1 : info.team2.score >= firstTo ? 2 : 0 //0 should never occur
+                                const data = {
+                                    team1: {
+                                        entrantId: info.team1.startggEntrant,
+                                        names: [
+                                            info.team1.players[0].name,
+                                            info.team1.players[1].name
+                                        ]
+                                    },
+                                    team2: {
+                                        entrantId: info.team2.startggEntrant,
+                                        names: [
+                                            info.team2.players[0].name,
+                                            info.team2.players[1].name
+                                        ]
+                                    },
+                                    round: info.round,
+                                    vod: directory ? path.join(directory, vod) : vod,
+                                    setId: info.startggSetId,
+                                    winner: winner,
+                                    timecodes: [timecode, recordLive.timecodeOffset(timecode, 15000)],
+                                    isDoubles: info.isDoubles,
+                                    games: currentSet
+                                }
+                                //create directory if not exists
+                                mkdir(tournamentPath)
+                                    .then(() => {
+                                        createFile(jsonFile, data, info, tournamentName)
+                                        if (config["OBS"]["VODs"]["Auto-record"] === "true") {
+                                            logging.log("Saving VOD in 20s")
+                                            setTimeout(() => { recordLive.createVod(data, info.tournament) }, 20000)
+                                        }
+                                    })
+                                    .catch(() => {
+                                        createFile(jsonFile, data, info, tournamentName)
+                                        if (config["OBS"]["VODs"]["Auto-record"] === "true") {
+                                            logging.log("Saving VOD in 20s")
+                                            setTimeout(() => { recordLive.createVod(data, info.tournament) }, 20000)
+                                        }
+                                    })
+                            })
                     })
-                    .catch(() => {
-                        createFile(jsonFile, data, info, tournamentName)
-                        if(config["OBS"]["VODs"]["Auto-record"] === "true") {
-                            logging.log("Saving VOD in 20s")
-                            setTimeout(() => {recordLive.createVod(data, info.tournament)}, 20000)
-                        }
-                    })
-                })
             })
-        })
     }
 };
-
-/**
- * Used to get the active ports on the rotation, but currently doesn't work and isn't required so just returns [1,2]
- * @returns [1,2]
- */
-const getActiveRotationPlayers = () => {
-    return [1,2]
-}
 
 /**
  * Executed on game start
@@ -190,22 +181,18 @@ exports.gameStart = async (path) => {
 
     this.checkSetStart(info, true);
     if (teams.length === 2) {
-        const activePlayers = getActiveRotationPlayers(info, settings.players);
-        info.activePlayers = activePlayers;
-
         teams.forEach(([p1, p2 = {}], index) => {
             p1Data = slpTools.getCharacter(p1);
             p2Data = slpTools.getCharacter(p2);
 
-            const key = activePlayers[index];
-            info[`team${key}`].players[0] = {
-                ...info[`team${key}`].players[0],
+            info[`team${index + 1}`].players[0] = {
+                ...info[`team${index + 1}`].players[0],
                 ...p1Data,
                 port: p1.port
             };
             if (settings.players.length === 4) {
-                info[`team${key}`].players[1] = {
-                    ...info[`team${key}`].players[1],
+                info[`team${index + 1}`].players[1] = {
+                    ...info[`team${index + 1}`].players[1],
                     ...p2Data,
                     port: p2.port
                 };
@@ -234,21 +221,18 @@ exports.gameMid = async ({ game, settings, teams }) => {
     if (teams.length === 2) {
         const playersLatestFrame = game.getLatestFrame().players;
         const info = await readData(INFO);
-        const activePlayers = getActiveRotationPlayers(info, settings.players);
-        info.activePlayers = activePlayers;
 
         teams.forEach(([p, pd = {}], index) => {
-            const key = activePlayers[index];
             p1char = slpTools.getLatestCharacter(p, playersLatestFrame)
-            if(p1char === "zelda" || p1char === "sheik") {
-                sheikZeldaPlaytime[`team${key}`][0][p1char] += 1;
+            if (p1char === "zelda" || p1char === "sheik") {
+                sheikZeldaPlaytime[`team${index + 1}`][0][p1char] += 1;
             }
             p2char = slpTools.getLatestCharacter(pd, playersLatestFrame)
-            if(p2char === "zelda" || p2char === "sheik") {
-                sheikZeldaPlaytime[`team${key}`][1][p2char] += 1;
+            if (p2char === "zelda" || p2char === "sheik") {
+                sheikZeldaPlaytime[`team${index + 1}`][1][p2char] += 1;
             }
-            info[`team${key}`].players[0].character = p1char
-            info[`team${key}`].players[1].character = p2char
+            info[`team${index + 1}`].players[0].character = p1char
+            info[`team${index + 1}`].players[1].character = p2char
         });
         return writeData(INFO, info);
     }
@@ -284,7 +268,7 @@ exports.gameEnd = async ({ game, settings, teams }) => {
     const winnerKey = `team${winnerPlayerNumber}`;
     info[winnerKey].score = (info[winnerKey].score || 0) + 1;
 
-    if(info[winnerKey].score === getFirstTo(info.bestOf)) {
+    if (info[winnerKey].score === getFirstTo(info.bestOf)) {
         //set ended
         delayPromiseStart(1000, () => changeScene(config["OBS"]["Scenes"]["Set end scene"]))
     } else {
@@ -303,14 +287,14 @@ exports.gameEnd = async ({ game, settings, teams }) => {
         //get most playtime between sheik and zelda
         p1Char = slpTools.getCharacter(player)
         p2Char = ""
-        if(p1Char.character === "zelda" || p1Char.character === "sheik") {
+        if (p1Char.character === "zelda" || p1Char.character === "sheik") {
             sheikZeldaPlaytime[`team${key}`][0].sheik >= sheikZeldaPlaytime[`team${key}`][0].zelda ? p1Char.character = "sheik" : p1Char.character = "zelda";
         }
-        if(settings.players.length === 4) {
+        if (settings.players.length === 4) {
             p2Char = slpTools.getCharacter(playerDoubles)
-            if(p2Char.character === "zelda" || p2Char.character === "sheik") {
+            if (p2Char.character === "zelda" || p2Char.character === "sheik") {
                 sheikZeldaPlaytime[`team${key}`][1].sheik >= sheikZeldaPlaytime[`team${key}`][1].zelda ? p2Char.character = "sheik" : p2Char.character = "zelda";
-            } 
+            }
         }
 
         acc[`team${key}`] = [

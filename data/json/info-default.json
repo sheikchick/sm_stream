@@ -59,10 +59,5 @@
     "startggSetId": "",
     "startggSwapped": false,
     "tournament": "test",
-    "isDoubles": false,
-    "bestOf": 3,
-    "activePlayers": [
-        1,
-        2
-    ]
+    "isDoubles": false
 }

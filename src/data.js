@@ -63,6 +63,7 @@ exports.fixInfo = (info) => {
         "team1": {
             "players": [
                 {
+                    "slug": info?.team1?.players?.[0]?.slug || "",
                     "name": info?.team1?.players?.[0]?.name || "Player 1",
                     "character": info?.team1?.players?.[0]?.character || "fox",
                     "colour": info?.team1?.players?.[0]?.colour || "red",
@@ -71,6 +72,7 @@ exports.fixInfo = (info) => {
                     "port": info?.team1?.players?.[0]?.port || 1
                 },
                 {
+                    "slug": info?.team1?.players?.[1]?.slug || "",
                     "name": info?.team1?.players?.[1]?.name || "Player 4",
                     "character": info?.team1?.players?.[1]?.character || "falco",
                     "colour": info?.team1?.players?.[1]?.colour || "red",
@@ -85,6 +87,7 @@ exports.fixInfo = (info) => {
         "team2": {
             "players": [
                 {
+                    "slug": info?.team2?.players?.[0]?.slug || "",
                     "name": info?.team2?.players?.[0]?.name || "Player 2",
                     "character": info?.team2?.players?.[0]?.character || "sheik",
                     "colour": info?.team2?.players?.[0]?.colour || "blue",
@@ -93,6 +96,7 @@ exports.fixInfo = (info) => {
                     "port": info?.team2?.players?.[0]?.port || 1
                 },
                 {
+                    "slug": info?.team2?.players?.[1]?.slug || "",
                     "name": info?.team2?.players?.[1]?.name || "Player 3",
                     "character": info?.team2?.players?.[1]?.character || "peach",
                     "colour": info?.team2?.players?.[1]?.colour || "blue",
@@ -120,8 +124,7 @@ exports.fixInfo = (info) => {
         "startggSwapped": info?.startggSwapped || false,
         "tournament": info?.tournament || "",
         "isDoubles": info?.isDoubles || false,
-        "bestOf": info?.bestOf || 5,
-        "activePlayers": info?.activePlayers || [ 1,2 ]
+        "bestOf": info?.bestOf || 5
     }
     return newInfo;
 }
@@ -208,8 +211,7 @@ exports.fixCrews = (crew) => {
         ],
         "seatOrdering": info?.seatOrdering || [ "1","2","3","4" ],
         "round": info?.round || "",
-        "tournament": info?.tournament || "",
-        "activePlayers": info?.activePlayers || [ 1,2 ]
+        "tournament": info?.tournament || ""
     }
     return newCrews;
 }

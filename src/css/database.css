@@ -1,0 +1,141 @@
+.row {
+	display: flex;
+	flex-direction: row;
+	border-radius: 5px;
+	align-items: center;
+    justify-content: center;
+}
+
+.column {
+	display: flex;
+	flex-direction: row;
+	border-radius: 5px;
+	align-items: center;
+    justify-content: center;
+}
+
+#main {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.database {
+    display: flex;
+    flex-direction: column;
+    width: 770px;
+    gap: 5px;
+}
+
+.startgg {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    align-items: center;
+    gap: 5px;
+    background-color: var(--element-bg-color);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+#startgg-load-wrapper {
+    gap: 5px;
+}
+
+.startgg-button {
+    padding: 5px;
+    height: 30px;
+}
+
+#add {
+    width: 72px;
+}
+
+#bin {
+    width: 40px;
+}
+
+#tournament-slug {
+    width: 160px;
+}
+
+#list {
+    margin-top: 10px;
+    text-align: left;
+    width: 180px;
+}
+
+.entry {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.entry.template {
+    margin-bottom: 6px;
+}
+
+.entry.template>span {
+    text-align: center;
+    padding: 8px;
+}
+
+.entry>input {
+    padding: 8px;
+    font-size: 14px;
+}
+
+/*
+
+Have SUBMIT for each
+store the initial data in attributes to compare if submitting needed
+Have auto pronoun updater using start.gg
+
+*/
+
+.slug {
+    width: 100px;
+}
+
+.name {
+    width: 150px;
+}
+
+.country {
+    width: 110px;
+}
+
+.pronouns {
+    width: 90px;
+}
+
+.character {
+    width: 24px;
+    background-color: white;
+    padding: 5px 4px 4px 4px;
+    border-radius: 5px;
+}
+
+.character:hover {
+    cursor: pointer;
+    background-color: #d0d0d7;
+}
+
+#character {
+    width: 24px;
+    padding: 4px;
+}
+
+.delete {
+    width: 40px;
+    height: 30px;
+    padding: 0;
+}
+
+.submit {
+    width: 80px;
+    height: 30px;
+    padding: 0;
+}

@@ -1,11 +1,16 @@
 #characterSelect {
-	position: absolute;
+	position: fixed;
 	display: none;
+	background-color: rgba(0, 0, 0, 0.2);
+	border-radius: 10px;
+	padding: 10px;
 }
 
 .characters {
 	display: flex;
 	flex-direction: column;
+	margin-bottom: 10px;
+
 }
 
 .character-row {
@@ -22,11 +27,16 @@
 }
 
 .css-character {
-	width: 48px;
-	height: 48px;
+	width: 56px;
+	height: 56px;
+	border-radius: 4px;
+	transition: background 0.2s ease;
+	cursor: pointer;
 }
 
 .char-colour {
-	width: 36px;
-	height: 36px;
+	width: 48px;
+	height: 48px;
+	image-rendering: pixelated;
+	cursor: pointer;
 }

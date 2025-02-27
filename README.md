@@ -2,7 +2,7 @@
 Automatic Super Smash Bros Melee stream application using slippi-js, with startgg integration
 
 # Running
-This application assumes you have a distribution of ffmpeg installed. Please install from [HERE](https://www.ffmpeg.org/) and ensure `ffmpeg/bin` has an PATH environmental variable set up (see [HERE](https://www.architectryan.com/2018/03/17/add-to-the-path-on-windows-10/) if you need assistance)
+This application assumes you have a distribution of ffmpeg installed. Please install from [HERE](https://www.ffmpeg.org/) and point `config.json` to the path `ffmpeg/bin` where it is installed (if you have ffmpeg as an environmental variable already, you can ignore this step).
 1. Download and unzip the latest release from [HERE](https://github.com/sheikchick/sm_stream/releases) into a folder.
     1. If you already have an application running on `:5000`, edit the config.json file to change the port the webpage uses.
 2. Run `sm_stream.exe`

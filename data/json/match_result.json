@@ -1,1 +1,127 @@
-{"team1":{"entrantId":"17284066","names":["Frenzy (L)","Player 4"]},"team2":{"entrantId":"17284155","names":["Kingu (L)","Player 3"]},"round":"Grand Final Reset","vod":"D:\\OBS\\2024-10-26_11-47-05.mkv","setId":"81486683","winner":1,"timecodes":[32807269,33338662],"isDoubles":false,"games":[{"stage":"Dream Land N64","winner":1,"team1":[{"character":"falco","colour":"red","stocks":1},{}],"team2":[{"character":"fox","colour":"original","stocks":0},{}]},{"stage":"Yoshis Story","winner":1,"team1":[{"character":"falco","colour":"red","stocks":1},{}],"team2":[{"character":"fox","colour":"original","stocks":0},{}]},{"stage":"Yoshis Story","winner":1,"team1":[{"character":"falco","colour":"red","stocks":3},{}],"team2":[{"character":"fox","colour":"original","stocks":0},{}]}]}
+{
+    "team1": {
+        "entrantId": "19045462",
+        "names": [
+            "b1rdnecksss",
+            ""
+        ]
+    },
+    "team2": {
+        "entrantId": "19046173",
+        "names": [
+            "Maskless (L)",
+            ""
+        ]
+    },
+    "round": "Friendlies",
+    "vod": "D:\\OBS\\2025-02-25_23-51-23.mkv",
+    "setId": "84779152",
+    "winner": 1,
+    "timecodes": [
+        0,
+        15000
+    ],
+    "isDoubles": false,
+    "games": [
+        {
+            "stage": "Battlefield",
+            "winner": 2,
+            "team1": [
+                {
+                    "character": "captainfalcon",
+                    "colour": "green",
+                    "stocks": 3
+                },
+                {}
+            ],
+            "team2": [
+                {
+                    "character": "fox",
+                    "colour": "green",
+                    "stocks": 4
+                },
+                {}
+            ]
+        },
+        {
+            "stage": "Battlefield",
+            "winner": 1,
+            "team1": [
+                {
+                    "character": "captainfalcon",
+                    "colour": "white",
+                    "stocks": 3
+                },
+                {}
+            ],
+            "team2": [
+                {
+                    "character": "fox",
+                    "colour": "green",
+                    "stocks": 0
+                },
+                {}
+            ]
+        },
+        {
+            "stage": "Dream Land N64",
+            "winner": 1,
+            "team1": [
+                {
+                    "character": "drmario",
+                    "colour": "original",
+                    "stocks": 4
+                },
+                {}
+            ],
+            "team2": [
+                {
+                    "character": "fox",
+                    "colour": "original",
+                    "stocks": 0
+                },
+                {}
+            ]
+        },
+        {
+            "stage": "Final Destination",
+            "winner": 1,
+            "team1": [
+                {
+                    "character": "drmario",
+                    "colour": "original",
+                    "stocks": 1
+                },
+                {}
+            ],
+            "team2": [
+                {
+                    "character": "fox",
+                    "colour": "original",
+                    "stocks": 4
+                },
+                {}
+            ]
+        },
+        {
+            "stage": "Final Destination",
+            "winner": 1,
+            "team1": [
+                {
+                    "character": "drmario",
+                    "colour": "original",
+                    "stocks": 4
+                },
+                {}
+            ],
+            "team2": [
+                {
+                    "character": "jigglypuff",
+                    "colour": "original",
+                    "stocks": 0
+                },
+                {}
+            ]
+        }
+    ]
+}

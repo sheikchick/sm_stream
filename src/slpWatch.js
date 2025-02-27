@@ -35,9 +35,8 @@ exports.watch = (dir) => {
                 
                 games[path] = {
                     lastUpdate: Promise.all([
-                        changeScene(config["OBS"]["Scenes"]["Game scene"]),
                         processSlp.gameStart(path)
-                    ]).then(([_, gameObj]) => {
+                    ]).then(([gameObj]) => {
                         games[path] = {...gameObj, lastUpdate: Promise.resolve()};
                     })
                 };

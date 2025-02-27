@@ -17,3 +17,12 @@ exports.msToHHmmss = (ms) => {
 
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
+
+/**
+ * Removes illegal filename characters from a given string
+ * @param {string} string   Input string
+ * @returns {string}        String with removed characters
+ */
+exports.replaceIllegal = (string) => {
+    return string.replace(/[/\\?%*:|"<>]/g, '');
+}

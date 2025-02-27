@@ -32,11 +32,9 @@ exports.isValidGame = (() => {
     return function(game) {
         settings = game.getSettings();
 
-        for(let player of settings.players) {
-            if(player.type == 1) {
-                logging.log("No contest: Game included CPU player.");
-                return false;
-            }
+        if(this.hasCPU(settings)) {
+            logging.log("No contest: Game included CPU player.");
+            return false;
         }
 
         if(settings.gameInfoBlock.bombRainEnabled) {
@@ -99,6 +97,15 @@ exports.getWinner = (game) => {
     }
     return winner;
 };
+
+exports.hasCPU = (settings) => {
+    for(let player of settings.players) {
+        if(player.type == 1) {
+            return true;
+        }
+    }
+    return false;
+}
 
 /**
  * Get winner of a game of singles. Likely already deprecated by the latest slippi-js update

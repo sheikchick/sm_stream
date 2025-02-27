@@ -68,6 +68,22 @@ function autocompleteListneners() {
         $(`#${indicator}-flag`).val(player.country)
         loadCharChange(indicator, player.character, player.colour)
     });
+    $(".name.change").on("blur", function(el) {
+        setTimeout(() => {
+            if(el.target.id.includes('p1-name')) {
+                $("#p1-autofill").hide()
+            }
+            if(el.target.id.includes('p1d-name')) {
+                $("#p1d-autofill").hide()
+            }
+            if(el.target.id.includes('p2-name')) {
+                $("#p2-autofill").hide()
+            }
+            if(el.target.id.includes('p2d-name')) {
+                $("#p2d-autofill").hide()
+            }
+        }, 200)
+    })
     $("body").on("click", function(el) {
         if(!el.target.id.includes('p1-name')) {
             $("#p1-autofill").hide()
@@ -95,7 +111,6 @@ function autocompleteMatch(input) {
 		return [];
 	}
 	var reg = new RegExp(input.toLowerCase())
-    console.log(autocompletePlayers)
 	return autocompletePlayers.filter((player) => {
 		return player.name.toLowerCase().match(reg)
 	});

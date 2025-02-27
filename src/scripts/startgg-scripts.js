@@ -2,9 +2,99 @@
  * STARTGG
  */
 
+/* FIND A VALID SET FOR GIVEN PLAYERS BASED ON SLUGS */
+function findSetForPlayers() {
+	eventId = $("#events :selected").val()
+	if(eventId === undefined) {
+		console.log("Empty events - please select an event on start.gg (e.g. Melee Singles)")
+		return
+	}
+	fetch('https://api.start.gg/gql/alpha', {
+		method: 'POST',
+		headers: {
+			'Authorization': 'Bearer ' + apiKey,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			query: `
+				query EventSets($eventId:ID!){
+					event(id:$eventId){
+						sets( 
+							page: 1,
+							perPage: 500,
+							filters: {
+								hideEmpty: true,
+								state: [1,2,3,4,5,6,7]
+							} 
+						) {
+							nodes{
+								id
+								fullRoundText
+								slots{
+									entrant{
+                                        id
+										participants{
+											gamerTag
+											contactInfo{
+												country
+											}
+											user {
+												discriminator
+												genderPronoun
+												location {
+													country
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			`,
+			variables: {
+				eventId: eventId
+			},
+		}),
+	})
+		.then((res) => res.json())
+		.then((result) => {
+			playerSlugs = [$("#p1-slug").val(), $("#p2-slug").val()]
+			if(isDoubles) {
+				playerSlugs.push($("#p1d-slug").val())
+				playerSlugs.push($("#p2d-slug").val())
+			}
+			for(let set of result.data.event.sets.nodes) {
+				//check every slug requested matches the player for a given set
+				validSet = playerSlugs.every((slug) => {
+					return set.slots.some((slot) => {
+						return slot.entrant.participants.some((participant) => {
+							return slug === participant.user?.discriminator
+						})
+					})
+				})
+				if(validSet) {
+					console.log("Set found")
+					console.log(set)
+					//if #p2-slug is in slot[0], mark it as swapped for startgg (no need to check for doubles or other slots as should not be needed)
+					swapped = set.slots[0].entrant.participants.some((participant) => {
+						return playerSlugs[1] === participant.user.discriminator
+					})
+					$("#p1-entrant").val(set.slots[swapped ? 1 : 0].entrant.id)
+					$("#p2-entrant").val(set.slots[swapped ? 0 : 1].entrant.id)
+					$("#set-id").val(set.id)
+					$("#round-change").val(set.fullRoundText)
+					return
+				}
+			}
+		});
+}
+
 /* GET EVENTS IN TOURNAMENT (Melee Singles, Melee Doubles, ...) */
 function getTournamentEvents() {
 	tournamentSlug = $("#tournament-slug").val()
+	eventId = ""
 	fetch('https://api.start.gg/gql/alpha', {
 		method: 'POST',
 		headers: {
@@ -54,7 +144,7 @@ function getTournamentEvents() {
 			image = result.data.tournament.images.find((el) => {
 				return el.type === "profile";
 			})
-			$("#tournament-image").attr("src", image.url)
+			$("#tournament-image").attr("src", image?.url || "static/img/startgg.png")
 			//set up autocomplete
 			getDBAutocompleteSlug(tournamentSlug)
 			//add new events
@@ -71,7 +161,6 @@ function getTournamentEvents() {
 /* GET PHASES IN EVENT (Pools, Pro Bracket, ...) */
 function getEventPhases() {
 	eventId = $("#events :selected").val()
-
 	fetch('https://api.start.gg/gql/alpha', {
 		method: 'POST',
 		headers: {
@@ -115,7 +204,6 @@ function getEventPhases() {
 			for (let phase of result["data"]["event"]["phases"]) {
 				phaseOption = `<option value="${phase.id}" disabled>${phase.name}</option>`;
 				$("#phases").append(phaseOption);
-				console.log(phase)
 				for (let phaseGroup of phase.phaseGroups.nodes) {
 					phaseGroupOption = `<option value="${phaseGroup.id}">${phase.name} ${phaseGroup.displayIdentifier}</option>`;
 					$("#phases").append(phaseGroupOption);
@@ -341,12 +429,14 @@ function getSets(stateArray, hideEmpty, showButtons) {
 								slots{
 									entrant{
                                         id
-										participants{
+										participants {
+											id
 											gamerTag
 											contactInfo{
 												country
 											}
 											user {
+												id
 												discriminator
 												genderPronoun
 												location {
@@ -370,6 +460,7 @@ function getSets(stateArray, hideEmpty, showButtons) {
 	})
 		.then((res) => res.json())
 		.then((result) => {
+
 			sets = []
 			phaseGroup = result["data"]["phaseGroup"]
 			for (let set of phaseGroup["sets"]["nodes"]) {

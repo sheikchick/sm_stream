@@ -42,10 +42,6 @@ select.right {
 	text-align: right;
 }
 
-.autofill.doubles {
-	margin-top: 86px;
-}
-
 .autofill ul {
 	list-style-type: none;
 	padding: 0;
@@ -105,6 +101,8 @@ button:disabled {
 	border-radius: 5px;
 	font-size: 18px;
 	color: #FFF;
+	width: 300px;
+	align-self: center;
 }
 
 #top-label {
@@ -119,6 +117,7 @@ button:disabled {
 	flex-direction: row;
 	height: 70px;
 	gap: 0.5em;
+	align-self: center;
 }
 
 .info.actual,
@@ -207,16 +206,6 @@ button:disabled {
 	display: flex;
 }
 
-input.startgg.display {
-	background-color: #fff;
-	color: var(--element-bg-color);
-	font-size: 11px;
-	height: 16px;
-	width: 80px;
-	padding: 2px;
-	margin: 2px 10px;
-	text-align: left;
-}
 
 /* MAIN */
 
@@ -231,7 +220,7 @@ input.startgg.display {
 	display: flex;
 	flex-direction: column;
 	gap: 0.5em;
-	min-width: 750px;
+	width: 804px;
 }
 
 #p1-info-change {
@@ -251,6 +240,45 @@ input.startgg.display {
 	transition: background 0.3s ease;
 }
 
+button.startgg.entrant {
+	width: 32px;
+	height: 32px;
+	padding: 0;
+}
+
+input.startgg.display.id {
+	position: absolute;
+	align-self: flex-end;
+	margin-right: 725px;
+}
+
+#p2-entrant {
+	align-self: flex-start;
+}
+
+input.startgg.display {
+	background-color: #fff;
+	color: var(--element-bg-color);
+	font-size: 11px;
+	height: 16px;
+	width: 60px;
+	padding: 2px;
+	text-align: left;
+	opacity: 0;
+}
+
+.small-svg-icon {
+	width: 20px;
+	height: 20px;
+	margin-top: 4px;
+	filter: saturate(100%) grayscale(1) brightness(0.4);
+}
+
+#find-set {
+	font-size: 12px;
+	padding: 1px 5px;
+}
+
 .swap {
 	font-size: 20px;
 	color: #323232;
@@ -263,6 +291,22 @@ input.startgg.display {
 
 .swap:hover {
 	background-color: #CCC;
+}
+
+.player.info.wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 10px;
+}
+
+.player.info.row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
 }
 
 .database.wrapper {
@@ -338,16 +382,12 @@ select.flag:hover {
 	cursor: pointer;
 }
 
-
 select.flag>optgroup {
-	font-size: 16px;
-	color: #000;
-	font-weight: 400;
+	font-size: 15px;
+	color: #323232;
+	font-weight: 500;
 	font-style: normal;
 	margin-top: -200px;
-}
-
-select.flag>optgroup>option:disabled {
 	background-color: #ffdbdb;
 }
 
@@ -380,6 +420,7 @@ select.flag>optgroup>option:disabled {
 	width: 68px;
 	height: 93px;
 	border-radius: 5px;
+	transition: background 0.1s ease;
 }
 
 .csp.change:hover {
@@ -404,8 +445,9 @@ select.flag>optgroup>option:disabled {
 }
 
 #middle-row {
-	justify-content: center;
-	gap: 5em;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 1em;
 }
 
 /* Seating */
@@ -423,7 +465,7 @@ select.flag>optgroup>option:disabled {
 	padding: 5px;
 	border-radius: 5px;
 	gap: 0.2em;
-	width: 110px;
+	width: 120px;
 }
 
 .seat>.name {
@@ -513,9 +555,18 @@ select.flag>optgroup>option:disabled {
 	float: left;
 }
 
-.caster {
+.caster.row {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
 	gap: 0.5em;
 	margin-right: 1em;
+}
+
+input.caster {
+	height: 18px;
+	font-size: 14px;
 }
 
 .caster-name {
@@ -524,6 +575,7 @@ select.flag>optgroup>option:disabled {
 
 .caster>.pronouns {
 	text-align: left;
+	font-size: 13px;
 }
 
 /* OBS */

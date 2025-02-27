@@ -79,7 +79,7 @@
 /* GENERAL */
 html {
 	height: 100%;
-	font-family: 'Gilroy';
+	font-family: 'Gilroy', sans-serif;
 	font-weight: 400;
 }
 body {

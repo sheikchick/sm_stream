@@ -3,17 +3,6 @@ var shown = false;
 function swapCharacter(id, index = 0) {
 	shown = true;
 	$("#characterSelect").attr("imgId", id)
-	switch (index) {
-		case 1:
-			$("#characterSelect").css("margin-top", "120px")
-			break;
-		case 2:
-			$("#characterSelect").css("margin-top", "378px")
-			break;
-		default:
-			$("#characterSelect").css("margin-top", "200px")
-			$("#characterSelect").css("transform", "scale(100%)")
-	}
 	for (i = 0; i <= 5; i++) {
 		$(`#colour${i + 1}`).attr('src', `static/img/stock_icons/empty.png`)
 	}

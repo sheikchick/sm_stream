@@ -266,21 +266,25 @@ function fixPlayerColours() {
 		p1colour = portColours[Math.min(info.team1.players[0].port - 1, 3)]
 		p2colour = portColours[Math.min(info.team2.players[0].port - 1, 3)]
 	}
-	$("#p1-info-change").removeClass(["red-bg", "blue-bg", "yellow-bg", "green-bg",])
-	$("#p1-info-change").addClass(`${p1colour}-bg`)
 
 	for(let selector of ["input", "button", "select"]) {
-		$(`${selector}.left`).removeClass(portColours)
-		$(`${selector}.left`).addClass(p1colour)
-		$(`${selector}.right`).removeClass(portColours)
-		$(`${selector}.right`).addClass(p2colour)
+		if(!$(`${selector}.left`).hasClass(p1colour)) {
+			$(`${selector}.left`).removeClass(portColours)
+			$(`${selector}.left`).addClass(p1colour)
+		}
+		if(!$(`${selector}.right`).hasClass(p2colour)) {
+			$(`${selector}.right`).removeClass(portColours)
+			$(`${selector}.right`).addClass(p2colour)
+		}
 	}
-
-
-	$("#p2-info-change").removeClass(["red-bg", "blue-bg", "yellow-bg", "green-bg",])
-	$("#p2-info-change").addClass(`${p2colour}-bg`)
-
-
+	if(!$("#p1-info-change").hasClass(`${p1colour}-bg`)) {
+		$("#p1-info-change").removeClass(["red-bg", "blue-bg", "yellow-bg", "green-bg",])
+		$("#p1-info-change").addClass(`${p1colour}-bg`)
+	}
+	if(!$("#p2-info-change").hasClass(`${p2colour}-bg`)) {
+		$("#p2-info-change").removeClass(["red-bg", "blue-bg", "yellow-bg", "green-bg",])
+		$("#p2-info-change").addClass(`${p2colour}-bg`)
+	}
 }
 
 function fixSeatColour(index) {
@@ -483,7 +487,7 @@ function updateSeatsLoop() {
 		$("#right-seat-changer").css("border-bottom", $(`#t1p1-database`).css("border-bottom"))
 	}
 	fixPlayerColours()
-	setTimeout(updateSeatsLoop, 10)
+	setTimeout(updateSeatsLoop, 50)
 }
 
 function getSeatPlayer(index) {
@@ -668,15 +672,11 @@ function toggleDoubles() {
 
 		$(".swap").hide()
 
-		$(".database.doubles").hide();
+		$(".player.info.row.doubles").hide();
 		$(".database.doubles").prop("disabled", true);
-		$(".slug.doubles").hide();
 		$(".slug.doubles").prop("disabled", true);
-		$(".name.change.doubles").hide();
 		$(".name.change.doubles").prop("disabled", true);
-		$(".pronouns.change.doubles").hide();
 		$(".pronouns.change.doubles").prop("disabled", true);
-		$(".flag.change.doubles").hide();
 		$(".flag.change.doubles").prop("disabled", true);
 		$(".csp.change.doubles").hide();
 
@@ -705,15 +705,11 @@ function toggleDoubles() {
 
 		$(".swap").show()
 
-		$(".database.doubles").show();
+		$(".player.info.row.doubles").show();
 		$(".database.doubles").prop("disabled", false);
-		$(".slug.doubles").show();
 		$(".slug.doubles").prop("disabled", false);
-		$(".name.change.doubles").show();
 		$(".name.change.doubles").prop("disabled", false);
-		$(".pronouns.change.doubles").show();
 		$(".name.change.doubles").prop("disabled", false);
-		$(".flag.change.doubles").show();
 		$(".flag.change.doubles").prop("disabled", false);
 		$(".csp.change.doubles").show();
 
@@ -904,6 +900,11 @@ function changeBestOf(value) {
 	}
 }
 
+function toggleStartggEntrant() {
+	current = $(".startgg.display").css('opacity')
+	$(".startgg.display").css('opacity', 1-current)
+}
+
 /**
  * up : direction of page (true/false)
  */
@@ -1015,7 +1016,9 @@ function loadSet(x) {
 	$("#p1-flag").val(fixCountry(p1Data["country"])).change();
 	p1Db = getPlayer(p1Data.slug)
 	if(p1Db) {
-		loadCharChange("p1", p1Db.character, p1Db.colour)
+		if(p1Db.character !== "" && p1Db.colour !== "") {
+			loadCharChange("p1", p1Db.character, p1Db.colour || "red")
+		}
 	}
 
 	//p1d
@@ -1026,7 +1029,9 @@ function loadSet(x) {
 	$("#p1d-flag").val(fixCountry(p1dData["country"])).change();
 	p1dDb = getPlayer(p1dData.slug)
 	if(p1dDb) {
-		loadCharChange("p1d", p1dDb.character, p1dDb.colour)
+		if(p1dDb.character !== "" && p1dDb.colour !== "") {
+			loadCharChange("p1d", p1dDb.character, p1dDb.colour || "red")
+		}
 	}
 
 	//p2
@@ -1037,7 +1042,9 @@ function loadSet(x) {
 	$("#p2-flag").val(fixCountry(p2Data["country"])).change();
 	p2Db = getPlayer(p2Data.slug)
 	if(p2Db) {
-		loadCharChange("p2", p2Db.character, p2Db.colour)
+		if(p2Db.character !== "" && p2Db.colour !== "") {
+			loadCharChange("p2", p2Db.character, p2Db.colour || "red")
+		}
 	}
 
 	//p2d
@@ -1048,7 +1055,9 @@ function loadSet(x) {
 	$("#p2d-flag").val(fixCountry(p2dData["country"])).change();
 	p2dDb = getPlayer(p2dData.slug)
 	if(p2dDb) {
-		loadCharChange("p2d", p2dDb.character, p2dDb.colour)
+		if(p2dDb.character !== "" && p2dDb.colour !== "") {
+			loadCharChange("p2d", p2dDb.character, p2dDb.colour || "red")
+		}
 	}
 
 

@@ -20,7 +20,7 @@ const charInfo = require("./charInfo.js");
 const { readData, writeData, updateTournament, INFO, CREWS, CHARACTER_DATA, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
 const { watch } = require("./slpWatch.js");
 const { getGames } = require("./slpResults.js");
-const { checkSetStart } = require("./processSlp.js");
+const { checkSetStart, test } = require("./processSlp.js");
 const { msToHHmmss } = require("./util.js")
 
 let server;
@@ -138,12 +138,10 @@ DATA_FILES.forEach((f) => {
     app.get(`/${f}`, (req, res) => {
         res.sendFile(path.join(process.cwd(), DIRECTORY + f), (error) => {
             if(error) {
-                console.log(error)
                 if(f === "info.json") {
                     res.sendFile(path.join(process.cwd(), DIRECTORY + "info-default.json"), (error) => {
                         if(error) {
-                            console.log(error)
-                            logging.error(`Error serving info.json`)
+                            logging.error(`Error serving info.json: ${error}`)
                             res.send(`Error serving info.json`)
                         }
                     })

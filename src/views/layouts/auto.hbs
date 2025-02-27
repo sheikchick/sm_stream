@@ -34,78 +34,83 @@
 
 <body>
 	{{> footer}}
-	<span class="label" id="top-label">Currently displayed on stream</span>
-	<div id="header">
-		<div id="p1-info-actual" class="info actual">
-			<div id="p1-text-actual" class="name-container actual">
-				<input type="text" id="p1-name-actual" class="name actual left" value="{{team1.players.[0].name}}"
-					tabindex="-1" placeholder="Player 1 name" readonly="true">
-				<input type="text" id="p1d-name-actual" class="name actual left doubles" tabindex="-1"
-					value="{{team1.players.[1].name}}" placeholder="Player 2 name" readonly="true">
-			</div>
-			<div class="column stock">
-				<img id="p1-character-actual" class="stock-icon actual" src="stock">
-				<img id="p1d-character-actual" class="stock-icon actual doubles" src="stock">
-			</div>
-			<input id="p1-score-actual" class="score actual" min="0" max="99" value="{{team1.score}}" readonly="true"
-				tabindex="-1">
-		</div>
-
-		<div id="p2-info-actual" class="info actual">
-			<input id="p2-score-actual" class="score actual" min="0" max="99" value="{{team2.score}}" readonly="true"
-				tabindex="-1">
-			<div class="column stock">
-				<img id="p2-character-actual" class="stock-icon actual" src="stock">
-				<img id="p2d-character-actual" class="stock-icon actual doubles" src="stock">
-			</div>
-			<div id="p2-text-actual" class="name-container actual">
-				<input type="text" id="p2-name-actual" class="name actual right" value="{{team2.players.[0].name}}"
-					tabindex="-1" placeholder="Player 1 name" readonly="true">
-				<input type="text" id="p2d-name-actual" class="name actual right doubles" tabindex="-1"
-					value="{{team2.players.[1].name}}" placeholder="Player 2 name" readonly="true">
-			</div>
-		</div>
-		<div id="data-actual" class="data actual column">
-			<input type="text" id="round-actual" class="data-text actual" value="{{round}}" placeholder="Round"
-				tabindex="-1" readonly="true">
-			<input id="best-of-actual" class="data-text actual" best-of="{{bestOf}}" value="Bo{{bestOf}}" tabindex="-1"
-				readonly="true">
-		</div>
-	</div>
 	<div id="main">
 		<div id="left-wrapper">
+			<span class="label" id="top-label">Currently displayed on stream</span>
+			<div id="header">
+				<div id="p1-info-actual" class="info actual">
+					<div id="p1-text-actual" class="name-container actual">
+						<input type="text" id="p1-name-actual" class="name actual left"
+							value="{{team1.players.[0].name}}" tabindex="-1" placeholder="Player 1 name"
+							readonly="true">
+						<input type="text" id="p1d-name-actual" class="name actual left doubles" tabindex="-1"
+							value="{{team1.players.[1].name}}" placeholder="Player 2 name" readonly="true">
+					</div>
+					<div class="column stock">
+						<img id="p1-character-actual" class="stock-icon actual" src="stock">
+						<img id="p1d-character-actual" class="stock-icon actual doubles" src="stock">
+					</div>
+					<input id="p1-score-actual" class="score actual" min="0" max="99" value="{{team1.score}}"
+						readonly="true" tabindex="-1">
+				</div>
+
+				<div id="p2-info-actual" class="info actual">
+					<input id="p2-score-actual" class="score actual" min="0" max="99" value="{{team2.score}}"
+						readonly="true" tabindex="-1">
+					<div class="column stock">
+						<img id="p2-character-actual" class="stock-icon actual" src="stock">
+						<img id="p2d-character-actual" class="stock-icon actual doubles" src="stock">
+					</div>
+					<div id="p2-text-actual" class="name-container actual">
+						<input type="text" id="p2-name-actual" class="name actual right"
+							value="{{team2.players.[0].name}}" tabindex="-1" placeholder="Player 1 name"
+							readonly="true">
+						<input type="text" id="p2d-name-actual" class="name actual right doubles" tabindex="-1"
+							value="{{team2.players.[1].name}}" placeholder="Player 2 name" readonly="true">
+					</div>
+				</div>
+				<div id="data-actual" class="data actual column">
+					<input type="text" id="round-actual" class="data-text actual" value="{{round}}" placeholder="Round"
+						tabindex="-1" readonly="true">
+					<input id="best-of-actual" class="data-text actual" best-of="{{bestOf}}" value="Bo{{bestOf}}"
+						tabindex="-1" readonly="true">
+				</div>
+			</div>
 			<div id="p1-info-change" class="info change left">
+				<input type="text" id="p1-entrant" class="startgg display id left" value="{{team1.startggEntrant}}"
+					placeholder="start.gg Entrant">
 				<button type="button" id="team1-swap" class="swap left" onclick="swapTeam(1)"><i
 						class="fa-solid fa-arrows-up-down"></i></button>
-				<div id="p1-database-wrapper" class="database wrapper change column">
-					<button type="button" id="t1p1-database" class="database left" onclick="submitNewPlayer('1')"><i
-							class="fa-solid fa-database"></i></button>
-					<button type="button" id="t1p2-database" class="database left doubles"
-						onclick="submitNewPlayer('1d')"><i class="fa-solid fa-database"></i></button>
-				</div>
-				<div id="p1-slug-change" class="slug-container change column">
-					<input type="text" id="p1-slug" class="slug change left" value="{{team1.players.[0].slug}}"
-						placeholder="start.gg slug">
-					<input type="text" id="p1d-slug" class="slug change left doubles" value="{{team1.players.[1].slug}}"
-						placeholder="start.gg slug">
-				</div>
-				<div id="p1-pronouns-wrapper" class="pronouns wrapper change">
-					<input type="text" id="p1-pronouns" class="pronouns change left"
-						value="{{team1.players.[0].pronouns}}" placeholder="Pronouns">
-					<input type="text" id="p1d-pronouns" class="pronouns change left doubles"
-						value="{{team1.players.[1].pronouns}}" placeholder="Pronouns">
-				</div>
-				<div id="p1-flag-wrapper" class="flag wrapper change">
-					<select class="flag change left" id="p1-flag"></select>
-					<select class="flag change left doubles" id="p1d-flag"></select>
-				</div>
-				<div id="p1-text-change" class="name-container change">
-					<input type="text" id="p1-name" class="name change left" value="{{team1.players.[0].name}}"
-						placeholder="Player 1 name" onKeyUp="showResults(this.id, this.value)">
-					<div id="p1-autofill" class="autofill"></div>
-					<input type="text" id="p1d-name" class="name change left doubles" value="{{team1.players.[1].name}}"
-						placeholder="Player 2 name" onKeyUp="showResults(this.id, this.value)">
-					<div id="p1d-autofill" class="autofill doubles"></div>
+				<div class="player info wrapper column">
+					<div class="player info row">
+						<button type="button" id="t1p1-database" class="database left" onclick="submitNewPlayer('1')"><i
+								class="fa-solid fa-database"></i></button>
+						<input type="text" id="p1-slug" class="slug change left" value="{{team1.players.[0].slug}}"
+							placeholder="start.gg slug">
+						<input type="text" id="p1-pronouns" class="pronouns change left"
+							value="{{team1.players.[0].pronouns}}" placeholder="Pronouns">
+						<select class="flag change left" id="p1-flag"></select>
+						<div class="name-container change">
+							<input type="text" id="p1-name" class="name change left" value="{{team1.players.[0].name}}"
+								placeholder="Player 1 name" onKeyUp="showResults(this.id, this.value)">
+							<div id="p1-autofill" class="autofill"></div>
+						</div>
+					</div>
+					<div class="player info row doubles">
+						<button type="button" id="t1p2-database" class="database left doubles"
+							onclick="submitNewPlayer('1d')"><i class="fa-solid fa-database"></i></button>
+						<input type="text" id="p1d-slug" class="slug change left doubles"
+							value="{{team1.players.[1].slug}}" placeholder="start.gg slug">
+						<input type="text" id="p1d-pronouns" class="pronouns change left doubles"
+							value="{{team1.players.[1].pronouns}}" placeholder="Pronouns">
+						<select class="flag change left doubles" id="p1d-flag"></select>
+						<div class="name-container change">
+							<input type="text" id="p1d-name" class="name change left doubles"
+								value="{{team1.players.[1].name}}" placeholder="Player 2 name"
+								onKeyUp="showResults(this.id, this.value)">
+							<div id="p1d-autofill" class="autofill doubles"></div>
+						</div>
+					</div>
 				</div>
 				<img id="p1-character-change" class="csp change" src="csp" onclick="swapCharacter(this.id, 1)">
 				<img id="p1d-character-change" class="csp change doubles" src="csp" onclick="swapCharacter(this.id, 1)">
@@ -120,6 +125,12 @@
 			</div>
 
 			<div id="middle-row" class="row">
+				<button type="button" id="p1-entrant-button" class="startgg entrant" onclick="toggleStartggEntrant()"
+					title="Toggle display of start.gg IDs for current set"><img class="small-svg-icon"
+						src="static/img/startgg.svg" /></button>
+				<input type="text" id="set-id" class="startgg display setid" value="{{startggSetId}}"
+					placeholder="start.gg Set ID">
+				<button id="find-set" class="startgg" onclick="findSetForPlayers()">Find start.gg set</button>
 				<button type="button" id="swap-info" class="swap-sides" onclick="swapSides(true, false)">
 					Info <i class="fa-solid fa-arrows-up-down"></i>
 				</button>
@@ -130,40 +141,42 @@
 					Chars. <i class="fa-solid fa-arrows-up-down"></i>
 				</button>
 			</div>
+
 			<div id="p2-info-change" class="info change right">
+				<input type="text" id="p2-entrant" class="startgg display id right" value="{{team2.startggEntrant}}"
+					placeholder="P2 start.gg Entrant">
 				<button type="button" id="team2-swap" class="swap right
-				" onclick="swapTeam(2)"><i
-						class="fa-solid fa-arrows-up-down"></i></button>
-				<div id="p2-database-wrapper" class="database wrapper change column">
-					<button type="button" id="t2p1-database" class="database right" onclick="submitNewPlayer('2')"><i
-							class="fa-solid fa-database"></i></button>
-					<button type="button" id="t2p2-database" class="database right doubles" onclick="submitNewPlayer('2d')"><i
-							class="fa-solid fa-database"></i></button>
-				</div>
-				<div id="p2-slug-change" class="slug-container change column">
-					<input type="text" id="p2-slug" class="slug change right" value="{{team2.players.[0].slug}}"
-						placeholder="start.gg slug">
-					<input type="text" id="p2d-slug" class="slug change right doubles"
-						value="{{team2.players.[1].slug}}" placeholder="start.gg slug">
-				</div>
-				<div id="p2-pronouns-wrapper" class="pronouns wrapper change">
-					<input type="text" id="p2-pronouns" class="pronouns change right"
-						value="{{team2.players.[0].pronouns}}" placeholder="Pronouns">
-					<input type="text" id="p2d-pronouns" class="pronouns change right doubles"
-						value="{{team2.players.[1].pronouns}}" placeholder="Pronouns">
-				</div>
-				<div id="p2-flag-wrapper" class="flag wrapper change">
-					<select class="flag change right" id="p2-flag"></select>
-					<select class="flag change right doubles" id="p2d-flag"></select>
-				</div>
-				<div id="p2-text-change" class="name-container change">
-					<input type="text" id="p2-name" class="name change right" value="{{team2.players.[0].name}}"
-						placeholder="Player 1 name" onKeyUp="showResults(this.id, this.value)">
-					<div id="p2-autofill" class="autofill"></div>
-					<input type="text" id="p2d-name" class="name change right doubles"
-						value="{{team2.players.[1].name}}" placeholder="Player 2 name"
-						onKeyUp="showResults(this.id, this.value)">
-					<div id="p2d-autofill" class="autofill doubles"></div>
+				" onclick="swapTeam(2)"><i class="fa-solid fa-arrows-up-down"></i></button>
+				<div class="player info wrapper column">
+					<div class="player info row">
+						<button type="button" id="t2p1-database" class="database right"
+							onclick="submitNewPlayer('2')"><i class="fa-solid fa-database"></i></button>
+						<input type="text" id="p2-slug" class="slug change right" value="{{team2.players.[0].slug}}"
+							placeholder="start.gg slug">
+						<input type="text" id="p2-pronouns" class="pronouns change right"
+							value="{{team2.players.[0].pronouns}}" placeholder="Pronouns">
+						<select class="flag change right" id="p2-flag"></select>
+						<div class="name-container change">
+							<input type="text" id="p2-name" class="name change right" value="{{team2.players.[0].name}}"
+								placeholder="Player 1 name" onKeyUp="showResults(this.id, this.value)">
+							<div id="p2-autofill" class="autofill"></div>
+						</div>
+					</div>
+					<div class="player info row doubles">
+						<button type="button" id="t2p2-database" class="database right doubles"
+							onclick="submitNewPlayer('2d')"><i class="fa-solid fa-database"></i></button>
+						<input type="text" id="p2d-slug" class="slug change right doubles"
+							value="{{team2.players.[1].slug}}" placeholder="start.gg slug">
+						<input type="text" id="p2d-pronouns" class="pronouns change right doubles"
+							value="{{team2.players.[1].pronouns}}" placeholder="Pronouns">
+						<select class="flag change right doubles" id="p2d-flag"></select>
+						<div class="name-container change">
+							<input type="text" id="p2d-name" class="name change right doubles"
+								value="{{team2.players.[1].name}}" placeholder="Player 2 name"
+								onKeyUp="showResults(this.id, this.value)">
+							<div id="p2d-autofill" class="autofill doubles"></div>
+						</div>
+					</div>
 				</div>
 				<img id="p2-character-change" class="csp change" src="csp" onclick="swapCharacter(this.id, 2)">
 				<img id="p2d-character-change" class="csp change doubles" src="csp" onclick="swapCharacter(this.id, 2)">
@@ -179,50 +192,50 @@
 			<div id="seat-wrapper" class="row">
 				<button id="seat-reset" onclick="resetSeats()"><i class="fa-solid fa-rotate-left"></i></button>
 				<div class="seat p1 left column" id="p1-left-seat" index="{{seatOrdering.[0]}}">
+					<span class="name" tabindex="-1">{{team1.players.[0].name}}</span>
+					<img class="stock-icon" src="static/img/stock_icons/smash.png">
 					<span class="header">
 						<i class="fas fa-chair" style="opacity: 100%;"></i>
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
 						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
 					</span>
-					<span class="name" tabindex="-1">{{team1.players.[0].name}}</span>
-					<img class="stock-icon" src="static/img/stock_icons/smash.png">
 				</div>
 				<button class="seat-changer side" id="left-seat-changer" onclick="swapSeatTeam(1)"><i
 						class="fa-solid fa-left-right"></i></button>
 				<div class="seat p1 right column" id="p1-right-seat" index="{{seatOrdering.[1]}}">
+					<span class="name" tabindex="-1">{{team1.players.[1].name}}</span>
+					<img class="stock-icon" src="static/img/stock_icons/smash.png">
 					<span class="header">
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 						<i class="fas fa-chair" style="opacity: 100%;"></i>
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 					</span>
-					<span class="name" tabindex="-1">{{team1.players.[1].name}}</span>
-					<img class="stock-icon" src="static/img/stock_icons/smash.png">
 				</div>
 				<button class="seat-changer" onclick="swapSeatSides()">Swap sides<br /><i
 						class="fa-solid fa-left-right"></i></button>
 				<div class="seat p2 left column" id="p2-left-seat" index="{{seatOrdering.[2]}}">
+					<span class="name" tabindex="-1">{{team2.players.[0].name}}</span>
+					<img class="stock-icon" src="static/img/stock_icons/smash.png">
 					<span class="header">
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
 						<i class="fas fa-chair" style="opacity: 100%;"></i>
 						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
 					</span>
-					<span class="name" tabindex="-1">{{team2.players.[0].name}}</span>
-					<img class="stock-icon" src="static/img/stock_icons/smash.png">
 				</div>
 				<button class="seat-changer side" id="right-seat-changer" onclick="swapSeatTeam(2)"><i
 						class="fa-solid fa-left-right"></i></button>
 				<div class="seat p2 right column" id="p2-right-seat" index="{{seatOrdering.[3]}}">
+					<span class="name" tabindex="-1">{{team2.players.[1].name}}</span>
+					<img class="stock-icon" src="static/img/stock_icons/smash.png">
 					<span class="header">
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 						<i class="fas fa-chair" style="opacity: 100%;"></i>
 					</span>
-					<span class="name" tabindex="-1">{{team2.players.[1].name}}</span>
-					<img class="stock-icon" src="static/img/stock_icons/smash.png">
 				</div>
 			</div>
 
@@ -242,24 +255,16 @@
 			<div id="caster-wrapper" class="row">
 				<img class="icon" id="caster-icon" src="static/img/microphone.svg" alt="Mic" />
 				<div class="caster row">
-					<input type="text" id="caster1-name" value="" class="caster-name" placeholder="Caster 1 name">
-					<input type="text" id="caster1-pronouns" value="" class="pronouns" placeholder="Pronouns">
+					<input type="text" id="caster1-name" value="" class="caster caster-name"
+						placeholder="Caster 1 name">
+					<input type="text" id="caster1-pronouns" value="" class="caster pronouns" placeholder="Pronouns">
 				</div>
 				<div class="caster row">
-					<input type="text" id="caster2-name" value="" class="caster-name" placeholder="Caster 2 name">
-					<input type="text" id="caster2-pronouns" value="" class="pronouns" placeholder="Pronouns">
+					<input type="text" id="caster2-name" value="" class="caster caster-name"
+						placeholder="Caster 2 name">
+					<input type="text" id="caster2-pronouns" value="" class="caster pronouns" placeholder="Pronouns">
 				</div>
 			</div>
-
-			<div id="startgg-entrants" class="row">
-				<input type="text" id="p1-entrant" class="startgg display id" value="{{team1.startggEntrant}}"
-					placeholder="start.gg Entrant">
-				<input type="text" id="set-id" class="startgg display setid" value="{{startggSetId}}"
-					placeholder="start.gg Set ID">
-				<input type="text" id="p2-entrant" class="startgg display id" value="{{team2.startggEntrant}}"
-					placeholder="P2 start.gg Entrant">
-			</div>
-
 			<div id="obs-wrapper" class="row">
 				<img class="icon" id="obs-icon" src="static/img/obs.svg" alt="OBS" />
 				<div class="row" id="obs-load">
@@ -273,7 +278,6 @@
 					</div>
 				</div>
 			</div>
-
 		</div>
 		<div id="right-wrapper">
 			<div id="startgg-banner-wrapper">

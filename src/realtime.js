@@ -67,15 +67,12 @@ exports.start = (address, port) => {
                 }
             });
         }
-        console.log(payload)
         writeData(INFO, info);
     });
     
     //GAME END
     realtime.game.end$.subscribe((payload) => {
         logging.log("Game ended");
-        console.log(payload)
-        console.log(livestream.connection)
     });
 }
 

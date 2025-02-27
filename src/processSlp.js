@@ -39,7 +39,7 @@ exports.checkSetStart = (() => {
             const p2Score = info.team2.score;
             const totalScore = p1Score + p2Score;
 
-            if (p1Score >= firstTo || p2Score >= firstTo || totalScore === 0) {
+            if (p1Score >= firstTo || p2Score >= firstTo || totalScore === 0 || (p1Score == 0 && p2Score == 0)) {
                 logging.log('New set detected');
                 if (round.includes(gf) && totalScore) {
                     logging.log('Grand Final reset detected. Both players now in losers')
@@ -167,6 +167,18 @@ checkSetEnd = async (info) => {
     }
 };
 
+exports.test = async (path) => {
+    const game = new SlippiGame(path);
+    const settings = game.getSettings();
+    const teams = slpTools.getSlippiTeams(settings.players);
+
+    for(let player of settings.players) {
+        if(player.connectCode !== "") {
+            logging.log(`Port ${player.port} - ${player.displayName} (${player.connectCode})`)
+        }
+    }
+}
+
 /**
  * Executed on game start
  * @param {*} path  Path to the .slp file
@@ -176,6 +188,19 @@ exports.gameStart = async (path) => {
     const game = new SlippiGame(path, { processOnTheFly: true });
     const settings = game.getSettings();
     const teams = slpTools.getSlippiTeams(settings.players);
+
+    //Change scene to GameScene if game has been played for less than 10 seconds to avoid mismatched scenes when streaming Netplay
+    if(game.getStats()?.playableFrameCount < 600) {
+        if(!slpTools.hasCPU(settings) || config["Slippi"]["Debug Mode"] === "true") {
+            changeScene(config["OBS"]["Scenes"]["Game scene"])
+        }
+    }
+
+    for(let player of settings.players) {
+        if(player.connectCode !== "") {
+            logging.log(`Port ${player.port} - ${player.displayName} (${player.connectCode})`)
+        }
+    }
 
     const info = await readData(INFO);
 
@@ -218,7 +243,7 @@ exports.gameStart = async (path) => {
  * @returns         Write output to info.json
  */
 exports.gameMid = async ({ game, settings, teams }) => {
-    if (teams.length === 2) {
+    if (teams?.length === 2) {
         const playersLatestFrame = game.getLatestFrame().players;
         const info = await readData(INFO);
 
@@ -249,6 +274,9 @@ exports.gameEnd = async ({ game, settings, teams }) => {
     global.gameInProgress = false;
     //if debug mode disabled and if the game is not valid
     if (config["Slippi"]["Debug Mode"] === "false" && !slpTools.isValidGame(game)) {
+        if(!slpTools.hasCPU(settings)  || config["Slippi"]["Debug Mode"] === "true") {
+            changeScene(config["OBS"]["Scenes"]["Game end scene"])
+        }
         return;
     }
 

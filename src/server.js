@@ -156,12 +156,17 @@ DATA_FILES.forEach((f) => {
 /* PLAYER DATABASE */
 
 app.post("/database.db", (req, res) => {
-    if(!!req.body.players) {
-        res.json(playerDB.getDBFromList(req.body.players))
-    } else {
+    if(!!req.body.full) {
+        //override for no filter
         playerDB.getDB((db) => {
             res.json(db)
         })
+    } else {
+        //will fallback to full DB if filter is incorrect
+        playerDB.getFilteredDB((db) => {
+            res.json(db)
+        })
+
     }
 });
 
@@ -236,6 +241,24 @@ app.post("/addPlayer", (req, res) => {
         res.sendStatus(400);
     }
 });
+
+app.post("/saveFilter", (req, res) => {
+    if(!!req.body.players) {
+        playerDB.createFilter(req.body.players, req.body.slug, (err) => {
+            if(err) {
+                logging.error(err)
+                res.sendStatus(500)
+            } else {
+                logging.log(`Filtered database using slug '${req.body.slug}'.`)
+                res.sendStatus(200)
+            }
+        })
+    } else {
+        res.sendStatus(400);
+    }
+});
+
+
 
 /* TOURNAMENT SET DATA */
 

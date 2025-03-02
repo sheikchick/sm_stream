@@ -1,12 +1,10 @@
 let players = []
+let slug = ""
 
-function getDB() {
+function getDB(full = false) {
     $.ajax({
         type: 'POST',
         url: "/database.db",
-        data: {
-            players: []
-        },
         success: function (response) {
             let index = 0;
             db = response.sort(function compare(a,b) {
@@ -193,7 +191,8 @@ const getTournamentPlayers = (tournamentSlug) => new Promise((resolve, reject) =
 });
 
 function load() {
-    getTournamentPlayers($("#tournament-slug").val()).then((res) => {
+    slug = $("#tournament-slug").val()
+    getTournamentPlayers(slug).then((res) => {
         $("#list").text("");
         players = res
         for(let player of players) {
@@ -208,6 +207,29 @@ function addToDB(el) {
         url: "/addPlayers",
         data: {
             players: players
+        },
+        success: function (response) {
+            submitFinished(el, false)
+        },
+        error: function (response) {
+            console.log(response)
+            submitFinished(el, true)
+        },
+        timeout: 5000
+    })
+}
+
+function saveFilter(el) {
+    filtered = []
+    players.forEach((player) => {
+        filtered.push(player.slug)
+    })
+    $.ajax({
+        type: 'POST',
+        url: "/saveFilter",
+        data: {
+            players: filtered,
+            slug: slug
         },
         success: function (response) {
             submitFinished(el, false)

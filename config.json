@@ -4,6 +4,7 @@
     },
     "Slippi": {
         "Directory": "",
+        "Spectator Directory": "",
         "Debug Mode": "false"
     },
     "OBS": {
@@ -13,7 +14,8 @@
             "Password": ""
         },
         "Scenes": {
-            "Auto-swap Scenes": "false",
+            "Auto-swap Scenes": "true",
+            "Swap scenes on friendlies": "false",
             "Game scene": "",
             "Game end scene": "",
             "Set end scene": ""
@@ -22,10 +24,12 @@
         "VODs": {
             "Auto-record": "false",
             "Output path": ""
-        }
+        },
+        "ffmpeg Path": ""
     },
     "start.gg": {
         "API key": "",
-        "Auto-submit sets": "true"
+        "Auto-submit sets": "false",
+        "Database filter": ""
     }
 }

@@ -3,7 +3,10 @@ const logging = require("./logging.js");
 const fs = require("fs");
 const path = require('path');
 
+exports.FILTERS_DIRECTORY = "data/database-filters/";
+
 const db = new sqlite3.Database(path.join(__dirname, '..', 'data/database.db'));
+
 db.run(`
     CREATE TABLE if NOT EXISTS players(
         slug varchar(255) PRIMARY KEY,
@@ -22,15 +25,21 @@ exports.getDB = (fn) => {
         });
 };
 
-exports.getDBFromList = (list) => {
-    this.getDB((db) => {
-        return db.filter((player) => {
-            list.some((slug) => {
-                player.slug === slug;
-            })
+exports.getFilteredDB = (fn) => {
+    this.getFilter((err, list) => {
+        this.getDB((db) => {
+            if(err) {
+                fn(db)
+            } else {
+                filtered = db.filter((player) => {
+                    return list.some((slug) => {
+                        return player.slug === slug;
+                    })
+                });
+                fn(filtered)
+            }
         });
-    });
-
+    })
 }
 
 exports.addPlayer = (player, fn) => {
@@ -78,4 +87,28 @@ exports.removePlayer = (slug, fn) => {
                     })
             }
         });
+}
+
+exports.getFilter = (fn) => {
+    try {
+        slug = config["start.gg"]["Database filter"]
+        if(!!slug) {
+            const filter = JSON.parse(fs.readFileSync(this.FILTERS_DIRECTORY + slug + ".json"))
+            fn(false, filter)
+        } else {
+            fn(true)
+        }
+    } catch(e) {
+        fn(e)
+    }
+
+}
+
+exports.createFilter = (players, slug, fn) => {
+    try {
+        fs.writeFileSync(this.FILTERS_DIRECTORY + slug + ".json", JSON.stringify(players));
+        fn(false)
+    } catch(e) {
+        fn(e)
+    }
 }

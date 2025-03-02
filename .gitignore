@@ -51,6 +51,7 @@ ffmpeg/
 
 # OTHER #
 #########
+*.bak
 desktop.ini
 overlay/**
 dist/**

@@ -1,6 +1,17 @@
 let players = []
 let slug = ""
 
+let clickedDelete = "";
+
+function clickedListener() {
+    $("body").on("click", function (el) {
+        if (!el.target.id.includes('delete') && !el.target?.parentElement?.id?.includes('delete') && !el.target?.parentElement?.parentElement?.id?.includes('delete')) {
+            clickedDelete = "";
+            $(".delete").removeClass("clicked")
+        }
+    });
+}
+
 function getDB(full = false) {
     $.ajax({
         type: 'POST',
@@ -64,28 +75,55 @@ function updatePlayer(el) {
 
 function deletePlayer(el) {
     const index = $(`#${el}`).attr("index")
-    let request = {
-        "slug": $(`#player${index}>.slug`).val(),
-        "name": $(`#player${index}>.name`).val(),
-        "country": $(`#player${index}>.country`).val(),
-        "pronouns": $(`#player${index}>.pronouns`).val(),
-        "character": $(`#player${index}>.character`).attr("character"),
-        "colour": $(`#player${index}>.character`).attr("colour")
+    if(clickedDelete === index) {
+        let request = {
+            "slug": $(`#player${index}>.slug`).val(),
+            "name": $(`#player${index}>.name`).val(),
+            "country": $(`#player${index}>.country`).val(),
+            "pronouns": $(`#player${index}>.pronouns`).val(),
+            "character": $(`#player${index}>.character`).attr("character"),
+            "colour": $(`#player${index}>.character`).attr("colour")
+        }
+        $.ajax({
+            type: 'POST',
+            url: "/deletePlayer",
+            data: {
+                player: request
+            },
+            success: function (response) {
+                $(`#player${index}`).remove()
+                $(`#${el}`).css("background-color", "#CBFFC7");
+                $(`#${el}`).css("border-bottom", "3px solid #64B55E");
+                $(`#${el}`).text("");
+                $(`#${el}`).append('<i class="fa-solid fa-thumbs-up"></i>')
+                setTimeout(function () {
+                    $(`#${el}`).css("background-color", "#FFF");
+                    $(`#${el}`).css("border-bottom", "3px solid #AAA");
+                    $(`#${el}`).text("");
+                    $(`#${el}`).append('<i class="fa-solid fa-trash"></i>')
+                }, 2000);
+            },
+            error: function (response) {
+                console.log(response)
+                $(`#${el}`).css("background-color", "#F56262");
+                $(`#${el}`).css("border-bottom", "3px solid #F53535");
+                $(`#${el}`).text("");
+                $(`#${el}`).append('<i class="fa-solid fa-triangle-exclamation"></i>')
+                setTimeout(function () {
+                    $(`#${el}`).css("background-color", "#FFF");
+                    $(`#${el}`).css("border-bottom", "3px solid #AAA");
+                    $(`#${el}`).text("");
+                    $(`#${el}`).append('<i class="fa-solid fa-trash"></i>')
+                }, 2000);
+            },
+            timeout: 5000
+        })
+    } else {
+        $(".delete").removeClass("clicked")
+        clickedDelete = index;
+        $(`#${el}`).addClass("clicked");
     }
-    $.ajax({
-        type: 'POST',
-        url: "/deletePlayer",
-        data: {
-            player: request
-        },
-        success: function (response) {
-            $(`#player${index}`).remove()
-        },
-        error: function (response) {
-            console.log(response)
-        },
-        timeout: 5000
-    })
+
 }
 
 function submitPlayer(request, el) {

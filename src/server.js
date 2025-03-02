@@ -40,13 +40,13 @@ app.set('views', layoutsDir);
 app.set('view engine', 'hbs');
 hbs.registerPartials(path.join(__dirname, 'views/partials'));
 
-app.use("/static", express.static(path.join(__dirname,  "../static")));
+app.use("/static", express.static(path.join(__dirname, "../static")));
 app.use("/scripts", express.static(path.join(__dirname, "scripts")));
 app.use("/css", express.static(path.join(__dirname, "css")));
 
 app.use(express.json());
 app.use(cors())
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(favicon(path.join(__dirname, '../static/favicon.ico')));
 
@@ -56,7 +56,7 @@ app.get("/", (req, res) => {
 
 app.post("/update", (req, res) => {
     const info = req.body;
-    if(gameInProgress) {
+    if (gameInProgress) {
         checkSetStart(info);
     }
     writeData(INFO, info)
@@ -81,12 +81,12 @@ app.post("/update-crews", (req, res) => {
 
 // Endpoints for files in /views/layouts
 
-fs.readdir(layoutsDir, {withFileTypes: true}).then((files) => {
+fs.readdir(layoutsDir, { withFileTypes: true }).then((files) => {
     const hbs = '.hbs';
     files.filter((f) => f.isFile() && f.name.endsWith(hbs)).forEach((f) => {
         const layout = f.name.replace(hbs, '');
         app.get(`/${layout}`, (req, res) => {
-            if(layout === "crews") {
+            if (layout === "crews") {
                 readData(CREWS).then((data) => {
                     res.render(layout, {
                         ...data,
@@ -137,10 +137,10 @@ fs.readdir(overlayDir, {withFileTypes: true}).then((overlays) => {
 DATA_FILES.forEach((f) => {
     app.get(`/${f}`, (req, res) => {
         res.sendFile(path.join(process.cwd(), DIRECTORY + f), (error) => {
-            if(error) {
-                if(f === "info.json") {
+            if (error) {
+                if (f === "info.json") {
                     res.sendFile(path.join(process.cwd(), DIRECTORY + "info-default.json"), (error) => {
-                        if(error) {
+                        if (error) {
                             logging.error(`Error serving info.json: ${error}`)
                             res.send(`Error serving info.json`)
                         }
@@ -156,7 +156,7 @@ DATA_FILES.forEach((f) => {
 /* PLAYER DATABASE */
 
 app.post("/database.db", (req, res) => {
-    if(!!req.body.full) {
+    if (!!req.body.full) {
         //override for no filter
         playerDB.getDB((db) => {
             res.json(db)
@@ -172,9 +172,9 @@ app.post("/database.db", (req, res) => {
 
 
 app.post("/deletePlayer", (req, res) => {
-    if(!!req.body.player) {
+    if (!!req.body.player) {
         playerDB.removePlayer(req.body.player.slug, (err) => {
-            if(err) {
+            if (err) {
                 res.sendStatus(200)
             } else {
                 logging.log(`Removed player '${req.body.player.name}' from database.`)
@@ -187,14 +187,14 @@ app.post("/deletePlayer", (req, res) => {
 });
 
 app.post("/updatePlayer", (req, res) => {
-    if(!!req.body.player) {
+    if (!!req.body.player) {
         playerDB.addPlayer(req.body.player, (err, data, updated) => {
-            if(err) {
+            if (err) {
                 res.sendStatus(200)
             } else {
-                updated ? 
+                updated ?
                     logging.log(`Updated player '${data}' in database.`)
-                :
+                    :
                     logging.log(`Added player '${data}' to database.`)
                 res.sendStatus(200)
             }
@@ -205,13 +205,13 @@ app.post("/updatePlayer", (req, res) => {
 });
 
 app.post("/addPlayers", (req, res) => {
-    if(!!req.body.players) {
+    if (!!req.body.players) {
         count = 0;
         promises = []
-        for(let player of req.body.players) {
+        for (let player of req.body.players) {
             promises.push(new Promise((res, rej) => {
                 playerDB.addIfNotExists(player, (err, data) => {
-                    if(!err) {
+                    if (!err) {
                         count++;
                     }
                 })
@@ -227,9 +227,9 @@ app.post("/addPlayers", (req, res) => {
 });
 
 app.post("/addPlayer", (req, res) => {
-    if(!!req.body.player) {
+    if (!!req.body.player) {
         playerDB.addPlayer(req.body.player, (err, data) => {
-            if(err) {
+            if (err) {
                 logging.error(err)
                 res.sendStatus(500)
             } else {
@@ -243,13 +243,18 @@ app.post("/addPlayer", (req, res) => {
 });
 
 app.post("/saveFilter", (req, res) => {
-    if(!!req.body.players) {
+    if (!!req.body.players) {
         playerDB.createFilter(req.body.players, req.body.slug, (err) => {
-            if(err) {
+            if (err) {
                 logging.error(err)
                 res.sendStatus(500)
             } else {
                 logging.log(`Filtered database using slug '${req.body.slug}'.`)
+                config["start.gg"]["Database filter"] = req.body.slug
+                serverConfig.write(config)
+                    .catch(() => {
+                        logging.error("Error updating config with new database filter.")
+                    });
                 res.sendStatus(200)
             }
         })
@@ -263,7 +268,7 @@ app.post("/saveFilter", (req, res) => {
 /* TOURNAMENT SET DATA */
 
 app.get(`/tournaments`, (req, res) => {
-    fs.readdir(path.join(process.cwd(), DIRECTORY, "tournaments"), {withFileTypes: true}).then((files) => {
+    fs.readdir(path.join(process.cwd(), DIRECTORY, "tournaments"), { withFileTypes: true }).then((files) => {
         const json = '.json';
         const data = files.filter((f) => f.isFile() && f.name.endsWith(json));
         const output = []
@@ -303,18 +308,18 @@ app.post("/save_clip", (req, res) => {
     recordLive.saveClip("", req.body.timecode, req.body?.tournament || "default")
         .then(() => {
             recordLive.saveClip("vertical", req.body.timecode, req.body?.tournament || "default")
-            .then(() => {
-                res.sendStatus(200);
-            }).catch((e) => {
-                res.sendStatus(207);
-            });
+                .then(() => {
+                    res.sendStatus(200);
+                }).catch((e) => {
+                    res.sendStatus(207);
+                });
         }).catch((e) => {
             res.sendStatus(500);
         });
 });
 
 app.get("/recording_status", (req, res) => {
-    res.json({recording_status: recordLive.getRecordingStatus()});
+    res.json({ recording_status: recordLive.getRecordingStatus() });
 });
 
 /* RECORDING SET ENDPOINTS */
@@ -347,7 +352,7 @@ app.all("/update_set", (req, res) => {
     updateTournament(req.body.data, req.body.index, req.body.tournament)
         .then(() => {
             res.sendStatus(200);
-        }).catch((e)=>{
+        }).catch((e) => {
             logging.error(`Failed to update set - ${e}`)
             res.sendStatus(500);
         })
@@ -356,7 +361,7 @@ app.all("/update_set", (req, res) => {
 app.all("/player_character", (req, res) => {
     readData(CHARACTER_DATA)
         .then((data) => {
-            if(data.hasOwnProperty(req.body.id)) {
+            if (data.hasOwnProperty(req.body.id)) {
                 res.json({
                     "name": data[req.body.id].name || "",
                     "character": data[req.body.id].character || "",
@@ -372,12 +377,12 @@ app.all("/player_character", (req, res) => {
 /* MULTI-SET REPORTING ENDPOINTS */
 app.all("/get-wii-games", (req, res) => {
     getGames(req.body.directory, req.body.index, req.body.amount)
-    .then((games) => {
-        res.json(games)
-    })
-    .catch(() => {
-        res.sendStatus(500)
-    })
+        .then((games) => {
+            res.json(games)
+        })
+        .catch(() => {
+            res.sendStatus(500)
+        })
 });
 
 /* CHARACTER INFO ENDPOINTS */
@@ -395,12 +400,12 @@ app.get(`/css`, (req, res) => {
 });
 
 app.get(`/csp`, (req, res) => {
-    const {query: {character, colour}} = req;
+    const { query: { character, colour } } = req;
     res.sendFile(charInfo.getCsp(character, colour));
 });
 
 app.get(`/stock`, (req, res) => {
-    const {query: {character, colour, overlay}} = req;
+    const { query: { character, colour, overlay } } = req;
     res.sendFile(charInfo.getStock(character, colour, overlay));
 });
 
@@ -418,12 +423,12 @@ app.get(`/pm/stock`, (req, res) => {
 
 //fete stock icons
 app.get(`/fete`, (req, res) => {
-    const {query: {character, colour, overlay}} = req;
+    const { query: { character, colour, overlay } } = req;
     res.sendFile(charInfo.getFeteStock(character, colour, overlay));
 });
 
 app.get(`/vs`, (req, res) => {
-    const {query: {character, colour, side}} = req;
+    const { query: { character, colour, side } } = req;
     res.sendFile(charInfo.getVs(character, colour, side));
 });
 
@@ -447,6 +452,6 @@ process.on('exit', function () {
     logging.error("Exiting program...")
 });
 
-if(require.main == module) {
+if (require.main == module) {
     serverConfig.read(startApp);
 }

@@ -24,6 +24,7 @@
 		var obsPassword = "{{obsPassword}}"
 		$(document).ready(function () {
 			getDB();
+			clickedListener();
 		});
 	</script>
     <link rel="stylesheet" type="text/css" href="css/common.css">
@@ -42,7 +43,7 @@
                 <span class="country">Country</span>
                 <span class="pronouns">Pronouns</span>
                 <span id="character">🦊</span>
-				<button class="submit">Submit all</button>
+				<button id="submit-all" class="submit">Submit all</button>
             </div>
         </div>
 		<div class="startgg" id="startgg">

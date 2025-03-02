@@ -59,4 +59,5 @@ static/img/vs_icons/**
 static/img/stock_icons/!characters/**
 static/overlay/**
 data/json/tournaments/**
+data/database-filters/**
 !data/json/tournaments/sm-test/

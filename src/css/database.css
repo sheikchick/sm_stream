@@ -139,3 +139,12 @@ Have auto pronoun updater using start.gg
     height: 30px;
     padding: 0;
 }
+
+#submit-all {
+    opacity: 0;
+}
+
+.clicked {
+    background-color: #F5C462;
+    border-bottom: 3px solid #f5b536;
+}

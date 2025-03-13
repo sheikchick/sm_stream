@@ -27,13 +27,16 @@ var sheikZeldaPlaytime = {
  */
 exports.checkSetStart = (() => {
     const FRIENDLIES = 'friendlies';
+    const CREWS = 'crews';
     const gf = "grand final";
     const l = " (L)";
     const lRegex = /\s*(?:\(L\))?$/;
 
     return (info, isGameStart) => {
         const round = info.round?.toLowerCase();
-        if (!round.includes(FRIENDLIES) && info.bestOf !== 0) {
+        if (round.includes(CREWS)) {
+            currentSet = []; //clear set
+        } else if (!round.includes(FRIENDLIES) && info.bestOf !== 0) {
             const firstTo = getFirstTo(info.bestOf);
             const p1Score = info.team1.score;
             const p2Score = info.team2.score;
@@ -246,7 +249,9 @@ exports.gameMid = async ({ game, settings, teams }) => {
     if (teams?.length === 2) {
         const playersLatestFrame = game.getLatestFrame().players;
         const info = await readData(INFO);
-
+        if (info.round === this.CREWS) {
+            //handle lowering of score
+        }
         teams.forEach(([p, pd = {}], index) => {
             p1char = slpTools.getLatestCharacter(p, playersLatestFrame)
             if (p1char === "zelda" || p1char === "sheik") {

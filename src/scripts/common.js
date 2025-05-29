@@ -24,6 +24,11 @@ function HHmmssToMs(input) {
 	return ms;
 };
 
+function getName(name) {
+	const lRegex = /\s*\(L\)$/;
+	return ({ name: name.replace(lRegex, ''), l: lRegex.test(name) });
+};
+
 function getDefaultIcon(character) {
 	switch (character) {
 		case "bowser":

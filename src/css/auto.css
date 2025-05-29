@@ -438,6 +438,14 @@ select.flag>optgroup {
 .swap-sides {
 	height: 39px;
 	font-weight: 600;
+	width: 100px;
+}
+
+#reset-scores {
+	width: 97px;
+	font-size: 12px;
+	padding: 1px 5px;
+	margin-left: 23px;
 }
 
 .swap-sides>svg {

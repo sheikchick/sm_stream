@@ -170,6 +170,15 @@ app.post("/database.db", (req, res) => {
     }
 });
 
+app.post("/getPlayer", (req, res) => {
+    if (!!req.body.slug) {
+        playerDB.getPlayer(req.body.slug, (db) => {
+            res.json(db)
+        })
+    } else {
+        res.sendStatus(400);
+    }
+});
 
 app.post("/deletePlayer", (req, res) => {
     if (!!req.body.player) {
@@ -204,11 +213,34 @@ app.post("/updatePlayer", (req, res) => {
     }
 });
 
+app.post("/updatePlayers", (req, res) => {
+    if (!!req.body.players) {
+        count = 0;
+        promises = []
+        for (let player of req.body.players) {
+            promises.push(new Promise((res, rej) => {
+                playerDB.updatePlayer(player, (err, data) => {
+                    if (!err) {
+                        count++;
+                    }
+                })
+            }))
+        }
+        Promise.all(promises).then(() => {
+            logging.log(`Added ${count} players to the database.`)
+            res.sendStatus(200)
+        })
+    } else {
+        res.sendStatus(400);
+    }
+});
+
 app.post("/addPlayers", (req, res) => {
     if (!!req.body.players) {
         count = 0;
         promises = []
         for (let player of req.body.players) {
+            console.log(player)
             promises.push(new Promise((res, rej) => {
                 playerDB.addIfNotExists(player, (err, data) => {
                     if (!err) {

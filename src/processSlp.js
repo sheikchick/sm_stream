@@ -116,7 +116,7 @@ checkSetEnd = async (info) => {
     const firstTo = getFirstTo(info.bestOf);
     if (info.team1.score >= firstTo || info.team2.score >= firstTo) {
         getTimecode()
-            .then((timecode) => {
+            .then((finalTimecode) => {
                 getDirectory()
                     .then((directory) => {
                         recordLive.getLatestRecordingFile(directory)
@@ -144,7 +144,7 @@ checkSetEnd = async (info) => {
                                     vod: directory ? path.join(directory, vod) : vod,
                                     setId: info.startggSetId,
                                     winner: winner,
-                                    timecodes: [timecode, recordLive.timecodeOffset(timecode, 15000)],
+                                    timecodes: [timecode, recordLive.timecodeOffset(finalTimecode, 15000)],
                                     isDoubles: info.isDoubles,
                                     games: currentSet
                                 }

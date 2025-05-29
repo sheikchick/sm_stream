@@ -242,7 +242,7 @@ function load() {
 function addToDB(el) {
     $.ajax({
         type: 'POST',
-        url: "/addPlayers",
+        url: "/updatePlayers",
         data: {
             players: players
         },

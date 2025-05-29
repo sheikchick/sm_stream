@@ -350,6 +350,8 @@ function loadChanges() {
 		url: "/info.json",
 		data: {},
 		success: function (response) {
+			let scoreChanged = false;
+
 			info = fixInfo(response);
 			swapped = info.startggSwapped
 			//load team1 data
@@ -361,6 +363,7 @@ function loadChanges() {
 			}
 
 			if (document.getElementById("p1-score-actual").value != info.team1.score) {
+				scoreChanged = true
 				document.getElementById("p1-score-actual").value = info.team1.score
 				document.getElementById("p1-score-change").value = info.team1.score
 			}
@@ -374,6 +377,7 @@ function loadChanges() {
 			}
 
 			if (document.getElementById("p2-score-actual").value != info.team2.score) {
+				scoreChanged = true
 				document.getElementById("p2-score-actual").value = info.team2.score
 				document.getElementById("p2-score-change").value = info.team2.score
 			}
@@ -388,6 +392,27 @@ function loadChanges() {
 			//load
 			$("#round-actual").attr("value", info.round)
 			$("#best-of-actual").attr("value", "Bo" + info.bestOf)
+
+			//Handle Grand Finals Reset with start.gg after 10 seconds
+			//Runs every second, need to add an end clause
+			
+			if(scoreChanged && (info.round === "Grand Final" || info.round === "Grand Finals")) {
+				let {l: p1L} = getName(info.team1.players[0].name)
+				let {l: p2L} = getName(info.team2.players[0].name)
+				let firstTo = Math.ceil(info.bestOf/2)
+				if((p1L && info.team1.score === firstTo) || (p2L && info.team2.score === firstTo)) {
+					setTimeout(() => {
+						findSetForPlayers("Grand Final Reset")
+						setTimeout(() => {
+							fixLosers("Grand Final Reset")
+							document.getElementById("p1-score-actual").value = 0
+							document.getElementById("p1-score-change").value = 0
+							document.getElementById("p2-score-actual").value = 0
+							document.getElementById("p2-score-change").value = 0
+						}, 2000)
+					}, 10000)
+				}
+			}
 		},
 		error: function (response) {
 			console.log(response)
@@ -398,6 +423,29 @@ function loadChanges() {
 		getRecordStatus();
 	}
 	setTimeout(loadChanges, 1000)
+}
+
+function fixLosers(fullRoundText) {
+	let {name: p1Name} = getName($("#p1-name").val())
+	let {name: p2Name} = getName($("#p2-name").val())
+	switch(fullRoundText) {
+		case "Grand Final":
+			if(swapped) {
+				$("#p1-name").val(`${p1Name} (L)`)
+				$("#p2-name").val(`${p2Name}`)
+			} else {
+				$("#p1-name").val(`${p1Name}`)
+				$("#p2-name").val(`${p2Name} (L)`)
+			}
+			break;
+		case "Grand Final Reset":
+			$("#p1-name").val(`${p1Name} (L)`)
+			$("#p2-name").val(`${p2Name} (L)`)
+			break;
+		default:
+			$("#p1-name").val(`${p1Name}`)
+			$("#p2-name").val(`${p2Name}`)
+	}
 }
 
 function fixInfo(info) {
@@ -536,6 +584,11 @@ function submitNewPlayer(index) {
         "colour": $(`#p${index}-character-change`).attr("colour")
     }
     submitPlayer(request)
+}
+
+function resetScores() {
+	$(`#p1-score-change`).val(0)
+	$(`#p2-score-change`).val(0)
 }
 
 function changeScore(value, player) {
@@ -684,6 +737,8 @@ function toggleDoubles() {
 		$(".seat-changer.side").hide();
 		$(".fa-chair.doubles").hide();
 
+		$("#reset-scores").css({"margin-left": "23px"})
+
 		//fix seat orientation so always indices 1 and 3
 		validIndices = ["1", "3"]
 		if (!validIndices.includes($("#p1-left-seat").attr("index"))) {
@@ -716,6 +771,8 @@ function toggleDoubles() {
 		$(".seat.right").show();
 		$(".seat-changer.side").show();
 		$(".fa-chair.doubles").show();
+
+		$("#reset-scores").css({"margin-left": "83px"})
 
 		isDoubles = true;
 	}

@@ -2,8 +2,12 @@
  * STARTGG
  */
 
-/* FIND A VALID SET FOR GIVEN PLAYERS BASED ON SLUGS */
-function findSetForPlayers() {
+/**
+ * Find a start.gg set for the currently active players
+ * @param {*} fullRoundTextFilter Optional filter for fiding 'Grand Final Reset'
+ * @returns 
+ */
+function findSetForPlayers(fullRoundTextFilter = "") {
 	eventId = $("#events :selected").val()
 	if(eventId === undefined) {
 		console.log("Empty events - please select an event on start.gg (e.g. Melee Singles)")
@@ -24,7 +28,7 @@ function findSetForPlayers() {
 							perPage: 500,
 							filters: {
 								hideEmpty: true,
-								state: [1,2,3,4,5,6,7]
+								state: [1,2,4,5,6,7]
 							} 
 						) {
 							nodes{
@@ -67,6 +71,11 @@ function findSetForPlayers() {
 			}
 			for(let set of result.data.event.sets.nodes) {
 				//check every slug requested matches the player for a given set
+				if(fullRoundTextFilter) {
+					if(fullRoundTextFilter !== set.fullRoundText) {
+						continue;
+					}
+				}
 				validSet = playerSlugs.every((slug) => {
 					return set.slots.some((slot) => {
 						return slot.entrant.participants.some((participant) => {
@@ -85,9 +94,12 @@ function findSetForPlayers() {
 					$("#p2-entrant").val(set.slots[swapped ? 0 : 1].entrant.id)
 					$("#set-id").val(set.id)
 					$("#round-change").val(set.fullRoundText)
+					// Fix " (L)"
+					fixLosers(fullRoundText)
 					return
 				}
 			}
+			console.log("No set found")
 		});
 }
 
@@ -735,10 +747,14 @@ function getCountryInformation(tournamentSlug) {
 		.then((result) => {
 			let countries = new Map()
 			for (let participant of result.data.tournament.participants.nodes) {
-				country = participant.contactInfo.country || participant.user.location.country;
+				country = participant?.contactInfo?.country || participant?.user?.location?.country || "";
+				if(!country) {
+					console.log(participant)
+				}
 				value = countries.has(country) ? countries.get(country) + 1 : 1;
 				countries.set(country, value)
 			}
-			console.log(countries)
+			var countriesSorted = new Map([...countries.entries()].sort((a, b) => b[1] - a[1]));
+			console.table(countriesSorted)
 		});
 }

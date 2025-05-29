@@ -42,6 +42,14 @@ exports.getFilteredDB = (fn) => {
     })
 }
 
+
+exports.getPlayer = (slug, fn) => {
+    db.all(`SELECT * FROM players WHERE slug = '${slug}'`,
+        (err, res) => {
+            fn(res);
+        });
+};
+
 exports.addPlayer = (player, fn) => {
     db.all(`SELECT * FROM players WHERE slug = '${player.slug}'`,
         (err, res) => {
@@ -55,6 +63,33 @@ exports.addPlayer = (player, fn) => {
                     `,
                 (err, res) => {
                     fn(err, player.name, updated)
+                })
+        })
+
+}
+
+exports.updatePlayer = (player, fn) => {
+    db.all(`SELECT * FROM players WHERE slug = '${player.slug}'`,
+        (err, res) => {
+            let updated = 0
+            let updatedPlayer = player;
+            if (res.length > 0) {
+                updated = 1
+                updatedPlayer = {
+                    slug: player.slug,
+                    name: player.name || res[0].name,
+                    country: player.country || res[0].country,
+                    pronouns: (player.pronouns || res[0].pronouns).replace(/\b\w/g, l => l.toUpperCase()),
+                    character: player.character || res[0].character,
+                    colour: player.colour || res[0].colour
+                }
+            }
+            db.run(`REPLACE INTO
+                        players(slug, name, country, pronouns, character, colour)
+                    VALUES  ('${updatedPlayer.slug}', '${updatedPlayer.name}', '${updatedPlayer.country}', '${updatedPlayer.pronouns}', '${updatedPlayer.character}', '${updatedPlayer.colour}')
+                    `,
+                (err, res) => {
+                    fn(err, updatedPlayer.name, updated)
                 })
         })
 

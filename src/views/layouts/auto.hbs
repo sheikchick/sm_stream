@@ -27,6 +27,7 @@
 		var apiKey = "{{apiKey}}"
 		var obsPort = "{{obsPort}}"
 		var obsPassword = "{{obsPassword}}"
+		var hideSwapAll = {{ hideSwapAll }}
 	</script>
 	<link rel="stylesheet" type="text/css" href="css/common.css">
 	<link rel="stylesheet" type="text/css" href="css/auto.css">
@@ -134,8 +135,10 @@
 				</div>
 				<div class="team-colour-wrapper column">
 					<button id="p1-red" class="team-colour red-colour" onclick="changeTeamColour(1, 'red')">R</button>
-					<button id="p1-green" class="team-colour green-colour" onclick="changeTeamColour(1, 'green')">G</button>
-					<button id="p1-blue" class="team-colour blue-colour" onclick="changeTeamColour(1, 'blue')">B</button>
+					<button id="p1-green" class="team-colour green-colour"
+						onclick="changeTeamColour(1, 'green')">G</button>
+					<button id="p1-blue" class="team-colour blue-colour"
+						onclick="changeTeamColour(1, 'blue')">B</button>
 				</div>
 			</div>
 
@@ -147,15 +150,17 @@
 					placeholder="start.gg Set ID">
 				<button id="find-set" class="startgg" onclick="findSetForPlayers()"
 					title="Find start.gg set for given players">Find start.gg set</button>
-				<button type="button" id="swap-info" class="swap-sides" onclick="swapSides(true, false)">
-					Info <i class="fa-solid fa-arrows-up-down"></i>
-				</button>
-				<button type="button" id="swap-all" class="swap-sides" onclick="swapSides(true, true)">
-					All <i class="fa-solid fa-arrows-up-down"></i>
-				</button>
-				<button type="button" id="swap-chars" class="swap-sides" onclick="swapSides(false, true)">
-					Chars. <i class="fa-solid fa-arrows-up-down"></i>
-				</button>
+				<div id="swap-group">
+					<button type="button" id="swap-all" class="swap-sides" onclick="swapSides(true, true)">
+						All <i class="fa-solid fa-arrows-up-down"></i>
+					</button>
+					<button type="button" id="swap-info" class="swap-sides" onclick="swapSides(true, false)">
+						Info <i class="fa-solid fa-arrows-up-down"></i>
+					</button>
+					<button type="button" id="swap-chars" class="swap-sides" onclick="swapSides(false, true)">
+						Chars. <i class="fa-solid fa-arrows-up-down"></i>
+					</button>
+				</div>
 				<button type="button" id="reset-scores" class="" onclick="resetScores()">
 					Reset scores <i class="fas fa-undo"></i>
 				</button>
@@ -219,8 +224,10 @@
 				</div>
 				<div class="team-colour-wrapper column">
 					<button id="p2-red" class="team-colour red-colour" onclick="changeTeamColour(2, 'red')">R</button>
-					<button id="p2-green" class="team-colour green-colour" onclick="changeTeamColour(2, 'green')">G</button>
-					<button id="p2-blue" class="team-colour blue-colour" onclick="changeTeamColour(2, 'blue')">B</button>
+					<button id="p2-green" class="team-colour green-colour"
+						onclick="changeTeamColour(2, 'green')">G</button>
+					<button id="p2-blue" class="team-colour blue-colour"
+						onclick="changeTeamColour(2, 'blue')">B</button>
 				</div>
 			</div>
 			<div id="seat-wrapper" class="row">
@@ -230,8 +237,9 @@
 					<img class="stock-icon" src="static/img/melee/stock_icons/smash.png">
 					<span class="header">
 						<i class="fas fa-chair" style="opacity: 100%;"></i>
-						<i class="fas fa-chair" style="opacity: 15%;"></i>
 						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
+						&nbsp;
+						<i class="fas fa-chair" style="opacity: 15%;"></i>
 						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
 					</span>
 				</div>
@@ -243,6 +251,7 @@
 					<span class="header">
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 						<i class="fas fa-chair" style="opacity: 100%;"></i>
+						&nbsp;
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 					</span>
@@ -255,6 +264,7 @@
 					<span class="header">
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
+						&nbsp;
 						<i class="fas fa-chair" style="opacity: 100%;"></i>
 						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
 					</span>
@@ -267,6 +277,7 @@
 					<span class="header">
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
+						&nbsp;
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
 						<i class="fas fa-chair" style="opacity: 100%;"></i>
 					</span>
@@ -279,8 +290,12 @@
 					<input type="text" id="round-change" value="{{round}}" placeholder="Round">
 				</div>
 				<select class="best-of" id="best-of-change" onchange="changeBestOf()">
+					<option disabled>Regular</option>
 					<option value="3">Best of 3</option>
 					<option value="5">Best of 5</option>
+					<option disabled>Special</option>
+					<option class="special" value="7">Best of 7</option>
+					<option class="special" value="9">Best of 9</option>
 				</select>
 				<button type="button" class="toggle-doubles" onclick="toggleDoubles()" value="{{isDoubles}}"
 					title="Toggle between Singles/Doubles"></button>

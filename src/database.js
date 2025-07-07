@@ -91,8 +91,8 @@ exports.updatePlayer = (player, fn) => {
                     slug: player.slug,
                     name: player.name || res[0].name,
                     country: player.country || res[0].country,
-                    prefix: player.prefix || res[0].prefix,
-                    pronouns: (player.pronouns || res[0].pronouns).replace(/\b\w/g, l => l.toUpperCase()),
+                    prefix: player.prefix,
+                    pronouns: player.pronouns.replace(/\b\w/g, l => l.toUpperCase()),
                     character: player.character || res[0].character,
                     colour: player.colour || res[0].colour
                 }

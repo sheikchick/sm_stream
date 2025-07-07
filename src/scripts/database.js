@@ -1,7 +1,10 @@
-let players = []
-let slug = ""
+var players = []
+var slug = ""
 
-let clickedDelete = "";
+var loadedPlayers = 0
+var processedPlayers = 0
+
+var clickedDelete = "";
 
 function clickedListener() {
     $("body").on("click", function (el) {
@@ -327,10 +330,14 @@ const getTournamentPlayersBasic = (tournamentSlug) => new Promise((resolve, reje
 });
 
 function load() {
+    loadedPlayers = 0
+    processedPlayers = 0
     slug = $("#tournament-slug").val()
     getTournamentPlayers(slug).then((res) => {
         $("#list").text("");
         players = res
+        loadedPlayers = res.length
+        $("#status").text(`Found ${res.length} players`)
         for (let player of players) {
             $("#list").html($("#list").html() + player.name + "<br>")
         }
@@ -338,31 +345,41 @@ function load() {
 }
 
 function addToDB(el) {
-    let success = true
+    $("#status").text(`Adding players. This can take a long time.`)
+    let promises = []
     for (x = 0; x < players.length; x += 20) {
-        slicedPlayers = players.slice(x, Math.min(x + 20, players.length))
-        updatePlayers(slicedPlayers) === false ? success = false : ""
+        promises.push(updatePlayers(players.slice(x, Math.min(x + 20, players.length)), players.length))
     }
+    Promise.all(promises)
+        .then(() => {
+            $("#status").text(`All ${loadedPlayers} players processed`)
+            $("#list").html("")
+        })
+        .catch((e)=> {
+            console.log(e)
+        })
 }
 
 //TODO: update to promise, reflect result
-function updatePlayers(playerList) {
-    //console.log(playerList)
+const updatePlayers = (playerList, length) => new Promise((resolve, reject) => {
     $.ajax({
         type: 'POST',
         url: "/updatePlayers",
         data: {
             players: playerList
         },
-        success: function (response) {
-            console.log("Added players")
+        success: function (res) {
+            $("#status").text(`${Math.min(processedPlayers+=playerList.length, length)}/${loadedPlayers} processed`)
+            resolve(res)
         },
-        error: function (response) {
-            console.log(response)
+        error: function (err) {
+            $("#status").text(`${Math.min(processedPlayers, length)}/${loadedPlayers} processed`)
+            reject(err)
         },
-        timeout: 5000
+        timeout: length * 100
     })
-}
+    console.log(`Submitting players with timeout of length ${length/10}s`)
+})
 
 function saveFilter(el) {
     filtered = []

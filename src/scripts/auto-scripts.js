@@ -29,58 +29,67 @@ $(document).ready(function () {
 
 function hoverListeners() {
 	$("#swap-info").hover(highlightInfo, clearInfo)
-	$("#swap-chars").hover(highlightChars, clearChars)
-	$("#swap-all").hover(() => {
-		highlightInfo()
-		highlightChars()
-	}, () => {
-		clearInfo()
-		clearChars()
-	})
+	if (!hideSwapAll) {
+		$("#swap-chars").hover(highlightChars, clearChars)
+		$("#swap-all").hover(() => {
+			highlightInfo()
+			highlightChars()
+		}, () => {
+			clearInfo()
+			clearChars()
+		})
+	} else {
+		$("#swap-chars").css("opacity", 0)
+		$("#swap-chars").prop("disabled", true)
+		$("#swap-all").css("opacity", 0)
+		$("#swap-all").prop("disabled", true)
+	}
 	$("#team1-swap").hover(() => {
-		gsap.to($("input.slug.change.left"), {"background-color": "#FFFFCC", duration: 0.2})
-		gsap.to($("input.pronouns.change.left"), {"background-color": "#FFFFCC", duration: 0.2})
-		gsap.to($("select.flag.change.left"), {"background-color": "#FFFFCC", duration: 0.2})
-		gsap.to($("input.name.change.left"), {"background-color": "#FFFFCC", duration: 0.2})
+		gsap.to($("input.slug.change.left"), { "background-color": "#FFFFCC", duration: 0.2 })
+		gsap.to($("input.pronouns.change.left"), { "background-color": "#FFFFCC", duration: 0.2 })
+		gsap.to($("select.flag.change.left"), { "background-color": "#FFFFCC", duration: 0.2 })
+		gsap.to($("input.name.change.left"), { "background-color": "#FFFFCC", duration: 0.2 })
 	}, () => {
-		gsap.to($("input.slug.change.left"), {"background-color": "white", duration: 0.2})
-		gsap.to($("input.pronouns.change.left"), {"background-color": "white", duration: 0.2})
-		gsap.to($("select.flag.change.left"), {"background-color": "white", duration: 0.2})
-		gsap.to($("input.name.change.left"), {"background-color": "white", duration: 0.2})
+		gsap.to($("input.slug.change.left"), { "background-color": "white", duration: 0.2 })
+		gsap.to($("input.pronouns.change.left"), { "background-color": "white", duration: 0.2 })
+		gsap.to($("select.flag.change.left"), { "background-color": "white", duration: 0.2 })
+		gsap.to($("input.name.change.left"), { "background-color": "white", duration: 0.2 })
 	})
 	$("#team2-swap").hover(() => {
-		gsap.to($("input.slug.change.right"), {"background-color": "#FFFFCC", duration: 0.2})
-		gsap.to($("input.pronouns.change.right"), {"background-color": "#FFFFCC", duration: 0.2})
-		gsap.to($("select.flag.change.right"), {"background-color": "#FFFFCC", duration: 0.2})
-		gsap.to($("input.name.change.right"), {"background-color": "#FFFFCC", duration: 0.2})
+		gsap.to($("input.slug.change.right"), { "background-color": "#FFFFCC", duration: 0.2 })
+		gsap.to($("input.pronouns.change.right"), { "background-color": "#FFFFCC", duration: 0.2 })
+		gsap.to($("select.flag.change.right"), { "background-color": "#FFFFCC", duration: 0.2 })
+		gsap.to($("input.name.change.right"), { "background-color": "#FFFFCC", duration: 0.2 })
 	}, () => {
-		gsap.to($("input.slug.change.right"), {"background-color": "white", duration: 0.2})
-		gsap.to($("input.pronouns.change.right"), {"background-color": "white", duration: 0.2})
-		gsap.to($("select.flag.change.right"), {"background-color": "white", duration: 0.2})
-		gsap.to($("input.name.change.right"), {"background-color": "white", duration: 0.2})
+		gsap.to($("input.slug.change.right"), { "background-color": "white", duration: 0.2 })
+		gsap.to($("input.pronouns.change.right"), { "background-color": "white", duration: 0.2 })
+		gsap.to($("select.flag.change.right"), { "background-color": "white", duration: 0.2 })
+		gsap.to($("input.name.change.right"), { "background-color": "white", duration: 0.2 })
 	})
 }
 
 function highlightInfo() {
-	gsap.to($("input.slug.change"), {"background-color": "#FFFFCC", duration: 0.2})
-	gsap.to($("input.pronouns.change"), {"background-color": "#FFFFCC", duration: 0.2})
-	gsap.to($("select.flag.change"), {"background-color": "#FFFFCC", duration: 0.2})
-	gsap.to($("input.name.change"), {"background-color": "#FFFFCC", duration: 0.2})
+	gsap.to($("input.slug.change"), { "background-color": "#FFFFCC", duration: 0.2 })
+	gsap.to($("input.prefix.change"), { "background-color": "#FFFFCC", duration: 0.2 })
+	gsap.to($("input.pronouns.change"), { "background-color": "#FFFFCC", duration: 0.2 })
+	gsap.to($("select.flag.change"), { "background-color": "#FFFFCC", duration: 0.2 })
+	gsap.to($("input.name.change"), { "background-color": "#FFFFCC", duration: 0.2 })
 
 }
 function clearInfo() {
-	gsap.to($("input.slug.change"), {"background-color": "white", duration: 0.2})
-	gsap.to($("input.pronouns.change"), {"background-color": "white", duration: 0.2})
-	gsap.to($("select.flag.change"), {"background-color": "white", duration: 0.2})
-	gsap.to($("input.name.change"), {"background-color": "white", duration: 0.2})
+	gsap.to($("input.slug.change"), { "background-color": "white", duration: 0.2 })
+	gsap.to($("input.prefix.change"), { "background-color": "white", duration: 0.2 })
+	gsap.to($("input.pronouns.change"), { "background-color": "white", duration: 0.2 })
+	gsap.to($("select.flag.change"), { "background-color": "white", duration: 0.2 })
+	gsap.to($("input.name.change"), { "background-color": "white", duration: 0.2 })
 }
 
 function highlightChars() {
-	gsap.to($(".csp.change"), {"background-color": "rgba(255,255,170,0.3)", duration: 0.2})
+	gsap.to($(".csp.change"), { "background-color": "rgba(255,255,170,0.3)", duration: 0.2 })
 }
 
 function clearChars() {
-	gsap.to($(".csp.change"), {"background-color": "rgba(255,255,170,0)", duration: 0.2})
+	gsap.to($(".csp.change"), { "background-color": "rgba(255,255,170,0)", duration: 0.2 })
 }
 
 function populateFlags() {
@@ -95,7 +104,7 @@ function populateFlags() {
 			}
 			$(select).append(optgroup)
 		}
-		
+
 	})
 }
 
@@ -164,21 +173,21 @@ function fixPlayerColours() {
 		p2colour = portColours[Math.min(info.team2.players[0].port - 1, 3)]
 	}
 
-	for(let selector of ["input", "button", "select"]) {
-		if(!$(`${selector}.left`).hasClass(p1colour)) {
+	for (let selector of ["input", "button", "select"]) {
+		if (!$(`${selector}.left`).hasClass(p1colour)) {
 			$(`${selector}.left`).removeClass(portColours)
 			$(`${selector}.left`).addClass(p1colour)
 		}
-		if(!$(`${selector}.right`).hasClass(p2colour)) {
+		if (!$(`${selector}.right`).hasClass(p2colour)) {
 			$(`${selector}.right`).removeClass(portColours)
 			$(`${selector}.right`).addClass(p2colour)
 		}
 	}
-	if(!$("#p1-info-change").hasClass(`${p1colour}-bg`)) {
+	if (!$("#p1-info-change").hasClass(`${p1colour}-bg`)) {
 		$("#p1-info-change").removeClass(["red-bg", "blue-bg", "yellow-bg", "green-bg",])
 		$("#p1-info-change").addClass(`${p1colour}-bg`)
 	}
-	if(!$("#p2-info-change").hasClass(`${p2colour}-bg`)) {
+	if (!$("#p2-info-change").hasClass(`${p2colour}-bg`)) {
 		$("#p2-info-change").removeClass(["red-bg", "blue-bg", "yellow-bg", "green-bg",])
 		$("#p2-info-change").addClass(`${p2colour}-bg`)
 	}
@@ -226,7 +235,7 @@ function updateSeatsLoop() {
 		$(seat).find(".stock-icon").attr('src', `static/img/${GAME}/stock_icons/${player.character.character || "empty"}/${player.character.colour || "red"}.png`)
 		$(seat).css("background-color", fixSeatColour($(seat).attr("index")))
 	})
-	if(["1","2"].includes($("#p1-left-seat").attr("index"))) {
+	if (["1", "2"].includes($("#p1-left-seat").attr("index"))) {
 		$("#left-seat-changer").css("border-bottom", $(`#t1p1-database`).css("border-bottom"))
 		$("#right-seat-changer").css("border-bottom", $(`#t2p1-database`).css("border-bottom"))
 	} else {
@@ -238,12 +247,12 @@ function updateSeatsLoop() {
 }
 
 function getSeatPlayer(index) {
-	sign = ["p1","p1d","p2","p2d"]
+	sign = ["p1", "p1d", "p2", "p2d"]
 	return ({
-		name: $(`#${sign[index-1]}-name`).val(),
+		name: $(`#${sign[index - 1]}-name`).val(),
 		character: {
-			character: $(`#${sign[index-1]}-character-change`).attr("character"),
-			colour: $(`#${sign[index-1]}-character-change`).attr("colour")
+			character: $(`#${sign[index - 1]}-character-change`).attr("character"),
+			colour: $(`#${sign[index - 1]}-character-change`).attr("colour")
 		}
 	})
 }
@@ -274,18 +283,18 @@ function swapSeatSides() {
 }
 
 function submitNewPlayer(index) {
-	if(!isMelee()) {
+	if (!isMelee()) {
 		return
 	}
-    let request = {
-        "slug": $(`#p${index}-slug`).val(),
-        "name": $(`#p${index}-name`).val().replace(" (L)", ""),
-        "country": $(`#p${index}-flag`).val(),
-        "pronouns": $(`#p${index}-pronouns`).val(),
-        "character": $(`#p${index}-character-change`).attr("character"),
-        "colour": $(`#p${index}-character-change`).attr("colour")
-    }
-    submitPlayer(request)
+	let request = {
+		"slug": $(`#p${index}-slug`).val(),
+		"name": $(`#p${index}-name`).val().replace(" (L)", ""),
+		"country": $(`#p${index}-flag`).val(),
+		"pronouns": $(`#p${index}-pronouns`).val(),
+		"character": $(`#p${index}-character-change`).attr("character"),
+		"colour": $(`#p${index}-character-change`).attr("colour")
+	}
+	submitPlayer(request)
 }
 
 function resetScores() {
@@ -457,7 +466,7 @@ function toggleDoubles() {
 		$(".seat-changer.side").hide();
 		$(".fa-chair.doubles").hide();
 
-		$("#reset-scores").css({"margin-left": "23px"})
+		$("#reset-scores").css({ "margin-left": "23px" })
 
 		//fix seat orientation so always indices 1 and 3
 		validIndices = ["1", "3"]
@@ -494,7 +503,7 @@ function toggleDoubles() {
 		$(".seat-changer.side").show();
 		$(".fa-chair.doubles").show();
 
-		$("#reset-scores").css({"margin-left": "83px"})
+		$("#reset-scores").css({ "margin-left": "59px" })
 
 		isDoubles = true;
 	}
@@ -527,10 +536,10 @@ function loadCharActual(player, character = "empty", colour) {
  * @param {*} colour colour
  */
 function loadCharChange(player, character, colour) {
-	if(!character) {
+	if (!character) {
 		return
 	}
-	if(!colour) {
+	if (!colour) {
 		colour = getDefaultColour(character)
 	}
 	const characterChange = $(`#${player}-character-change`)
@@ -673,12 +682,10 @@ function changeBestOf(value) {
 	}
 	switch (value) {
 		case "3":
-			bestOfValue = 3;
-			$("#best-of-change").val("3")
-			break;
 		case "7":
-			bestOfValue = 7;
-			$("#best-of-change").val("7")
+		case "9":
+			bestOfValue = parseint(value);
+			$("#best-of-change").val(value)
 			break;
 		default:
 			bestOfValue = 5;
@@ -689,7 +696,7 @@ function changeBestOf(value) {
 
 function toggleStartggEntrant() {
 	current = $(".startgg.display").css('opacity')
-	$(".startgg.display").css('opacity', 1-current)
+	$(".startgg.display").css('opacity', 1 - current)
 }
 
 /**
@@ -726,7 +733,7 @@ function showSets(up, showButtons) {
 	}
 
 	for (x = 1; x <= MAX_PER_PAGE; x++) {
-		index = x + ((setPage - 1) * MAX_PER_PAGE)-1;
+		index = x + ((setPage - 1) * MAX_PER_PAGE) - 1;
 		if (typeof (sets.length) != "undefined") {
 			if (sets.length == 0 || index >= sets.length) {
 				$(`#set${x}`).css("display", "none");
@@ -803,8 +810,8 @@ function loadSet(x) {
 	$("#p1-pronouns").val(p1Data["pronouns"])
 	$("#p1-flag").val(fixCountry(p1Data["country"])).change();
 	p1Db = getPlayer(p1Data.slug)
-	if(p1Db && isMelee()) {
-		if(p1Db.character !== "" && p1Db.colour !== "") {
+	if (p1Db && isMelee()) {
+		if (p1Db.character !== "" && p1Db.colour !== "") {
 			loadCharChange("p1", p1Db.character, p1Db.colour || "red")
 		}
 	}
@@ -817,8 +824,8 @@ function loadSet(x) {
 	$("#p1d-pronouns").val(p1dData["pronouns"])
 	$("#p1d-flag").val(fixCountry(p1dData["country"])).change();
 	p1dDb = getPlayer(p1dData.slug)
-	if(p1dDb && isMelee()) {
-		if(p1dDb.character !== "" && p1dDb.colour !== "") {
+	if (p1dDb && isMelee()) {
+		if (p1dDb.character !== "" && p1dDb.colour !== "") {
 			loadCharChange("p1d", p1dDb.character, p1dDb.colour || "red")
 		}
 	}
@@ -826,13 +833,13 @@ function loadSet(x) {
 	//p2
 	p2Data = JSON.parse($(`#set${x}-name2`).attr("data-p1"))
 	$("#p2-slug").val(p2Data.slug)
-	$("#p2-name").val(p2Data["name"] + p2Loser) 
+	$("#p2-name").val(p2Data["name"] + p2Loser)
 	$("#p2-prefix").val(p2Data["prefix"])
 	$("#p2-pronouns").val(p2Data["pronouns"])
 	$("#p2-flag").val(fixCountry(p2Data["country"])).change();
 	p2Db = getPlayer(p2Data.slug)
-	if(p2Db && isMelee()) {
-		if(p2Db.character !== "" && p2Db.colour !== "") {
+	if (p2Db && isMelee()) {
+		if (p2Db.character !== "" && p2Db.colour !== "") {
 			loadCharChange("p2", p2Db.character, p2Db.colour || "red")
 		}
 	}
@@ -845,8 +852,8 @@ function loadSet(x) {
 	$("#p2d-pronouns").val(p2dData["pronouns"])
 	$("#p2d-flag").val(fixCountry(p2dData["country"])).change();
 	p2dDb = getPlayer(p2dData.slug)
-	if(p2dDb && isMelee()) {
-		if(p2dDb.character !== "" && p2dDb.colour !== "") {
+	if (p2dDb && isMelee()) {
+		if (p2dDb.character !== "" && p2dDb.colour !== "") {
 			loadCharChange("p2d", p2dDb.character, p2dDb.colour || "red")
 		}
 	}

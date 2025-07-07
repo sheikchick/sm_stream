@@ -59,6 +59,10 @@
     width: 160px;
 }
 
+#status {
+    text-align: center;
+}
+
 #list {
     margin-top: 10px;
     text-align: left;

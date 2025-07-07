@@ -99,6 +99,7 @@ fs.readdir(layoutsDir, { withFileTypes: true }).then((files) => {
                 readData(MELEE).then((data) => {
                     res.render(layout, {
                         ...data,
+                        hideSwapAll: config["Web"]["Hide 'Swap All'"],
                         apiKey: config["start.gg"]["API key"],
                         obsPort: config["OBS"]["Websocket"]["Port"],
                         obsPassword: config["OBS"]["Websocket"]["Password"],
@@ -215,26 +216,31 @@ app.post("/updatePlayer", (req, res) => {
 
 app.post("/updatePlayers", (req, res) => {
     if (!!req.body.players) {
-        count = 0;
-        promises = []
+        let count = 0;
+        let promises = []
         for (let player of req.body.players) {
-            promises.push(new Promise((res, rej) => {
+            promises.push(new Promise((resolve, reject) => {
                 playerDB.updatePlayer(player, (err, data) => {
                     if (!err) {
                         count++;
+                        resolve()
                     } else {
-                        logging.error(err)
+                        reject(err)
                         logging.error(JSON.stringify(player))
                     }
                 })
             }))
         }
-        Promise.all(promises).then(() => {
-            logging.log(`Added ${count} players to the database.`)
+        Promise.all(promises)
+        .then(() => {
+            logging.log(`Added/updated ${count} players in the database.`)
             res.sendStatus(200)
         })
+        .catch((e) => {
+            res.sentStatus(500).send(e)
+        })
     } else {
-        res.sendStatus(400);
+        res.sendStatus(400).send("No player data found in request");
     }
 });
 

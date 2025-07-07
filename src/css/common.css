@@ -117,6 +117,10 @@ button:focus {
 	outline: none;
 }
 
+button:disabled {
+	cursor: pointer!important;
+}
+
 input {
 	padding: 10px 10px 10px 10px;
 	appearance: none;

@@ -475,6 +475,15 @@ select.flag>optgroup {
 	padding-right: 32px;
 }
 
+#swap-group {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: calc(300px + 2em);
+	gap: 1em;
+}
+
 .swap-sides {
 	height: 39px;
 	font-weight: 600;
@@ -573,6 +582,10 @@ select.flag>optgroup {
 	border: none;
 	height: 39px;
 	width: 90px;
+}
+
+option.special {
+	font-style: italic;
 }
 
 .update {

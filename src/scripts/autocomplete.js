@@ -5,7 +5,6 @@ function getDBAutocomplete() {
         type: 'POST',
         url: "/database.db",
         success: function (response) {
-            console.log(response)
             autocompletePlayers = response.sort(function compare(a,b) {
                 if(a.name.toLowerCase() < b.name.toLowerCase()) {
                     return -1;

@@ -141,7 +141,7 @@ continents = {
             "country": "Brazil",
             "shortcode": "BR",
             "emoji": "🇧🇷"
-        },{
+        }, {
             "country": "Argentina",
             "shortcode": "AR",
             "emoji": "🇦🇷"
@@ -159,9 +159,24 @@ continents = {
     ],
     "Asia & The Middle East": [
         {
+            "country": "China",
+            "shortcode": "CN",
+            "emoji": "🇨🇳"
+        },
+        {
             "country": "Japan",
             "shortcode": "JP",
             "emoji": "🇯🇵"
+        },
+        {
+            "country": "Indonesia",
+            "shortcode": "ID",
+            "emoji": "🇮🇩"
+        },
+        {
+            "country": "Hong Kong",
+            "shortcode": "HK",
+            "emoji": "🇭🇰"
         },
         {
             "country": "India",
@@ -174,19 +189,9 @@ continents = {
             "emoji": "🇵🇰"
         },
         {
-            "country": "Indonesia",
-            "shortcode": "ID",
-            "emoji": "🇮🇩"
-        },
-        {
-            "country": "China",
-            "shortcode": "CN",
-            "emoji": "🇨🇳"
-        },
-        {
-            "country": "Hong Kong",
-            "shortcode": "HK",
-            "emoji": "🇭🇰"
+            "country": "Saudi Arabia",
+            "shortcode": "SA",
+            "emoji": "🇸🇦"
         },
         {
             "country": "Iran",
@@ -237,9 +242,9 @@ continents = {
 
 function fixCountry(country) {
     if (!country) {
-        return("United Kingdom")
+        return ("United Kingdom")
     }
-    switch(country) {
+    switch (country) {
         case "United Kingdom":
         case "Scotland":
         case "England":
@@ -283,7 +288,7 @@ function fixCountry(country) {
         case "South Africa":
         case "Australia":
         case "New Zealand":
-            return(country)
+            return (country)
         case "Ukraine":
         case "Czechia":
         case "Czech Republic":
@@ -309,8 +314,8 @@ function fixCountry(country) {
         case "Liechtenstein":
         case "Monaco":
         case "San Marino":
-            return("Europe")
+            return ("Europe")
         default:
-            return("United Kingdom") //should represent as a generic 'World' but its funny
+            return ("United Kingdom") //should represent as a generic 'World' but its funny
     }
 }

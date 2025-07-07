@@ -38,6 +38,7 @@ function findSetForPlayers(fullRoundTextFilter = "") {
 									entrant{
                                         id
 										participants{
+											prefix
 											gamerTag
 											contactInfo{
 												country
@@ -158,7 +159,7 @@ function getTournamentEvents() {
 			})
 			$("#tournament-image").attr("src", image?.url || "static/img/startgg.png")
 			//set up autocomplete
-			getDBAutocompleteSlug(tournamentSlug)
+			//getDBAutocompleteSlug(tournamentSlug)
 			//add new events
 			$("#events").empty()
 			$("#events").append(new Option("Select...", 0));
@@ -370,6 +371,7 @@ function getStreamQueue(tournamentSlug, streamName) {
                                 entrant {
                                     id
                                     participants {
+										prefix
                                         gamerTag
                                         user {
 											discriminator
@@ -443,6 +445,7 @@ function getSets(stateArray, hideEmpty, showButtons) {
                                         id
 										participants {
 											id
+											prefix
 											gamerTag
 											contactInfo{
 												country
@@ -505,31 +508,35 @@ function constructSetObject(set, matchRound) {
 
 		setIsDoubles = team1["entrant"]["participants"].length > 1
 
-		//team1
+		//TEAM 1
 		p1Entrant = team1["entrant"]["id"]
 
 		p1Slug = team1.entrant.participants[0].user?.discriminator || ""
 		p1Name = team1.entrant.participants[0].gamerTag || ""
+		p1Prefix = team1.entrant.participants[0].prefix || ""
 		p1Pronouns = team1.entrant.participants[0].user?.genderPronoun || ""
 		p1Country = team1.entrant.participants[0].user?.location?.country || team1.entrant.participants[0].contactInfo?.country || ""
 
-		//player 1 doubles
+		//doubles
 		p1dSlug = setIsDoubles ? team1.entrant.participants[1].user?.discriminator || "" : ""
 		p1dName = setIsDoubles ? team1.entrant.participants[1].gamerTag || "" : ""
+		p1dPrefix = setIsDoubles ? team1.entrant.participants[1].prefix || "" : ""
 		p1dPronouns = setIsDoubles ? team1.entrant.participants[1].user?.genderPronoun || "" : ""
 		p1dCountry = setIsDoubles ? team1.entrant.participants[1].user?.location?.country || team1.entrant.participants[1].contactInfo?.country || "" || "" : ""
 
-		//team2
+		//TEAM 2
 		p2Entrant = team2["entrant"]["id"]
 
 		p2Slug = team2.entrant.participants[0].user?.discriminator || ""
 		p2Name = team2.entrant.participants[0].gamerTag || ""
+		p2Prefix = team2.entrant.participants[0].prefix || ""
 		p2Pronouns = team2.entrant.participants[0].user?.genderPronoun || ""
 		p2Country = team2.entrant.participants[0].user?.location?.country || team2.entrant.participants[0].contactInfo?.country || ""
 
-		//player 1 doubles
+		//doubles
 		p2dSlug = setIsDoubles ? team2.entrant.participants[1].user?.discriminator || "" : ""
 		p2dName = setIsDoubles ? team2.entrant.participants[1].gamerTag || "" : ""
+		p2dPrefix = setIsDoubles ? team2.entrant.participants[1].prefix || "" : ""
 		p2dPronouns = setIsDoubles ? team2.entrant.participants[1].user?.genderPronoun || "" : ""
 		p2dCountry = setIsDoubles ? team2.entrant.participants[1].user?.location?.country || team2.entrant.participants[1].contactInfo?.country || "" || "" : ""
 
@@ -541,12 +548,14 @@ function constructSetObject(set, matchRound) {
 				"data": [
 					{
 						"slug": p1Slug,
+						"prefix": p1Prefix,
 						"name": p1Name,
 						"pronouns": p1Pronouns,
 						"country": p1Country
 					},
 					{
 						"slug": p1dSlug,
+						"prefix": p1dPrefix,
 						"name": p1dName,
 						"pronouns": p1dPronouns,
 						"country": p1dCountry
@@ -558,12 +567,14 @@ function constructSetObject(set, matchRound) {
 				"data": [
 					{
 						"slug": p2Slug,
+						"prefix": p2Prefix,
 						"name": p2Name,
 						"pronouns": p2Pronouns,
 						"country": p2Country
 					},
 					{
 						"slug": p2dSlug,
+						"prefix": p2dPrefix,
 						"name": p2dName,
 						"pronouns": p2dPronouns,
 						"country": p2dCountry
@@ -705,7 +716,8 @@ function updateStartggSet(setId, winnerId, gameData) {
 //misc
 
 //misc
-function getCountryInformation(tournamentSlug) {
+function getCountryInformation() {
+	let tournamentSlug = $("#country-tournament").val()
 	fetch('https://api.start.gg/gql/alpha', {
 		method: 'POST',
 		headers: {
@@ -731,7 +743,6 @@ function getCountryInformation(tournamentSlug) {
 									location {
 										country
 									}
-										
 								}
 							}
 						}
@@ -755,6 +766,10 @@ function getCountryInformation(tournamentSlug) {
 				countries.set(country, value)
 			}
 			var countriesSorted = new Map([...countries.entries()].sort((a, b) => b[1] - a[1]));
-			console.table(countriesSorted)
+			console.log(countriesSorted)
+			$("#country-info").text("")
+			for(let [country, amount] of countriesSorted) {
+				$("#country-info").append(`${amount} - ${country}<br>`)
+			}	
 		});
 }

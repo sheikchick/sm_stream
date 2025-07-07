@@ -4,7 +4,7 @@ const { Ports } = require('@slippi/slippi-js')
 
 const slpTools = require("./slpTools.js");
 const logging = require("./logging.js");
-const { readData, writeData, INFO, MATCH_RESULT } = require("./data.js");
+const { readData, writeData, MELEE, MATCH_RESULT } = require("./data.js");
 
 const { SlpLiveStream, SlpRealTime, ComboFilter, generateDolphinQueuePayload } = require("@vinceau/slp-realtime");
 
@@ -45,7 +45,7 @@ exports.start = (address, port) => {
     //GAME START
     realtime.game.start$.subscribe(async (payload) => {
         logging.log("Game started");
-        const info = await readData(INFO);
+        const info = await readData(MELEE);
 
         const teams = slpTools.getSlippiTeams(payload.players);
         if (teams.length === 2) {
@@ -67,7 +67,7 @@ exports.start = (address, port) => {
                 }
             });
         }
-        writeData(INFO, info);
+        writeData(MELEE, info);
     });
     
     //GAME END

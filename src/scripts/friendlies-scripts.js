@@ -268,7 +268,7 @@ function toggle_doubles() {
 function load_changes() {
 	$.ajax({
 		type: 'GET',
-		url: "/info.json",
+		url: "/melee.json",
 		data: {},
 		success: function(response) {
 			$("#p1_name_actual").attr("value", response.Player1["name"])

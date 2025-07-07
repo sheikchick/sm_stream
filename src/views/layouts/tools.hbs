@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>sm-stream - Overlay configure</title>
+    <script src="scripts/jquery-3.4.1.min.js"></script>
+    <script src="scripts/gsap.min.js"></script>
+    <script src="scripts/common.js"></script>
+
+    <script src="scripts/startgg-scripts.js"></script>
+    <script src="scripts/startgg-utils.js"></script>
+    <script src="scripts/flags.js"></script>
+
+    <script src="scripts/obs-ws.min.js"></script>
+	<script>
+		var bestOfValue = "{{bestOf}}"
+		var tournament = "{{tournament}}"
+		var apiKey = "{{apiKey}}"
+		var obsPort = "{{obsPort}}"
+		var obsPassword = "{{obsPassword}}"
+	</script>
+    <script src="scripts/fontawesome.min.js"></script>
+    <script src="scripts/solid.min.js"></script>
+    <script src="scripts/brands.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/common.css">
+    <link rel="stylesheet" type="text/css" href="css/tools.css">
+    <link rel="icon" href="favicon.ico">
+</head>
+
+<body>
+    {{> footer}}
+    <div id="country-wrapper" class="wrapper column">
+        <input type="text" id="country-tournament" placeholder="start.gg slug">
+        <button id="country-submit" onclick="getCountryInformation()">Get country info</button>
+        <span id="country-info"></span>
+</body>

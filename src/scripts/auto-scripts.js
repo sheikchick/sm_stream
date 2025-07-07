@@ -10,6 +10,10 @@ var swapped = false;
 
 const phoneAspect = window.matchMedia("(max-aspect-ratio: 1/1), (max-width: 1000px)");
 
+function isMelee() {
+	return GAME === "melee"
+}
+
 $(document).ready(function () {
 	populateFlags();
 	obsConnect();
@@ -82,7 +86,6 @@ function clearChars() {
 function populateFlags() {
 	$("select.flag").each((key, select) => {
 		//from flags.js
-		
 		for (let [key, value] of Object.entries(continents)) {
 			optgroup = document.createElement("OPTGROUP")
 			$(optgroup).attr("label", key)
@@ -127,112 +130,6 @@ function hideColour(player, slot) {
 
 function resetBackground(player) {
 	$(".css" + player).css("background-color", "transparent");
-}
-
-function update() {
-	const updateController = new AbortController()
-	const updateTimeout = setTimeout(() => {
-		updateController.abort()
-		$(".update").css("background-color", "#F56262");
-		$(".update").css("border-bottom", "3px solid #F53535");
-		$(".update").text("Error ");
-		$(".update").append('<i class="fa-solid fa-triangle-exclamation"></i>')
-		setTimeout(function () {
-			$(".update").css("background-color", "#CBFFC7");
-			$(".update").css("border-bottom", "3px solid #64B55E");
-			$(".update").text("Update ");
-			$(".update").append('<i class="fa fa-sync"></i>')
-		}, 2000);
-	}, 5000);
-	fetch("/update", {
-		method: 'POST',
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({
-			team1: {
-				players: [
-					{
-						slug: $("#p1-slug").val(),
-						name: $("#p1-name").val(),
-						character: $("#p1-character-change").attr("character"),
-						colour: $("#p1-character-change").attr("colour"),
-						pronouns: $("#p1-pronouns").val(),
-						country: $("#p1-flag").find(":selected").val(),
-						port: info.team1.players[0].port || 1
-					},
-					{
-						slug: $("#p1d-slug").val(),
-						name: $("#p1d-name").val(),
-						character: $("#p1d-character-change").attr("character"),
-						colour: $("#p1d-character-change").attr("colour"),
-						pronouns: $("#p1d-pronouns").val(),
-						country: $("#p1d-flag").find(":selected").val(),
-						port: info.team1.players[1].port || 2
-					}
-				],
-				score: parseInt($("#p1-score-change").val()),
-				startggEntrant: $("#p1-entrant").val()
-			},
-			team2: {
-				players: [
-					{
-						slug: $("#p2-slug").val(),
-						name: $("#p2-name").val(),
-						character: $("#p2-character-change").attr("character"),
-						colour: $("#p2-character-change").attr("colour"),
-						pronouns: $("#p2-pronouns").val(),
-						country:  $("#p2-flag").find(":selected").val(),
-						port: info.team2.players[0].port || 3
-					},
-					{
-						slug: $("#p2d-slug").val(),
-						name: $("#p2d-name").val(),
-						character: $("#p2d-character-change").attr("character"),
-						colour: $("#p2d-character-change").attr("colour"),
-						pronouns: $("#p2d-pronouns").val(),
-						country: $("#p2d-flag").find(":selected").val(),
-						port: info.team2.players[1].port || 4
-					},
-				],
-				score: parseInt($("#p2-score-change").val()),
-				startggEntrant: $("#p2-entrant").val()
-			},
-			casters: [
-				{
-					name: $("#caster1-name").val(),
-					pronouns: $("#caster1-pronouns").val()
-				},
-				{
-					name: $("#caster2-name").val(),
-					pronouns: $("#caster2-pronouns").val()
-				}
-			],
-			seatOrdering: [
-				$("#p1-left-seat").attr("index"),
-				$("#p1-right-seat").attr("index"),
-				$("#p2-left-seat").attr("index"),
-				$("#p2-right-seat").attr("index"),
-			],
-			round: $("#round-change").val(),
-			startggSetId: $("#set-id").val(),
-			startggSwapped: swapped,
-			tournament: $("#tournament-change").val(),
-			isDoubles,
-			bestOf: bestOfValue
-		}),
-		signal: updateController.signal
-	}).then(() => {
-		clearTimeout(updateTimeout)
-		$(".update").css("background-color", "#55F76B");
-		$(".update").css("border-bottom", "3px solid #349641");
-		$(".update").text("Updated ");
-		$(".update").append('<i class="fa-solid fa-thumbs-up"></i>')
-		setTimeout(function () {
-			$(".update").css("background-color", "#CBFFC7");
-			$(".update").css("border-bottom", "3px solid #64B55E");
-			$(".update").text("Update ");
-			$(".update").append('<i class="fa fa-sync"></i>')
-		}, 2000);
-	})
 }
 
 const portColours = [
@@ -321,210 +218,12 @@ function fixSeatAccent(index) {
 	}
 }
 
-function loadInitialChanges() {
-	$("#tournament-slug").text(localStorage.getItem("startggSlug"))
-	$.ajax({
-		type: 'GET',
-		url: "/info.json",
-		data: {},
-		success: function (response) {
-			info = fixInfo(response);
-			swapped = info.startggSwapped
-
-			//flags
-			$("#p1-flag").val(info.team1.players[0].country)
-			$("#p1d-flag").val(info.team1.players[1].country)
-			$("#p2-flag").val(info.team2.players[0].country)
-			$("#p2d-flag").val(info.team2.players[1].country)
-		},
-		error: function (response) {
-			console.log(response)
-		},
-		timeout: 5000
-	})
-}
-
-function loadChanges() {
-	$.ajax({
-		type: 'GET',
-		url: "/info.json",
-		data: {},
-		success: function (response) {
-			let scoreChanged = false;
-
-			info = fixInfo(response);
-			swapped = info.startggSwapped
-			//load team1 data
-			$("#p1-name-actual").attr("value", info.team1.players[0].name)
-			loadCharActual("p1", info.team1.players[0].character, info.team1.players[0].colour)
-			if (info.team1.players.length >= 2) {
-				$("#p1d-name-actual").attr("value", info.team1.players[1].name)
-				loadCharActual("p1d", info.team1.players[1].character, info.team1.players[1].colour)
-			}
-
-			if (document.getElementById("p1-score-actual").value != info.team1.score) {
-				scoreChanged = true
-				document.getElementById("p1-score-actual").value = info.team1.score
-				document.getElementById("p1-score-change").value = info.team1.score
-			}
-
-			//load team2 data
-			$("#p2-name-actual").attr("value", info.team2.players[0].name)
-			loadCharActual("p2", info.team2.players[0].character, response.team2.players[0].colour)
-			if (info.team2.players.length >= 2) {
-				$("#p2d-name-actual").attr("value", info.team2.players[1].name)
-				loadCharActual("p2d", info.team2.players[1].character, response.team2.players[1].colour)
-			}
-
-			if (document.getElementById("p2-score-actual").value != info.team2.score) {
-				scoreChanged = true
-				document.getElementById("p2-score-actual").value = info.team2.score
-				document.getElementById("p2-score-change").value = info.team2.score
-			}
-
-
-			//casters
-			$("#caster1-name").attr("value", info.casters[0].name)
-			$("#caster1-pronouns").attr("value", info.casters[0].pronouns)
-			$("#caster2-name").attr("value", info.casters[1].name)
-			$("#caster2-pronouns").attr("value", info.casters[1].pronouns)
-
-			//load
-			$("#round-actual").attr("value", info.round)
-			$("#best-of-actual").attr("value", "Bo" + info.bestOf)
-
-			//Handle Grand Finals Reset with start.gg after 10 seconds
-			//Runs every second, need to add an end clause
-			
-			if(scoreChanged && (info.round === "Grand Final" || info.round === "Grand Finals")) {
-				let {l: p1L} = getName(info.team1.players[0].name)
-				let {l: p2L} = getName(info.team2.players[0].name)
-				let firstTo = Math.ceil(info.bestOf/2)
-				if((p1L && info.team1.score === firstTo) || (p2L && info.team2.score === firstTo)) {
-					setTimeout(() => {
-						findSetForPlayers("Grand Final Reset")
-						setTimeout(() => {
-							fixLosers("Grand Final Reset")
-							document.getElementById("p1-score-actual").value = 0
-							document.getElementById("p1-score-change").value = 0
-							document.getElementById("p2-score-actual").value = 0
-							document.getElementById("p2-score-change").value = 0
-						}, 2000)
-					}, 10000)
-				}
-			}
-		},
-		error: function (response) {
-			console.log(response)
-		},
-		timeout: 5000
-	})
-	if (obs !== null) {
-		getRecordStatus();
-	}
-	setTimeout(loadChanges, 1000)
-}
-
-function fixLosers(fullRoundText) {
-	let {name: p1Name} = getName($("#p1-name").val())
-	let {name: p2Name} = getName($("#p2-name").val())
-	switch(fullRoundText) {
-		case "Grand Final":
-			if(swapped) {
-				$("#p1-name").val(`${p1Name} (L)`)
-				$("#p2-name").val(`${p2Name}`)
-			} else {
-				$("#p1-name").val(`${p1Name}`)
-				$("#p2-name").val(`${p2Name} (L)`)
-			}
-			break;
-		case "Grand Final Reset":
-			$("#p1-name").val(`${p1Name} (L)`)
-			$("#p2-name").val(`${p2Name} (L)`)
-			break;
-		default:
-			$("#p1-name").val(`${p1Name}`)
-			$("#p2-name").val(`${p2Name}`)
-	}
-}
-
-function fixInfo(info) {
-	let newInfo = {
-		"team1": {
-			"players": [
-				{
-					"slug": info?.team1?.players?.[0]?.slug || "",
-					"name": info?.team1?.players?.[0]?.name || "Player 1",
-					"character": info?.team1?.players?.[0]?.character || "fox",
-					"colour": info?.team1?.players?.[0]?.colour || "red",
-					"pronouns": info?.team1?.players?.[0]?.pronouns || "",
-					"country": info?.team1?.players?.[0]?.country || "EU",
-					"port": info?.team1?.players?.[0]?.port || 1
-				},
-				{
-					"slug": info?.team1?.players?.[1]?.slug || "",
-					"name": info?.team1?.players?.[1]?.name || "Player 4",
-					"character": info?.team1?.players?.[1]?.character || "falco",
-					"colour": info?.team1?.players?.[1]?.colour || "red",
-					"pronouns": info?.team1?.players?.[1]?.pronouns || "",
-					"country": info?.team1?.players?.[1]?.country || "EU",
-					"port": info?.team1?.players?.[1]?.port || 2
-				}
-			],
-			"score": info?.team1?.score || 0,
-			"startggEntrant": info?.team1?.startggEntrant || "",
-		},
-		"team2": {
-			"players": [
-				{
-					"slug": info?.team2?.players?.[0]?.slug || "",
-					"name": info?.team2?.players?.[0]?.name || "Player 2",
-					"character": info?.team2?.players?.[0]?.character || "sheik",
-					"colour": info?.team2?.players?.[0]?.colour || "blue",
-					"pronouns": info?.team2?.players?.[0]?.pronouns || "",
-					"country": info?.team2?.players?.[0]?.country || "EU",
-					"port": info?.team2?.players?.[0]?.port || 1
-				},
-				{
-					"slug": info?.team2?.players?.[0]?.slug || "",
-					"name": info?.team2?.players?.[1]?.name || "Player 3",
-					"character": info?.team2?.players?.[1]?.character || "peach",
-					"colour": info?.team2?.players?.[1]?.colour || "blue",
-					"pronouns": info?.team2?.players?.[1]?.pronouns || "",
-					"country": info?.team2?.players?.[1]?.country || "EU",
-					"port": info?.team2?.players?.[1]?.port || 2
-				}
-			],
-			"score": info?.team2?.score || 0,
-			"startggEntrant": info?.team2?.startggEntrant || "",
-		},
-		"casters": [
-			{
-				"name": info?.casters?.[0].name || "",
-				"pronouns": info?.casters?.[0].pronouns || "",
-			},
-			{
-				"name": info?.casters?.[1].name || "",
-				"pronouns": info?.casters?.[1].pronouns || "",
-			}
-		],
-		"seatOrdering": info?.seatOrdering || ["1", "2", "3", "4"],
-		"round": info?.round || "",
-		"startggSetId": info?.startggSetId || "",
-		"startggSwapped": swapped || false,
-		"tournament": info?.tournament || "",
-		"isDoubles": info?.isDoubles || false,
-		"bestOf": info?.bestOf || 5
-	}
-	return newInfo;
-}
-
 function updateSeatsLoop() {
 	localStorage.setItem("startggSlug", $("#tournament-slug").text())
 	$(".seat").each((index, seat) => {
 		player = getSeatPlayer(parseInt($(seat).attr("index")))
 		$(seat).find(".name").text(player.name)
-		$(seat).find(".stock-icon").attr('src', `static/img/stock_icons/${player.character.character || "empty"}/${player.character.colour || "red"}.png`)
+		$(seat).find(".stock-icon").attr('src', `static/img/${GAME}/stock_icons/${player.character.character || "empty"}/${player.character.colour || "red"}.png`)
 		$(seat).css("background-color", fixSeatColour($(seat).attr("index")))
 	})
 	if(["1","2"].includes($("#p1-left-seat").attr("index"))) {
@@ -575,6 +274,9 @@ function swapSeatSides() {
 }
 
 function submitNewPlayer(index) {
+	if(!isMelee()) {
+		return
+	}
     let request = {
         "slug": $(`#p${index}-slug`).val(),
         "name": $(`#p${index}-name`).val().replace(" (L)", ""),
@@ -614,6 +316,11 @@ function swapSides(info, characters) {
 
 		team1entrant = $("#p1-entrant").val();
 
+		player1prefix = $("#p1-prefix").val();
+		player1dprefix = $("#p1d-prefix").val();
+		player2prefix = $("#p2-prefix").val();
+		player2dprefix = $("#p2d-prefix").val();
+
 		player1pronouns = $("#p1-pronouns").val();
 		player1dpronouns = $("#p1d-pronouns").val();
 		player2pronouns = $("#p2-pronouns").val();
@@ -637,6 +344,11 @@ function swapSides(info, characters) {
 		$("#p2d-name").val(player1dname);
 
 		$("#p1-entrant").val(team2entrant);
+
+		$("#p1-prefix").val(player2prefix);
+		$("#p1d-prefix").val(player2dprefix);
+		$("#p2-prefix").val(player1prefix);
+		$("#p2d-prefix").val(player1dprefix);
 
 		$("#p1-pronouns").val(player2pronouns);
 		$("#p1d-pronouns").val(player2dpronouns);
@@ -670,19 +382,19 @@ function swapSides(info, characters) {
 
 		$("#p1-character-change").attr("character", p2.character);
 		$("#p1-character-change").attr("colour", p2.colour);
-		$("#p1-character-change").attr("src", `static/img/csp_icons/${p2.character}/${p2.colour}.png`);
+		$("#p1-character-change").attr("src", `static/img/${GAME}/csp_icons/${p2.character}/${p2.colour}.png`);
 
 		$("#p1d-character-change").attr("character", p2d.character);
 		$("#p1d-character-change").attr("colour", p2d.colour);
-		$("#p1d-character-change").attr("src", `static/img/csp_icons/${p2d.character}/${p2d.colour}.png`);
+		$("#p1d-character-change").attr("src", `static/img/${GAME}/csp_icons/${p2d.character}/${p2d.colour}.png`);
 
 		$("#p2-character-change").attr("character", p1.character);
 		$("#p2-character-change").attr("colour", p1.colour);
-		$("#p2-character-change").attr("src", `static/img/csp_icons/${p1.character}/${p1.colour}.png`);
+		$("#p2-character-change").attr("src", `static/img/${GAME}/csp_icons/${p1.character}/${p1.colour}.png`);
 
 		$("#p2d-character-change").attr("character", p1d.character);
 		$("#p2d-character-change").attr("colour", p1d.colour);
-		$("#p2d-character-change").attr("src", `static/img/csp_icons/${p1d.character}/${p1d.colour}.png`);
+		$("#p2d-character-change").attr("src", `static/img/${GAME}/csp_icons/${p1d.character}/${p1d.colour}.png`);
 	}
 }
 
@@ -692,6 +404,9 @@ function swapTeam(n) {
 
 	player1Name = $(`#p${n}-name`).val();
 	player2Name = $(`#p${n}d-name`).val();
+
+	player1Prefix = $(`#p${n}-prefix`).val();
+	player2Prefix = $(`#p${n}d-prefix`).val();
 
 	player1Pronouns = $(`#p${n}-pronouns`).val();
 	player2Pronouns = $(`#p${n}d-pronouns`).val();
@@ -704,6 +419,9 @@ function swapTeam(n) {
 
 	$(`#p${n}-name`).val(player2Name);
 	$(`#p${n}d-name`).val(player1Name);
+
+	$(`#p${n}-prefix`).val(player2Prefix);
+	$(`#p${n}d-prefix`).val(player1Prefix);
 
 	$(`#p${n}-pronouns`).val(player2Pronouns);
 	$(`#p${n}d-pronouns`).val(player1Pronouns);
@@ -725,6 +443,7 @@ function toggleDoubles() {
 
 		$(".swap").hide()
 
+		$(".player.header.row.doubles").hide();
 		$(".player.info.row.doubles").hide();
 		$(".database.doubles").prop("disabled", true);
 		$(".slug.doubles").prop("disabled", true);
@@ -732,6 +451,7 @@ function toggleDoubles() {
 		$(".pronouns.change.doubles").prop("disabled", true);
 		$(".flag.change.doubles").prop("disabled", true);
 		$(".csp.change.doubles").hide();
+		$(".team-colour-wrapper").hide();
 
 		$(".seat.right").hide();
 		$(".seat-changer.side").hide();
@@ -760,6 +480,7 @@ function toggleDoubles() {
 
 		$(".swap").show()
 
+		$(".player.header.row.doubles").show();
 		$(".player.info.row.doubles").show();
 		$(".database.doubles").prop("disabled", false);
 		$(".slug.doubles").prop("disabled", false);
@@ -767,6 +488,7 @@ function toggleDoubles() {
 		$(".name.change.doubles").prop("disabled", false);
 		$(".flag.change.doubles").prop("disabled", false);
 		$(".csp.change.doubles").show();
+		$(".team-colour-wrapper").show();
 
 		$(".seat.right").show();
 		$(".seat-changer.side").show();
@@ -790,11 +512,11 @@ function loadCharActual(player, character = "empty", colour) {
 	if (characterActual.attr("character") !== character || characterActual.attr("colour") !== colour) {
 		characterActual.attr("character", character);
 		characterActual.attr("colour", colour);
-		characterActual.attr("src", `static/img/stock_icons/${character}/${colour}.png`);
+		characterActual.attr("src", `static/img/${GAME}/stock_icons/${character}/${colour}.png`);
 
 		characterChange.attr("character", character);
 		characterChange.attr("colour", colour);
-		characterChange.attr("src", `static/img/csp_icons/${character}/${colour}.png`);
+		characterChange.attr("src", `static/img/${GAME}/csp_icons/${character}/${colour}.png`);
 	}
 }
 
@@ -804,11 +526,17 @@ function loadCharActual(player, character = "empty", colour) {
  * @param {*} character character
  * @param {*} colour colour
  */
-function loadCharChange(player, character = "empty", colour) {
+function loadCharChange(player, character, colour) {
+	if(!character) {
+		return
+	}
+	if(!colour) {
+		colour = getDefaultColour(character)
+	}
 	const characterChange = $(`#${player}-character-change`)
 	characterChange.attr("character", character);
 	characterChange.attr("colour", colour);
-	characterChange.attr("src", `static/img/csp_icons/${character}/${colour}.png`);
+	characterChange.attr("src", `static/img/${GAME}/csp_icons/${character}/${colour}.png`);
 }
 
 function updateScene() {
@@ -948,12 +676,14 @@ function changeBestOf(value) {
 			bestOfValue = 3;
 			$("#best-of-change").val("3")
 			break;
-		case "5":
-			bestOfValue = 5;
-			$("#best-of-change").val("5")
+		case "7":
+			bestOfValue = 7;
+			$("#best-of-change").val("7")
 			break;
 		default:
 			bestOfValue = 5;
+			$("#best-of-change").val("5")
+			break;
 	}
 }
 
@@ -1069,10 +799,11 @@ function loadSet(x) {
 	p1Data = JSON.parse($(`#set${x}-name1`).attr("data-p1"))
 	$("#p1-slug").val(p1Data.slug)
 	$("#p1-name").val(p1Data["name"] + p1Loser)
+	$("#p1-prefix").val(p1Data["prefix"])
 	$("#p1-pronouns").val(p1Data["pronouns"])
 	$("#p1-flag").val(fixCountry(p1Data["country"])).change();
 	p1Db = getPlayer(p1Data.slug)
-	if(p1Db) {
+	if(p1Db && isMelee()) {
 		if(p1Db.character !== "" && p1Db.colour !== "") {
 			loadCharChange("p1", p1Db.character, p1Db.colour || "red")
 		}
@@ -1082,10 +813,11 @@ function loadSet(x) {
 	p1dData = JSON.parse($(`#set${x}-name1`).attr("data-p2"))
 	$("#p1d-slug").val(p1dData.slug)
 	$("#p1d-name").val(p1dData["name"] ? p1dData["name"] + p1Loser : "")
-	$("#p1d-pronouns").val(p1dpronouns = p1dData["pronouns"])
+	$("#p1d-prefix").val(p1dData["prefix"])
+	$("#p1d-pronouns").val(p1dData["pronouns"])
 	$("#p1d-flag").val(fixCountry(p1dData["country"])).change();
 	p1dDb = getPlayer(p1dData.slug)
-	if(p1dDb) {
+	if(p1dDb && isMelee()) {
 		if(p1dDb.character !== "" && p1dDb.colour !== "") {
 			loadCharChange("p1d", p1dDb.character, p1dDb.colour || "red")
 		}
@@ -1095,10 +827,11 @@ function loadSet(x) {
 	p2Data = JSON.parse($(`#set${x}-name2`).attr("data-p1"))
 	$("#p2-slug").val(p2Data.slug)
 	$("#p2-name").val(p2Data["name"] + p2Loser) 
+	$("#p2-prefix").val(p2Data["prefix"])
 	$("#p2-pronouns").val(p2Data["pronouns"])
 	$("#p2-flag").val(fixCountry(p2Data["country"])).change();
 	p2Db = getPlayer(p2Data.slug)
-	if(p2Db) {
+	if(p2Db && isMelee()) {
 		if(p2Db.character !== "" && p2Db.colour !== "") {
 			loadCharChange("p2", p2Db.character, p2Db.colour || "red")
 		}
@@ -1108,10 +841,11 @@ function loadSet(x) {
 	p2dData = JSON.parse($(`#set${x}-name2`).attr("data-p2"))
 	$("#p2d-slug").val(p2dData.slug)
 	$("#p2d-name").val(p2dData["name"] ? p2dData["name"] + p2Loser : "")
+	$("#p2d-prefix").val(p2dData["prefix"])
 	$("#p2d-pronouns").val(p2dData["pronouns"])
 	$("#p2d-flag").val(fixCountry(p2dData["country"])).change();
 	p2dDb = getPlayer(p2dData.slug)
-	if(p2dDb) {
+	if(p2dDb && isMelee()) {
 		if(p2dDb.character !== "" && p2dDb.colour !== "") {
 			loadCharChange("p2d", p2dDb.character, p2dDb.colour || "red")
 		}
@@ -1128,131 +862,7 @@ function loadSet(x) {
 	$("#set-id").val($(`#set${x}`).attr("data-id"))
 }
 
-function saveSet(x) {
-	swapped = false;
-	$("#p1-entrant").val($(`#set${x}-name1`).attr("data-entrant"))
-	$("#p1-entrant-name").text($(`#set${x}-name1`).text())
-
-	$("#p2-entrant").val($(`#set${x}-name2`).attr("data-entrant"))
-	$("#p2-entrant-name").text($(`#set${x}-name2`).text())
-
-	$("#setID-input").val($(`#set${x}`).attr("data-id"))
-}
-
 /* SET DATA */
-
-//make this shit pretty then make it submit to start.gg
-function getTournamentSet() {
-	const STOCK_ICON = `static/img/stock_icons`
-
-	var set = JSON.parse($("#tournament-data :selected").attr("data-set"));
-	if (!set) {
-		return
-	}
-	$("#display-set-results").empty()
-	$("#display-set-results").show()
-
-	var entrantIds = $('<div />')
-		.attr('class', 'row')
-	$(entrantIds).append($('<input />').val(`${set.team1.entrantId}`).attr('class', 'startgg display id').attr('id', 'p1-entrant-input'))
-	$(entrantIds).append($('<button />').attr('onclick', 'swapEntrants()').attr('class', 'startgg entrant swap').attr('id', 'entrant-swap').append(`<i class="fa-solid fa-arrow-right-arrow-left"></i>`))
-	$(entrantIds).append($('<input />').val(`${set.team2.entrantId}`).attr('class', 'startgg display id').attr('id', 'p2-entrant-input'))
-
-	$("#display-set-results").append($('<input />').val(`${set.setId}`).attr('class', 'startgg display id').attr('id', 'setID-input'))
-	$("#display-set-results").append(entrantIds)
-
-	var playerNames = $('<div />')
-		.attr('class', 'row')
-		.attr('id', 'startgg-names')
-	$(playerNames).append($('<span />').text(set.team1.names[0]).attr('class', 'startgg display name left').attr('id', 'p1-entrant-name'))
-	$(playerNames).append($('<span />').text("vs").attr('class', 'startgg'))
-	$(playerNames).append($('<span />').text(set.team2.names[0]).attr('class', 'startgg display name right').attr('id', 'p2-entrant-name'))
-
-	$("#display-set-results").append(playerNames)
-
-	for (let game of set.games) {
-		var gameRow = $('<div />')
-		for (x = 0; x < 4 - game.team1[0].stocks; x++) {
-			gameRow.append($('<img />').attr("src", `${STOCK_ICON}/${getDefaultIcon(game.team1[0].character)}`).attr("class", 'stock-icon dark'))
-		}
-		for (x = 0; x < game.team1[0].stocks; x++) {
-			gameRow.append($('<img />').attr("src", `${STOCK_ICON}/${getDefaultIcon(game.team1[0].character)}`).attr("class", 'stock-icon'))
-		}
-		gameRow.append($('<span />').attr("class", 'stage').text(` ${getStageShort(game.stage)} `))
-		for (x = 0; x < game.team2[0].stocks; x++) {
-			gameRow.append($('<img />').attr("src", `${STOCK_ICON}/${getDefaultIcon(game.team2[0].character)}`).attr("class", 'stock-icon'))
-		}
-		for (x = 0; x < 4 - game.team2[0].stocks; x++) {
-			gameRow.append($('<img />').attr("src", `${STOCK_ICON}/${getDefaultIcon(game.team2[0].character)}`).attr("class", 'stock-icon dark'))
-		}
-		$("#display-set-results").append(gameRow);
-	}
-	$("#display-set-results").append($('<button />').attr('id', 'submit-startgg-set').attr('onClick', 'submitSet()').text("Submit start.gg"));
-	index = 1;
-	$("#set-update").show()
-}
-
-function swapEntrants() {
-	swapped = !swapped;
-
-	p1Entrant = $("#p1-entrant-input").val()
-	p1Name = $("#p1-entrant-name").text()
-
-	p2Entrant = $("#p2-entrant-input").val()
-	p2Name = $("#p2-entrant-name").text()
-
-	$("#p1-entrant-input").val(p2Entrant)
-	$("#p1-entrant-name").text(p2Name)
-
-	$("#p2-entrant-input").val(p1Entrant)
-	$("#p2-entrant-name").text(p1Name)
-}
-
 function showGetSets() {
 	$("#get-sets").show()
-}
-
-function updateSet() {
-	let data = JSON.parse($('#tournament-data :selected').attr("data-set"))
-	data.timecodes[0] = HHmmssToMs($("#timecode-1").val())
-	data.timecodes[1] = HHmmssToMs($("#timecode-2").val())
-
-	let index = $('#tournament-data :selected').val()
-	let tournament = `${$('#tournament-data :selected').attr("data-tournament")}`
-
-	$.ajax({
-		type: 'POST',
-		url: "/update_set",
-		data: {
-			data: data,
-			index: index,
-			tournament: tournament
-		},
-		success: function () {
-			$("#set-update").css("background-color", "#55F76B");
-			$("#set-update").css("border-bottom", "3px solid #349641");
-			$("#set-update").text("Success ");
-			$("#set-update").append('<i class="fa-solid fa-thumbs-up"></i>')
-			setTimeout(function () {
-				$("#set-update").css("background-color", "#FFF");
-				$("#set-update").css("border-bottom", "3px solid #AAA");
-				$("#set-update").text("Submit timestamps");
-			}, 2000);
-			return true;
-		},
-		error: function (response) {
-			console.error(response)
-			$("#set-update").css("background-color", "#F56262");
-			$("#set-update").css("border-bottom", "3px solid #F53535");
-			$("#set-update").text("Error ");
-			$("#set-update").append('<i class="fa-solid fa-triangle-exclamation"></i>')
-			setTimeout(function () {
-				$("#set-update").css("background-color", "#FFF");
-				$("#set-update").css("border-bottom", "3px solid #AAA");
-				$("#set-update").text("Submit timestamps");
-			}, 2000);
-			return false;
-		},
-		timeout: 5000
-	})
 }

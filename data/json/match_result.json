@@ -1,1 +1,127 @@
-{"team1":{"entrantId":"19794773","names":["Westers (L)","Player 4"]},"team2":{"entrantId":"19794873","names":["Rain","Player 3"]},"round":"Grand Final","vod":"D:\\OBS\\2025-05-11 13-26-30.mkv","setId":"88937876","winner":2,"timecodes":[29122065,29710782],"isDoubles":false,"games":[{"stage":"Battlefield","winner":2,"team1":[{"character":"falco","colour":"blue","stocks":0},{}],"team2":[{"character":"marth","colour":"black","stocks":3},{}]},{"stage":"Yoshis Story","winner":2,"team1":[{"character":"falco","colour":"blue","stocks":0},{}],"team2":[{"character":"marth","colour":"black","stocks":2},{}]},{"stage":"Pokemon Stadium","winner":1,"team1":[{"character":"falco","colour":"blue","stocks":2},{}],"team2":[{"character":"marth","colour":"black","stocks":0},{}]},{"stage":"Final Destination","winner":2,"team1":[{"character":"falco","colour":"blue","stocks":0},{}],"team2":[{"character":"marth","colour":"black","stocks":2},{}]}]}
+{
+    "team1": {
+        "entrantId": "19794773",
+        "names": [
+            "c:leo",
+            "Player 4"
+        ]
+    },
+    "team2": {
+        "entrantId": "19794873",
+        "names": [
+            "ECS",
+            "Player 3"
+        ]
+    },
+    "round": "Losers Final",
+    "vod": "",
+    "setId": "",
+    "winner": 1,
+    "timecodes": [
+        29122065,
+        29710782
+    ],
+    "isDoubles": false,
+    "games": [
+        {
+            "stage": "Battlefield",
+            "winner": 2,
+            "team1": [
+                {
+                    "character": "sheik",
+                    "colour": "white",
+                    "stocks": 1
+                },
+                {}
+            ],
+            "team2": [
+                {
+                    "character": "captainfalcon",
+                    "colour": "white",
+                    "stocks": 0
+                },
+                {}
+            ]
+        },
+        {
+            "stage": "Dreamland 64",
+            "winner": 2,
+            "team1": [
+                {
+                    "character": "sheik",
+                    "colour": "white",
+                    "stocks": 0
+                },
+                {}
+            ],
+            "team2": [
+                {
+                    "character": "captainfalcon",
+                    "colour": "white",
+                    "stocks": 2
+                },
+                {}
+            ]
+        },
+        {
+            "stage": "Fountain of Dreams",
+            "winner": 1,
+            "team1": [
+                {
+                    "character": "sheik",
+                    "colour": "white",
+                    "stocks": 2
+                },
+                {}
+            ],
+            "team2": [
+                {
+                    "character": "captainfalcon",
+                    "colour": "white",
+                    "stocks": 0
+                },
+                {}
+            ]
+        },
+        {
+            "stage": "Yoshis Story",
+            "winner": 2,
+            "team1": [
+                {
+                    "character": "sheik",
+                    "colour": "white",
+                    "stocks": 0
+                },
+                {}
+            ],
+            "team2": [
+                {
+                    "character": "captainfalcon",
+                    "colour": "white",
+                    "stocks": 2
+                },
+                {}
+            ]
+        },
+        {
+            "stage": "Yoshis Story",
+            "winner": 1,
+            "team1": [
+                {
+                    "character": "sheik",
+                    "colour": "white",
+                    "stocks": 2
+                },
+                {}
+            ],
+            "team2": [
+                {
+                    "character": "captainfalcon",
+                    "colour": "white",
+                    "stocks": 0
+                },
+                {}
+            ]
+        }
+    ]
+}

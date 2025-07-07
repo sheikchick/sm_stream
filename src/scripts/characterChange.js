@@ -3,8 +3,9 @@ var shown = false;
 function swapCharacter(id, index = 0) {
 	shown = true;
 	$("#characterSelect").attr("imgId", id)
+	$("#characterSelect").attr("index", index)
 	for (i = 0; i <= 5; i++) {
-		$(`#colour${i + 1}`).attr('src', `static/img/stock_icons/empty.png`)
+		$(`#colour${i + 1}`).attr('src', `static/img/melee/stock_icons/empty.png`)
 	}
 	$("#characterSelect").show()
 	$("#main").css("opacity", "0.25")
@@ -40,7 +41,7 @@ $(".css-character").on("click", function (el) {
 					$(`#colour${i + 1}`).attr('colour', "")
 					$(`#colour${i + 1}`).hide()
 				}
-				$(`#colour${i + 1}`).attr('src', `static/img/stock_icons/${img}`)
+				$(`#colour${i + 1}`).attr('src', `static/img/melee/stock_icons/${img}`)
 			}
 		},
 		error: function (response) {
@@ -65,9 +66,12 @@ $(".char-colour").on("click", function (el) {
 	imgId = $("#characterSelect").attr("imgId")
 	character = $(el.target).attr("character")
 	colour = $(el.target).attr("colour")
-	$(`#${imgId}`).attr("src", `static/img/${iconType}/${character}/${colour}.png`)
+	$(`#${imgId}`).attr("src", `static/img/melee/${iconType}/${character}/${colour}.png`)
 	$(`#${imgId}`).attr("character", character)
 	$(`#${imgId}`).attr("colour", colour)
+	if(window.location.pathname === "/database") {
+		showSubmit($("#characterSelect").attr("index"))
+	}
 });
 
 $('.char-colour').on('dragstart', function (event) { event.preventDefault(); });

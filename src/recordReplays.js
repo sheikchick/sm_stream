@@ -9,7 +9,7 @@ const { Subject, combineLatest } = require("rxjs");
 const { map, filter, distinct } = require("rxjs/operators");
 const os = require('os');
 const processSlp = require("./processSlp");
-const { REPLAY_QUEUE, writeData, INFO, DOLPHIN, DIRECTORY } = require('./data');
+const { REPLAY_QUEUE, writeData, MELEE: INFO, DOLPHIN, DIRECTORY } = require('./data');
 const { changeScene } = require('./obs');
 const { delayPromiseStart } = require('./util');
 

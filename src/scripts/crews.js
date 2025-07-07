@@ -172,7 +172,7 @@ function update() {
 			$(".update").append('<i class="fa fa-sync"></i>')
 		}, 2000);
 	}, 5000);
-	fetch("/update-crews", {
+	fetch("/update-melee-crews", {
 		method: 'POST',
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({
@@ -541,7 +541,7 @@ function updateSeatsLoop() {
 	$(".seat").each((index, seat) => {
 		player = getSeatPlayer($(seat).attr("index"))
 		$(seat).find(".name").text(player.name)
-		$(seat).find(".stock-icon").attr('src', `static/img/stock_icons/${player.character.character}/${player.character.colour}.png`)
+		$(seat).find(".stock-icon").attr('src', `static/img/melee/stock_icons/${player.character.character}/${player.character.colour}.png`)
 		$(seat).css("background-color", fixSeatColour($(seat).attr("index")))
 	})
 	$("#left-seat-changer").css("background-color", `${fixSeatAccent($("#p1-left-seat").attr("index"))}`)
@@ -647,11 +647,11 @@ function swapSides(info, characters) {
 
 		$("#p1-character-change").attr("character", p2.character);
 		$("#p1-character-change").attr("colour", p2.colour);
-		$("#p1-character-change").attr("src", `static/img/csp_icons/${p2.character}/${p2.colour}.png`);
+		$("#p1-character-change").attr("src", `static/img/melee/csp_icons/${p2.character}/${p2.colour}.png`);
 
 		$("#p2-character-change").attr("character", p1.character);
 		$("#p2-character-change").attr("colour", p1.colour);
-		$("#p2-character-change").attr("src", `static/img/csp_icons/${p1.character}/${p1.colour}.png`);
+		$("#p2-character-change").attr("src", `static/img/melee/csp_icons/${p1.character}/${p1.colour}.png`);
 	}
 }
 
@@ -761,11 +761,11 @@ function loadCharActual(player, character="empty", colour) {
 	if(characterActual.attr("character") !== character || characterActual.attr("colour") !== colour) {
 		characterActual.attr("character", character);
 		characterActual.attr("colour", colour);
-		characterActual.attr("src", `static/img/stock_icons/${character}/${colour}.png`);
+		characterActual.attr("src", `static/img/melee/stock_icons/${character}/${colour}.png`);
 	
 		characterChange.attr("character", character);
 		characterChange.attr("colour", colour);
-		characterChange.attr("src", `static/img/csp_icons/${character}/${colour}.png`);
+		characterChange.attr("src", `static/img/melee/csp_icons/${character}/${colour}.png`);
 	}
 }
 
@@ -779,7 +779,7 @@ function loadCharChange(player, character="empty", colour) {
 	const characterChange = $(`#${player}-character-change`)
 	characterChange.attr("character", character);
 	characterChange.attr("colour", colour);
-	characterChange.attr("src", `static/img/csp_icons/${character}/${colour}.png`);
+	characterChange.attr("src", `static/img/melee/csp_icons/${character}/${colour}.png`);
 }
 
 
@@ -1177,7 +1177,7 @@ function submitSet() {
 
 //make this shit pretty then make it submit to start.gg
 function getTournamentSet() {
-	const STOCK_ICON = `static/img/stock_icons`
+	const STOCK_ICON = `static/img/melee/stock_icons`
 
 	var set = JSON.parse($("#tournament-data :selected").attr("data-set"));
 	if (!set) {

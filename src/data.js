@@ -2,7 +2,7 @@ const path = require("path");
 const { readFile, writeFile } = require("fs/promises");
 const logging = require("./logging");
 
-exports.INFO = 'info.json';
+exports.MELEE = 'melee.json';
 exports.CREWS = 'crews.json';
 exports.MATCH_RESULT = 'match_result.json';
 exports.DOLPHIN = 'dolphin.json';
@@ -12,7 +12,7 @@ exports.REGIONS = 'regions.json';
 exports.CHARACTER_DATA = 'character-data.json';
 
 exports.DATA_FILES = [
-    this.INFO,
+    this.MELEE,
     this.CREWS,
     this.MATCH_RESULT,
     this.DOLPHIN,
@@ -27,11 +27,11 @@ exports.DIRECTORY = "data/json/";
 const FORMAT = "utf8";
 
 exports.writeData = async (file, data) => this.DATA_FILES.includes(file) &&
-    writeFile(this.DIRECTORY + file, file === this.INFO ? JSON.stringify(this.fixInfo(data)) : JSON.stringify(data), FORMAT);
+    writeFile(this.DIRECTORY + file, file === this.MELEE ? JSON.stringify(this.fixMeleeInfo(data)) : JSON.stringify(data), FORMAT);
 
 exports.readData = async (file) => this.DATA_FILES.includes(file)
     ? readFile(this.DIRECTORY + file, FORMAT)
-        .then((data) => file === this.INFO ? this.fixInfo(JSON.parse(data)) : JSON.parse(data))  //TODO; IMPLEMENT DEFAULT INFO.JSON LOADING SEAMLESSLY IN CASE OF ERROR
+        .then((data) => file === this.MELEE ? this.fixMeleeInfo(JSON.parse(data)) : JSON.parse(data))  //TODO; IMPLEMENT DEFAULT MELEE.JSON LOADING SEAMLESSLY IN CASE OF ERROR
         .catch((e) => logging.log(`Failed to open ${file} - ${e}`))
     : {};
 
@@ -58,7 +58,7 @@ exports.updateTournament = async (data, index, tournamentFilename) => {
         });
 };
 
-exports.fixInfo = (info) => {
+exports.fixMeleeInfo = (info) => {
     let newInfo = {
         "team1": {
             "players": [
@@ -67,6 +67,7 @@ exports.fixInfo = (info) => {
                     "name": info?.team1?.players?.[0]?.name || "Player 1",
                     "character": info?.team1?.players?.[0]?.character || "fox",
                     "colour": info?.team1?.players?.[0]?.colour || "red",
+                    "prefix": info?.team1?.players?.[0]?.prefix || "",
                     "pronouns": info?.team1?.players?.[0]?.pronouns || "",
                     "country": info?.team1?.players?.[0]?.country || "EU",
                     "port": info?.team1?.players?.[0]?.port || 1
@@ -75,6 +76,7 @@ exports.fixInfo = (info) => {
                     "slug": info?.team1?.players?.[1]?.slug || "",
                     "name": info?.team1?.players?.[1]?.name || "Player 4",
                     "character": info?.team1?.players?.[1]?.character || "falco",
+                    "prefix": info?.team1?.players?.[1]?.prefix || "",
                     "colour": info?.team1?.players?.[1]?.colour || "red",
                     "pronouns": info?.team1?.players?.[1]?.pronouns || "",
                     "country": info?.team1?.players?.[1]?.country || "EU",
@@ -91,6 +93,7 @@ exports.fixInfo = (info) => {
                     "name": info?.team2?.players?.[0]?.name || "Player 2",
                     "character": info?.team2?.players?.[0]?.character || "sheik",
                     "colour": info?.team2?.players?.[0]?.colour || "blue",
+                    "prefix": info?.team2?.players?.[0]?.prefix || "",
                     "pronouns": info?.team2?.players?.[0]?.pronouns || "",
                     "country": info?.team2?.players?.[0]?.country || "EU",
                     "port": info?.team2?.players?.[0]?.port || 1
@@ -100,6 +103,7 @@ exports.fixInfo = (info) => {
                     "name": info?.team2?.players?.[1]?.name || "Player 3",
                     "character": info?.team2?.players?.[1]?.character || "peach",
                     "colour": info?.team2?.players?.[1]?.colour || "blue",
+                    "prefix": info?.team2?.players?.[1]?.prefix || "",
                     "pronouns": info?.team2?.players?.[1]?.pronouns || "",
                     "country": info?.team2?.players?.[1]?.country || "EU",
                     "port": info?.team2?.players?.[1]?.port || 2

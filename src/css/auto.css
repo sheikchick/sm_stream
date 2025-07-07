@@ -1,7 +1,22 @@
+/*
+	Noto Color Emoji is used on Chromium-based browsers
+*/
+
 @font-face {
 	font-family: 'Noto Color Emoji';
 	src: url('fonts/NotoColorEmoji.ttf');
 }
+
+/*
+	Noto Color Emoji COLRv1 is used on Firefox-based browsers
+*/
+
+@font-face {
+	font-family: 'Noto Color Emoji COLRv1';
+	src: url('fonts/Noto-COLRv1-emojicompat.ttf');
+}
+
+
 
 :root {
 	--main-bg-color: #443344;
@@ -37,9 +52,11 @@ select.right {
 	width: 220px;
 	background-color: white;
 	color: black;
-	margin-top: 38px;
-	border-radius: 5px;
+	margin-top: 34px;
+	border-radius: 0 0 5px 5px;
 	text-align: right;
+	align-self: flex-end;
+	font-style: italic;
 }
 
 .autofill ul {
@@ -53,7 +70,7 @@ select.right {
 }
 
 .autofill ul li:hover {
-	background: #eee;
+	background: #DDD;
 	border-radius: 5px;
 }
 
@@ -298,7 +315,7 @@ input.startgg.display {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	gap: 10px;
+	gap: 5px;
 }
 
 .player.info.row {
@@ -307,6 +324,25 @@ input.startgg.display {
 	align-items: center;
 	justify-content: center;
 	gap: 5px;
+}
+
+.player.header.row {
+	display: flex;
+	align-items: flex-end;
+	justify-content: flex-end;
+	flex-direction: row;
+	width: 100%;
+}
+
+.team-colour-wrapper {
+	display: flex;
+	gap: 5px;
+}
+
+button.team-colour {
+	width: 24px;
+	height: 24px;
+	padding: 0;
 }
 
 .database.wrapper {
@@ -338,10 +374,7 @@ input.slug {
 .name-container {
 	display: flex;
 	flex-direction: column;
-}
-
-.name-container.change {
-	gap: 10px;
+	align-items: flex-end;
 }
 
 .pronouns.wrapper {
@@ -350,6 +383,13 @@ input.slug {
 	align-items: center;
 	justify-content: flex-start;
 	gap: 20px;
+}
+
+input.prefix {
+	width: 90px;
+	padding: 2px 5px;
+	text-align: right;
+	font-size: 13px;
 }
 
 input.pronouns {
@@ -375,7 +415,7 @@ select.flag {
 	background: white;
 	color: #FFF;
 	border: none;
-	font-family: sans-serif, 'Noto Color Emoji';
+	font-family: sans-serif, 'Noto Color Emoji', 'Noto Color Emoji COLRv1';
 }
 
 select.flag:hover {
@@ -863,4 +903,22 @@ span.stage {
 	width: 50px;
 	padding: 2px;
 	font-size: 10px;
+}
+
+.red-colour {
+	color: rgb(136, 34, 34);
+	background-color: rgb(245, 98, 98);
+	border-bottom: 2px solid rgb(68, 34, 34)!important;
+}
+
+.blue-colour {
+	color: rgb(34, 34, 136);
+	background-color: rgb(98, 98, 245);
+	border-bottom: 2px solid rgb(34, 34, 68)!important;
+}
+
+.green-colour {
+	color: rgb(34, 136, 34);
+	background-color: rgb(98, 245, 98);
+	border-bottom: 2px solid rgb(34, 68, 34)!important;
 }

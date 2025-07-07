@@ -55,8 +55,9 @@ ffmpeg/
 desktop.ini
 overlay/**
 dist/**
-static/img/vs_icons/**
-static/img/stock_icons/!characters/**
+static/img/melee/vs_icons/**
+static/img/melee/fete_icons/**
+static/img/slapcity/**
 static/overlay/**
 data/json/tournaments/**
 data/database-filters/**

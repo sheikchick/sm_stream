@@ -1,4 +1,4 @@
-const { readData, INFO } = require("./data.js");
+const { readData, MELEE } = require("./data.js");
 
 const OBSWebSocket = require('obs-websocket-js').default;
 const logging = require("./logging.js");
@@ -90,7 +90,7 @@ exports.changeScene = (() => {
     const setCurrentProgramScene = 'SetCurrentProgramScene';
     return async (sceneName) => {
         if (config["OBS"]["Scenes"]["Auto-swap Scenes"] === "true") {
-            readData(INFO).then((info) => {
+            readData(MELEE).then((info) => {
                 if (info.handwarmers !== false && (info.round !== "Friendlies" || config["OBS"]["Scenes"]["Swap scenes on friendlies"] === "true")) {
                     return obs?.call(setCurrentProgramScene, { sceneName })
                         .then(() => {

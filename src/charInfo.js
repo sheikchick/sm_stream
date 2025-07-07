@@ -2,16 +2,15 @@ const path = require("path");
 
 const {charactersByName, characterRandom} = require("./slpTools.js");
 
-const sagaDir = path.join(__dirname, '..', 'static', 'img', 'saga_icons');
-const cssDir = path.join(__dirname, '..', 'static', 'img', 'css_icons');
-const cspDir = path.join(__dirname, '..', 'static', 'img', 'csp_icons');
-const vsDir = path.join(__dirname, '..', 'static', 'img', 'vs_icons');
+const sagaDir = path.join(__dirname, '..', 'static', 'img', 'melee', 'saga_icons');
+const cssDir = path.join(__dirname, '..', 'static', 'img', 'melee', 'css_icons');
+const cspDir = path.join(__dirname, '..', 'static', 'img', 'melee', 'csp_icons');
+const vsDir = path.join(__dirname, '..', 'static', 'img', 'melee', 'vs_icons');
+const stockDir = path.join(__dirname, '..', 'static', 'img', 'melee', 'stock_icons');
+const feteStockDir = path.join(__dirname, '..', 'static', 'img', 'melee', 'fete_icons');
 
 const pmDir = path.join(__dirname, '..', 'static', 'img', 'pm');
 
-const stockIcons = 'stock_icons';
-const stockDir = path.join(__dirname, '..', 'static', 'img', stockIcons);
-const feteStockDir = path.join(__dirname, '..', 'static', 'img', 'fete_icons');
 const overlayDir = path.join(__dirname, '..', 'static', 'img', 'overlay');
 
 
@@ -38,7 +37,7 @@ exports.getCsp = (characterName, colour) => _getCsp(this.getCharacterByName(char
 exports.getStock = (characterName, colour, overlay) => {
     const {character, colours, stock} = this.getCharacterByName(characterName);
     return path.join(
-        ...(overlay ? [overlayDir, overlay, stockIcons] : [stockDir]),
+        ...(overlay ? [overlayDir, overlay, 'stock_icons'] : [stockDir]),
         `${stock || path.join(character, getColourSafe(colours, colour))}.png`
     );
 };
@@ -49,18 +48,6 @@ exports.getFeteStock = (characterName, colour) => {
         ...([feteStockDir]),
         `${stock || path.join(character, getColourSafe(colours, colour))}.png`
     );
-};
-
-exports.getPMCss = (characterName) => {
-    return path.join(pmDir, "css_icons", `${characterName}.png`);
-};
-
-exports.getPMCsp = (characterName) => {
-    return path.join(pmDir, "csp_icons", `${characterName}.png`);
-}
-
-exports.getPMStock = (characterName) => {
-    return path.join(pmDir, "stock_icons", `${characterName}.png`);
 };
 
 exports.getVs = (characterName, colour, side) => {

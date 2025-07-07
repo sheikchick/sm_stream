@@ -185,7 +185,7 @@
 						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
 					</span>
 					<span class="name" tabindex="-1">{{crew1.activePlayer.name}}</span>
-					<img class="stock-icon" src="static/img/stock_icons/smash.png">
+					<img class="stock-icon" src="static/img/melee/stock_icons/smash.png">
 				</div>
 				<button class="seat-changer" onclick="swapSeatSides()">Swap sides<br/><i class="fa-solid fa-left-right"></i></button>
 				<div class="seat p2 left column" id="p2-left-seat" index="{{seatOrdering.[2]}}">
@@ -196,7 +196,7 @@
 						<i class="fas fa-chair doubles" style="opacity: 15%;"></i>
 					</span>
 					<span class="name" tabindex="-1">{{crew2.activePlayer.name}}</span>
-					<img class="stock-icon" src="static/img/stock_icons/smash.png">
+					<img class="stock-icon" src="static/img/melee/stock_icons/smash.png">
 				</div>
 			</div>
 
@@ -237,6 +237,6 @@
 		</div>
 	</div>
 	<div id="characterSelect">
-		{{> characterChange}}
+		{{> characterChangeMelee}}
 	</div>
 </body>

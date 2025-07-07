@@ -64,7 +64,7 @@ function slpFilter(file) {
  * @param {SlippiGame} game                 Slippi game object
  * @param {*} settings                      Settings of the slippi game
  * @param {slpTools.getSlippiTeams} teams   Teams in play
- * @returns                                 Promise to write output to info.json
+ * @returns                                 Promise to write output to melee.json
  */
 const processGame = (filePath) => {
     const game = new SlippiGame(filePath);

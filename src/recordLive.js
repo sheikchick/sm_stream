@@ -3,9 +3,6 @@ const fs = require("fs/promises");
 const ffmpeg = require("fluent-ffmpeg")
 
 const logging = require("./logging.js");
-const { readData, INFO } = require("./data.js");
-
-const { getTimecode, getDirectory } = require("./obs.js");
 
 const { msToHHmmss: msToHHmmss, replaceIllegal } = require("./util.js")
 

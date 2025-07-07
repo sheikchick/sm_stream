@@ -40,7 +40,7 @@ function getDBAutocompleteSlug(slug) {
                 }
                 return 0;
             })
-            getTournamentPlayers(slug).then((eventPlayers) => {
+            getTournamentPlayersBasic(slug).then((eventPlayers) => {
                 autocompletePlayers = dbPlayers.filter((dbPlayer) => {
                     return eventPlayers.some((eventPlayer) => {
                         return dbPlayer.slug == eventPlayer.slug
@@ -62,6 +62,7 @@ function autocompleteListneners() {
         player = autocompletePlayers.find((el) => el.slug === slug)
         $(`#${indicator}-slug`).val(player.slug)
         $(`#${indicator}-name`).val(player.name)
+        $(`#${indicator}-prefix`).val(player.prefix)
         $(`#${indicator}-pronouns`).val(player.pronouns)
         $(`#${indicator}-flag`).val(player.country)
         loadCharChange(indicator, player.character, player.colour)

@@ -3,7 +3,7 @@ const path = require("path");
 const slpTools = require("./slpTools.js");
 const logging = require("./logging.js");
 const { SlippiGame } = require("@slippi/slippi-js");
-const { readData, writeData, INFO, MATCH_RESULT } = require("./data.js");
+const { readData, writeData, MELEE, MATCH_RESULT } = require("./data.js");
 const { appendFile, readFile, writeFile, mkdir } = require("fs/promises");
 const { getTimecode, getDirectory } = require("./obs.js");
 const recordLive = require("./recordLive.js");
@@ -185,7 +185,7 @@ exports.test = async (path) => {
 /**
  * Executed on game start
  * @param {*} path  Path to the .slp file
- * @returns         Write output to info.json
+ * @returns         Write output to melee.json
  */
 exports.gameStart = async (path) => {
     const game = new SlippiGame(path, { processOnTheFly: true });
@@ -205,7 +205,7 @@ exports.gameStart = async (path) => {
         }
     }
 
-    const info = await readData(INFO);
+    const info = await readData(MELEE);
 
     this.checkSetStart(info, true);
     if (teams.length === 2) {
@@ -228,7 +228,7 @@ exports.gameStart = async (path) => {
         });
     }
 
-    return writeData(INFO, info).then(() => ({
+    return writeData(MELEE, info).then(() => ({
         game,
         settings,
         teams
@@ -248,7 +248,7 @@ exports.gameStart = async (path) => {
 exports.gameMid = async ({ game, settings, teams }) => {
     if (teams?.length === 2) {
         const playersLatestFrame = game.getLatestFrame().players;
-        const info = await readData(INFO);
+        const info = await readData(MELEE);
         if (info.round === this.CREWS) {
             //handle lowering of score
         }
@@ -264,7 +264,7 @@ exports.gameMid = async ({ game, settings, teams }) => {
             info[`team${index + 1}`].players[0].character = p1char
             info[`team${index + 1}`].players[1].character = p2char
         });
-        return writeData(INFO, info);
+        return writeData(MELEE, info);
     }
 };
 
@@ -297,7 +297,7 @@ exports.gameEnd = async ({ game, settings, teams }) => {
 
     logging.log(`Team ${winnerPlayerNumber} wins game.`);
 
-    const info = await readData(INFO);
+    const info = await readData(MELEE);
     const winnerKey = `team${winnerPlayerNumber}`;
     info[winnerKey].score = (info[winnerKey].score || 0) + 1;
 
@@ -309,7 +309,7 @@ exports.gameEnd = async ({ game, settings, teams }) => {
         delayPromiseStart(1000, () => changeScene(config["OBS"]["Scenes"]["Game end scene"]))
     }
 
-    const writeInfoPromise = writeData(INFO, info);
+    const writeInfoPromise = writeData(MELEE, info);
 
     // Update match_data and/or match_result.json
     const { players: playersLatestFrame } = game.getLatestFrame();

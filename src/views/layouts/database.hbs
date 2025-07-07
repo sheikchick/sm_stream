@@ -39,11 +39,12 @@
             <div class="entry template">
 				<div id="trash-spacer" style="width:40px"></div>
                 <span class="slug">Slug</span>
-                <span class="name"></spanclass>Name</span>
+				<span class="prefix">Prefix</span>
+                <span class="name">Name</span>
                 <span class="country">Country</span>
                 <span class="pronouns">Pronouns</span>
                 <span id="character">🦊</span>
-				<button id="submit-all" class="submit">Submit all</button>
+				<button id="submit-all" class="submit" onclick="submitAll()">Submit all</button>
             </div>
         </div>
 		<div class="startgg" id="startgg">
@@ -58,6 +59,6 @@
 		</div>
     </div>
 	<div id="characterSelect">
-		{{> characterChange}}
+		{{> characterChangeMelee}}
 	</div>
 </body>

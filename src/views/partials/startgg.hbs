@@ -1,0 +1,94 @@
+<div id="right-wrapper">
+	<div id="startgg-banner-wrapper">
+		<img id="tournament-image" src="static/img/startgg.png">
+		<div class="column" id="startgg-input-wrapper">
+			<div class="row">
+				<input type="text" id="tournament-slug" class="startgg tournament input" placeholder="startgg slug">
+				<button type="button" id="load-sets" class="startgg bottom button submit" onclick="getStreamQueues()"
+					title="Get stream queue"><i class="fa-solid fa-tv"></i></button>
+				<button type="button" id="load-sets" class="startgg bottom button submit"
+					onclick="getTournamentEvents()" title="Get tournament sets"><img type="icon" id="bracket-icon"
+						src="static/img/bracket.svg"></button>
+			</div>
+			<div class="row">
+				<select class="startgg input c" id="streams" onchange="getStreamQueue()"></select>
+				<select class="startgg input c" id="events" onchange="getEventPhases()"></select>
+				<select class="startgg input c" id="phases" onchange="showGetSets()"></select>
+			</div>
+			<button type="button" id="get-sets" class="startgg bottom button"
+				onclick="getSets('[1,2,4,5,6,7]', true, false)">Get sets</button>
+		</div>
+	</div>
+	<div id="pages">
+		<button id="page-left" class="page-button" onclick="showSets(false)"><i
+				class="fa-solid fa-arrow-left"></i></button>
+		<button id="page-right" class="page-button" onclick="showSets(true)"><i
+				class="fa-solid fa-arrow-right"></i></button>
+	</div>
+	<div id="set1" class="set">
+		<div id="set1-wrapperL" class="set wrapper left">
+			<label id="set1-name1" class="startgg name left"></label>
+			<label id="set1-vs" class="startgg name vs">vs</label>
+			<label id="set1-name2" class="startgg name right"></label>
+		</div>
+		<div id="set1-wrapperR" class="set wrapper right">
+			<label id="set1-round" class="startgg round"></label>
+			<div class="column">
+				<button id="set1-button" class="startgg button load" onclick="loadSet(1)">Load</button>
+			</div>
+		</div>
+
+	</div>
+	<div id="set2" class="set">
+		<div id="set2-wrapperL" class="set wrapper left">
+			<label id="set2-name1" class="startgg name left"></label>
+			<label id="set2-vs" class="startgg name vs">vs</label>
+			<label id="set2-name2" class="startgg name right"></label>
+		</div>
+		<div id="set2-wrapperR" class="set wrapper right">
+			<label id="set2-round" class="startgg round"></label>
+			<div class="column">
+				<button id="set2-button" class="startgg button load" onclick="loadSet(2)">Load</button>
+			</div>
+		</div>
+	</div>
+	<div id="set3" class="set">
+		<div id="set3-wrapperL" class="set wrapper left">
+			<label id="set3-name1" class="startgg name left"></label>
+			<label id="set3-vs" class="startgg name vs">vs</label>
+			<label id="set3-name2" class="startgg name right"></label>
+		</div>
+		<div id="set3-wrapperR" class="set wrapper right">
+			<label id="set3-round" class="startgg round"></label>
+			<div class="column">
+				<button id="set3-button" class="startgg button load" onclick="loadSet(3)">Load</button>
+			</div>
+		</div>
+	</div>
+	<div id="set4" class="set">
+		<div id="set4-wrapperL" class="set wrapper left">
+			<label id="set4-name1" class="startgg name left"></label>
+			<label id="set4-vs" class="startgg name vs">vs</label>
+			<label id="set4-name2" class="startgg name right"></label>
+		</div>
+		<div id="set4-wrapperR" class="set wrapper right">
+			<label id="set4-round" class="startgg round"></label>
+			<div class="column">
+				<button id="set4-button" class="startgg button load" onclick="loadSet(4)">Load</button>
+			</div>
+		</div>
+	</div>
+	<div id="set5" class="set">
+		<div id="set5-wrapperL" class="set wrapper left">
+			<label id="set5-name1" class="startgg name left"></label>
+			<label id="set5-vs" class="startgg name vs">vs</label>
+			<label id="set5-name2" class="startgg name right"></label>
+		</div>
+		<div id="set5-wrapperR" class="set wrapper right">
+			<label id="set5-round" class="startgg round"></label>
+			<div class="column">
+				<button id="set5-button" class="startgg button load" onclick="loadSet(5)">Load</button>
+			</div>
+		</div>
+	</div>
+</div>

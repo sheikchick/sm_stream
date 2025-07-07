@@ -23,7 +23,7 @@
 .database {
     display: flex;
     flex-direction: column;
-    width: 770px;
+    width: 780px;
     gap: 5px;
 }
 
@@ -96,7 +96,22 @@ Have auto pronoun updater using start.gg
 */
 
 .slug {
-    width: 100px;
+    width: 70px;
+    text-align: center;
+}
+
+.entry>.slug {
+    background-color: #DDD;
+    font-style: italic;
+}
+
+.entry.template>.slug {
+    background-color: RGBA(0,0,0,0)!important;
+    font-style: normal!important;
+}
+
+.prefix {
+    width: 90px;
 }
 
 .name {
@@ -134,14 +149,20 @@ Have auto pronoun updater using start.gg
     padding: 0;
 }
 
+.submit-wrapper {
+    width: 80px;
+    height: 30px;
+}
+
 .submit {
+    display: none;
     width: 80px;
     height: 30px;
     padding: 0;
 }
 
 #submit-all {
-    opacity: 0;
+    display: block!important;
 }
 
 .clicked {

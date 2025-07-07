@@ -1,0 +1,35 @@
+:root {
+	--main-bg-color: #443344;
+	--element-bg-color: #332233;
+	--startgg-set-bg-color: #336;
+}
+
+.wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.row {
+    flex-direction: row;
+}
+
+.column {
+    flex-direction: column;
+}
+
+#country-wrapper {
+    background-color: var(--element-bg-color);
+    width: 300px;
+    gap: 5px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+#country-tournament {
+    width: 250px;
+}
+
+#country-submit {
+    width: 200px
+}

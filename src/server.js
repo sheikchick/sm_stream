@@ -17,7 +17,7 @@ const { loadObs } = require("./obs.js");
 const recordLive = require("./recordLive.js");
 const { recordReplays } = require("./recordReplays.js");
 const charInfo = require("./charInfo.js");
-const { readData, writeData, updateTournament, INFO, CREWS, CHARACTER_DATA, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
+const { readData, writeData, updateTournament, MELEE, CREWS, CHARACTER_DATA, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
 const { watch } = require("./slpWatch.js");
 const { getGames } = require("./slpResults.js");
 const { checkSetStart, test } = require("./processSlp.js");
@@ -54,12 +54,12 @@ app.get("/", (req, res) => {
     res.redirect('/auto');
 });
 
-app.post("/update", (req, res) => {
+app.post("/update-melee", (req, res) => {
     const info = req.body;
     if (gameInProgress) {
         checkSetStart(info);
     }
-    writeData(INFO, info)
+    writeData(MELEE, info)
         .then(() => {
             res.sendStatus(200);
         })
@@ -68,7 +68,7 @@ app.post("/update", (req, res) => {
         });
 });
 
-app.post("/update-crews", (req, res) => {
+app.post("/update-melee-crews", (req, res) => {
     const info = req.body;
     writeData(CREWS, info)
         .then(() => {
@@ -96,7 +96,7 @@ fs.readdir(layoutsDir, { withFileTypes: true }).then((files) => {
                     });
                 });
             } else {
-                readData(INFO).then((data) => {
+                readData(MELEE).then((data) => {
                     res.render(layout, {
                         ...data,
                         apiKey: config["start.gg"]["API key"],
@@ -138,11 +138,11 @@ DATA_FILES.forEach((f) => {
     app.get(`/${f}`, (req, res) => {
         res.sendFile(path.join(process.cwd(), DIRECTORY + f), (error) => {
             if (error) {
-                if (f === "info.json") {
-                    res.sendFile(path.join(process.cwd(), DIRECTORY + "info-default.json"), (error) => {
+                if (f === "melee.json") {
+                    res.sendFile(path.join(process.cwd(), DIRECTORY + "melee-default.json"), (error) => {
                         if (error) {
-                            logging.error(`Error serving info.json: ${error}`)
-                            res.send(`Error serving info.json`)
+                            logging.error(`Error serving melee.json: ${error}`)
+                            res.send(`Error serving melee.json`)
                         }
                     })
                 } else {
@@ -222,6 +222,9 @@ app.post("/updatePlayers", (req, res) => {
                 playerDB.updatePlayer(player, (err, data) => {
                     if (!err) {
                         count++;
+                    } else {
+                        logging.error(err)
+                        logging.error(JSON.stringify(player))
                     }
                 })
             }))

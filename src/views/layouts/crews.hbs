@@ -5,8 +5,12 @@
 <head>
 	<title>sm-stream - Crews</title>
 	<script src="scripts/jquery-3.4.1.min.js"></script>
+	<script src="scripts/gsap.min.js"></script>
+	<script src="scripts/common.js"></script>
 
 	<script src="scripts/crews.js"></script>
+	<script src="scripts/autocomplete.js"></script>
+	<script src="scripts/database.js"></script>
 	<script src="scripts/startgg-scripts.js"></script>
 	<script src="scripts/startgg-utils.js"></script>
 	<script src="scripts/flags.js"></script>
@@ -22,14 +26,16 @@
 		var apiKey = "{{apiKey}}"
 		var obsPort = "{{obsPort}}"
 		var obsPassword = "{{obsPassword}}"
+		var hideSwapAll = {{ hideSwapAll }}
 	</script>
+	<link rel="stylesheet" type="text/css" href="css/common.css">
 	<link rel="stylesheet" type="text/css" href="css/crews.css">
 	<link rel="icon" href="favicon.ico">
 </head>
 
 <body>
 	{{> footer}}
-	<span class="label" id="top-label">WIP - Works but not fully implemented</span>
+	<span class="label" id="top-label">Currently displayed on stream</span>
 	<div id="header">
 		<div id="p1-info-actual" class="info actual">
 			<div id="p1-text-actual" class="name-container actual">
@@ -66,18 +72,29 @@
 	<div id="main">
 		<div id="left-wrapper">
 			<div id="p1-info-change" class="info change left">
-				<div id="p1-pronouns-wrapper" class="pronouns wrapper change">
-					<input type="text" id="p1-pronouns" class="pronouns change left"
-						value="{{crew1.activePlayer.pronouns}}" placeholder="Pronouns">
+				<input type="text" id="p1-entrant" class="startgg display id left" value="{{crew1.startggEntrant}}"
+					placeholder="start.gg Entrant">
+				<div class="player info wrapper column">
+					<div class="player header row">
+						<input type="text" id="p1-prefix" class="prefix change left"
+							value="{{crew1.activePlayer.prefix}}" placeholder="Player 1 prefix">
+					</div>
+					<div class="player info row">
+						<button type="button" id="t1p1-database" class="database left" title="Update player in database"
+							onclick="submitNewPlayer('1')"><i class="fa-solid fa-database"></i></button>
+						<input type="text" id="p1-slug" class="slug change left" value="{{crew1.activePlayer.slug}}"
+							placeholder="start.gg slug">
+						<input type="text" id="p1-pronouns" class="pronouns change left"
+							value="{{crew1.activePlayer.pronouns}}" placeholder="Pronouns">
+						<select class="flag change left" id="p1-flag"></select>
+						<div class="name-container change">
+							<input type="text" id="p1-name" class="name change left" value="{{crew1.activePlayer.name}}"
+								placeholder="Player 1 name" onKeyUp="showResults(this.id, this.value)">
+							<div id="p1-autofill" class="autofill"></div>
+						</div>
+					</div>
 				</div>
-				<div id="p1-flag-wrapper" class="flag wrapper change">
-					<select class="flag change left" id="p1-flag"></select>
-				</div>
-				<div id="p1-text-change" class="name-container change">
-					<input type="text" id="p1-name" class="name change left" value="{{crew1.activePlayer.name}}"
-						placeholder="Player 1 name">
-				</div>
-				<img id="p1-character-change" class="csp change" src="csp" onclick="swapCharacter(1,1)">
+				<img id="p1-character-change" class="csp change" src="csp" onclick="swapCharacter(this.id, 1)">
 				<div class="column">
 					<input type="number" id="p1-score-change" class="score change left" pattern="[0-9]"
 						value="{{crew1.score}}">
@@ -87,91 +104,130 @@
 					<button class="score-changer" onclick="changeScore(-1,1)">-</button>
 				</div>
 				<div class="column crew">
-					<input type="text" id="crew1-name" class="crew name left" value="{{crew1.name}}" placeholder="Crew Name">
+					<input type="text" id="crew1-name" class="crew name left" value="{{crew1.name}}"
+						placeholder="Crew Name">
 					<div class="crew row">
 						<button type="button" class="load-crew" onclick="loadCrew(1,1)" value="">Load</button>
-						<input type="text" id="t1-crew1" class="crew left" value="{{crew1.players.[0].name}}" placeholder="Player 1">
-						<button type="button" id="t1-crew1-toggle" class="toggle-crew" onclick="toggleCrew(1,1)" value=""></button>
+						<input type="text" id="t1-crew1" class="crew left" value="{{crew1.players.[0].name}}" slug="{{crew1.players.[0].slug}}"
+							placeholder="Player 1">
+						<button type="button" id="t1-crew1-toggle" class="toggle-crew c1" onclick="toggleCrew(1,1)"
+							value=""></button>
 					</div>
 					<div class="crew row">
 						<button type="button" class="load-crew" onclick="loadCrew(1,2)" value="">Load</button>
-						<input type="text" id="t1-crew2" class="crew left" value="{{crew1.players.[1].name}}" placeholder="Player 2">
-						<button type="button" id="t1-crew2-toggle" class="toggle-crew" onclick="toggleCrew(1,2)" value=""></button>
+						<input type="text" id="t1-crew2" class="crew left" value="{{crew1.players.[1].name}}" slug="{{crew1.players.[1].slug}}"
+							placeholder="Player 2">
+						<button type="button" id="t1-crew2-toggle" class="toggle-crew c1" onclick="toggleCrew(1,2)"
+							value=""></button>
 					</div>
 					<div class="crew row">
 						<button type="button" class="load-crew" onclick="loadCrew(1,3)" value="">Load</button>
-						<input type="text" id="t1-crew3" class="crew left" value="{{crew1.players.[2].name}}" placeholder="Player 3">
-						<button type="button" id="t1-crew3-toggle" class="toggle-crew" onclick="toggleCrew(1,3)" value=""></button>
+						<input type="text" id="t1-crew3" class="crew left" value="{{crew1.players.[2].name}}" slug="{{crew1.players.[2].slug}}"
+							placeholder="Player 3">
+						<button type="button" id="t1-crew3-toggle" class="toggle-crew c1" onclick="toggleCrew(1,3)"
+							value=""></button>
 					</div>
-					<div class="crew row">
+					<div class="crew row hidden">
 						<button type="button" class="load-crew" onclick="loadCrew(1,4)" value="">Load</button>
-						<input type="text" id="t1-crew4" class="crew left" value="{{crew1.players.[3].name}}" placeholder="Player 4">
-						<button type="button" id="t1-crew4-toggle" class="toggle-crew" onclick="toggleCrew(1,4)" value=""></button>
+						<input type="text" id="t1-crew4" class="crew left" value="{{crew1.players.[3].name}}" slug="{{crew1.players.[3].slug}}"
+							placeholder="Player 4">
+						<button type="button" id="t1-crew4-toggle" class="toggle-crew c1" onclick="toggleCrew(1,4)"
+							value=""></button>
 					</div>
-					<div class="crew row">
+					<div class="crew row hidden">
 						<button type="button" class="load-crew" onclick="loadCrew(1,5)" value="">Load</button>
-						<input type="text" id="t1-crew5" class="crew left" value="{{crew1.players.[4].name}}" placeholder="Player 5">
-						<button type="button" id="t1-crew5-toggle" class="toggle-crew" onclick="toggleCrew(1,5)" value=""></button>
+						<input type="text" id="t1-crew5" class="crew left" value="{{crew1.players.[4].name}}" slug="{{crew1.players.[4].slug}}"
+							placeholder="Player 5">
+						<button type="button" id="t1-crew5-toggle" class="toggle-crew c1" onclick="toggleCrew(1,5)"
+							value=""></button>
 					</div>
 				</div>
 			</div>
 
 			<div id="middle-row" class="row">
-				<button type="button" id="swap-info" class="swap-sides" onclick="swapSides(true, false)">
-					Swap info <i class="fa-solid fa-arrows-up-down"></i>
-				</button>
-				<button type="button" id="swap-all" class="swap-sides" onclick="swapSides(true, true)">
-					Swap all <i class="fa-solid fa-arrows-up-down"></i>
-				</button>
-				<button type="button" id="swap-chars" class="swap-sides" onclick="swapSides(false, true)">
-					Swap chars. <i class="fa-solid fa-arrows-up-down"></i>
-				</button>
+				<div id="swap-group">
+					<button type="button" id="swap-all" class="swap-sides" onclick="swapSides(true, true)">
+						All <i class="fa-solid fa-arrows-up-down"></i>
+					</button>
+					<button type="button" id="swap-info" class="swap-sides" onclick="swapSides(true, false)">
+						Info <i class="fa-solid fa-arrows-up-down"></i>
+					</button>
+					<button type="button" id="swap-chars" class="swap-sides" onclick="swapSides(false, true)">
+						Chars. <i class="fa-solid fa-arrows-up-down"></i>
+					</button>
+				</div>
 			</div>
 			<div id="p2-info-change" class="info change right">
-				<div id="p2-pronouns-wrapper" class="pronouns wrapper change">
-					<input type="text" id="p2-pronouns" class="pronouns change right"
-						value="{{crew2.activePlayer.pronouns}}" placeholder="Pronouns">
+				<input type="text" id="p2-entrant" class="startgg display id right" value="{{crew2.startggEntrant}}"
+					placeholder="start.gg Entrant">
+				<div class="player info wrapper column">
+					<div class="player header row">
+						<input type="text" id="p2-prefix" class="prefix change right"
+							value="{{crew2.activePlayer.prefix}}" placeholder="Player 2 prefix">
+					</div>
+					<div class="player info row">
+						<button type="button" id="t2p1-database" class="database right"
+							title="Update player in database" onclick="submitNewPlayer('2')"><i
+								class="fa-solid fa-database"></i></button>
+						<input type="text" id="p2-slug" class="slug change right" value="{{crew2.activePlayer.slug}}"
+							placeholder="start.gg slug">
+						<input type="text" id="p2-pronouns" class="pronouns change right"
+							value="{{crew2.activePlayer.pronouns}}" placeholder="Pronouns">
+						<select class="flag change right" id="p2-flag"></select>
+						<div class="name-container change">
+							<input type="text" id="p2-name" class="name change right"
+								value="{{crew2.activePlayer.name}}" placeholder="Player 2 name"
+								onKeyUp="showResults(this.id, this.value)">
+							<div id="p2-autofill" class="autofill"></div>
+						</div>
+					</div>
 				</div>
-				<div id="p2-flag-wrapper" class="flag wrapper change">
-					<select class="flag change right" id="p2-flag"></select>
-				</div>
-				<div id="p2-text-change" class="name-container change">
-					<input type="text" id="p2-name" class="name change right" value="{{crew2.activePlayer.name}}"
-						placeholder="Player 1 name">
-				</div>
-				<img id="p2-character-change" class="csp change" src="csp" onclick="swapCharacter(2,1)">
-					<input type="number" id="p2-score-change" class="score change right" min="0" max="99"
+				<img id="p2-character-change" class="csp change" src="csp" onclick="swapCharacter(this.id, 2)">
+				<div class="column">
+					<input type="number" id="p2-score-change" class="score change right" pattern="[0-9]"
 						value="{{crew2.score}}">
+				</div>
 				<div class="column changer">
 					<button class="score-changer" onclick="changeScore(1,2)">+</button>
 					<button class="score-changer" onclick="changeScore(-1,2)">-</button>
 				</div>
 				<div class="column crew">
-					<input type="text" id="crew2-name" class="crew name right" value="{{crew2.name}}" placeholder="Crew Name">
+					<input type="text" id="crew2-name" class="crew name right" value="{{crew2.name}}"
+						placeholder="Crew Name">
 					<div class="crew row">
 						<button type="button" class="load-crew" onclick="loadCrew(2,1)" value="">Load</button>
-						<input type="text" id="t2-crew1" class="crew right" value="{{crew2.players.[0].name}}" placeholder="Player 1">
-						<button type="button" id="t2-crew1-toggle" class="toggle-crew" onclick="toggleCrew(2,1)" value=""></button>
+						<input type="text" id="t2-crew1" class="crew right" value="{{crew2.players.[0].name}}"
+							slug="{{crew2.players.[0].slug}}" placeholder="Player 1">
+						<button type="button" id="t2-crew1-toggle" class="toggle-crew c2" onclick="toggleCrew(2,1)"
+							value=""></button>
 					</div>
 					<div class="crew row">
 						<button type="button" class="load-crew" onclick="loadCrew(2,2)" value="">Load</button>
-						<input type="text" id="t2-crew2" class="crew right" value="{{crew2.players.[1].name}}" placeholder="Player 2">
-						<button type="button" id="t2-crew2-toggle" class="toggle-crew" onclick="toggleCrew(2,2)" value=""></button>
+						<input type="text" id="t2-crew2" class="crew right" value="{{crew2.players.[1].name}}"
+							slug="{{crew2.players.[1].slug}}" placeholder="Player 2">
+						<button type="button" id="t2-crew2-toggle" class="toggle-crew c2" onclick="toggleCrew(2,2)"
+							value=""></button>
 					</div>
 					<div class="crew row">
 						<button type="button" class="load-crew" onclick="loadCrew(2,3)" value="">Load</button>
-						<input type="text" id="t2-crew3" class="crew right" value="{{crew2.players.[2].name}}" placeholder="Player 3">
-						<button type="button" id="t2-crew3-toggle" class="toggle-crew" onclick="toggleCrew(2,3)" value=""></button>
+						<input type="text" id="t2-crew3" class="crew right" value="{{crew2.players.[2].name}}"
+							slug="{{crew2.players.[2].slug}}" placeholder="Player 3">
+						<button type="button" id="t2-crew3-toggle" class="toggle-crew c2" onclick="toggleCrew(2,3)"
+							value=""></button>
 					</div>
-					<div class="crew row">
+					<div class="crew row hidden">
 						<button type="button" class="load-crew" onclick="loadCrew(2,4)" value="">Load</button>
-						<input type="text" id="t2-crew4" class="crew right" value="{{crew2.players.[3].name}}" placeholder="Player 4">
-						<button type="button" id="t2-crew4-toggle" class="toggle-crew" onclick="toggleCrew(2,4)" value=""></button>
+						<input type="text" id="t2-crew4" class="crew right" value="{{crew2.players.[3].name}}"
+							slug="{{crew2.players.[3].slug}}" placeholder="Player 4">
+						<button type="button" id="t2-crew4-toggle" class="toggle-crew c2" onclick="toggleCrew(2,4)"
+							value=""></button>
 					</div>
-					<div class="crew row">
+					<div class="crew row hidden">
 						<button type="button" class="load-crew" onclick="loadCrew(2,5)" value="">Load</button>
-						<input type="text" id="t2-crew5" class="crew right" value="{{crew2.players.[4].name}}" placeholder="Player 5">
-						<button type="button" id="t2-crew5-toggle" class="toggle-crew" onclick="toggleCrew(2,5)" value=""></button>
+						<input type="text" id="t2-crew5" class="crew right" value="{{crew2.players.[4].name}}"
+							slug="{{crew2.players.[4].slug}}" placeholder="Player 5">
+						<button type="button" id="t2-crew5-toggle" class="toggle-crew c2" onclick="toggleCrew(2,5)"
+							value=""></button>
 					</div>
 				</div>
 			</div>
@@ -187,7 +243,8 @@
 					<span class="name" tabindex="-1">{{crew1.activePlayer.name}}</span>
 					<img class="stock-icon" src="static/img/melee/stock_icons/smash.png">
 				</div>
-				<button class="seat-changer" onclick="swapSeatSides()">Swap sides<br/><i class="fa-solid fa-left-right"></i></button>
+				<button class="seat-changer" onclick="swapSeatSides()">Swap sides<br /><i
+						class="fa-solid fa-left-right"></i></button>
 				<div class="seat p2 left column" id="p2-left-seat" index="{{seatOrdering.[2]}}">
 					<span class="header">
 						<i class="fas fa-chair" style="opacity: 15%;"></i>
@@ -233,7 +290,101 @@
 					</div>
 				</div>
 			</div>
+		</div>
+		<div id="right-wrapper">
+			<div id="startgg-banner-wrapper">
+				<img id="tournament-image" src="static/img/startgg.png">
+				<div class="column" id="startgg-input-wrapper">
+					<div class="row">
+						<input type="text" id="tournament-slug" class="startgg tournament input"
+							placeholder="startgg slug">
+						<button type="button" id="load-sets" class="startgg bottom button submit"
+							onclick="getStreamQueues()" title="Get stream queue"><i class="fa-solid fa-tv"></i></button>
+						<button type="button" id="load-sets" class="startgg bottom button submit"
+							onclick="getTournamentEvents()" title="Get tournament sets"><img type="icon"
+								id="bracket-icon" src="static/img/bracket.svg"></button>
+					</div>
+					<div class="row">
+						<select class="startgg input c" id="streams" onchange="getStreamQueue()"></select>
+						<select class="startgg input c" id="events" onchange="getEventPhases()"></select>
+						<select class="startgg input c" id="phases" onchange="showGetSets()"></select>
+					</div>
+					<button type="button" id="get-sets" class="startgg bottom button"
+						onclick="getSets('[1,2,4,5,6,7]', true, false)">Get sets</button>
+				</div>
+			</div>
+			<div id="pages">
+				<button id="page-left" class="page-button" onclick="showSets(false)"><i
+						class="fa-solid fa-arrow-left"></i></button>
+				<button id="page-right" class="page-button" onclick="showSets(true)"><i
+						class="fa-solid fa-arrow-right"></i></button>
+			</div>
+			<div id="set1" class="set">
+				<div id="set1-wrapperL" class="set wrapper left">
+					<label id="set1-name1" class="startgg name left"></label>
+					<label id="set1-vs" class="startgg name vs">vs</label>
+					<label id="set1-name2" class="startgg name right"></label>
+				</div>
+				<div id="set1-wrapperR" class="set wrapper right">
+					<label id="set1-round" class="startgg round"></label>
+					<div class="column">
+						<button id="set1-button" class="startgg button load" onclick="loadSet(1)">Load</button>
+					</div>
+				</div>
 
+			</div>
+			<div id="set2" class="set">
+				<div id="set2-wrapperL" class="set wrapper left">
+					<label id="set2-name1" class="startgg name left"></label>
+					<label id="set2-vs" class="startgg name vs">vs</label>
+					<label id="set2-name2" class="startgg name right"></label>
+				</div>
+				<div id="set2-wrapperR" class="set wrapper right">
+					<label id="set2-round" class="startgg round"></label>
+					<div class="column">
+						<button id="set2-button" class="startgg button load" onclick="loadSet(2)">Load</button>
+					</div>
+				</div>
+			</div>
+			<div id="set3" class="set">
+				<div id="set3-wrapperL" class="set wrapper left">
+					<label id="set3-name1" class="startgg name left"></label>
+					<label id="set3-vs" class="startgg name vs">vs</label>
+					<label id="set3-name2" class="startgg name right"></label>
+				</div>
+				<div id="set3-wrapperR" class="set wrapper right">
+					<label id="set3-round" class="startgg round"></label>
+					<div class="column">
+						<button id="set3-button" class="startgg button load" onclick="loadSet(3)">Load</button>
+					</div>
+				</div>
+			</div>
+			<div id="set4" class="set">
+				<div id="set4-wrapperL" class="set wrapper left">
+					<label id="set4-name1" class="startgg name left"></label>
+					<label id="set4-vs" class="startgg name vs">vs</label>
+					<label id="set4-name2" class="startgg name right"></label>
+				</div>
+				<div id="set4-wrapperR" class="set wrapper right">
+					<label id="set4-round" class="startgg round"></label>
+					<div class="column">
+						<button id="set4-button" class="startgg button load" onclick="loadSet(4)">Load</button>
+					</div>
+				</div>
+			</div>
+			<div id="set5" class="set">
+				<div id="set5-wrapperL" class="set wrapper left">
+					<label id="set5-name1" class="startgg name left"></label>
+					<label id="set5-vs" class="startgg name vs">vs</label>
+					<label id="set5-name2" class="startgg name right"></label>
+				</div>
+				<div id="set5-wrapperR" class="set wrapper right">
+					<label id="set5-round" class="startgg round"></label>
+					<div class="column">
+						<button id="set5-button" class="startgg button load" onclick="loadSet(5)">Load</button>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div id="characterSelect">

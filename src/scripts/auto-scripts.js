@@ -30,6 +30,7 @@ $(document).ready(function () {
 function hoverListeners() {
 	$("#swap-info").hover(highlightInfo, clearInfo)
 	if (!hideSwapAll) {
+		$("#swap-all, #swap-chars").css("opacity", "1")
 		$("#swap-chars").hover(highlightChars, clearChars)
 		$("#swap-all").hover(() => {
 			highlightInfo()
@@ -741,30 +742,22 @@ function showSets(up, showButtons) {
 				//not ideal
 				$(`#set${x}`).css("display", "none");
 			} else {
-				$("#right-wrapper").css("display", "flex")
-
 				$(`#set${x}`).css("display", "flex");
-				$(`#set${x}`).attr("data-id", sets[index]["id"])
+				$(`#set${x}`).attr("set-index", index)
 
-				if (sets[index]["player1"]["data"][1]["name"] != "") {
-					$(`#set${x}-name1`).text(`${sets[index]["player1"]["data"][0]["name"]} / ${sets[index]["player1"]["data"][1]["name"]}`)
+				if (sets[index].player1.data.length > 1) {
+					$(`#set${x}-name1`).text(`${sets[index].player1.data[0].name} / ${sets[index].player1.data[1].name}`)
 				} else {
-					$(`#set${x}-name1`).text(sets[index]["player1"]["data"][0]["name"])
+					$(`#set${x}-name1`).text(sets[index].player1.data[0].name)
 				}
-				$(`#set${x}-name1`).attr("data-p1", JSON.stringify(sets[index]["player1"]["data"][0]))
-				$(`#set${x}-name1`).attr("data-p2", JSON.stringify(sets[index]["player1"]["data"][1]))
-				$(`#set${x}-name1`).attr("data-entrant", JSON.stringify(sets[index]["player1"]["entrantId"]))
 
-				if (sets[index]["player2"]["data"][1]["name"] != "") {
-					$(`#set${x}-name2`).text(`${sets[index]["player2"]["data"][0]["name"]} / ${sets[index]["player2"]["data"][1]["name"]}`)
+				if (sets[index].player2.data.length > 1) {
+					$(`#set${x}-name2`).text(`${sets[index].player2.data[0].name} / ${sets[index].player2.data[1].name}`)
 				} else {
-					$(`#set${x}-name2`).text(sets[index]["player2"]["data"][0]["name"])
+					$(`#set${x}-name2`).text(sets[index].player2.data[0].name)
 				}
-				$(`#set${x}-name2`).attr("data-p1", JSON.stringify(sets[index]["player2"]["data"][0]))
-				$(`#set${x}-name2`).attr("data-p2", JSON.stringify(sets[index]["player2"]["data"][1]))
-				$(`#set${x}-name2`).attr("data-entrant", JSON.stringify(sets[index]["player2"]["entrantId"]))
 
-				$(`#set${x}-round`).text(sets[index]["round"])
+				$(`#set${x}-round`).text(sets[index].round)
 			}
 		} else {
 			$(`#set${x}`).css("display", "none");
@@ -790,83 +783,96 @@ function showSets(up, showButtons) {
 }
 
 function loadSet(x) {
+	const BLANK_PLAYER = {
+		slug : "",
+		name : "",
+		prefix : "",
+
+	}
 	swapped = false;
 
-	round = $(`#set${x}-round`).text()
-	let p1Loser = "";
-	let p2Loser = "";
-	if (round.startsWith("Grand Final")) {
-		p2Loser = " (L)"
-	}
-	if (round === "Grand Final Reset") {
-		p1Loser = " (L)"
+	let setID = parseInt($(`#set${x}`).attr("set-index"))
+	let set = sets[setID]
+
+	let p1Loser = set.round === "Grand Final Reset" ? " (L)" : "";
+	let p2Loser = set.round.startsWith("Grand Final") ? " (L)" : "";
+
+	//if no data
+	if (!set.player1.data[0] || !set.player2.data[0]) {
+		return
 	}
 
 	//p1
-	p1Data = JSON.parse($(`#set${x}-name1`).attr("data-p1"))
+	let p1Data = set.player1.data[0]
 	$("#p1-slug").val(p1Data.slug)
-	$("#p1-name").val(p1Data["name"] + p1Loser)
-	$("#p1-prefix").val(p1Data["prefix"])
-	$("#p1-pronouns").val(p1Data["pronouns"])
-	$("#p1-flag").val(fixCountry(p1Data["country"])).change();
-	p1Db = getPlayer(p1Data.slug)
-	if (p1Db && isMelee()) {
-		if (p1Db.character !== "" && p1Db.colour !== "") {
-			loadCharChange("p1", p1Db.character, p1Db.colour || "red")
+	$("#p1-name").val(p1Data.name + p1Loser)
+	$("#p1-prefix").val(p1Data.prefix)
+	$("#p1-pronouns").val(p1Data.pronouns)
+	$("#p1-flag").val(fixCountry(p1Data.country)).change();
+	if (isMelee()) {
+		let p1Db = getPlayer(p1Data.slug)
+		if (p1Db) {
+			if (p1Db.character !== "") {
+				loadCharChange("p1", p1Db.character, p1Db.colour || undefined) //may need to be || ""
+			}
 		}
 	}
 
 	//p1d
-	p1dData = JSON.parse($(`#set${x}-name1`).attr("data-p2"))
+	let p1dData = set.player1.data[1] || BLANK_PLAYER
 	$("#p1d-slug").val(p1dData.slug)
-	$("#p1d-name").val(p1dData["name"] ? p1dData["name"] + p1Loser : "")
-	$("#p1d-prefix").val(p1dData["prefix"])
-	$("#p1d-pronouns").val(p1dData["pronouns"])
-	$("#p1d-flag").val(fixCountry(p1dData["country"])).change();
-	p1dDb = getPlayer(p1dData.slug)
-	if (p1dDb && isMelee()) {
-		if (p1dDb.character !== "" && p1dDb.colour !== "") {
-			loadCharChange("p1d", p1dDb.character, p1dDb.colour || "red")
+	$("#p1d-name").val(p1dData.name + p1Loser)
+	$("#p1d-prefix").val(p1dData.prefix)
+	$("#p1d-pronouns").val(p1dData.pronouns)
+	$("#p1d-flag").val(fixCountry(p1dData.country)).change();
+	if (isMelee()) {
+		let p1dDb = getPlayer(p1dData.slug)
+		if (p1dDb) {
+			if (p1dDb.character !== "") {
+				loadCharChange("p1d", p1dDb.character, p1dDb.colour || undefined)
+			}
 		}
 	}
 
-	//p2
-	p2Data = JSON.parse($(`#set${x}-name2`).attr("data-p1"))
+	let p2Data = set.player2.data[0]
 	$("#p2-slug").val(p2Data.slug)
-	$("#p2-name").val(p2Data["name"] + p2Loser)
-	$("#p2-prefix").val(p2Data["prefix"])
-	$("#p2-pronouns").val(p2Data["pronouns"])
-	$("#p2-flag").val(fixCountry(p2Data["country"])).change();
-	p2Db = getPlayer(p2Data.slug)
-	if (p2Db && isMelee()) {
-		if (p2Db.character !== "" && p2Db.colour !== "") {
-			loadCharChange("p2", p2Db.character, p2Db.colour || "red")
+	$("#p2-name").val(p2Data.name + p2Loser)
+	$("#p2-prefix").val(p2Data.prefix)
+	$("#p2-pronouns").val(p2Data.pronouns)
+	$("#p2-flag").val(fixCountry(p2Data.country)).change();
+	if (isMelee()) {
+		let p2Db = getPlayer(p2Data.slug)
+		if (p2Db) {
+			if (p2Db.character !== "") {
+				loadCharChange("p2", p2Db.character, p2Db.colour || undefined)
+			}
 		}
 	}
 
-	//p2d
-	p2dData = JSON.parse($(`#set${x}-name2`).attr("data-p2"))
+	//p1d
+	let p2dData = set.player2.data[1] || BLANK_PLAYER
 	$("#p2d-slug").val(p2dData.slug)
-	$("#p2d-name").val(p2dData["name"] ? p2dData["name"] + p2Loser : "")
-	$("#p2d-prefix").val(p2dData["prefix"])
-	$("#p2d-pronouns").val(p2dData["pronouns"])
-	$("#p2d-flag").val(fixCountry(p2dData["country"])).change();
-	p2dDb = getPlayer(p2dData.slug)
-	if (p2dDb && isMelee()) {
-		if (p2dDb.character !== "" && p2dDb.colour !== "") {
-			loadCharChange("p2d", p2dDb.character, p2dDb.colour || "red")
+	$("#p2d-name").val(p2dData.name + p2Loser)
+	$("#p2d-prefix").val(p2dData.prefix)
+	$("#p2d-pronouns").val(p2dData.pronouns)
+	$("#p2d-flag").val(fixCountry(p2dData.country)).change();
+	if (isMelee()) {
+		let p2dDb = getPlayer(p2dData.slug)
+		if (p2dDb) {
+			if (p2dDb.character !== "") {
+				loadCharChange("p2d", p2dDb.character, p2dDb.colour || undefined)
+			}
 		}
 	}
 
-
-	$("#p1-entrant").val($(`#set${x}-name1`).attr("data-entrant"))
-	$("#p2-entrant").val($(`#set${x}-name2`).attr("data-entrant"))
+	$("#p1-entrant").val(set.player1.entrant)
+	$("#p2-entrant").val(set.player1.entrant)
 
 	$("#p1-score-change").val(0)
 	$("#p2-score-change").val(0)
 
-	$("#round-change").val(round)
-	$("#set-id").val($(`#set${x}`).attr("data-id"))
+	$("#round-change").val(set.round)
+	$("#set-id").val(set.id)
 }
 
 /* SET DATA */

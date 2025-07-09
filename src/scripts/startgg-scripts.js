@@ -9,7 +9,7 @@
  */
 function findSetForPlayers(fullRoundTextFilter = "") {
 	eventId = $("#events :selected").val()
-	if(eventId === undefined) {
+	if (eventId === undefined) {
 		console.log("Empty events - please select an event on start.gg (e.g. Melee Singles)")
 		return
 	}
@@ -66,14 +66,14 @@ function findSetForPlayers(fullRoundTextFilter = "") {
 		.then((res) => res.json())
 		.then((result) => {
 			playerSlugs = [$("#p1-slug").val(), $("#p2-slug").val()]
-			if(isDoubles) {
+			if (isDoubles) {
 				playerSlugs.push($("#p1d-slug").val())
 				playerSlugs.push($("#p2d-slug").val())
 			}
-			for(let set of result.data.event.sets.nodes) {
+			for (let set of result.data.event.sets.nodes) {
 				//check every slug requested matches the player for a given set
-				if(fullRoundTextFilter) {
-					if(fullRoundTextFilter !== set.fullRoundText) {
+				if (fullRoundTextFilter) {
+					if (fullRoundTextFilter !== set.fullRoundText) {
 						continue;
 					}
 				}
@@ -84,7 +84,7 @@ function findSetForPlayers(fullRoundTextFilter = "") {
 						})
 					})
 				})
-				if(validSet) {
+				if (validSet) {
 					console.log("Set found")
 					console.log(set)
 					//if #p2-slug is in slot[0], mark it as swapped for startgg (no need to check for doubles or other slots as should not be needed)
@@ -121,12 +121,8 @@ function getTournamentEvents() {
 						id
 						name
 						images {
-							id
-							height
-							ratio
 							type
 							url
-							width
 						}
 						events{
 							id
@@ -149,7 +145,7 @@ function getTournamentEvents() {
 			$("#phase-groups").hide()
 			$("#get-sets").hide()
 			if (result["data"]["tournament"] == null) {
-				
+
 				return
 			}
 			//proceed
@@ -299,6 +295,10 @@ function getStreamQueues() {
                 tournament(slug: $tourneySlug) {
                     id
                     name
+					images {
+						type
+						url
+					}
                     streamQueue {
                         stream {
                             streamSource
@@ -321,10 +321,16 @@ function getStreamQueues() {
 			$("#phase-groups").hide()
 			$("#get-sets").hide()
 			$("#streams").empty()
+			//set image
+			image = result.data.tournament.images.find((el) => {
+				return el.type === "profile";
+			})
+			$("#tournament-image").attr("src", image?.url || "static/img/startgg.png")
 			streamQueue = result.data.tournament.streamQueue
 			if (streamQueue.length === 1) {
 				getStreamQueue(tournamentSlug, streamQueue[0].stream.streamName)
 			} else {
+				$("#streams").append(new Option("Select...", 0));
 				for (let stream of streamQueue) {
 					streamOption = new Option(stream.stream["streamName"], stream.stream["streamName"], false, false);
 					$("#streams").append(streamOption);
@@ -370,6 +376,7 @@ function getStreamQueue(tournamentSlug, streamName) {
                             slots {
                                 entrant {
                                     id
+									name
                                     participants {
 										prefix
                                         gamerTag
@@ -395,9 +402,8 @@ function getStreamQueue(tournamentSlug, streamName) {
 	})
 		.then((res) => res.json())
 		.then((result) => {
-			console.log(result.data.tournament.streamQueue)
 			sets = []
-			streamQueue = result.data.tournament.streamQueue.find((element) => (element))
+			streamQueue = result.data.tournament.streamQueue.find((element) => (element.stream.streamName === streamName))
 			for (let set of streamQueue.sets) {
 				matchRound = set.phaseGroup["bracketType"] == "ROUND_ROBIN"
 					? set.phaseGroup["phase"]["name"] + " " + set.phaseGroup["displayIdentifier"]
@@ -443,6 +449,7 @@ function getSets(stateArray, hideEmpty, showButtons) {
 								slots{
 									entrant{
                                         id
+										name
 										participants {
 											id
 											prefix
@@ -475,7 +482,6 @@ function getSets(stateArray, hideEmpty, showButtons) {
 	})
 		.then((res) => res.json())
 		.then((result) => {
-
 			sets = []
 			phaseGroup = result["data"]["phaseGroup"]
 			for (let set of phaseGroup["sets"]["nodes"]) {
@@ -492,6 +498,16 @@ function getSets(stateArray, hideEmpty, showButtons) {
 		});
 }
 
+function constructPlayer(participant) {
+	return ({
+		"slug": participant.user?.discriminator || "",
+		"prefix": participant.prefix || "",
+		"name": participant.gamerTag || "",
+		"pronouns": participant.user?.genderPronoun || "",
+		"country": participant.user?.location?.country || participant.contactInfo?.country || ""
+	})
+}
+
 function constructSetObject(set, matchRound) {
 	valid = true
 	for (let entrant of set["slots"]) {
@@ -500,86 +516,34 @@ function constructSetObject(set, matchRound) {
 		}
 	}
 	if (valid) {
-		//match details
-		matchId = set["id"]
 		//players
-		team1 = set["slots"][0]
-		team2 = set["slots"][1]
-
-		setIsDoubles = team1["entrant"]["participants"].length > 1
+		let team1 = set["slots"][0]
+		let team2 = set["slots"][1]
 
 		//TEAM 1
-		p1Entrant = team1["entrant"]["id"]
-
-		p1Slug = team1.entrant.participants[0].user?.discriminator || ""
-		p1Name = team1.entrant.participants[0].gamerTag || ""
-		p1Prefix = team1.entrant.participants[0].prefix || ""
-		p1Pronouns = team1.entrant.participants[0].user?.genderPronoun || ""
-		p1Country = team1.entrant.participants[0].user?.location?.country || team1.entrant.participants[0].contactInfo?.country || ""
-
-		//doubles
-		p1dSlug = setIsDoubles ? team1.entrant.participants[1].user?.discriminator || "" : ""
-		p1dName = setIsDoubles ? team1.entrant.participants[1].gamerTag || "" : ""
-		p1dPrefix = setIsDoubles ? team1.entrant.participants[1].prefix || "" : ""
-		p1dPronouns = setIsDoubles ? team1.entrant.participants[1].user?.genderPronoun || "" : ""
-		p1dCountry = setIsDoubles ? team1.entrant.participants[1].user?.location?.country || team1.entrant.participants[1].contactInfo?.country || "" || "" : ""
+		let p1Data = []
+		for (let participant of team1.entrant.participants) {
+			p1Data.push(constructPlayer(participant))
+		}
 
 		//TEAM 2
-		p2Entrant = team2["entrant"]["id"]
+		let p2Data = []
+		for (let participant of team2.entrant.participants) {
+			p2Data.push(constructPlayer(participant))
+		}
 
-		p2Slug = team2.entrant.participants[0].user?.discriminator || ""
-		p2Name = team2.entrant.participants[0].gamerTag || ""
-		p2Prefix = team2.entrant.participants[0].prefix || ""
-		p2Pronouns = team2.entrant.participants[0].user?.genderPronoun || ""
-		p2Country = team2.entrant.participants[0].user?.location?.country || team2.entrant.participants[0].contactInfo?.country || ""
-
-		//doubles
-		p2dSlug = setIsDoubles ? team2.entrant.participants[1].user?.discriminator || "" : ""
-		p2dName = setIsDoubles ? team2.entrant.participants[1].gamerTag || "" : ""
-		p2dPrefix = setIsDoubles ? team2.entrant.participants[1].prefix || "" : ""
-		p2dPronouns = setIsDoubles ? team2.entrant.participants[1].user?.genderPronoun || "" : ""
-		p2dCountry = setIsDoubles ? team2.entrant.participants[1].user?.location?.country || team2.entrant.participants[1].contactInfo?.country || "" || "" : ""
-
-		matchData = {
+		let matchData = {
 			"id": set["id"],
 			"round": matchRound,
 			"player1": {
-				"entrantId": p1Entrant,
-				"data": [
-					{
-						"slug": p1Slug,
-						"prefix": p1Prefix,
-						"name": p1Name,
-						"pronouns": p1Pronouns,
-						"country": p1Country
-					},
-					{
-						"slug": p1dSlug,
-						"prefix": p1dPrefix,
-						"name": p1dName,
-						"pronouns": p1dPronouns,
-						"country": p1dCountry
-					}
-				]
+				"entrantId": team1["entrant"]["id"],
+				"teamName": team1["entrant"]["name"],
+				"data": p1Data
 			},
 			"player2": {
-				"entrantId": p2Entrant,
-				"data": [
-					{
-						"slug": p2Slug,
-						"prefix": p2Prefix,
-						"name": p2Name,
-						"pronouns": p2Pronouns,
-						"country": p2Country
-					},
-					{
-						"slug": p2dSlug,
-						"prefix": p2dPrefix,
-						"name": p2dName,
-						"pronouns": p2dPronouns,
-						"country": p2dCountry
-					}
-				]
+				"entrantId": team2["entrant"]["id"],
+				"teamName": team2["entrant"]["name"],
+				"data": p2Data
 			}
 		}
 		return (matchData)
@@ -759,7 +723,7 @@ function getCountryInformation() {
 			let countries = new Map()
 			for (let participant of result.data.tournament.participants.nodes) {
 				country = participant?.contactInfo?.country || participant?.user?.location?.country || "";
-				if(!country) {
+				if (!country) {
 					console.log(participant)
 				}
 				value = countries.has(country) ? countries.get(country) + 1 : 1;
@@ -768,8 +732,8 @@ function getCountryInformation() {
 			var countriesSorted = new Map([...countries.entries()].sort((a, b) => b[1] - a[1]));
 			console.log(countriesSorted)
 			$("#country-info").text("")
-			for(let [country, amount] of countriesSorted) {
+			for (let [country, amount] of countriesSorted) {
 				$("#country-info").append(`${amount} - ${country}<br>`)
-			}	
+			}
 		});
 }

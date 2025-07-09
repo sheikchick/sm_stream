@@ -1,5 +1,7 @@
 var autocompletePlayers = [];
 
+const lRegex = /\s*\(L\)$/;
+
 function getDBAutocomplete() {
     $.ajax({
         type: 'POST',
@@ -56,9 +58,9 @@ function getDBAutocompleteSlug(slug) {
 
 function autocompleteListneners() {
     $(".autofill").on("click", function(el) {
-        indicator = $(el.target).attr("index")
-        slug = $(el.target).attr("slug")
-        player = autocompletePlayers.find((el) => el.slug === slug)
+        let indicator = $(el.target).attr("index")
+        let slug = $(el.target).attr("slug")
+        let player = autocompletePlayers.find((el) => el.slug === slug)
         $(`#${indicator}-slug`).val(player.slug)
         $(`#${indicator}-name`).val(player.name)
         $(`#${indicator}-prefix`).val(player.prefix)
@@ -127,11 +129,13 @@ function getPlayer(slug) {
 }
 
 function showResults(id, val) {
+    val = val.replace(lRegex, '')
     indicator = id.split("-")[0]
 	res = document.getElementById(`${indicator}-autofill`);
 	res.innerHTML = '';
 	let list = '';
 	let terms = autocompleteMatch(val);
+    console.log(val)
 	for (i = 0; i < terms.length; i++) {
 		list += `<li class="autocomplete-item" index="${indicator}" slug="${terms[i].slug}">${terms[i].name}</li>`;
 	}

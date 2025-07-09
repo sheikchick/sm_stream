@@ -25,6 +25,8 @@
     flex-direction: column;
     width: 780px;
     gap: 5px;
+    margin-top: 35px;
+    padding-bottom: 20px;
 }
 
 .startgg {
@@ -78,7 +80,11 @@
 }
 
 .entry.template {
+    position: fixed;
+    top: 5px;
     margin-bottom: 6px;
+    border-radius: 5px;
+    background-color: var(--element-bg-color);
 }
 
 .entry.template>span {

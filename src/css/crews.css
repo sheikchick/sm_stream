@@ -43,13 +43,11 @@ body {
 	align-items: center;
 	gap: 0.5em;
 	background-color: var(--main-bg-color);
-	font-family: sans-serif;
 	color: white;
 }
 
 button {
 	width: 116px;
-	box-shadow: 0px 4px 2px #222;
 	padding: 10px 0px;
 	cursor: pointer;
 	border-radius: 5px;
@@ -64,11 +62,9 @@ button {
 
 button:focus {
 	outline: none;
-	box-shadow: 0px 4px 2px black !important;
 }
 
 .score-changer:focus {
-	box-shadow: 0px 1px 2px #222 !important;
 }
 
 input[type=text], input[type=number] {
@@ -80,7 +76,6 @@ input[type=text], input[type=number] {
 	color: #323232;
 	border: none;
 	border-radius: 5px;
-	box-shadow: 0px 4px 2px #222;
 }
 
 input[type=text] {
@@ -89,7 +84,6 @@ input[type=text] {
 
 input:focus {
 	outline: none;
-	box-shadow: 0px 4px 2px black !important;
 }
 
 select {
@@ -102,7 +96,6 @@ select {
 	display: inline-block;
 	background: #fafafa;
 	color: #323232;
-	box-shadow: 0px 4px 2px #222;
 	border-radius: 5px;
 	background-position: right 50%;
 	background-repeat: no-repeat;
@@ -111,7 +104,6 @@ select {
 
 select:focus {
 	outline: none;
-	box-shadow: 0px 4px 2px black !important;
 }
 
 .info {
@@ -120,13 +112,37 @@ select:focus {
 	border-radius: 5px;
 }
 
+.autofill {
+	position: absolute;
+	display: none;
+	width: 220px;
+	background-color: white;
+	color: black;
+	margin-top: 34px;
+	border-radius: 0 0 5px 5px;
+	text-align: right;
+	align-self: flex-end;
+	font-style: italic;
+}
+
+.autofill ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+.autofill ul li {
+	padding: 5px;
+}
+
+.autofill ul li:hover {
+	background: #DDD;
+	border-radius: 5px;
+}
+
 .name-container {
 	display: flex;
 	flex-direction: column;
-}
-
-.name-container.change {
-	gap: 10px;
 }
 
 .column {
@@ -139,7 +155,6 @@ select:focus {
 	width: 2em;
 	height: 2em;
 	margin: 10px;
-	filter: drop-shadow(0 4px 1px #202020)
 }
 
 .clip {
@@ -219,7 +234,6 @@ button:disabled {
 	height: 12px;
 	color: #fff;
 	background-color: #444;
-	box-shadow: 0px 4px 2px #202020;
 	text-align: center;
 }
 
@@ -248,7 +262,6 @@ button:disabled {
 	width: 160px;
 	border: none;
 	border-radius: 5px;
-	box-shadow: 0px 4px 2px #202020;
 }
 
 .name.actual.left {
@@ -275,7 +288,7 @@ button:disabled {
 
 .score.actual {
 	font-size: 32px;
-	width: 22px;
+	width: 44px;
 	height: 40px;
 	margin: 0px 5px 0px 5px;
 	padding: 5px 5px;
@@ -285,7 +298,6 @@ button:disabled {
 	background: #444444;
 	color: #fff;
 	border: none;
-	box-shadow: 0px 4px 2px #202020;
 }
 
 .character-container.actual {
@@ -293,6 +305,7 @@ button:disabled {
 }
 
 input.startgg.display {
+	display: none;
 	background-color: #fff;
 	color: var(--element-bg-color);
 	font-size: 11px;
@@ -319,16 +332,6 @@ input.startgg.display {
 	min-width: 750px;
 }
 
-#right-wrapper {
-	display: none;
-	flex-direction: column;
-	gap: 0.5em;
-	border-radius: 5px;
-	background-color: var(--element-bg-color);
-	padding: 5px;
-	color: #FFF;
-}
-
 #p1-info-change {
 	background-color: #442222;
 }
@@ -345,6 +348,43 @@ input.startgg.display {
 	padding: 10px;
 }
 
+.player.info.wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 5px;
+}
+
+.player.info.row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+}
+
+.player.header.row {
+	display: flex;
+	align-items: flex-end;
+	justify-content: flex-end;
+	flex-direction: row;
+	width: 100%;
+}
+
+#swap-group {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: calc(300px + 2em);
+	gap: 1em;
+}
+
+#swap-all, #swap-chars {
+	opacity: 0;
+}
+
 .swap {
 	font-size: 20px;
 	color: #323232;
@@ -359,6 +399,38 @@ input.startgg.display {
 	background-color: #CCC;
 }
 
+.database.wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 20px;
+}
+
+button.database {
+	width: 30px;
+	padding: 2px;
+	text-align: center;
+}
+
+.slug-container {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+input.slug {
+	width: 60px;
+	padding: 5px;
+	font-size: 13px;
+}
+
+.name-container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+}
+
 .pronouns.wrapper {
 	display: flex;
 	flex-direction: column;
@@ -367,10 +439,18 @@ input.startgg.display {
 	gap: 20px;
 }
 
+input.prefix {
+	width: 90px;
+	padding: 2px 5px;
+	text-align: right;
+	font-size: 13px;
+}
+
 input.pronouns {
 	width: 70px;
 	padding: 5px;
 	text-align: right;
+	font-size: 13px;
 }
 
 .flag.wrapper {
@@ -389,15 +469,19 @@ select.flag {
 	background: white;
 	color: #FFF;
 	border: none;
-	font-family: sans-serif, 'Noto Color Emoji';
+	font-family: sans-serif, 'Noto Color Emoji', 'Noto Color Emoji COLRv1';
 }
 
-select.flag>option {
-	font-size: 16px;
-	color: #000;
+select.flag:hover {
+	cursor: pointer;
 }
 
-select.flag>option:disabled {
+select.flag>optgroup {
+	font-size: 15px;
+	color: #323232;
+	font-weight: 500;
+	font-style: normal;
+	margin-top: -200px;
 	background-color: #ffdbdb;
 }
 
@@ -417,7 +501,7 @@ select.flag>option:disabled {
 	display: inline-block;
 	background: #fff;
 	color: #323232;
-	width: 260px;
+	width: 200px;
 	border: none;
 	border-radius: 5px;
 	text-align: right;
@@ -520,7 +604,7 @@ select.flag>option:disabled {
 }
 
 #data-wrapper input {
-	width: 125px;
+	width: 130px;
 	height: 18px;
 	font-size: 14px;
 }
@@ -704,6 +788,92 @@ span.stage {
 
 /* Right wrapper stuff */
 
+#right-wrapper {
+	display: flex;
+	flex-direction: column;
+	min-width: 320px;
+	gap: 0.5em;
+	border-radius: 5px;
+	background-color: var(--element-bg-color);
+	padding: 5px;
+	color: #FFF;
+}
+
+#startgg-banner-wrapper {
+	display: flex;
+	flex-direction: row;
+	gap: 0.5em;
+}
+
+#startgg-input-wrapper {
+	gap: 0.5em;
+	width: 220px;
+	align-items: center;
+}
+#startgg-input-wrapper>.row {
+	gap: 0.5em
+}
+
+#tournament-slug {
+	width: 110px;
+	height: 15px;
+}
+
+#tournament-slug-submit {
+	display: none;
+}
+
+.startgg-submit.column {
+	margin: 5px 0;
+	gap: 4px;
+}
+
+.startgg.bottom.button {
+	height: 35px;
+	width: 35px;
+	padding: 3px 3px 2px 3px;
+	font-size: 18px;
+}
+
+#bracket-icon {
+	width: 22px;
+	height: 22px;
+}
+
+#get-sets {
+	display: none;
+	width: 100%;
+	height: 19px;
+	font-size: 11px;
+	padding: 0px;
+}
+
+.startgg.input.c {
+	display: none;
+	width: 105px;
+	height: 30px;
+	padding: 3px 8px 3px 8px;
+	font-size: 13px;
+}
+
+#events {
+	width: 115px;
+}
+
+#phases {
+	width: 95px;
+}
+
+#phase-groups {
+	width: 100px;
+}
+
+#tournament-image {
+	width: 100px;
+	height: 100px;
+	border-radius: 10px;
+}
+
 .load {
 	padding: 4px 4px;
 	margin: 5px;
@@ -747,23 +917,21 @@ span.stage {
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	height: 80px;
+	min-height: 74px;
 	background-color: var(--startgg-set-bg-color);
 	border-radius: 5px;
 	padding: 5px;
 }
 
-.set.wrapper.left {
-	width: 140px;
+.set.wrapper {
 	display: flex;
-	flex-direction: column;
 	padding: 0px;
+	overflow: hidden;
 }
 
-.set.wrapper.right {
-	width: 160px;
-	display: flex;
-	padding: 0px;
+.set.wrapper.left {
+	width: 188px;
+	flex-direction: column;
 }
 
 #set1,
@@ -776,12 +944,15 @@ span.stage {
 
 .startgg.name {
 	text-align: center;
-	font-size: 16px;
-	width: 140px;
+	font-size: 14px;
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .startgg.name.vs {
 	color: #AAA;
+	font-size: 12px;
 }
 
 .startgg.name.display {
@@ -800,24 +971,38 @@ span.stage {
 	gap: 0.5em;
 }
 
-
 .startgg.round {
-	width: 120px;
+	width: 60px;
 	text-align: center;
-	font-size: 14px;
+	font-size: 12px;
 }
 
 .startgg.button {
 	height: 30px;
-	width: 80px;
+	width: 50px;
 	padding: 2px;
 	font-size: 10px;
 }
 
-.startgg.button.save {
-	background-color: #FF9999;
-	border-bottom: 2px solid #AA4444;
+.red-colour {
+	color: rgb(136, 34, 34);
+	background-color: rgb(245, 98, 98);
+	border-bottom: 2px solid rgb(68, 34, 34)!important;
 }
+
+.blue-colour {
+	color: rgb(34, 34, 136);
+	background-color: rgb(98, 98, 245);
+	border-bottom: 2px solid rgb(34, 34, 68)!important;
+}
+
+.green-colour {
+	color: rgb(34, 136, 34);
+	background-color: rgb(98, 245, 98);
+	border-bottom: 2px solid rgb(34, 68, 34)!important;
+}
+
+/* Crew stuff */
 
 .crew.column {
     gap: 2px;
@@ -825,6 +1010,10 @@ span.stage {
 
 .crew.row {
     gap: 4px;
+}
+
+.crew.row.hidden {
+    display: none;
 }
 
 input.crew[type=text] {

@@ -1,23 +1,3 @@
-/*
-	Noto Color Emoji is used on Chromium-based browsers
-*/
-
-@font-face {
-	font-family: 'Noto Color Emoji';
-	src: url('fonts/NotoColorEmoji.ttf');
-}
-
-/*
-	Noto Color Emoji COLRv1 is used on Firefox-based browsers
-*/
-
-@font-face {
-	font-family: 'Noto Color Emoji COLRv1';
-	src: url('fonts/Noto-COLRv1-emojicompat.ttf');
-}
-
-
-
 :root {
 	--main-bg-color: #443344;
 	--element-bg-color: #332233;
@@ -296,14 +276,29 @@ input.startgg.display {
 	padding: 1px 5px;
 }
 
+#swap-group {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	width: calc(300px + 2em);
+	gap: 1em;
+}
+
+#swap-all, #swap-chars {
+	opacity: 0;
+}
+
 .swap {
-	font-size: 20px;
+	font-size: 14px;
 	color: #323232;
 	background-color: #FFF;
 	border: none;
 	border-bottom: 3px solid #AAA;
-	height: 39px;
-	width: 30px
+	height: 30px;
+	width: 30px;
+	margin-top: 24px;
+	padding: 2px 0 0 0;
 }
 
 .swap:hover {
@@ -475,15 +470,6 @@ select.flag>optgroup {
 	padding-right: 32px;
 }
 
-#swap-group {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	width: calc(300px + 2em);
-	gap: 1em;
-}
-
 .swap-sides {
 	height: 39px;
 	font-weight: 600;
@@ -572,7 +558,7 @@ select.flag>optgroup {
 }
 
 #data-wrapper input {
-	width: 125px;
+	width: 130px;
 	height: 18px;
 	font-size: 14px;
 }
@@ -657,6 +643,10 @@ input.caster {
 #obs-wrapper input,
 #obs-wrapper button {
 	margin: 10px;
+}
+
+#update-scene {
+	font-size: 14px;
 }
 
 /* Recorded sets */
@@ -852,7 +842,7 @@ span.stage {
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	height: 50px;
+	min-height: 50px;
 	background-color: var(--startgg-set-bg-color);
 	border-radius: 5px;
 	padding: 5px;
@@ -886,7 +876,7 @@ span.stage {
 
 .startgg.name.vs {
 	color: #AAA;
-	font-size: 8px;
+	font-size: 12px;
 }
 
 .startgg.name.display {

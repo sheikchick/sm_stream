@@ -117,38 +117,39 @@ function showSets(up) {
 	}
 
 	for (x = 0; x < MAX_PER_PAGE; x++) {
+		let setID = `#set${x + 1}`
 		index = x + ((setPage - 1) * MAX_PER_PAGE);
 		if (typeof (sets.length) != "undefined") {
 			if (sets.length == 0 || index >= sets.length) {
-				$(`#set${x + 1}`).css("display", "none");
+				$(setID).css("display", "none");
 			} else {
 				$("#right-wrapper").css("display", "flex")
 
-				$(`#set${x + 1}`).css("display", "flex");
-				$(`#set${x + 1}`).attr("data-id", sets[index]["id"])
+				$(setID).css("display", "flex");
+				$(setID).attr("data-id", sets[index]["id"])
 
 				if (sets[index]["player1"]["data"][1]["name"] != "") {
 					$(`#set${x + 1}-name1`).text(`${sets[index]["player1"]["data"][0]["name"]} / ${sets[index]["player1"]["data"][1]["name"]}`)
 				} else {
 					$(`#set${x + 1}-name1`).text(sets[index]["player1"]["data"][0]["name"])
 				}
-				$(`#set${x + 1}-name1`).attr("data-p1", JSON.stringify(sets[index]["player1"]["data"][0]))
-				$(`#set${x + 1}-name1`).attr("data-p2", JSON.stringify(sets[index]["player1"]["data"][1]))
-				$(`#set${x + 1}-name1`).attr("data-entrant", JSON.stringify(sets[index]["player1"]["entrantId"]))
+				$(`${setID}-name1`).attr("data-p1", JSON.stringify(sets[index]["player1"]["data"][0]))
+				$(`${setID}-name1`).attr("data-p2", JSON.stringify(sets[index]["player1"]["data"][1]))
+				$(`${setID}-name1`).attr("data-entrant", JSON.stringify(sets[index]["player1"]["entrantId"]))
 
 				if (sets[index]["player2"]["data"][1]["name"] != "") {
 					$(`#set${x + 1}-name2`).text(`${sets[index]["player2"]["data"][0]["name"]} / ${sets[index]["player2"]["data"][1]["name"]}`)
 				} else {
 					$(`#set${x + 1}-name2`).text(sets[index]["player2"]["data"][0]["name"])
 				}
-				$(`#set${x + 1}-name2`).attr("data-p1", JSON.stringify(sets[index]["player2"]["data"][0]))
-				$(`#set${x + 1}-name2`).attr("data-p2", JSON.stringify(sets[index]["player2"]["data"][1]))
-				$(`#set${x + 1}-name2`).attr("data-entrant", JSON.stringify(sets[index]["player2"]["entrantId"]))
+				$(`${setID}-name2`).attr("data-p1", JSON.stringify(sets[index]["player2"]["data"][0]))
+				$(`${setID}-name2`).attr("data-p2", JSON.stringify(sets[index]["player2"]["data"][1]))
+				$(`${setID}-name2`).attr("data-entrant", JSON.stringify(sets[index]["player2"]["entrantId"]))
 
-				$(`#set${x + 1}-round`).text(sets[index]["round"])
+				$(`${setID}-round`).text(sets[index]["round"])
 			}
 		} else {
-			$(`#set${x + 1}`).css("display", "none");
+			$(setID).css("display", "none");
 		}
 	}
 	if (sets.length == 0) {

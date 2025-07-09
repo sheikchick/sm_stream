@@ -1,6 +1,19 @@
+/*
+	Noto Color Emoji is used on Chromium-based browsers
+*/
+
 @font-face {
 	font-family: 'Noto Color Emoji';
 	src: url('fonts/NotoColorEmoji.ttf');
+}
+
+/*
+	Noto Color Emoji COLRv1 is used on Firefox-based browsers
+*/
+
+@font-face {
+	font-family: 'Noto Color Emoji COLRv1';
+	src: url('fonts/Noto-COLRv1-emojicompat.ttf');
 }
 
 /* Gilroy */

@@ -55,7 +55,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/update-melee", (req, res) => {
-    const info = req.body;
+    let info = req.body;
     if (gameInProgress) {
         checkSetStart(info);
     }
@@ -69,7 +69,7 @@ app.post("/update-melee", (req, res) => {
 });
 
 app.post("/update-melee-crews", (req, res) => {
-    const info = req.body;
+    let info = req.body;
     writeData(CREWS, info)
         .then(() => {
             res.sendStatus(200);
@@ -90,6 +90,7 @@ fs.readdir(layoutsDir, { withFileTypes: true }).then((files) => {
                 readData(CREWS).then((data) => {
                     res.render(layout, {
                         ...data,
+                        hideSwapAll: config["Web"]["Hide 'Swap All'"],
                         apiKey: config["start.gg"]["API key"],
                         obsPort: config["OBS"]["Websocket"]["Port"],
                         obsPassword: config["OBS"]["Websocket"]["Password"],
@@ -136,7 +137,7 @@ fs.readdir(overlayDir, {withFileTypes: true}).then((overlays) => {
 // endpoints for data in /data/json
 
 DATA_FILES.forEach((f) => {
-    app.get(`/${f}`, (req, res) => {
+    app.all(`/${f}`, (req, res) => {
         res.sendFile(path.join(process.cwd(), DIRECTORY + f), (error) => {
             if (error) {
                 if (f === "melee.json") {

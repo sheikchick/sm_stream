@@ -141,6 +141,7 @@ exports.fixCrews = (crew) => {
 				"name": crew?.crew1?.activePlayer?.name || "Player 1",
 				"character": crew?.crew1?.activePlayer?.character || "fox",
 				"colour": crew?.crew1?.activePlayer?.colour || "red",
+                "prefix": crew?.crew1?.activePlayer?.prefix || "",
 				"pronouns": crew?.crew1?.activePlayer?.pronouns || "",
 				"country": crew?.crew1?.activePlayer?.country || "UK",
 				"port": crew?.crew1?.activePlayer?.port || 1
@@ -175,6 +176,7 @@ exports.fixCrews = (crew) => {
 				"name": crew?.crew2?.activePlayer?.name || "Player 1",
 				"character": crew?.crew2?.activePlayer?.character || "fox",
 				"colour": crew?.crew2?.activePlayer?.colour || "red",
+                "prefix": crew?.crew2?.activePlayer?.prefix || "",
 				"pronouns": crew?.crew2?.activePlayer?.pronouns || "",
 				"country": crew?.crew2?.activePlayer?.country || "UK",
 				"port": crew?.crew2?.activePlayer?.port || 1

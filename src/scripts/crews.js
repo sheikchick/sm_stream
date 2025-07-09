@@ -14,77 +14,81 @@ var crew1 = []
 
 var crew2 = []
 
+function isMelee() {
+	return true;
+}
+
 $(document).ready(function () {
 	populateFlags();
 	obsConnect();
 	loadInitialChanges();
 	loadChanges();
 	updateSeatsLoop();
-	changeBestOf(bestOfValue);
 	toggleDoubles();
 	hoverListeners();
+	autocompleteListneners();
+	getDBAutocomplete();
 });
 
 function hoverListeners() {
 	$("#swap-info").hover(highlightInfo, clearInfo)
-	$("#swap-chars").hover(highlightChars, clearChars)
-	$("#swap-all").hover(() => {
-		highlightInfo()
-		highlightChars()
-	}, () => {
-		clearInfo()
-		clearChars()
-	})
-	$("#team1-swap").hover(()=>{
-		$("input.pronouns.change.left").css("background-color", "#FFFFCC")
-		$("select.flag.change.left").css("background-color", "#FFFFCC")
-		$("input.name.change.left").css("background-color", "#FFFFCC")
-	}, ()=>{
-		$("input.pronouns.change.left").css("background-color", "white")
-		$("select.flag.change.left").css("background-color", "white")
-		$("input.name.change.left").css("background-color", "white")
-	})
-	$("#team2-swap").hover(()=>{
-		$("input.pronouns.change.right").css("background-color", "#FFFFCC")
-		$("select.flag.change.right").css("background-color", "#FFFFCC")
-		$("input.name.change.right").css("background-color", "#FFFFCC")
-	}, ()=>{
-		$("input.pronouns.change.right").css("background-color", "white")
-		$("select.flag.change.right").css("background-color", "white")
-		$("input.name.change.right").css("background-color", "white")
-	})
+	if (!hideSwapAll) {
+		$("#swap-all, #swap-chars").css("opacity", "1")
+		$("#swap-chars").hover(highlightChars, clearChars)
+		$("#swap-all").hover(() => {
+			highlightInfo()
+			highlightChars()
+		}, () => {
+			clearInfo()
+			clearChars()
+		})
+	} else {
+		$("#swap-chars").css("opacity", 0)
+		$("#swap-chars").prop("disabled", true)
+		$("#swap-all").css("opacity", 0)
+		$("#swap-all").prop("disabled", true)
+	}
 }
 
 function highlightInfo() {
-	$("input.pronouns.change").css("background-color", "#FFFFCC")
-	$("select.flag.change").css("background-color", "#FFFFCC")
-	$("input.name.change").css("background-color", "#FFFFCC")
-	
+	gsap.to($("input.slug.change"), { "background-color": "#FFFFCC", duration: 0.2 })
+	gsap.to($("input.prefix.change"), { "background-color": "#FFFFCC", duration: 0.2 })
+	gsap.to($("input.pronouns.change"), { "background-color": "#FFFFCC", duration: 0.2 })
+	gsap.to($("select.flag.change"), { "background-color": "#FFFFCC", duration: 0.2 })
+	gsap.to($("input.name.change"), { "background-color": "#FFFFCC", duration: 0.2 })
+	gsap.to($("input.crew"), { "background-color": "#FFFFCC", duration: 0.2 })
+
 }
 function clearInfo() {
-	$("input.pronouns.change").css("background-color", "white")
-	$("select.flag.change").css("background-color", "white")
-	$("input.name.change").css("background-color", "white")
+	gsap.to($("input.slug.change"), { "background-color": "white", duration: 0.2 })
+	gsap.to($("input.prefix.change"), { "background-color": "white", duration: 0.2 })
+	gsap.to($("input.pronouns.change"), { "background-color": "white", duration: 0.2 })
+	gsap.to($("select.flag.change"), { "background-color": "white", duration: 0.2 })
+	gsap.to($("input.name.change"), { "background-color": "white", duration: 0.2 })
+	gsap.to($("input.crew"), { "background-color": "white", duration: 0.2 })
 }
 
 function highlightChars() {
-	$(".csp.change").css("background-color", "rgba(255,255,170,0.3)")
+	gsap.to($(".csp.change"), { "background-color": "rgba(255,255,170,0.3)", duration: 0.2 })
 }
 
 function clearChars() {
-	$(".csp.change").css("background-color", "rgba(255,255,170,0)")
+	gsap.to($(".csp.change"), { "background-color": "rgba(255,255,170,0)", duration: 0.2 })
 }
 
 function populateFlags() {
 	$("select.flag").each((key, select) => {
-		console.log(select)
 		//from flags.js
-		for(let [key, value] of Object.entries(continents)) {
-			$(select).append(`<option disabled>${key}</option>`)
-			for(let country of value) {
-				$(select).append(`<option value="${country.country}">${country.emoji} ${country.country}</option>`)
+		for (let [key, value] of Object.entries(continents)) {
+			optgroup = document.createElement("OPTGROUP")
+			$(optgroup).attr("label", key)
+			//$(optgroup).append(`<option disabled>${key}</option>`)
+			for (let country of value) {
+				$(optgroup).append(`<option value="${country.country}">${country.emoji} ${country.country}</option>`)
 			}
+			$(select).append(optgroup)
 		}
+
 	})
 }
 
@@ -122,43 +126,7 @@ function resetBackground(player) {
 }
 
 function update() {
-	crew1name = $("#crew1-name").val();
-
-	player1name = $("#p1-name").val();
-	player1char = $("#p1-character-change").attr("character");
-	player1colour = $("#p1-character-change").attr("colour");
-	player1pronouns = $("#p1-pronouns").val();
-	player1country = $("#p1-flag").find(":selected").val();
-
-	crew1score = parseInt($("#p1-score-change").val());
-
-	crew2name = $("#crew2-name").val();
-
-	player2name = $("#p2-name").val();
-	player2char = $("#p2-character-change").attr("character");
-	player2colour = $("#p2-character-change").attr("colour");
-	player2pronouns = $("#p2-pronouns").val();
-	player2country = $("#p2-flag").find(":selected").val();
-
-	crew2score = parseInt($("#p2-score-change").val());
-
-	round = $("#round-change").val();
-	tournament = $("#tournament-change").val();
-
-	caster1name = $("#caster1-name").val();
-	caster1pronouns = $("#caster1-pronouns").val();
-
-	caster2name = $("#caster2-name").val();
-	caster2pronouns = $("#caster2-pronouns").val();
-
-	seatOrdering = [
-		$("#p1-left-seat").attr("index"),
-		$("#p1-right-seat").attr("index"),
-		$("#p2-left-seat").attr("index"),
-		$("#p2-right-seat").attr("index"),
-	]
-
-	const updateController = new AbortController()
+	const updateController = new AbortController();
 	const updateTimeout = setTimeout(() => {
 		updateController.abort()
 		$(".update").css("background-color", "#F56262");
@@ -177,86 +145,104 @@ function update() {
 		headers: { "Content-Type": "application/json" },
 		body: JSON.stringify({
 			crew1: {
-				name: crew1name,
+				name: $("#crew1-name").val(),
+				score: parseInt($("#p1-score-change").val()),
 				activePlayer: {
-					name: player1name,
-					character: player1char,
-					colour: player1colour,
-					pronouns: player1pronouns,
-					country: player1country,
+					slug: $("#p1-slug").val(),
+					name: $("#p1-name").val(),
+					character: $("#p1-character-change").attr("character"),
+					colour: $("#p1-character-change").attr("colour"),
+					prefix: $("#p1-prefix").val(),
+					pronouns: $("#p1-pronouns").val(),
+					country: $("#p1-flag").find(":selected").val(),
 					port: info.crew1.activePlayer.port || 1
 				},
 				players: [
 					{
 						name: $("#t1-crew1").val(),
+						slug: $("#t1-crew1").attr("slug"),
 						alive: !$("#t1-crew1-toggle").hasClass("defeated")
 					},
 					{
 						name: $("#t1-crew2").val(),
+						slug: $("#t1-crew2").attr("slug"),
 						alive: !$("#t1-crew2-toggle").hasClass("defeated")
 					},
 					{
 						name: $("#t1-crew3").val(),
+						slug: $("#t1-crew3").attr("slug"),
 						alive: !$("#t1-crew3-toggle").hasClass("defeated")
 					},
 					{
 						name: $("#t1-crew4").val(),
+						slug: $("#t1-crew4").attr("slug"),
 						alive: !$("#t1-crew4-toggle").hasClass("defeated")
 					},
 					{
 						name: $("#t1-crew5").val(),
+						slug: $("#t1-crew5").attr("slug"),
 						alive: !$("#t1-crew5-toggle").hasClass("defeated")
 					}
-				],
-				score: crew1score,
+				]
 			},
 			crew2: {
-				name: crew2name,
+				name: $("#crew2-name").val(),
+				score: parseInt($("#p2-score-change").val()),
 				activePlayer: {
-					name: player2name,
-					character: player2char,
-					colour: player2colour,
-					pronouns: player2pronouns,
-					country: player2country,
+					name: $("#p2-name").val(),
+					character: $("#p2-character-change").attr("character"),
+					colour: $("#p2-character-change").attr("colour"),
+					prefix: $("#p2-prefix").val(),
+					pronouns: $("#p2-pronouns").val(),
+					country: $("#p2-flag").find(":selected").val(),
 					port: info.crew2.activePlayer.port || 1
 				},
 				players: [
 					{
 						name: $("#t2-crew1").val(),
+						slug: $("#t2-crew1").attr("slug"),
 						alive: !$("#t2-crew1-toggle").hasClass("defeated")
 					},
 					{
 						name: $("#t2-crew2").val(),
+						slug: $("#t2-crew2").attr("slug"),
 						alive: !$("#t2-crew2-toggle").hasClass("defeated")
 					},
 					{
 						name: $("#t2-crew3").val(),
+						slug: $("#t2-crew3").attr("slug"),
 						alive: !$("#t2-crew3-toggle").hasClass("defeated")
 					},
 					{
 						name: $("#t2-crew4").val(),
+						slug: $("#t2-crew4").attr("slug"),
 						alive: !$("#t2-crew4-toggle").hasClass("defeated")
 					},
 					{
 						name: $("#t2-crew5").val(),
+						slug: $("#t2-crew5").attr("slug"),
 						alive: !$("#t2-crew5-toggle").hasClass("defeated")
 					}
-				],
-				score: crew2score,
+				]
 			},
 			casters: [
 				{
-					name: caster1name,
-					pronouns: caster1pronouns
+					name: $("#caster1-name").val(),
+					pronouns: $("#caster1-pronouns").val()
 				},
 				{
-					name: caster2name,
-					pronouns: caster2pronouns
+					name: $("#caster2-name").val(),
+					pronouns: $("#caster2-pronouns").val()
 				}
 			],
-			seatOrdering,
-			round,
-			tournament,
+			seatOrdering: [
+				$("#p1-left-seat").attr("index"),
+				$("#p1-right-seat").attr("index"),
+				$("#p2-left-seat").attr("index"),
+				$("#p2-right-seat").attr("index"),
+			],
+			round: $("#round-change").val(),
+			tournament: $("#tournament-change").val()
 		}),
 		signal: updateController.signal
 	}).then(() => {
@@ -289,7 +275,7 @@ const accentColours = [
 ]
 
 function resolveTeamColour(colour) {
-	switch(colour) {
+	switch (colour) {
 		case "red":
 			return 0;
 		case "blue":
@@ -302,17 +288,17 @@ function resolveTeamColour(colour) {
 }
 
 function fixPlayerColours() {
-	if(!info) {
+	if (!info) {
 		return
 	}
 	//background colours
-	if(isDoubles) {
+	if (isDoubles) {
 		p1ColourIndex = resolveTeamColour(info.crew1.activePlayer.colour)
 		p2ColourIndex = resolveTeamColour(info.crew2.activePlayer.colour)
 
 	} else {
-		p1ColourIndex = Math.min(info.crew1.activePlayer.port-1, 3)
-		p2ColourIndex = Math.min(info.crew2.activePlayer.port-1, 3)
+		p1ColourIndex = Math.min(info.crew1.activePlayer.port - 1, 3)
+		p2ColourIndex = Math.min(info.crew2.activePlayer.port - 1, 3)
 	}
 	$("#p1-info-change").css("background-color", bgColours[p1ColourIndex])
 	$("input.left").css("border-bottom", `2px solid ${accentColours[p1ColourIndex]}`)
@@ -337,7 +323,7 @@ function fixPlayerColours() {
 }
 
 function fixSeatColour(index) {
-	switch(index) {
+	switch (index) {
 		case "1":
 		case 1:
 		case "2":
@@ -354,7 +340,7 @@ function fixSeatColour(index) {
 }
 
 function fixSeatAccent(index) {
-	switch(index) {
+	switch (index) {
 		case "1":
 		case 1:
 		case "2":
@@ -376,24 +362,22 @@ function loadInitialChanges() {
 		url: "/crews.json",
 		data: {},
 		success: function (response) {
-			console.log(response)
 			info = fixCrews(response);
-			console.log(info)
 			//flags
 			$("#p1-flag").val(info.crew1.activePlayer.country)
 			$("#p2-flag").val(info.crew2.activePlayer.country)
 			//player states
 			let index = 1;
-			for(let player of info.crew1.players) {
-				if(player.alive === false) {
-					toggleCrew(1,index)
+			for (let player of info.crew1.players) {
+				if (player.alive === false) {
+					toggleCrew(1, index)
 				}
 				index++;
 			}
 			index = 1;
-			for(let player of info.crew2.players) {
-				if(player.alive === false) {
-					toggleCrew(2,index)
+			for (let player of info.crew2.players) {
+				if (player.alive === false) {
+					toggleCrew(2, index)
 				}
 				index++;
 			}
@@ -415,7 +399,7 @@ function loadChanges() {
 			//load team1 data
 			$("#p1-name-actual").attr("value", info.crew1.activePlayer.name)
 			loadCharActual("p1", info.crew1.activePlayer.character, info.crew1.activePlayer.colour)
-			if(document.getElementById("p1-score-actual").value != info.crew1.score) {
+			if (document.getElementById("p1-score-actual").value != info.crew1.score) {
 				document.getElementById("p1-score-actual").value = info.crew1.score
 				document.getElementById("p1-score-change").value = info.crew1.score
 			}
@@ -423,7 +407,7 @@ function loadChanges() {
 			//load team2 data
 			$("#p2-name-actual").attr("value", info.crew2.activePlayer.name)
 			loadCharActual("p2", info.crew2.activePlayer.character, info.crew2.activePlayer.colour)
-			if(document.getElementById("p2-score-actual").value != info.crew2.score) {
+			if (document.getElementById("p2-score-actual").value != info.crew2.score) {
 				document.getElementById("p2-score-actual").value = info.crew2.score
 				document.getElementById("p2-score-change").value = info.crew2.score
 			}
@@ -451,90 +435,104 @@ function loadChanges() {
 }
 
 function fixCrews(crew) {
-    let newCrews = {
-        "crew1": {
+	let newCrews = {
+		"crew1": {
 			"name": crew?.crew1?.name || "Crew 1",
+			"score": crew?.crew1?.score || 0,
 			"activePlayer": {
+				"slug": crew?.crew1?.activePlayer?.slug || "",
 				"name": crew?.crew1?.activePlayer?.name || "Player 1",
 				"character": crew?.crew1?.activePlayer?.character || "fox",
 				"colour": crew?.crew1?.activePlayer?.colour || "red",
+				"prefix": crew?.crew1?.activePlayer?.prefix || "",
 				"pronouns": crew?.crew1?.activePlayer?.pronouns || "",
 				"country": crew?.crew1?.activePlayer?.country || "UK",
 				"port": crew?.crew1?.activePlayer?.port || 1
 			},
-            "players": [
-                {
-                    "name": crew?.crew1?.players?.[0]?.name || "Player 1",
-                    "alive": crew?.crew1?.players?.[0]?.alive
-                },
+			"players": [
 				{
-                    "name": crew?.crew1?.players?.[1]?.name || "Player 2",
-                    "alive": crew?.crew1?.players?.[1]?.alive
-                },
+					"name": crew?.crew1?.players?.[0]?.name || "Player 1",
+					"slug": crew?.crew1?.players?.[0]?.slug || "",
+					"alive": crew?.crew1?.players?.[0]?.alive
+				},
 				{
-                    "name": crew?.crew1?.players?.[2]?.name || "Player 3",
-                    "alive": crew?.crew1?.players?.[2]?.alive
-                },
+					"name": crew?.crew1?.players?.[1]?.name || "Player 2",
+					"slug": crew?.crew1?.players?.[1]?.slug || "",
+					"alive": crew?.crew1?.players?.[1]?.alive
+				},
 				{
-                    "name": crew?.crew1?.players?.[3]?.name || "Player 4",
-                    "alive": crew?.crew1?.players?.[3]?.alive
-                },
+					"name": crew?.crew1?.players?.[2]?.name || "Player 3",
+					"slug": crew?.crew1?.players?.[2]?.slug || "",
+					"alive": crew?.crew1?.players?.[2]?.alive
+				},
 				{
-                    "name": crew?.crew1?.players?.[4]?.name || "Player 5",
-                    "alive": crew?.crew1?.players?.[4]?.alive
-                }
-            ],
-            "score": crew?.crew1?.score || 0,
-        },
-        "crew2": {
+					"name": crew?.crew1?.players?.[3]?.name || "Player 4",
+					"slug": crew?.crew1?.players?.[3]?.slug || "",
+					"alive": crew?.crew1?.players?.[3]?.alive
+				},
+				{
+					"name": crew?.crew1?.players?.[4]?.name || "Player 5",
+					"slug": crew?.crew1?.players?.[4]?.slug || "",
+					"alive": crew?.crew1?.players?.[4]?.alive
+				}
+			]
+		},
+		"crew2": {
 			"name": crew?.crew2?.name || "Crew 2",
+			"score": crew?.crew2?.score || 0,
 			"activePlayer": {
+				"slug": crew?.crew2?.activePlayer?.slug || "",
 				"name": crew?.crew2?.activePlayer?.name || "Player 1",
 				"character": crew?.crew2?.activePlayer?.character || "fox",
 				"colour": crew?.crew2?.activePlayer?.colour || "red",
+				"prefix": crew?.crew2?.activePlayer?.prefix || "",
 				"pronouns": crew?.crew2?.activePlayer?.pronouns || "",
 				"country": crew?.crew2?.activePlayer?.country || "UK",
 				"port": crew?.crew2?.activePlayer?.port || 1
 			},
-            "players": [
-                {
-                    "name": crew?.crew2?.players?.[0]?.name || "Player 1",
-                    "alive": crew?.crew2?.players?.[0]?.alive
-                },
+			"players": [
 				{
-                    "name": crew?.crew2?.players?.[1]?.name || "Player 2",
-                    "alive": crew?.crew2?.players?.[1]?.alive
-                },
+					"name": crew?.crew2?.players?.[0]?.name || "Player 1",
+					"slug": crew?.crew2?.players?.[0]?.slug || "",
+					"alive": crew?.crew2?.players?.[0]?.alive
+				},
 				{
-                    "name": crew?.crew2?.players?.[2]?.name || "Player 3",
-                    "alive": crew?.crew2?.players?.[2]?.alive
-                },
+					"name": crew?.crew2?.players?.[1]?.name || "Player 2",
+					"slug": crew?.crew2?.players?.[1]?.slug || "",
+					"alive": crew?.crew2?.players?.[1]?.alive
+				},
 				{
-                    "name": crew?.crew2?.players?.[3]?.name || "Player 4",
-                    "alive": crew?.crew2?.players?.[3]?.alive
-                },
+					"name": crew?.crew2?.players?.[2]?.name || "Player 3",
+					"slug": crew?.crew2?.players?.[2]?.slug || "",
+					"alive": crew?.crew2?.players?.[2]?.alive
+				},
 				{
-                    "name": crew?.crew2?.players?.[4]?.name || "Player 5",
-                    "alive": crew?.crew2?.players?.[4]?.alive
-                }
-            ],
-            "score": crew?.crew2?.score || 0,
-        },
-        "casters": [
-            {
-                "name": crew?.casters?.[0].name || "",
-                "pronouns": crew?.casters?.[0].pronouns || "",
-            },
-            {
-                "name": crew?.casters?.[1].name || "",
-                "pronouns": crew?.casters?.[1].pronouns || "",
-            }
-        ],
-        "seatOrdering": crew?.seatOrdering || [ "1","2","3","4" ],
-        "round": crew?.round || "",
-        "tournament": crew?.tournament || ""
-    }
-    return newCrews;
+					"name": crew?.crew2?.players?.[3]?.name || "Player 4",
+					"slug": crew?.crew2?.players?.[3]?.slug || "",
+					"alive": crew?.crew2?.players?.[3]?.alive
+				},
+				{
+					"name": crew?.crew2?.players?.[4]?.name || "Player 5",
+					"slug": crew?.crew2?.players?.[4]?.slug || "",
+					"alive": crew?.crew2?.players?.[4]?.alive
+				}
+			]
+		},
+		"casters": [
+			{
+				"name": crew?.casters?.[0].name || "",
+				"pronouns": crew?.casters?.[0].pronouns || "",
+			},
+			{
+				"name": crew?.casters?.[1].name || "",
+				"pronouns": crew?.casters?.[1].pronouns || "",
+			}
+		],
+		"seatOrdering": crew?.seatOrdering || ["1", "2", "3", "4"],
+		"round": crew?.round || "",
+		"tournament": crew?.tournament || ""
+	}
+	return newCrews;
 }
 
 function updateSeatsLoop() {
@@ -556,7 +554,7 @@ function updateSeatsLoop() {
 function getSeatPlayer(index) {
 	let name;
 	let character;
-	switch(index) {
+	switch (index) {
 		case "1":
 		case 1:
 			name = $("#p1-name").val();
@@ -606,34 +604,47 @@ function swapSeatSides() {
 
 function changeScore(value, player) {
 	initialScore = $(`#p${player}-score-change`).val()
-	if((parseInt(initialScore) <= 0 && value <= -1) || (parseInt(initialScore) >= 99 && value >= 1)) {
+	if ((parseInt(initialScore) <= 0 && value <= -1) || (parseInt(initialScore) >= 99 && value >= 1)) {
 		return
 	}
 	$(`#p${player}-score-change`).val(parseInt(initialScore) + value)
 }
 
 function swapSides(info, characters) {
-	if(info) {
+	if (info) {
 		swapped = !swapped
-		player1name = $("#p1-name").val();
-		player2name = $("#p2-name").val();
-	
-		player1pronouns = $("#p1-pronouns").val();
-		player2pronouns = $("#p2-pronouns").val();
-	
-	
-		player1flag = $("#p1-flag").val();
-		player2flag = $("#p2-flag").val();
-	
+
+		let player1name = $("#p1-name").val();
+		let player2name = $("#p2-name").val();
+
+		let player1prefix = $("#p1-prefix").val();
+		let player2prefix = $("#p2-prefix").val();
+
+		let player1pronouns = $("#p1-pronouns").val();
+		let player2pronouns = $("#p2-pronouns").val();
+
+		let player1flag = $("#p1-flag").val();
+		let player2flag = $("#p2-flag").val();
+
+		let crew1 = getCrew(1)
+		let crew2 = getCrew(2)
+
 		$("#p1-name").val(player2name);
 		$("#p2-name").val(player1name);
-	
-	
+
+		$("#p1-prefix").val(player2prefix);
+		$("#p2-prefix").val(player1prefix);
+
 		$("#p1-pronouns").val(player2pronouns);
 		$("#p2-pronouns").val(player1pronouns);
-		
+
 		$("#p1-flag").val(player2flag).change();
 		$("#p2-flag").val(player1flag).change();
+
+		setCrew(1, crew2)
+		setCrew(2, crew1)
+
+		swapCrews()
 	}
 	if (characters) {
 		p1 = {
@@ -653,6 +664,52 @@ function swapSides(info, characters) {
 		$("#p2-character-change").attr("colour", p1.colour);
 		$("#p2-character-change").attr("src", `static/img/melee/csp_icons/${p1.character}/${p1.colour}.png`);
 	}
+}
+
+function getCrew(id) {
+	return ({
+		name: $(`#crew${id}-name`).val(),
+		players: [
+			{
+				name: $(`#t${id}-crew1`).val(),
+				defeated: $(`#t${id}-crew1-toggle`).hasClass("defeated")
+			},
+			{
+				name: $(`#t${id}-crew2`).val(),
+				defeated: $(`#t${id}-crew2-toggle`).hasClass("defeated")
+			},
+			{
+				name: $(`#t${id}-crew3`).val(),
+				defeated: $(`#t${id}-crew3-toggle1`).hasClass("defeated")
+			},
+			{
+				name: $(`#t${id}-crew4`).val(),
+				defeated: $(`#t${id}-crew4-toggle`).hasClass("defeated")
+			},
+			{
+				name: $(`#t${id}-crew5`).val(),
+				defeated: $(`#t${id}-crew5-toggle`).hasClass("defeated")
+			}
+		]
+	})
+}
+
+function setCrew(id, crew) {
+	$(`#crew${id}-name`).val(crew.name)
+
+	$(`#t${id}-crew1`).val(crew.players[0].name)
+	$(`#t${id}-crew2`).val(crew.players[1].name)
+	$(`#t${id}-crew3`).val(crew.players[2].name)
+	$(`#t${id}-crew4`).val(crew.players[3].name)
+	$(`#t${id}-crew5`).val(crew.players[4].name)
+
+	$(`.toggle-crew.c${id}`).removeClass("defeated")
+
+	crew.players[0].defeated && $(`#t${id}-crew1-toggle`).addClass("defeated")
+	crew.players[1].defeated && $(`#t${id}-crew2-toggle`).addClass("defeated")
+	crew.players[2].defeated && $(`#t${id}-crew3-toggle`).addClass("defeated")
+	crew.players[3].defeated && $(`#t${id}-crew4-toggle`).addClass("defeated")
+	crew.players[4].defeated && $(`#t${id}-crew5-toggle`).addClass("defeated")
 }
 
 function swapTeam(n) {
@@ -676,11 +733,29 @@ function swapTeam(n) {
 }
 
 function loadCrew(crewIndex, memberIndex) {
-	$(`#p${crewIndex}-name`).val($(`#t${crewIndex}-crew${memberIndex}`).val())
+	let slug = $(`#t${crewIndex}-crew${memberIndex}`).attr("slug")
+	let loser = lRegex.test($(`#p${crewIndex}-name`).val()) ? " (L)" : ""
+	if (slug) {
+		let player = autocompletePlayers.find((el) => el.slug === slug)
+		if (player) {
+			$(`#p${crewIndex}-slug`).val(player.slug || "")
+			$(`#p${crewIndex}-name`).val((player["name"] || "") + loser)
+			$(`#p${crewIndex}-prefix`).val(player.prefix || "")
+			$(`#p${crewIndex}-pronouns`).val(player.pronouns || "")
+			$(`#p${crewIndex}-flag`).val(fixCountry(player.country)).change();
+			if (player.character !== "") {
+				loadCharChange(`p${crewIndex}`, player.character, player.colour || undefined)
+			}
+		} else {
+			$(`#p${crewIndex}-name`).val($(`#t${crewIndex}-crew${memberIndex}`).val())
+		}
+	} else {
+		$(`#p${crewIndex}-name`).val($(`#t${crewIndex}-crew${memberIndex}`).val())
+	}
 }
 
 function toggleCrew(crewIndex, memberIndex) {
-	if($(`#t${crewIndex}-crew${memberIndex}-toggle`).hasClass("defeated")) {
+	if ($(`#t${crewIndex}-crew${memberIndex}-toggle`).hasClass("defeated")) {
 		$(`#t${crewIndex}-crew${memberIndex}-toggle`).removeClass("defeated")
 	} else {
 		$(`#t${crewIndex}-crew${memberIndex}-toggle`).addClass("defeated")
@@ -701,11 +776,11 @@ function toggleDoubles() {
 		$(".swap").hide()
 
 		$(".name.change.doubles").hide();
-		$(".name.change.doubles").prop("disabled",true);
+		$(".name.change.doubles").prop("disabled", true);
 		$(".pronouns.change.doubles").hide();
-		$(".pronouns.change.doubles").prop("disabled",true);
+		$(".pronouns.change.doubles").prop("disabled", true);
 		$(".flag.change.doubles").hide();
-		$(".flag.change.doubles").prop("disabled",true);
+		$(".flag.change.doubles").prop("disabled", true);
 		$(".csp.change.doubles").hide();
 
 		$(".seat.right").hide();
@@ -714,10 +789,10 @@ function toggleDoubles() {
 
 		//fix seat orientation so always indices 1 and 3
 		validIndices = ["1", "3"]
-		if(!validIndices.includes($("#p1-left-seat").attr("index"))) {
+		if (!validIndices.includes($("#p1-left-seat").attr("index"))) {
 			swapSeatTeam(1);
 		}
-		if(!validIndices.includes($("#p2-left-seat").attr("index"))) {
+		if (!validIndices.includes($("#p2-left-seat").attr("index"))) {
 			swapSeatTeam(2);
 		}
 		isDoubles = false;
@@ -755,14 +830,14 @@ function toggleDoubles() {
  * @param {*} character character
  * @param {*} colour colour
  */
-function loadCharActual(player, character="empty", colour) {
+function loadCharActual(player, character = "empty", colour) {
 	const characterActual = $(`#${player}-character-actual`);
 	const characterChange = $(`#${player}-character-change`)
-	if(characterActual.attr("character") !== character || characterActual.attr("colour") !== colour) {
+	if (characterActual.attr("character") !== character || characterActual.attr("colour") !== colour) {
 		characterActual.attr("character", character);
 		characterActual.attr("colour", colour);
 		characterActual.attr("src", `static/img/melee/stock_icons/${character}/${colour}.png`);
-	
+
 		characterChange.attr("character", character);
 		characterChange.attr("colour", colour);
 		characterChange.attr("src", `static/img/melee/csp_icons/${character}/${colour}.png`);
@@ -771,18 +846,22 @@ function loadCharActual(player, character="empty", colour) {
 
 /**
  * Load character into slot for changing - use when not updating
- * @param {String} player 1, 1d, 2, 2d
+ * @param {String} player p1, p1d, p2, p2d
  * @param {*} character character
  * @param {*} colour colour
  */
-function loadCharChange(player, character="empty", colour) {
+function loadCharChange(player, character, colour) {
+	if (!character) {
+		return
+	}
+	if (!colour) {
+		colour = getDefaultColour(character)
+	}
 	const characterChange = $(`#${player}-character-change`)
 	characterChange.attr("character", character);
 	characterChange.attr("colour", colour);
 	characterChange.attr("src", `static/img/melee/csp_icons/${character}/${colour}.png`);
 }
-
-
 
 function updateScene() {
 	newScene = $("#scenes :selected").text();
@@ -912,24 +991,6 @@ function clip() {
 
 }
 
-function changeBestOf(value) {
-	if(!value) {
-		value = $("#best-of-change").find(":selected").val()
-	}
-	switch(value) {
-		case "3":
-			bestOfValue = 3;
-			$("#best-of-change").val("3")
-			break;
-		case "5":
-			bestOfValue = 5;
-			$("#best-of-change").val("5")
-			break;
-		default:
-			bestOfValue = 5;
-	}
-}
-
 /**
  * up : direction of page (true/false)
  */
@@ -968,7 +1029,7 @@ function showSets(up, showButtons) {
 		if (typeof (sets.length) != "undefined") {
 			if (sets.length == 0 || index >= sets.length) {
 				$(`#set${x + 1}`).css("display", "none");
-			} else if(sets?.[index] == undefined) {
+			} else if (sets?.[index] == undefined) {
 				$(`#set${x + 1}`).css("display", "none");
 			} else {
 				$("#right-wrapper").css("display", "flex")
@@ -1024,85 +1085,44 @@ function loadSet(x) {
 	round = $("#set" + x + "-round").text()
 	let p1Loser = "";
 	let p2Loser = "";
-	if(round.startsWith("Grand Final")) {
+	if (round.startsWith("Grand Final")) {
 		p2Loser = " (L)"
 	}
-	if(round === "Grand Final Reset") {
+	if (round === "Grand Final Reset") {
 		p1Loser = " (L)"
 	}
 
 	p1Data = JSON.parse($(`#set${x}-name1`).attr("data-p1"))
+	$("#p1-slug").val(p1Data.slug)
 	$("#p1-name").val(p1Data["name"] + p1Loser)
-	p1pronouns = p1Data["pronouns"]
-	$("#p1-pronouns").val(p1pronouns)
-	console.log(`${p1Data["name"]} - ${p1Data["country"]}`)
-	p1country = fixCountry(p1Data["country"])
-	$("#p1-flag").val(p1country).change();
-	getCharacterInfo(p1Data.id)
-	.then((charInfo) => {
-		console.log("Setting character info")
-		loadCharChange("p1", charInfo.character, charInfo.colour)
-	})
-	.catch(() => {
-		console.log("Error fetching P1 character info")
-	})
-
-	p1dData = JSON.parse($(`#set${x}-name1`).attr("data-p2"))
-	$("#p1d-name").val(p1dData["name"] ? p1dData["name"] + p1Loser : "")
-	p1dpronouns = p1dData["pronouns"]
-	$("#p1d-pronouns").val(p1dpronouns)
-	console.log(`${p1dData["name"]} - ${p1dData["country"]}`)
-	p1dcountry = fixCountry(p1dData["country"])
-	$("#p1d-flag").val(p1dcountry).change();
-	getCharacterInfo(p1dData.id)
-	.then((charInfo) => {
-		console.log("Setting character info")
-		loadCharChange("p1d", charInfo.character, charInfo.colour)
-	})
-	.catch(() => {
-		console.log("Error fetching P1d character info")
-	})
+	$("#p1-prefix").val(p1Data["prefix"])
+	$("#p1-pronouns").val(p1Data["pronouns"])
+	$("#p1-flag").val(fixCountry(p1Data["country"])).change();
+	p1Db = getPlayer(p1Data.slug)
+	if (p1Db && isMelee()) {
+		if (p1Db.character !== "") {
+			loadCharChange("p1", p1Db.character, p1Db.colour || undefined)
+		}
+	}
 
 	p2Data = JSON.parse($(`#set${x}-name2`).attr("data-p1"))
+	$("#p2-slug").val(p2Data.slug)
 	$("#p2-name").val(p2Data["name"] + p2Loser)
-	p2pronouns = p2Data["pronouns"]
-	$("#p2-pronouns").val(p2pronouns)
-	console.log(`${p2Data["name"]} - ${p2Data["country"]}`)
-	p2country = fixCountry(p2Data["country"])
-	$("#p2-flag").val(p2country).change();
-	getCharacterInfo(p2Data.id)
-	.then((charInfo) => {
-		console.log("Setting character info")
-		loadCharChange("p2", charInfo.character, charInfo.colour)
-	})
-	.catch(() => {
-		console.log("Error fetching P2 character info")
-	})
-
-	p2dData = JSON.parse($(`#set${x}-name2`).attr("data-p2"))
-	$("#p2d-name").val(p2dData["name"] ? p2dData["name"] + p2Loser : "")
-	p2dpronouns = p2dData["pronouns"]
-	$("#p2d-pronouns").val(p2dpronouns)
-	console.log(`${p2dData["name"]} - ${p2dData["country"]}`)
-	p2dcountry = fixCountry(p2dData["country"])
-	$("#p2d-flag").val(p2dcountry).change();
-	getCharacterInfo(p2dData.id)
-	.then((charInfo) => {
-		console.log("Setting character info")
-		loadCharChange("p2d", charInfo.character, charInfo.colour)
-	})
-	.catch(() => {
-		console.log("Error fetching P2d character info")
-	})
-
+	$("#p2-prefix").val(p2Data["prefix"])
+	$("#p2-pronouns").val(p2Data["pronouns"])
+	$("#p2-flag").val(fixCountry(p2Data["country"])).change();
+	p2Db = getPlayer(p2Data.slug)
+	if (p2Db && isMelee()) {
+		if (p2Db.character !== "" && p2Db.colour !== "") {
+			loadCharChange("p2", p2Db.character, p2Db.colour || undefined)
+		}
+	}
 
 	$("#p1-entrant").val($(`#set${x}-name1`).attr("data-entrant"))
 	$("#p2-entrant").val($(`#set${x}-name2`).attr("data-entrant"))
 
-
 	$("#p1-score-change").val(0)
 	$("#p2-score-change").val(0)
-
 
 	$("#round-change").val(round)
 	$("#set-id").val($(`#set${x}`).attr("data-id"))
@@ -1112,10 +1132,10 @@ function saveSet(x) {
 	swapped = false;
 	$("#p1-entrant").val($(`#set${x}-name1`).attr("data-entrant"))
 	$("#p1-entrant-name").text($(`#set${x}-name1`).text())
-	
+
 	$("#p2-entrant").val($(`#set${x}-name2`).attr("data-entrant"))
 	$("#p2-entrant-name").text($(`#set${x}-name2`).text())
-	
+
 	$("#setID-input").val($(`#set${x}`).attr("data-id"))
 }
 
@@ -1364,4 +1384,156 @@ function getStageShort(stage) {
 		default:
 			return "VS"
 	}
+}
+
+/**
+ * up : direction of page (true/false)
+ */
+function showSets(up, showButtons) {
+	$("#page-left").attr("onclick", `showSets(false, ${showButtons})`)
+	$("#page-right").attr("onclick", `showSets(true, ${showButtons})`)
+	if (showButtons) {
+		$(".startgg.button.save").show()
+	} else {
+		$(".startgg.button.save").hide()
+	}
+	const MAX_PER_PAGE = 5;
+	if (up) {
+		//check if going over the amount
+		maxIndex = setPage * MAX_PER_PAGE;
+		if (maxIndex < sets.length) {
+			setPage++;
+		}
+		//should never occur but just in case
+		else if (setPage > Math.ceil(sets.length / MAX_PER_PAGE)) {
+			setPage = Math.ceil(sets.length / MAX_PER_PAGE);
+		}
+	} else {
+		//limit to 1
+		if (setPage > 1) {
+			setPage--;
+		}
+		//should never occur but just in case
+		else {
+			setPage = 1;
+		}
+	}
+
+	for (x = 1; x <= MAX_PER_PAGE; x++) {
+		index = x + ((setPage - 1) * MAX_PER_PAGE) - 1;
+		if (typeof (sets.length) != "undefined") {
+			if (sets.length == 0 || index >= sets.length) {
+				$(`#set${x}`).css("display", "none");
+			} else if (sets?.[index] == undefined) {
+				//not ideal
+				$(`#set${x}`).css("display", "none");
+			} else {
+				$(`#set${x}`).css("display", "flex");
+				$(`#set${x}`).attr("set-index", index)
+
+				$(`#set${x}-name1`).text(sets[index].player1.teamName)
+				$(`#set${x}-name2`).text(sets[index].player2.teamName)
+
+				$(`#set${x}-round`).text(sets[index].round)
+			}
+		} else {
+			$(`#set${x}`).css("display", "none");
+		}
+	}
+	if (sets.length == 0) {
+		$(".set").hide()
+		$(".page-button").hide()
+	}
+
+	//Hide arrows based on page number
+	if (setPage == 1 || setPage == 0) {
+		$("#page-left").hide()
+	} else {
+		$("#page-left").show()
+	}
+	maxIndex = setPage * MAX_PER_PAGE;
+	if (maxIndex >= sets.length) {
+		$("#page-right").hide()
+	} else {
+		$("#page-right").show()
+	}
+}
+
+function loadSet(x) {
+	const BLANK_PLAYER = {
+		slug: "",
+		name: "",
+		prefix: "",
+
+	}
+	swapped = false;
+
+	let setID = parseInt($(`#set${x}`).attr("set-index"))
+	let set = sets[setID]
+
+	let p1Loser = set.round === "Grand Final Reset" ? " (L)" : "";
+	let p2Loser = set.round.startsWith("Grand Final") ? " (L)" : "";
+
+	//if no data
+	if (!set.player1.data[0] || !set.player2.data[0]) {
+		return
+	}
+
+	//crew 1 active player
+	let p1Data = set.player1.data[0]
+	$("#p1-slug").val(p1Data.slug)
+	$("#p1-name").val(p1Data.name + p1Loser)
+	$("#p1-prefix").val(p1Data.prefix)
+	$("#p1-pronouns").val(p1Data.pronouns)
+	$("#p1-flag").val(fixCountry(p1Data.country)).change();
+	if (isMelee()) {
+		let p1Db = getPlayer(p1Data.slug)
+		if (p1Db) {
+			if (p1Db.character !== "") {
+				loadCharChange("p1", p1Db.character, p1Db.colour || undefined)
+			}
+		}
+	}
+
+	//crew 2 active player
+	let p2Data = set.player2.data[0]
+	$("#p2-slug").val(p2Data.slug)
+	$("#p2-name").val(p2Data.name + p2Loser)
+	$("#p2-prefix").val(p2Data.prefix)
+	$("#p2-pronouns").val(p2Data.pronouns)
+	$("#p2-flag").val(fixCountry(p2Data.country)).change();
+	if (isMelee()) {
+		let p2Db = getPlayer(p2Data.slug)
+		if (p2Db) {
+			if (p2Db.character !== "") {
+				loadCharChange("p2", p2Db.character, p2Db.colour || undefined)
+			}
+		}
+	}
+
+	for (x = 0; x < 5; x++) {
+		let player = set.player1.data[x]
+		$(`#t1-crew${x + 1}`).val(player?.name || "")
+		$(`#t1-crew${x + 1}`).attr("slug", player?.slug || "")
+		player == undefined ? $(`#t1-crew${x + 1}-toggle`).addClass("defeated") : $(`#t1-crew${x + 1}-toggle`).removeClass("defeated")
+	}
+
+	for (x = 0; x < 5; x++) {
+		let player = set.player2.data[x]
+		$(`#t2-crew${x + 1}`).val(player?.name || "")
+		$(`#t2-crew${x + 1}`).attr("slug", player?.slug || "")
+		player == undefined ? $(`#t2-crew${x + 1}-toggle`).addClass("defeated") : $(`#t2-crew${x + 1}-toggle`).removeClass("defeated")
+	}
+
+	$("#crew1-name").val(set.player1.teamName)
+	$("#crew2-name").val(set.player2.teamName)
+
+	$("#p1-entrant").val(set.player1.entrant)
+	$("#p2-entrant").val(set.player1.entrant)
+
+	$("#p1-score-change").val(set.player1.data.length * 4)
+	$("#p2-score-change").val(set.player1.data.length * 4)
+
+	$("#round-change").val(set.round)
+	$("#set-id").val(set.id)
 }

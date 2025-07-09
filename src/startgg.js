@@ -1,15 +1,19 @@
+const { collect } = require("underscore");
 const logging = require("./logging.js");
 
 exports.submitStartggSet = async (data, swapped) => {
     const setData = constructGQLSet(data, swapped)
     let winnerId = data.winner === 1 ? data.team1.entrantId : data.team2.entrantId;
+    if(winnerId === "") {
+        logging.log(`No start.gg info provided, not submitting - ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
+    }
     logging.log(`Attempting to submit set to start.gg`)
     GQLSubmit("reportBracketSet", data.setId, winnerId, setData)
         .then(() => {
-            logging.log(`Submitted set to start.gg -  ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
+            logging.log(`Submitted set to start.gg - ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
         }).catch((e) => {
-            logging.error(e)
-            logging.error(`Failed to submit set to start.gg -    ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
+            console.error(JSON.stringify(e))
+            logging.error(`Failed to submit set to start.gg - ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
             return;
             //return due to issues with updating a set that has already been reported, likely not ever needed anyway
             GQLSubmit("updateBracketSet", data.setId, winnerId, setData)
@@ -26,6 +30,9 @@ const GQLSubmit = (type, setId, winnerId, gameData) => new Promise((resolve, rej
     const submitTimeout = setTimeout(() => {
         reject();
     }, 5000);
+    console.log(setId)
+    console.log(winnerId)
+    console.log(gameData)
     fetch('https://api.start.gg/gql/alpha', {
         method: 'POST',
         headers: {
@@ -48,16 +55,22 @@ const GQLSubmit = (type, setId, winnerId, gameData) => new Promise((resolve, rej
             },
         }),
         signal: submitController.signal,
-    }).then((res) => res.json())
-        .then((result) => {
-            clearTimeout(submitTimeout)
-            if (typeof result.errors !== "undefined") {
-                console.error(result.errors)
-                reject(result.errors);
-            } else {
-                resolve();
-            }
-        })
+    })
+    .then((res) => res.json())
+    .then((result) => {
+        clearTimeout(submitTimeout)
+        if (typeof result.errors !== "undefined") {
+            console.error(result.errors)
+            reject(result.errors);
+        } else {
+            resolve();
+        }
+    })
+    .catch((e) => {
+        console.log("Error inside")
+        console.log(e)
+    })
+
 });
 
 function constructGQLSet(data, swapped) {
@@ -80,11 +93,11 @@ function constructGQLGame(index, game, data, swapped) {
         "selections": [
             {
                 "entrantId": data.team1.entrantId,
-                "characterId": resolveStartggCharacter(data?.isDoubles === true ? game.team1[1-(index%2)].character: game.team1[0].character)
+                "characterId": resolveStartggCharacter(data?.isDoubles === true ? game.team1[1 - (index % 2)].character : game.team1[0].character)
             },
             {
                 "entrantId": data.team2.entrantId,
-                "characterId": resolveStartggCharacter(data?.isDoubles === true ? game.team2[1-(index%2)].character: game.team2[0].character)
+                "characterId": resolveStartggCharacter(data?.isDoubles === true ? game.team2[1 - (index % 2)].character : game.team2[0].character)
             }
         ]
     }

@@ -685,7 +685,7 @@ function changeBestOf(value) {
 		case "3":
 		case "7":
 		case "9":
-			bestOfValue = parseint(value);
+			bestOfValue = parseInt(value);
 			$("#best-of-change").val(value)
 			break;
 		default:
@@ -811,6 +811,7 @@ function loadSet(x) {
 	$("#p1-flag").val(fixCountry(p1Data.country)).change();
 	if (isMelee()) {
 		let p1Db = getPlayer(p1Data.slug)
+		console.log(p1Data.slug)
 		if (p1Db) {
 			if (p1Db.character !== "") {
 				loadCharChange("p1", p1Db.character, p1Db.colour || undefined) //may need to be || ""
@@ -827,6 +828,7 @@ function loadSet(x) {
 	$("#p1d-flag").val(fixCountry(p1dData.country)).change();
 	if (isMelee()) {
 		let p1dDb = getPlayer(p1dData.slug)
+		console.log(p1dData.slug)
 		if (p1dDb) {
 			if (p1dDb.character !== "") {
 				loadCharChange("p1d", p1dDb.character, p1dDb.colour || undefined)
@@ -842,6 +844,7 @@ function loadSet(x) {
 	$("#p2-flag").val(fixCountry(p2Data.country)).change();
 	if (isMelee()) {
 		let p2Db = getPlayer(p2Data.slug)
+		console.log(p2Data.slug)
 		if (p2Db) {
 			if (p2Db.character !== "") {
 				loadCharChange("p2", p2Db.character, p2Db.colour || undefined)
@@ -858,6 +861,7 @@ function loadSet(x) {
 	$("#p2d-flag").val(fixCountry(p2dData.country)).change();
 	if (isMelee()) {
 		let p2dDb = getPlayer(p2dData.slug)
+		console.log(p2dData.slug)
 		if (p2dDb) {
 			if (p2dDb.character !== "") {
 				loadCharChange("p2d", p2dDb.character, p2dDb.colour || undefined)
@@ -865,8 +869,9 @@ function loadSet(x) {
 		}
 	}
 
-	$("#p1-entrant").val(set.player1.entrant)
-	$("#p2-entrant").val(set.player1.entrant)
+	console.log(set)
+	$("#p1-entrant").val(set.player1.entrantId)
+	$("#p2-entrant").val(set.player2.entrantId)
 
 	$("#p1-score-change").val(0)
 	$("#p2-score-change").val(0)

@@ -584,13 +584,6 @@ function resetSeats() {
 	$(`#p2-right-seat`).attr("index", "4")
 }
 
-function swapSeatTeam(i) {
-	index1 = $(`#p${i}-left-seat`).attr("index")
-	index2 = $(`#p${i}-right-seat`).attr("index")
-	$(`#p${i}-left-seat`).attr("index", index2)
-	$(`#p${i}-right-seat`).attr("index", index1)
-}
-
 function swapSeatSides() {
 	index1 = $(`#p1-left-seat`).attr("index")
 	index2 = $(`#p1-right-seat`).attr("index")
@@ -644,7 +637,6 @@ function swapSides(info, characters) {
 		setCrew(1, crew2)
 		setCrew(2, crew1)
 
-		swapCrews()
 	}
 	if (characters) {
 		p1 = {
@@ -672,22 +664,27 @@ function getCrew(id) {
 		players: [
 			{
 				name: $(`#t${id}-crew1`).val(),
+				slug: $(`#t${id}-crew1`).attr("slug"),
 				defeated: $(`#t${id}-crew1-toggle`).hasClass("defeated")
 			},
 			{
 				name: $(`#t${id}-crew2`).val(),
+				slug: $(`#t${id}-crew2`).attr("slug"),
 				defeated: $(`#t${id}-crew2-toggle`).hasClass("defeated")
 			},
 			{
 				name: $(`#t${id}-crew3`).val(),
+				slug: $(`#t${id}-crew3`).attr("slug"),
 				defeated: $(`#t${id}-crew3-toggle1`).hasClass("defeated")
 			},
 			{
 				name: $(`#t${id}-crew4`).val(),
+				slug: $(`#t${id}-crew4`).attr("slug"),
 				defeated: $(`#t${id}-crew4-toggle`).hasClass("defeated")
 			},
 			{
 				name: $(`#t${id}-crew5`).val(),
+				slug: $(`#t${id}-crew5`).attr("slug"),
 				defeated: $(`#t${id}-crew5-toggle`).hasClass("defeated")
 			}
 		]
@@ -702,6 +699,12 @@ function setCrew(id, crew) {
 	$(`#t${id}-crew3`).val(crew.players[2].name)
 	$(`#t${id}-crew4`).val(crew.players[3].name)
 	$(`#t${id}-crew5`).val(crew.players[4].name)
+
+	$(`#t${id}-crew1`).attr("slug", crew.players[0].slug)
+	$(`#t${id}-crew2`).attr("slug", crew.players[1].slug)
+	$(`#t${id}-crew3`).attr("slug", crew.players[2].slug)
+	$(`#t${id}-crew4`).attr("slug", crew.players[3].slug)
+	$(`#t${id}-crew5`).attr("slug", crew.players[4].slug)
 
 	$(`.toggle-crew.c${id}`).removeClass("defeated")
 

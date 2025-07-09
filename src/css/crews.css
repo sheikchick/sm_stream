@@ -67,24 +67,6 @@ button:focus {
 .score-changer:focus {
 }
 
-input[type=text], input[type=number] {
-	padding: 10px 10px 10px 10px;
-	appearance: none;
-	-webkit-appearance: none;
-	display: inline-block;
-	background: #fafafa;
-	color: #323232;
-	border: none;
-	border-radius: 5px;
-}
-
-input[type=text] {
-    width: 100%;
-}
-
-input:focus {
-	outline: none;
-}
 
 select {
 	display: none;
@@ -580,12 +562,11 @@ select.flag>optgroup {
 	padding: 3px;
 	width: 50px;
 	line-height: 12px;
+	font-size: 12px;
 }
 
 .seat-changer.side {
 	width: 30px;
-	background-color: #9a739a;
-	border-bottom: 3px solid #674467;
 }
 
 #seat-reset {
@@ -644,18 +625,27 @@ select.flag>optgroup {
 	float: left;
 }
 
-.caster {
+.caster.row {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
 	gap: 0.5em;
 	margin-right: 1em;
+}
+
+input.caster {
+	height: 18px;
+	font-size: 14px;
 }
 
 .caster-name {
 	width: 140px;
 }
 
-.caster-pronouns {
-	padding: 5px!important;
-	width: 65px!important;
+.caster>.pronouns {
+	text-align: left;
+	font-size: 13px;
 }
 
 /* OBS */

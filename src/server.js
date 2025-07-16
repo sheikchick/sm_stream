@@ -51,7 +51,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(favicon(path.join(__dirname, '../static/favicon.ico')));
 
 app.get("/", (req, res) => {
-    res.redirect('/auto');
+    res.redirect('/melee');
 });
 
 app.post("/update-melee", (req, res) => {
@@ -86,30 +86,31 @@ fs.readdir(layoutsDir, { withFileTypes: true }).then((files) => {
     files.filter((f) => f.isFile() && f.name.endsWith(hbs)).forEach((f) => {
         const layout = f.name.replace(hbs, '');
         app.get(`/${layout}`, (req, res) => {
-            if (layout === "crews") {
-                readData(CREWS).then((data) => {
-                    res.render(layout, {
-                        ...data,
-                        hideSwapAll: config["Web"]["Hide 'Swap All'"],
-                        apiKey: config["start.gg"]["API key"],
-                        obsPort: config["OBS"]["Websocket"]["Port"],
-                        obsPassword: config["OBS"]["Websocket"]["Password"],
+            switch (layout) {
+                case "auto":
+                case "melee":
+                    readData(MELEE).then((data) => { 
+                        console.log(data)
+                        res.render(layout, guiData(data)) 
                     });
-                });
-            } else {
-                readData(MELEE).then((data) => {
-                    res.render(layout, {
-                        ...data,
-                        hideSwapAll: config["Web"]["Hide 'Swap All'"],
-                        apiKey: config["start.gg"]["API key"],
-                        obsPort: config["OBS"]["Websocket"]["Port"],
-                        obsPassword: config["OBS"]["Websocket"]["Password"],
-                    });
-                });
+                    break;
+                case "crews":
+                    readData(CREWS).then((data) => { res.render(layout, guiData(data)) });
             }
         })
     })
 });
+
+function guiData(data) {
+    return ({
+        ...data,
+        hideSwapAll: config["Web"]["Hide 'Swap All'"],
+        apiKey: config["start.gg"]["API key"],
+        obsPort: config["OBS"]["Websocket"]["Port"],
+        obsPassword: config["OBS"]["Websocket"]["Password"],
+    })
+
+}
 
 // endpoints for overlays in /views/overlay
 
@@ -233,13 +234,13 @@ app.post("/updatePlayers", (req, res) => {
             }))
         }
         Promise.all(promises)
-        .then(() => {
-            logging.log(`Added/updated ${count} players in the database.`)
-            res.sendStatus(200)
-        })
-        .catch((e) => {
-            res.sentStatus(500).send(e)
-        })
+            .then(() => {
+                logging.log(`Added/updated ${count} players in the database.`)
+                res.sendStatus(200)
+            })
+            .catch((e) => {
+                res.sentStatus(500).send(e)
+            })
     } else {
         res.sendStatus(400).send("No player data found in request");
     }

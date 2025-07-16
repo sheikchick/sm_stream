@@ -92,7 +92,8 @@ function update() {
 			startggSwapped: swapped,
 			tournament: $("#tournament-change").val(),
 			isDoubles,
-			bestOf: bestOfValue
+			bestOf: bestOfValue,
+			isHandwarmer: $("#handwarmer").prop("checked")
 		}),
 		signal: updateController.signal
 	}).then(() => {
@@ -308,7 +309,8 @@ function fixInfo(info) {
 		"startggSwapped": swapped || false,
 		"tournament": info?.tournament || "",
 		"isDoubles": info?.isDoubles || false,
-		"bestOf": info?.bestOf || 5
+		"bestOf": info?.bestOf || 5,
+		"isHandwarmer": info?.isHandwarmer || false
 	}
 	return newInfo;
 }

@@ -27,11 +27,11 @@ exports.DIRECTORY = "data/json/";
 const FORMAT = "utf8";
 
 exports.writeData = async (file, data) => this.DATA_FILES.includes(file) &&
-    writeFile(this.DIRECTORY + file, file === this.MELEE ? JSON.stringify(this.fixMeleeInfo(data)) : JSON.stringify(data), FORMAT);
+    writeFile(this.DIRECTORY + file, file === this.MELEE ? JSON.stringify(this.fixMeleeJSON(data)) : JSON.stringify(data), FORMAT);
 
 exports.readData = async (file) => this.DATA_FILES.includes(file)
     ? readFile(this.DIRECTORY + file, FORMAT)
-        .then((data) => file === this.MELEE ? this.fixMeleeInfo(JSON.parse(data)) : JSON.parse(data))  //TODO; IMPLEMENT DEFAULT MELEE.JSON LOADING SEAMLESSLY IN CASE OF ERROR
+        .then((data) => file === this.MELEE ? this.fixMeleeJSON(JSON.parse(data)) : JSON.parse(data))  //TODO; IMPLEMENT DEFAULT MELEE.JSON LOADING SEAMLESSLY IN CASE OF ERROR
         .catch((e) => logging.log(`Failed to open ${file} - ${e}`))
     : {};
 
@@ -58,7 +58,7 @@ exports.updateTournament = async (data, index, tournamentFilename) => {
         });
 };
 
-exports.fixMeleeInfo = (info) => {
+exports.fixMeleeJSON = (info) => {
     let newInfo = {
         "team1": {
             "players": [
@@ -128,7 +128,8 @@ exports.fixMeleeInfo = (info) => {
         "startggSwapped": info?.startggSwapped || false,
         "tournament": info?.tournament || "",
         "isDoubles": info?.isDoubles || false,
-        "bestOf": info?.bestOf || 5
+        "bestOf": info?.bestOf || 5,
+        "isHandwarmers": info?.isHandwarmers || false
     }
     return newInfo;
 }

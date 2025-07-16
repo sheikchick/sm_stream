@@ -56,12 +56,13 @@ $('.css-character').on('dragstart', function (event) { event.preventDefault(); }
 $(".char-colour").on("click", function (el) {
 	let iconType = "stock_icons"
 	switch (window.location.pathname) {
-		case "/auto":
-			iconType = "csp_icons";
-			break;
 		case "/database":
 			iconType = "stock_icons"
 			break;
+		default:
+			iconType = "csp_icons";
+			break;
+
 	}
 	imgId = $("#characterSelect").attr("imgId")
 	character = $(el.target).attr("character")

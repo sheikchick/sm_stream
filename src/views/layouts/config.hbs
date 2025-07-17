@@ -2,7 +2,7 @@
 
 <html>
 <head>
-	<title>Smash Bros. Melee Overlay Config</title>
+	<title>sm-stream - Config</title>
 	<script src="scripts/jquery-3.4.1.min.js"></script>
 	<script src="scripts/settings.js"></script>
 	<script src="scripts/obs-ws.min.js"></script>
@@ -12,10 +12,11 @@
 	<script src="scripts/brands.min.js"></script>
 	
 	<script>
-		var best_of_value = "{{best_of}}"
-		var api_key = "{{api_key}}"
-		var obs_port = "{{obs_port}}"
-		var obs_password = "{{obs_password}}"
+		var bestOfValue = "{{bestOf}}"
+		var tournament = "{{tournament}}"
+		var apiKey = "{{apiKey}}"
+		var obsPort = "{{obsPort}}"
+		var obsPassword = "{{obsPassword}}"
 	</script>
 	<link rel="stylesheet" type="text/css" href="css/settings.css">
 	<link rel="icon" href="favicon.ico">
@@ -23,8 +24,8 @@
 
 <body>
 	{{> footer}}
-	<div id="left_wrapper">
+	<div id="left-wrapper">
 	</div>
-	<div id="right_wrapper">
+	<div id="right-wrapper">
 	</div>
 </body>

@@ -6,7 +6,7 @@ const logging = require("./logging");
  * @returns {Boolean}
  */
 exports.isValidGame = (() => {
-    const VALID_DAMAGE = 120;
+    const VALIDDAMAGE = 120;
 
     function getDamageDealt(game) {
         const frames = game.getFrames();
@@ -25,7 +25,7 @@ exports.isValidGame = (() => {
                 player.percent = post.percent;
             });
             frame = frames[i++];
-        } while (frame && acc.every(({percent}) => percent < VALID_DAMAGE));
+        } while (frame && acc.every(({percent}) => percent < VALIDDAMAGE));
         return acc.map(({percent}) => percent);
     }
     
@@ -57,8 +57,8 @@ exports.isValidGame = (() => {
             ? stats.overall.map(({totalDamage}) => totalDamage)
             : getDamageDealt(game);
 
-        if (correctDamage.every((damage) => damage < VALID_DAMAGE)) {
-            logging.log(`No contest: No player dealt ${VALID_DAMAGE}% or more.`);
+        if (correctDamage.every((damage) => damage < VALIDDAMAGE)) {
+            logging.log(`No contest: No player dealt ${VALIDDAMAGE}% or more.`);
             return false;
         }
 

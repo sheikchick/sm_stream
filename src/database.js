@@ -3,7 +3,7 @@ const logging = require("./logging.js");
 const fs = require("fs");
 const path = require('path');
 
-exports.FILTERS_DIRECTORY = "data/database-filters/";
+exports.FILTERSDIRECTORY = "data/database-filters/";
 
 const db = new sqlite3.Database(path.join(__dirname, '..', 'data/database.db'));
 
@@ -155,7 +155,7 @@ exports.getFilter = (fn) => {
     try {
         slug = config["start.gg"]["Database filter"]
         if (!!slug) {
-            const filter = JSON.parse(fs.readFileSync(this.FILTERS_DIRECTORY + slug + ".json"))
+            const filter = JSON.parse(fs.readFileSync(this.FILTERSDIRECTORY + slug + ".json"))
             fn(false, filter)
         } else {
             fn(true)
@@ -168,7 +168,7 @@ exports.getFilter = (fn) => {
 
 exports.createFilter = (players, slug, fn) => {
     try {
-        fs.writeFileSync(this.FILTERS_DIRECTORY + slug + ".json", JSON.stringify(players));
+        fs.writeFileSync(this.FILTERSDIRECTORY + slug + ".json", JSON.stringify(players));
         fn(false)
     } catch (e) {
         fn(e)

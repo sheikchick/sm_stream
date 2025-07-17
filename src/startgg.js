@@ -30,9 +30,6 @@ const GQLSubmit = (type, setId, winnerId, gameData) => new Promise((resolve, rej
     const submitTimeout = setTimeout(() => {
         reject();
     }, 5000);
-    console.log(setId)
-    console.log(winnerId)
-    console.log(gameData)
     fetch('https://api.start.gg/gql/alpha', {
         method: 'POST',
         headers: {
@@ -67,8 +64,7 @@ const GQLSubmit = (type, setId, winnerId, gameData) => new Promise((resolve, rej
         }
     })
     .catch((e) => {
-        console.log("Error inside")
-        console.log(e)
+        logging.error(e)
     })
 
 });

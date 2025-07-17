@@ -8,8 +8,8 @@ const { DolphinLauncher, DolphinPlaybackStatus: { FILE_LOADED, PLAYBACK_START, P
 const { Subject, combineLatest } = require("rxjs");
 const { map, filter, distinct } = require("rxjs/operators");
 const os = require('os');
-const processSlp = require("./processSlp");
-const { REPLAY_QUEUE, writeData, MELEE: INFO, DOLPHIN, DIRECTORY } = require('./data');
+const processSlp = require("./slpprocess");
+const { REPLAYQUEUE, writeData, MELEE: INFO, DOLPHIN, DIRECTORY } = require('./data');
 const { changeScene } = require('./obs');
 const { delayPromiseStart } = require('./util');
 
@@ -21,7 +21,7 @@ exports.recordReplays = async ([nextSet, ...restSets]) => {
         if (games.length) {
             return loadSet(nextSet)
                 .then(() => recordSet(games))
-                .then(() => writeData(REPLAY_QUEUE, restSets))
+                .then(() => writeData(REPLAYQUEUE, restSets))
                 .then(() => this.recordReplays(restSets))
                 .catch(() => {
                     console.log('Failed to record set');

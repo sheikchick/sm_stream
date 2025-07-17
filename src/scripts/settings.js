@@ -8,7 +8,7 @@ function getSettings() {
 		url: "/config",
 		data: {},
 		success: function(response) {
-			load_changes(response)
+			loadChanges(response)
 			//do something
 		},
 		error: function(response) {
@@ -18,12 +18,12 @@ function getSettings() {
 	})
 }
 
-function load_changes(settings) {
+function loadChanges(settings) {
 	for(section in settings) {
 		sectionDiv = new sectionElement(section, settings[section], 1)
-		$("#left_wrapper").append(sectionDiv)
+		$("#left-wrapper").append(sectionDiv)
 	}
-	$("#left_wrapper").append("<button type='button' class='submit' onclick='submitChanges()'>Submit <i class='fa fa-arrow-up'></i></button>")
+	$("#left-wrapper").append("<button type='button' class='submit' onclick='submitChanges()'>Submit <i class='fa fa-arrow-up'></i></button>")
 }
 
 function sectionElement(name, obj, depth) {
@@ -60,11 +60,11 @@ function isObject(el) {
 }
 
 function submitChanges(element) {
-	let data = getSettingsObject("#left_wrapper")
+	let data = getSettingsObject("#left-wrapper")
 	console.log(data)
 	$.ajax({
 		type: 'POST',
-		url: "/write_config",
+		url: "/write-config",
 		data: data,
 		success: function(response) {
 			$(".submit").css("background-color", "#55F76B");

@@ -1,5 +1,5 @@
 const chokidar = require("chokidar");
-const processSlp = require("./processSlp");
+const processSlp = require("./slpprocess");
 const { changeScene } = require("./obs");
 const logging = require("./logging");
 const { delayPromiseStart } = require('./util');

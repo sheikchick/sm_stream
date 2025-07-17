@@ -2,9 +2,9 @@ const fs = require("fs");
 const { tap, map, filter } = require("rxjs/operators");
 const { Ports } = require('@slippi/slippi-js')
 
-const slpTools = require("./slpTools.js");
+const slpTools = require("./slptools.js");
 const logging = require("./logging.js");
-const { readData, writeData, MELEE, MATCH_RESULT } = require("./data.js");
+const { readData, writeData, MELEE, MATChRESULT } = require("./data.js");
 
 const { SlpLiveStream, SlpRealTime, ComboFilter, generateDolphinQueuePayload } = require("@vinceau/slp-realtime");
 

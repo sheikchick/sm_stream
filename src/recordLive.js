@@ -6,13 +6,12 @@ const logging = require("./logging.js");
 
 const { msToHHmmss: msToHHmmss, replaceIllegal } = require("./util.js")
 
-const FILE_NOT_FOUND = "FILE NOT FOUND";
+const FILENOTFOUND = "FILE NOT FOUND";
 
 const createFfmpeg = () => {
     let path = config?.["OBS"]?.["ffmpeg Path"]
     let ffmpegInstance = new ffmpeg()
     logging.debugLog(path)
-    console.log(config)
     if (typeof path !== "undefined") {
         if (path !== "") {
             logging.debugLog("Using custom ffmpeg path")
@@ -108,7 +107,7 @@ exports.saveClip = (folderName, timecode, tournamentName) => new Promise((resolv
                                         fs.appendFile(batFile, command, "utf8")
                                             .then(() => {
                                                 logging.log(`Command to extract clip from vertical VoD saved to ${batFile}`);
-                                                if (vod === FILE_NOT_FOUND) {
+                                                if (vod === FILENOTFOUND) {
                                                     const message = "Unable to find VoD. Command saved with placeholder filename";
                                                     logging.error(message)
                                                     //throw new Error(message); // Throw simply to return a 500
@@ -199,7 +198,7 @@ exports.getLatestRecordingFile = (directory) => new Promise((resolve, reject) =>
                     (acc, cur) => (cur[0].endsWith('.mkv') && cur[1] > acc[1])
                         ? cur
                         : acc
-                    , [FILE_NOT_FOUND, 0]
+                    , [FILENOTFOUND, 0]
                 )[0];
                 resolve(latestFile)
             })

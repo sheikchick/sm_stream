@@ -882,10 +882,10 @@ function getRecordStatus() {
 		.then(({ outputActive }) => {
 			$.ajax({
 				type: 'GET',
-				url: "/recording_status",
+				url: "/recording-status",
 				data: {},
 				success: function (response) {
-					if (outputActive && response.recording_status) {
+					if (outputActive && response.recordingStatus) {
 						$("#ffmpeg-record").text("Recording...");
 						$("#ffmpeg-record").css("background-color", "#9146FF");
 						$("#ffmpeg-record").css("border-bottom", "3px solid #44158a");
@@ -944,7 +944,7 @@ function clip() {
 			$("#ffmpeg-clip").css("background-color", "#9146FF");
 			$("#ffmpeg-clip").css("border-bottom", "3px solid #44158a");
 
-			fetch("/save_clip", {
+			fetch("/save-clip", {
 				method: 'POST',
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -994,6 +994,10 @@ function clip() {
 
 }
 
+function showGetSets() {
+	$("#get-sets").show()
+}
+
 /**
  * up : direction of page (true/false)
  */
@@ -1005,16 +1009,16 @@ function showSets(up, showButtons) {
 	} else {
 		$(".startgg.button.save").hide()
 	}
-	const MAX_PER_PAGE = 5;
+	const MAXPERPAGE = 5;
 	if (up) {
 		//check if going over the amount
-		maxIndex = setPage * MAX_PER_PAGE;
+		maxIndex = setPage * MAXPERPAGE;
 		if (maxIndex < sets.length) {
 			setPage++;
 		}
 		//should never occur but just in case
-		else if (setPage > Math.ceil(sets.length / MAX_PER_PAGE)) {
-			setPage = Math.ceil(sets.length / MAX_PER_PAGE);
+		else if (setPage > Math.ceil(sets.length / MAXPERPAGE)) {
+			setPage = Math.ceil(sets.length / MAXPERPAGE);
 		}
 	} else {
 		//limit to 1
@@ -1027,8 +1031,8 @@ function showSets(up, showButtons) {
 		}
 	}
 
-	for (x = 0; x < MAX_PER_PAGE; x++) {
-		index = x + ((setPage - 1) * MAX_PER_PAGE);
+	for (x = 0; x < MAXPERPAGE; x++) {
+		index = x + ((setPage - 1) * MAXPERPAGE);
 		if (typeof (sets.length) != "undefined") {
 			if (sets.length == 0 || index >= sets.length) {
 				$(`#set${x + 1}`).css("display", "none");
@@ -1074,7 +1078,7 @@ function showSets(up, showButtons) {
 	} else {
 		$("#page-left").show()
 	}
-	maxIndex = setPage * MAX_PER_PAGE;
+	maxIndex = setPage * MAXPERPAGE;
 	if (maxIndex >= sets.length) {
 		$("#page-right").hide()
 	} else {
@@ -1083,392 +1087,6 @@ function showSets(up, showButtons) {
 }
 
 function loadSet(x) {
-	swapped = false;
-
-	round = $("#set" + x + "-round").text()
-	let p1Loser = "";
-	let p2Loser = "";
-	if (round.startsWith("Grand Final")) {
-		p2Loser = " (L)"
-	}
-	if (round === "Grand Final Reset") {
-		p1Loser = " (L)"
-	}
-
-	p1Data = JSON.parse($(`#set${x}-name1`).attr("data-p1"))
-	$("#p1-slug").val(p1Data.slug)
-	$("#p1-name").val(p1Data["name"] + p1Loser)
-	$("#p1-prefix").val(p1Data["prefix"])
-	$("#p1-pronouns").val(p1Data["pronouns"])
-	$("#p1-flag").val(fixCountry(p1Data["country"])).change();
-	p1Db = getPlayer(p1Data.slug)
-	if (p1Db && isMelee()) {
-		if (p1Db.character !== "") {
-			loadCharChange("p1", p1Db.character, p1Db.colour || undefined)
-		}
-	}
-
-	p2Data = JSON.parse($(`#set${x}-name2`).attr("data-p1"))
-	$("#p2-slug").val(p2Data.slug)
-	$("#p2-name").val(p2Data["name"] + p2Loser)
-	$("#p2-prefix").val(p2Data["prefix"])
-	$("#p2-pronouns").val(p2Data["pronouns"])
-	$("#p2-flag").val(fixCountry(p2Data["country"])).change();
-	p2Db = getPlayer(p2Data.slug)
-	if (p2Db && isMelee()) {
-		if (p2Db.character !== "" && p2Db.colour !== "") {
-			loadCharChange("p2", p2Db.character, p2Db.colour || undefined)
-		}
-	}
-
-	$("#p1-entrant").val($(`#set${x}-name1`).attr("data-entrant"))
-	$("#p2-entrant").val($(`#set${x}-name2`).attr("data-entrant"))
-
-	$("#p1-score-change").val(0)
-	$("#p2-score-change").val(0)
-
-	$("#round-change").val(round)
-	$("#set-id").val($(`#set${x}`).attr("data-id"))
-}
-
-function saveSet(x) {
-	swapped = false;
-	$("#p1-entrant").val($(`#set${x}-name1`).attr("data-entrant"))
-	$("#p1-entrant-name").text($(`#set${x}-name1`).text())
-
-	$("#p2-entrant").val($(`#set${x}-name2`).attr("data-entrant"))
-	$("#p2-entrant-name").text($(`#set${x}-name2`).text())
-
-	$("#setID-input").val($(`#set${x}`).attr("data-id"))
-}
-
-/* SET DATA */
-
-function updateTournamentData(tournament) {
-	$("#tournament-data").empty()
-	const tournamentUrl = `${tournament.split(" ").join("_")}.json`
-	$("#display-set-results").hide()
-	$.ajax({
-		type: 'GET',
-		url: "/tournaments",
-		data: {},
-		success: function (response) {
-			if (response.includes(tournamentUrl)) {
-				$.ajax({
-					type: 'GET',
-					url: `/tournaments/${tournamentUrl}`,
-					data: {},
-					success: function (response) {
-						$("#tournament-data").append(new Option(`Select set`, -1));
-						var index = 0;
-						for (let set of response) {
-							console.log(response)
-							var option = $('<option />')
-								.text(`${set.team1.names[0]} vs ${set.team2.names[0]} - ${set.round}`)
-								.val(index)
-								.attr("data-set", JSON.stringify(set))
-								.attr("data-tournament", tournament)
-							$("#tournament-data").append(option);
-							index++;
-						}
-						$("#set-update").hide()
-						//$("#load-tournament-data").show()
-					},
-					error: function (e) {
-						console.log(`No valid tournament data found for ${tournamentUrl} - ${e}`)
-						$("#load-tournament-data").hide()
-					},
-					timeout: 5000
-				})
-			} else {
-				console.log(`No valid tournament data found for ${tournamentUrl}`)
-				$("#load-tournament-data").hide()
-			}
-		},
-		error: function (response) {
-			console.log(response)
-		},
-		timeout: 5000
-	})
-}
-
-function submitSet() {
-	var set = JSON.parse($("#tournament-data :selected").attr("data-set"));
-	var startggSet = constructSet($("#p1-entrant-input").val(), $("#p2-entrant-input").val(), set.games, swapped)
-	submitStartggSet($(`#setID-input`).val(), $(`#p${set.winner}-entrant-input`).val(), startggSet)
-}
-
-//make this shit pretty then make it submit to start.gg
-function getTournamentSet() {
-	const STOCK_ICON = `static/img/melee/stock_icons`
-
-	var set = JSON.parse($("#tournament-data :selected").attr("data-set"));
-	if (!set) {
-		return
-	}
-	$("#display-set-results").empty()
-	$("#display-set-results").show()
-
-	var entrantIds = $('<div />')
-		.attr('class', 'row')
-	$(entrantIds).append($('<input />').val(`${set.team1.entrantId}`).attr('class', 'startgg display id').attr('id', 'p1-entrant-input'))
-	$(entrantIds).append($('<button />').attr('onclick', 'swapEntrants()').attr('class', 'startgg entrant swap').attr('id', 'entrant-swap').append(`<i class="fa-solid fa-arrow-right-arrow-left"></i>`))
-	$(entrantIds).append($('<input />').val(`${set.team2.entrantId}`).attr('class', 'startgg display id').attr('id', 'p2-entrant-input'))
-
-	$("#display-set-results").append($('<input />').val(`${set.setId}`).attr('class', 'startgg display id').attr('id', 'setID-input'))
-	$("#display-set-results").append(entrantIds)
-
-	var playerNames = $('<div />')
-		.attr('class', 'row')
-		.attr('id', 'startgg-names')
-	$(playerNames).append($('<span />').text(set.team1.names[0]).attr('class', 'startgg display name left').attr('id', 'p1-entrant-name'))
-	$(playerNames).append($('<span />').text("vs").attr('class', 'startgg'))
-	$(playerNames).append($('<span />').text(set.team2.names[0]).attr('class', 'startgg display name right').attr('id', 'p2-entrant-name'))
-
-	$("#display-set-results").append(playerNames)
-
-	for (let game of set.games) {
-		var gameRow = $('<div />')
-		for (x = 0; x < 4 - game.team1[0].stocks; x++) {
-			gameRow.append($('<img />').attr("src", `${STOCK_ICON}/${getDefaultIcon(game.team1[0].character)}`).attr("class", 'stock-icon dark'))
-		}
-		for (x = 0; x < game.team1[0].stocks; x++) {
-			gameRow.append($('<img />').attr("src", `${STOCK_ICON}/${getDefaultIcon(game.team1[0].character)}`).attr("class", 'stock-icon'))
-		}
-		gameRow.append($('<span />').attr("class", 'stage').text(` ${getStageShort(game.stage)} `))
-		for (x = 0; x < game.team2[0].stocks; x++) {
-			gameRow.append($('<img />').attr("src", `${STOCK_ICON}/${getDefaultIcon(game.team2[0].character)}`).attr("class", 'stock-icon'))
-		}
-		for (x = 0; x < 4 - game.team2[0].stocks; x++) {
-			gameRow.append($('<img />').attr("src", `${STOCK_ICON}/${getDefaultIcon(game.team2[0].character)}`).attr("class", 'stock-icon dark'))
-		}
-		$("#display-set-results").append(gameRow);
-	}
-	$("#display-set-results").append($('<button />').attr('id', 'submit-startgg-set').attr('onClick', 'submitSet()').text("Submit start.gg"));
-	index = 1;
-	$("#set-update").show()
-}
-
-function swapEntrants() {
-	swapped = !swapped;
-	p1Entrant = $("#p1-entrant-input").val()
-	p1Name = $("#p1-entrant-name").text()
-
-	p2Entrant = $("#p2-entrant-input").val()
-	p2Name = $("#p2-entrant-name").text()
-
-	$("#p1-entrant-input").val(p2Entrant)
-	$("#p1-entrant-name").text(p2Name)
-
-	$("#p2-entrant-input").val(p1Entrant)
-	$("#p2-entrant-name").text(p1Name)
-}
-
-function showGetSets() {
-	$("#get-sets").show()
-}
-
-function updateSet() {
-	let data = JSON.parse($('#tournament-data :selected').attr("data-set"))
-	data.timecodes[0] = HHmmssToMs($("#timecode-1").val())
-	data.timecodes[1] = HHmmssToMs($("#timecode-2").val())
-
-	let index = $('#tournament-data :selected').val()
-	let tournament = `${$('#tournament-data :selected').attr("data-tournament")}`
-
-	$.ajax({
-		type: 'POST',
-		url: "/update_set",
-		data: {
-			data: data,
-			index: index,
-			tournament: tournament
-		},
-		success: function () {
-			$("#set-update").css("background-color", "#55F76B");
-			$("#set-update").css("border-bottom", "3px solid #349641");
-			$("#set-update").text("Success ");
-			$("#set-update").append('<i class="fa-solid fa-thumbs-up"></i>')
-			setTimeout(function () {
-				$("#set-update").css("background-color", "#FFF");
-				$("#set-update").css("border-bottom", "3px solid #AAA");
-				$("#set-update").text("Submit timestamps");
-			}, 2000);
-			return true;
-		},
-		error: function (response) {
-			console.error(response)
-			$("#set-update").css("background-color", "#F56262");
-			$("#set-update").css("border-bottom", "3px solid #F53535");
-			$("#set-update").text("Error ");
-			$("#set-update").append('<i class="fa-solid fa-triangle-exclamation"></i>')
-			setTimeout(function () {
-				$("#set-update").css("background-color", "#FFF");
-				$("#set-update").css("border-bottom", "3px solid #AAA");
-				$("#set-update").text("Submit timestamps");
-			}, 2000);
-			return false;
-		},
-		timeout: 5000
-	})
-}
-
-function updateTimecode(index) {
-	const timecode = HHmmssToMs($(`#timecode-${index}`).val())
-	const vod = JSON.parse($("#tournament-data :selected").attr("data-set")).vod;
-}
-
-function msToHHmmss(ms) {
-	let seconds = parseInt(ms / 1000);
-
-	const minutes = parseInt(seconds / 60);
-	seconds = seconds % 60;
-
-	const hours = parseInt(seconds / 3600);
-	seconds = seconds % 3600;
-
-	return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}.${String(ms % 1000).padStart(3, '0')}`;
-};
-
-function HHmmssToMs(input) {
-	let raw = input.split(".")
-
-	let hhmmss = raw[0].split(":")
-
-	let ms = parseInt(raw[1])
-
-	ms += parseInt(hhmmss[0]) * 60 * 60 * 1000
-	ms += parseInt(hhmmss[1]) * 60 * 1000
-	ms += parseInt(hhmmss[2]) * 1000
-
-	return ms;
-};
-
-function getDefaultIcon(character) {
-	switch (character) {
-		case "bowser":
-		case "link":
-		case "luigi":
-		case "yoshi":
-		case "younglink":
-			return `${character}/green.png`
-		case "iceclimbers":
-		case "marth":
-			return `${character}/blue.png`
-		case "kirby":
-		case "mario":
-		case "ness":
-		case "peach":
-		case "samus":
-			return `${character}/red.png`
-		default:
-			return `${character}/original.png`
-	}
-}
-
-function getStageShort(stage) {
-	switch (stage) {
-		case "Yoshi's Story":
-		case "Yoshis Story":
-			return "YS"
-		case "Fountain of Dreams":
-			return "FoD"
-		case "Pokemon Stadium":
-		case "Pokémon Stadium":
-			return "PS"
-		case "Battlefield":
-			return "BF"
-		case "Final Destination":
-			return "FD"
-		case "Dream Land":
-		case "Dream Land 64":
-		case "Dream Land N64":
-			return "DL"
-		default:
-			return "VS"
-	}
-}
-
-/**
- * up : direction of page (true/false)
- */
-function showSets(up, showButtons) {
-	$("#page-left").attr("onclick", `showSets(false, ${showButtons})`)
-	$("#page-right").attr("onclick", `showSets(true, ${showButtons})`)
-	if (showButtons) {
-		$(".startgg.button.save").show()
-	} else {
-		$(".startgg.button.save").hide()
-	}
-	const MAX_PER_PAGE = 5;
-	if (up) {
-		//check if going over the amount
-		maxIndex = setPage * MAX_PER_PAGE;
-		if (maxIndex < sets.length) {
-			setPage++;
-		}
-		//should never occur but just in case
-		else if (setPage > Math.ceil(sets.length / MAX_PER_PAGE)) {
-			setPage = Math.ceil(sets.length / MAX_PER_PAGE);
-		}
-	} else {
-		//limit to 1
-		if (setPage > 1) {
-			setPage--;
-		}
-		//should never occur but just in case
-		else {
-			setPage = 1;
-		}
-	}
-
-	for (x = 1; x <= MAX_PER_PAGE; x++) {
-		index = x + ((setPage - 1) * MAX_PER_PAGE) - 1;
-		if (typeof (sets.length) != "undefined") {
-			if (sets.length == 0 || index >= sets.length) {
-				$(`#set${x}`).css("display", "none");
-			} else if (sets?.[index] == undefined) {
-				//not ideal
-				$(`#set${x}`).css("display", "none");
-			} else {
-				$(`#set${x}`).css("display", "flex");
-				$(`#set${x}`).attr("set-index", index)
-
-				$(`#set${x}-name1`).text(sets[index].player1.teamName)
-				$(`#set${x}-name2`).text(sets[index].player2.teamName)
-
-				$(`#set${x}-round`).text(sets[index].round)
-			}
-		} else {
-			$(`#set${x}`).css("display", "none");
-		}
-	}
-	if (sets.length == 0) {
-		$(".set").hide()
-		$(".page-button").hide()
-	}
-
-	//Hide arrows based on page number
-	if (setPage == 1 || setPage == 0) {
-		$("#page-left").hide()
-	} else {
-		$("#page-left").show()
-	}
-	maxIndex = setPage * MAX_PER_PAGE;
-	if (maxIndex >= sets.length) {
-		$("#page-right").hide()
-	} else {
-		$("#page-right").show()
-	}
-}
-
-function loadSet(x) {
-	const BLANK_PLAYER = {
-		slug: "",
-		name: "",
-		prefix: "",
-
-	}
 	swapped = false;
 
 	let setID = parseInt($(`#set${x}`).attr("set-index"))
@@ -1539,4 +1157,15 @@ function loadSet(x) {
 
 	$("#round-change").val(set.round)
 	$("#set-id").val(set.id)
+}
+
+function saveSet(x) {
+	swapped = false;
+	$("#p1-entrant").val($(`#set${x}-name1`).attr("data-entrant"))
+	$("#p1-entrant-name").text($(`#set${x}-name1`).text())
+
+	$("#p2-entrant").val($(`#set${x}-name2`).attr("data-entrant"))
+	$("#p2-entrant-name").text($(`#set${x}-name2`).text())
+
+	$("#setID-input").val($(`#set${x}`).attr("data-id"))
 }

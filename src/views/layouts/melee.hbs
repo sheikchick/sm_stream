@@ -9,12 +9,12 @@
 	<script src="scripts/common.js"></script>
 
 	<script src="scripts/overlay.js"></script>
-	<script src="scripts/overlay-melee.js"></script>
+	<script src="scripts/overlaymelee.js"></script>
 
 	<script src="scripts/autocomplete.js"></script>
 	<script src="scripts/database.js"></script>
-	<script src="scripts/startgg-scripts.js"></script>
-	<script src="scripts/startgg-utils.js"></script>
+	<script src="scripts/startgg.js"></script>
+	<script src="scripts/startggutils.js"></script>
 	<script src="scripts/flags.js"></script>
 
 	<script src="scripts/obs-ws.min.js"></script>
@@ -23,10 +23,10 @@
 	<script src="scripts/solid.min.js"></script>
 	<script src="scripts/brands.min.js"></script>
 	<script>
-		var bestOfValue = {{ bestOf }}
+		var bestOfValue = "{{ bestOf }}"
 		var tournament = "{{tournament}}"
 		var apiKey = "{{apiKey}}"
-		var obsPort = {{ obsPort }}
+		var obsPort = "{{ obsPort }}"
 		var obsPassword = "{{obsPassword}}"
 		var hideSwapAll = {{ hideSwapAll }}
 		var isHandwarmers = {{ isHandwarmers }}

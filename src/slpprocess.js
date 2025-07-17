@@ -1,14 +1,14 @@
 const path = require("path");
 
-const slpTools = require("./slpTools.js");
+const slpTools = require("./slptools.js");
 const logging = require("./logging.js");
 const { SlippiGame } = require("@slippi/slippi-js");
-const { readData, writeData, MELEE, MATCH_RESULT } = require("./data.js");
+const { readData, writeData, MELEE, MATCHRESULT, TOURNAMENTSETS } = require("./data.js");
 const { appendFile, readFile, writeFile, mkdir } = require("fs/promises");
 const { getTimecode, getDirectory } = require("./obs.js");
-const recordLive = require("./recordLive.js");
+const recordLive = require("./recordlive.js");
 const startgg = require("./startgg.js")
-const { changeScene } = require('./obs');
+const { changeScene } = require('./obs.js');
 
 const { delayPromiseStart } = require("./util.js")
 
@@ -72,7 +72,7 @@ exports.checkSetStart = (() => {
 
 /**
  * Used to ascertain whether or not a set has ended.
- * On a set end will write the set information to match_result.json; to /data/json/{tournamentName}/set_data.json;
+ * On a set end will write the set information to match-result.json; to /data/json/{tournamentName}/tournamentSets.json;
  * and if enabled in the config, will create the output .mp4 file corresponding to the set.
  */
 checkSetEnd = async (info) => {
@@ -97,13 +97,13 @@ checkSetEnd = async (info) => {
                                 if (config["start.gg"]["Auto-submit sets"] === "true") {
                                     startgg.submitStartggSet(data, info.startggSwapped)
                                 }
-                                //write to match_result for data purposes
-                                writeData(MATCH_RESULT, data)
+                                //write to match-result for data purposes
+                                writeData(MATCHRESULT, data)
                                     .then(() => {
-                                        logging.log(`Wrote match data to match_result.json`)
+                                        logging.log(`Wrote match data to match-result.json`)
                                     })
                                     .catch((e) => {
-                                        logging.error(`Failed to write match_result.json: ${e}`);
+                                        logging.error(`Failed to write match-result.json: ${e}`);
                                     });
                             })
                     })
@@ -123,7 +123,7 @@ checkSetEnd = async (info) => {
                             .then((vod) => {
                                 const tournamentName = info.tournament ? info.tournament.replace(/ /g, "_") : 'default'
                                 const tournamentPath = path.join("data/json/tournaments/", tournamentName);
-                                const jsonFile = path.join("data/json/tournaments/", tournamentName, "set_data.json");
+                                const jsonFile = path.join("data/json/tournaments/", tournamentName, TOURNAMENTSETS);
                                 const winner = info.team1.score >= firstTo ? 1 : info.team2.score >= firstTo ? 2 : 0 //0 should never occur
                                 const data = {
                                     team1: {
@@ -311,7 +311,7 @@ exports.gameEnd = async ({ game, settings, teams }) => {
 
     const writeInfoPromise = writeData(MELEE, info);
 
-    // Update match_data and/or match_result.json
+    // Update match data and/or match-result.json
     const { players: playersLatestFrame } = game.getLatestFrame();
 
     const gameData = teams.reduce((acc, [player, playerDoubles], index) => {

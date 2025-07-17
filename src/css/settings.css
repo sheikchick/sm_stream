@@ -6,7 +6,7 @@ body {
 	margin-left: 100px;
 }
 
-#left_wrapper {
+#left-wrapper {
   	display: flex;
 	flex-direction: column;
 	max-width: 50%;
@@ -71,7 +71,7 @@ button:focus {
 	outline: none;
 }
 
-#right_wrapper {
+#right-wrapper {
 	display: none;
 }
 

@@ -7,21 +7,20 @@ const cors = require('cors');
 const path = require("path");
 const fs = require("fs/promises");
 
-const { Ports } = require('@slippi/slippi-js')
+//const { Ports } = require('@slippi/slippi-js')
 
 const logging = require("./logging.js");
-const realtime = require("./realtime.js")
 const serverConfig = require("./config.js");
 const playerDB = require("./database.js")
 const { loadObs } = require("./obs.js");
-const recordLive = require("./recordLive.js");
-const { recordReplays } = require("./recordReplays.js");
-const charInfo = require("./charInfo.js");
-const { readData, writeData, updateTournament, MELEE, CREWS, CHARACTER_DATA, DATA_FILES, REPLAY_QUEUE, DIRECTORY } = require("./data.js");
-const { watch } = require("./slpWatch.js");
-const { getGames } = require("./slpResults.js");
-const { checkSetStart, test } = require("./processSlp.js");
-const { msToHHmmss } = require("./util.js")
+const recordLive = require("./recordlive.js");
+const charInfo = require("./charinfo.js");
+const { readData, writeData, updateTournament, MELEE, CREWS, CHARACTERDATA, DATAFILES, REPLAYQUEUE, DIRECTORY } = require("./data.js");
+const { watch } = require("./slpwatch.js");
+const { checkSetStart, test } = require("./slpprocess.js");
+//const realtime = require("./realtime.js")
+//const { recordReplays } = require("./recordreplays.js");
+//const { msToHHmmss } = require("./util.js")
 
 let server;
 
@@ -87,15 +86,18 @@ fs.readdir(layoutsDir, { withFileTypes: true }).then((files) => {
         const layout = f.name.replace(hbs, '');
         app.get(`/${layout}`, (req, res) => {
             switch (layout) {
-                case "auto":
                 case "melee":
                     readData(MELEE).then((data) => { 
-                        console.log(data)
                         res.render(layout, guiData(data)) 
                     });
                     break;
                 case "crews":
-                    readData(CREWS).then((data) => { res.render(layout, guiData(data)) });
+                    readData(CREWS).then((data) => {
+                        res.render(layout, guiData(data))
+                    });
+                    break;
+                default:
+                    res.render(layout)
             }
         })
     })
@@ -137,7 +139,7 @@ fs.readdir(overlayDir, {withFileTypes: true}).then((overlays) => {
 
 // endpoints for data in /data/json
 
-DATA_FILES.forEach((f) => {
+DATAFILES.forEach((f) => {
     app.all(`/${f}`, (req, res) => {
         res.sendFile(path.join(process.cwd(), DIRECTORY + f), (error) => {
             if (error) {
@@ -251,7 +253,6 @@ app.post("/addPlayers", (req, res) => {
         count = 0;
         promises = []
         for (let player of req.body.players) {
-            console.log(player)
             promises.push(new Promise((res, rej) => {
                 playerDB.addIfNotExists(player, (err, data) => {
                     if (!err) {
@@ -336,7 +337,7 @@ app.all("/config", (req, res) => {
     res.json(config);
 });
 
-app.all("/write_config", (req, res) => {
+app.all("/write-config", (req, res) => {
     serverConfig.write(req.body)
         .then(() => {
             res.sendStatus(200);
@@ -346,7 +347,7 @@ app.all("/write_config", (req, res) => {
 });
 
 /* lIVE-RECORDING ENDPOINTS */
-app.post("/save_clip", (req, res) => {
+app.post("/save-clip", (req, res) => {
     //save horizontal clip
     recordLive.saveClip("", req.body.timecode, req.body?.tournament || "default")
         .then(() => {
@@ -361,37 +362,38 @@ app.post("/save_clip", (req, res) => {
         });
 });
 
-app.get("/recording_status", (req, res) => {
-    res.json({ recording_status: recordLive.getRecordingStatus() });
+app.get("/recording-status", (req, res) => {
+    res.json({ recordingStatus: recordLive.getRecordingStatus() });
 });
 
-/* RECORDING SET ENDPOINTS */
+/* RECORDING SET ENDPOINTS - OUTDATED */
 
-app.all(`/${REPLAY_QUEUE}`, (req, res) => {
-    readData(REPLAY_QUEUE)
+/*
+app.all(`/${REPLAYQUEUE}`, (req, res) => {
+    readData(REPLAYQUEUE)
         .then((queue) => res.json(queue))
         .catch(() => res.sendStatus(500));
 });
 
 app.post("/replay-queue-update", (req, res) => {
-    writeData(REPLAY_QUEUE, req.body)
+    writeData(REPLAYQUEUE, req.body)
         .then(() => res.sendStatus(200))
         .catch(() => res.sendStatus(500));
 });
 
 app.post("/replay-record", (req, res) => {
-    readData(REPLAY_QUEUE).then((queue) => {
+    readData(REPLAYQUEUE).then((queue) => {
         recordReplays(queue);
         res.sendStatus(200);
     }).catch((e) => {
         logging.log(e)
         res.sendStatus(500)
     });
-});
+});*/
 
 /* START.GG SETS */
 
-app.all("/update_set", (req, res) => {
+app.all("/update-set", (req, res) => {
     updateTournament(req.body.data, req.body.index, req.body.tournament)
         .then(() => {
             res.sendStatus(200);
@@ -401,8 +403,8 @@ app.all("/update_set", (req, res) => {
         })
 });
 
-app.all("/player_character", (req, res) => {
-    readData(CHARACTER_DATA)
+app.all("/player-character", (req, res) => {
+    readData(CHARACTERDATA)
         .then((data) => {
             if (data.hasOwnProperty(req.body.id)) {
                 res.json({
@@ -415,17 +417,6 @@ app.all("/player_character", (req, res) => {
             }
         })
         .catch(() => res.sendStatus(500));
-});
-
-/* MULTI-SET REPORTING ENDPOINTS */
-app.all("/get-wii-games", (req, res) => {
-    getGames(req.body.directory, req.body.index, req.body.amount)
-        .then((games) => {
-            res.json(games)
-        })
-        .catch(() => {
-            res.sendStatus(500)
-        })
 });
 
 /* CHARACTER INFO ENDPOINTS */

@@ -565,10 +565,10 @@ function getRecordStatus() {
 		.then(({ outputActive }) => {
 			$.ajax({
 				type: 'GET',
-				url: "/recording_status",
+				url: "/recording-status",
 				data: {},
 				success: function (response) {
-					if (outputActive && response.recording_status) {
+					if (outputActive && response.recordingStatus) {
 						$("#ffmpeg-record").text("Recording...");
 						$("#ffmpeg-record").css("background-color", "#9146FF");
 						$("#ffmpeg-record").css("border-bottom", "3px solid #44158a");
@@ -627,7 +627,7 @@ function clip() {
 			$("#ffmpeg-clip").css("background-color", "#9146FF");
 			$("#ffmpeg-clip").css("border-bottom", "3px solid #44158a");
 
-			fetch("/save_clip", {
+			fetch("/save-clip", {
 				method: 'POST',
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -700,6 +700,10 @@ function toggleStartggEntrant() {
 	$(".startgg.display").css('opacity', 1 - current)
 }
 
+function showGetSets() {
+	$("#get-sets").show()
+}
+
 /**
  * up : direction of page (true/false)
  */
@@ -711,16 +715,16 @@ function showSets(up, showButtons) {
 	} else {
 		$(".startgg.button.save").hide()
 	}
-	const MAX_PER_PAGE = 5;
+	const MAXPERPAGE = 5;
 	if (up) {
 		//check if going over the amount
-		maxIndex = setPage * MAX_PER_PAGE;
+		maxIndex = setPage * MAXPERPAGE;
 		if (maxIndex < sets.length) {
 			setPage++;
 		}
 		//should never occur but just in case
-		else if (setPage > Math.ceil(sets.length / MAX_PER_PAGE)) {
-			setPage = Math.ceil(sets.length / MAX_PER_PAGE);
+		else if (setPage > Math.ceil(sets.length / MAXPERPAGE)) {
+			setPage = Math.ceil(sets.length / MAXPERPAGE);
 		}
 	} else {
 		//limit to 1
@@ -733,8 +737,8 @@ function showSets(up, showButtons) {
 		}
 	}
 
-	for (x = 1; x <= MAX_PER_PAGE; x++) {
-		index = x + ((setPage - 1) * MAX_PER_PAGE) - 1;
+	for (x = 1; x <= MAXPERPAGE; x++) {
+		index = x + ((setPage - 1) * MAXPERPAGE) - 1;
 		if (typeof (sets.length) != "undefined") {
 			if (sets.length == 0 || index >= sets.length) {
 				$(`#set${x}`).css("display", "none");
@@ -774,7 +778,7 @@ function showSets(up, showButtons) {
 	} else {
 		$("#page-left").show()
 	}
-	maxIndex = setPage * MAX_PER_PAGE;
+	maxIndex = setPage * MAXPERPAGE;
 	if (maxIndex >= sets.length) {
 		$("#page-right").hide()
 	} else {
@@ -783,7 +787,7 @@ function showSets(up, showButtons) {
 }
 
 function loadSet(x) {
-	const BLANK_PLAYER = {
+	const BLANKPLAYER = {
 		slug : "",
 		name : "",
 		prefix : "",
@@ -820,7 +824,7 @@ function loadSet(x) {
 	}
 
 	//p1d
-	let p1dData = set.player1.data[1] || BLANK_PLAYER
+	let p1dData = set.player1.data[1] || BLANKPLAYER
 	$("#p1d-slug").val(p1dData.slug)
 	$("#p1d-name").val(p1dData.name + p1Loser)
 	$("#p1d-prefix").val(p1dData.prefix)
@@ -853,7 +857,7 @@ function loadSet(x) {
 	}
 
 	//p1d
-	let p2dData = set.player2.data[1] || BLANK_PLAYER
+	let p2dData = set.player2.data[1] || BLANKPLAYER
 	$("#p2d-slug").val(p2dData.slug)
 	$("#p2d-name").val(p2dData.name + p2Loser)
 	$("#p2d-prefix").val(p2dData.prefix)
@@ -878,9 +882,4 @@ function loadSet(x) {
 
 	$("#round-change").val(set.round)
 	$("#set-id").val(set.id)
-}
-
-/* SET DATA */
-function showGetSets() {
-	$("#get-sets").show()
 }

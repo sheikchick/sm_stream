@@ -2,34 +2,36 @@ const path = require("path");
 const { readFile, writeFile } = require("fs/promises");
 const logging = require("./logging");
 
+const TOURNAMENTSETS = 
+
 exports.MELEE = 'melee.json';
 exports.CREWS = 'crews.json';
-exports.MATCH_RESULT = 'match_result.json';
+exports.CURRENTSET = 'current-set.json';
+exports.MATCHRESULT = 'match-result.json';
 exports.DOLPHIN = 'dolphin.json';
-exports.REPLAY_QUEUE = 'replay-queue.json';
-exports.TOP_8 = 'top_8.json';
-exports.REGIONS = 'regions.json';
-exports.CHARACTER_DATA = 'character-data.json';
+exports.REPLAYQUEUE = 'replay-queue.json';
+exports.TOP8 = 'top8.json';
+exports.TOURNAMENTSETS = 'tournament-sets.json';
 
-exports.DATA_FILES = [
+exports.DATAFILES = [
     this.MELEE,
     this.CREWS,
-    this.MATCH_RESULT,
+    this.CURRENTSET,
+    this.MATCHRESULT,
     this.DOLPHIN,
-    this.REPLAY_QUEUE,
-    this.TOP_8,
-    this.REGIONS,
-    this.CHARACTER_DATA
+    this.REPLAYQUEUE,
+    this.TOP8,
+    exports.TOURNAMENTSETS
 ];
 
 exports.DIRECTORY = "data/json/";
 
 const FORMAT = "utf8";
 
-exports.writeData = async (file, data) => this.DATA_FILES.includes(file) &&
+exports.writeData = async (file, data) => this.DATAFILES.includes(file) &&
     writeFile(this.DIRECTORY + file, file === this.MELEE ? JSON.stringify(this.fixMeleeJSON(data)) : JSON.stringify(data), FORMAT);
 
-exports.readData = async (file) => this.DATA_FILES.includes(file)
+exports.readData = async (file) => this.DATAFILES.includes(file)
     ? readFile(this.DIRECTORY + file, FORMAT)
         .then((data) => file === this.MELEE ? this.fixMeleeJSON(JSON.parse(data)) : JSON.parse(data))  //TODO; IMPLEMENT DEFAULT MELEE.JSON LOADING SEAMLESSLY IN CASE OF ERROR
         .catch((e) => logging.log(`Failed to open ${file} - ${e}`))
@@ -37,7 +39,7 @@ exports.readData = async (file) => this.DATA_FILES.includes(file)
 
 exports.updateTournament = async (data, index, tournamentFilename) => {
     const tournamentPath = path.join("data/json/tournaments/", tournamentFilename);
-    const jsonFile = path.join("data/json/tournaments/", tournamentPath, "set_data.json");
+    const jsonFile = path.join("data/json/tournaments/", tournamentPath, TOURNAMENTSETS);
     readFile(jsonFile, FORMAT)
         .then((readFile) => {
             var parsedFile = JSON.parse(readFile)

@@ -1,7 +1,7 @@
 const fs = require("fs/promises");
 const logging = require("./logging.js");
 const { loadObs } = require("./obs.js");
-const { watch } = require("./slpWatch.js");
+const { watch } = require("./slpwatch.js");
 
 const configPath = './config.json';
 const FORMAT = "utf8";

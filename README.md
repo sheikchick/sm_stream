@@ -8,9 +8,9 @@ This application assumes you have a distribution of [ffmpeg](https://www.ffmpeg.
 |-|
 1. Download and unzip the latest release from [HERE](https://github.com/sheikchick/sm_stream/releases) into a folder.
     1. If you already have an application running on `:5000`, edit the config.json file to change the port the webpage uses.
-2. Run `sm_stream.exe`
+2. Run `sm-stream.exe`
 3. Navigate to `127.0.0.1:5000` (or whatever port you are using instead)
-   1. If you did not set up a PATH variable for ffmpeg, open the settings on ther webpage and set your ffmpeg path to `.../ffmpeg/bin`
+   1. If you did not set up a PATH variable for ffmpeg, open the `⚙️ Settings` on the webpage and set your ffmpeg path to `.../ffmpeg/bin`
 
 # Building and running
 | :memo: It is recommended to use [nvm](https://github.com/nvm-sh/nvm) / [nvm-windows](https://github.com/coreybutler/nvm-windows) to manage Node.JS versions |
@@ -39,5 +39,6 @@ This application assumes you have a distribution of [ffmpeg](https://www.ffmpeg.
 ## Running from source
 1. Download the source code for the latest version
 2. Do `npm install` in the root directory, then `npm run` to start the application
+
 
 

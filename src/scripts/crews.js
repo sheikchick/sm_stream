@@ -24,7 +24,6 @@ $(document).ready(function () {
 	loadInitialChanges();
 	loadChanges();
 	updateSeatsLoop();
-	toggleDoubles();
 	hoverListeners();
 	autocompleteListneners();
 	getDBAutocomplete();
@@ -292,14 +291,9 @@ function fixPlayerColours() {
 		return
 	}
 	//background colours
-	if (isDoubles) {
-		p1ColourIndex = resolveTeamColour(info.crew1.activePlayer.colour)
-		p2ColourIndex = resolveTeamColour(info.crew2.activePlayer.colour)
+	p1ColourIndex = Math.min(info.crew1.activePlayer.port - 1, 3)
+	p2ColourIndex = Math.min(info.crew2.activePlayer.port - 1, 3)
 
-	} else {
-		p1ColourIndex = Math.min(info.crew1.activePlayer.port - 1, 3)
-		p2ColourIndex = Math.min(info.crew2.activePlayer.port - 1, 3)
-	}
 	$("#p1-info-change").css("background-color", bgColours[p1ColourIndex])
 	$("input.left").css("border-bottom", `2px solid ${accentColours[p1ColourIndex]}`)
 	$("input.left").attr("borderColor", accentColours[p1ColourIndex])
@@ -739,7 +733,9 @@ function loadCrew(crewIndex, memberIndex) {
 	let slug = $(`#t${crewIndex}-crew${memberIndex}`).attr("slug")
 	let loser = lRegex.test($(`#p${crewIndex}-name`).val()) ? " (L)" : ""
 	if (slug) {
-		let player = autocompletePlayers.find((el) => el.slug === slug)
+		console.log(autocompletePlayers)
+		console.log(getPlayer(slug))
+		let player = autocompletePlayers.find((el) => {return el.slug === slug})
 		if (player) {
 			$(`#p${crewIndex}-slug`).val(player.slug || "")
 			$(`#p${crewIndex}-name`).val((player["name"] || "") + loser)
@@ -762,68 +758,6 @@ function toggleCrew(crewIndex, memberIndex) {
 		$(`#t${crewIndex}-crew${memberIndex}-toggle`).removeClass("defeated")
 	} else {
 		$(`#t${crewIndex}-crew${memberIndex}-toggle`).addClass("defeated")
-	}
-}
-
-function toggleDoubles() {
-	isDoubles = $(".toggle-doubles").attr("value") != "true"
-	//changing to singles
-	if (isDoubles) {
-		$(".toggle-doubles").attr("value", "true");
-		$(".toggle-doubles").text("Singles ");
-		$(".toggle-doubles").append("<i class='fa fa-user'></i>");
-
-		$(".name.actual.doubles").hide();
-		$(".stock-icon.actual.doubles").hide();
-
-		$(".swap").hide()
-
-		$(".name.change.doubles").hide();
-		$(".name.change.doubles").prop("disabled", true);
-		$(".pronouns.change.doubles").hide();
-		$(".pronouns.change.doubles").prop("disabled", true);
-		$(".flag.change.doubles").hide();
-		$(".flag.change.doubles").prop("disabled", true);
-		$(".csp.change.doubles").hide();
-
-		$(".seat.right").hide();
-		$(".seat-changer.side").hide();
-		$(".fa-chair.doubles").hide();
-
-		//fix seat orientation so always indices 1 and 3
-		validIndices = ["1", "3"]
-		if (!validIndices.includes($("#p1-left-seat").attr("index"))) {
-			swapSeatTeam(1);
-		}
-		if (!validIndices.includes($("#p2-left-seat").attr("index"))) {
-			swapSeatTeam(2);
-		}
-		isDoubles = false;
-	}
-	//changing to doubles
-	else {
-		$(".toggle-doubles").attr("value", "false");
-		$(".toggle-doubles").text("Doubles ");
-		$(".toggle-doubles").append("<i class='fa fa-user-friends'></i>");
-
-		$(".name.actual.doubles").show();
-		$(".stock-icon.actual.doubles").show();
-
-		$(".swap").show()
-
-		$(".name.change.doubles").show();
-		$(".name.change.doubles").prop("disabled", false);
-		$(".pronouns.change.doubles").show();
-		$(".name.change.doubles").prop("disabled", false);
-		$(".flag.change.doubles").show();
-		$(".flag.change.doubles").prop("disabled", false);
-		$(".csp.change.doubles").show();
-
-		$(".seat.right").show();
-		$(".seat-changer.side").show();
-		$(".fa-chair.doubles").show();
-
-		isDoubles = true;
 	}
 }
 
@@ -1030,46 +964,51 @@ function showSets(up, showButtons) {
 			setPage = 1;
 		}
 	}
-
-	for (x = 0; x < MAXPERPAGE; x++) {
-		index = x + ((setPage - 1) * MAXPERPAGE);
+	for (x = 1; x <= MAXPERPAGE; x++) {
+		index = x + ((setPage - 1) * MAXPERPAGE) - 1;
 		if (typeof (sets.length) != "undefined") {
 			if (sets.length == 0 || index >= sets.length) {
-				$(`#set${x + 1}`).css("display", "none");
+				$(`#set${x}`).css("display", "none");
 			} else if (sets?.[index] == undefined) {
-				$(`#set${x + 1}`).css("display", "none");
+				//not ideal
+				$(`#set${x}`).css("display", "none");
 			} else {
-				$("#right-wrapper").css("display", "flex")
+				$(`#set${x}`).css("display", "flex");
+				$(`#set${x}`).attr("set-index", index)
 
-				$(`#set${x + 1}`).css("display", "flex");
-				$(`#set${x + 1}`).attr("data-id", sets[index]["id"])
-
-				if (sets[index]["player1"]["data"][1]["name"] != "") {
-					$(`#set${x + 1}-name1`).text(`${sets[index]["player1"]["data"][0]["name"]} / ${sets[index]["player1"]["data"][1]["name"]}`)
+				if (sets[index].player1.data.length > 2) {
+					$(`#set${x}-name1`).text(sets[index].player1.teamName)
+				} else if (sets[index].player1.data.length > 1) {
+					let names = []
+					for(let player of sets[index].player1.data) {
+						names.push(player.name)
+					}
+					$(`#set${x}-name1`).text(names.join(" / "))
 				} else {
-					$(`#set${x + 1}-name1`).text(sets[index]["player1"]["data"][0]["name"])
+					$(`#set${x}-name1`).text(sets[index].player1.data[0].name)
 				}
-				$(`#set${x + 1}-name1`).attr("data-p1", JSON.stringify(sets[index]["player1"]["data"][0]))
-				$(`#set${x + 1}-name1`).attr("data-p2", JSON.stringify(sets[index]["player1"]["data"][1]))
-				$(`#set${x + 1}-name1`).attr("data-entrant", JSON.stringify(sets[index]["player1"]["entrantId"]))
 
-				if (sets[index]["player2"]["data"][1]["name"] != "") {
-					$(`#set${x + 1}-name2`).text(`${sets[index]["player2"]["data"][0]["name"]} / ${sets[index]["player2"]["data"][1]["name"]}`)
+				if (sets[index].player2.data.length > 2) {
+					$(`#set${x}-name2`).text(sets[index].player2.teamName)
+				} else if (sets[index].player2.data.length > 1) {
+					let names = []
+					for(let player of sets[index].player2.data) {
+						names.push(player.name)
+					}
+					$(`#set${x}-name2`).text(names.join(" / "))
 				} else {
-					$(`#set${x + 1}-name2`).text(sets[index]["player2"]["data"][0]["name"])
+					$(`#set${x}-name2`).text(sets[index].player2.data[0].name)
 				}
-				$(`#set${x + 1}-name2`).attr("data-p1", JSON.stringify(sets[index]["player2"]["data"][0]))
-				$(`#set${x + 1}-name2`).attr("data-p2", JSON.stringify(sets[index]["player2"]["data"][1]))
-				$(`#set${x + 1}-name2`).attr("data-entrant", JSON.stringify(sets[index]["player2"]["entrantId"]))
 
-				$(`#set${x + 1}-round`).text(sets[index]["round"])
+				$(`#set${x}-round`).text(sets[index].round)
 			}
 		} else {
-			$(`#set${x + 1}`).css("display", "none");
+			$(`#set${x}`).css("display", "none");
 		}
 	}
 	if (sets.length == 0) {
-		$("#right-wrapper").css("display", "none")
+		$(".set").hide()
+		$(".page-button").hide()
 	}
 
 	//Hide arrows based on page number

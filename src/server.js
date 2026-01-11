@@ -96,6 +96,10 @@ fs.readdir(layoutsDir, { withFileTypes: true }).then((files) => {
                         res.render(layout, guiData(data))
                     });
                     break;
+                case "database":
+                case "tools":
+                    res.render(layout, guiData())
+                    break;
                 default:
                     res.render(layout)
             }
@@ -333,7 +337,7 @@ app.get(`/tournaments/*`, (req, res) => {
 
 /* CONFIG ENDPOINTS */
 
-app.all("/config", (req, res) => {
+app.all("/config.json", (req, res) => {
     res.json(config);
 });
 

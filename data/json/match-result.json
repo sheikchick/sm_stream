@@ -1,1 +1,167 @@
-{"team1":{"entrantId":"16748899","names":["Rain","c:leo"]},"team2":{"entrantId":"16748919","names":["sky","Glaikit"]},"round":"Winners Final","vod":"D:\\OBS\\2025-07-10 00-31-28.mkv","setId":"75267518","winner":1,"timecodes":[0,149566],"isDoubles":true,"games":[{"stage":"Battlefield","winner":1,"team1":[{"character":"marth","colour":"red","stocks":3},{"character":"sheik","colour":"red","stocks":2}],"team2":[{"character":"link","colour":"blue","stocks":0},{"character":"marth","colour":"blue","stocks":0}]},{"stage":"Final Destination","winner":1,"team1":[{"character":"marth","colour":"red","stocks":0},{"character":"captainfalcon","colour":"red","stocks":2}],"team2":[{"character":"link","colour":"blue","stocks":0},{"character":"fox","colour":"blue","stocks":0}]},{"stage":"Pokemon Stadium","winner":2,"team1":[{"character":"marth","colour":"red","stocks":0},{"character":"falco","colour":"red","stocks":0}],"team2":[{"character":"link","colour":"blue","stocks":3},{"character":"fox","colour":"blue","stocks":1}]},{"stage":"Final Destination","winner":1,"team1":[{"character":"marth","colour":"red","stocks":1},{"character":"donkeykong","colour":"red","stocks":1}],"team2":[{"character":"link","colour":"blue","stocks":0},{"character":"fox","colour":"blue","stocks":0}]}]}
+{
+    "team1": {
+        "entrantId": "16748899",
+        "names": [
+            "Rain",
+            "c:leo"
+        ]
+    },
+    "team2": {
+        "entrantId": "16748919",
+        "names": [
+            "sky",
+            "Glaikit"
+        ]
+    },
+    "round": "Winners Final",
+    "vod": "D:\\OBS\\2025-07-10 00-31-28.mkv",
+    "setId": "75267518",
+    "winner": 1,
+    "timecodes": [
+        0,
+        149566
+    ],
+    "isDoubles": false,
+    "games": [
+        {
+            "stage": "Battlefield",
+            "winner": 1,
+            "team1": [
+                {
+                    "character": "marth",
+                    "colour": "red",
+                    "stocks": 3
+                },
+                {
+                    "character": "sheik",
+                    "colour": "red",
+                    "stocks": 2
+                }
+            ],
+            "team2": [
+                {
+                    "character": "link",
+                    "colour": "blue",
+                    "stocks": 0
+                },
+                {
+                    "character": "marth",
+                    "colour": "blue",
+                    "stocks": 0
+                }
+            ]
+        },
+        {
+            "stage": "Final Destination",
+            "winner": 1,
+            "team1": [
+                {
+                    "character": "marth",
+                    "colour": "red",
+                    "stocks": 0
+                },
+                {
+                    "character": "captainfalcon",
+                    "colour": "red",
+                    "stocks": 2
+                }
+            ],
+            "team2": [
+                {
+                    "character": "link",
+                    "colour": "blue",
+                    "stocks": 0
+                },
+                {
+                    "character": "fox",
+                    "colour": "blue",
+                    "stocks": 0
+                }
+            ]
+        },
+        {
+            "stage": "Pokemon Stadium",
+            "winner": 2,
+            "team1": [
+                {
+                    "character": "marth",
+                    "colour": "red",
+                    "stocks": 0
+                },
+                {
+                    "character": "falco",
+                    "colour": "red",
+                    "stocks": 0
+                }
+            ],
+            "team2": [
+                {
+                    "character": "link",
+                    "colour": "blue",
+                    "stocks": 3
+                },
+                {
+                    "character": "fox",
+                    "colour": "blue",
+                    "stocks": 1
+                }
+            ]
+        },
+        {
+            "stage": "Final Destination",
+            "winner": 2,
+            "team1": [
+                {
+                    "character": "marth",
+                    "colour": "red",
+                    "stocks": 1
+                },
+                {
+                    "character": "donkeykong",
+                    "colour": "red",
+                    "stocks": 1
+                }
+            ],
+            "team2": [
+                {
+                    "character": "link",
+                    "colour": "blue",
+                    "stocks": 0
+                },
+                {
+                    "character": "fox",
+                    "colour": "blue",
+                    "stocks": 0
+                }
+            ]
+        },
+        {
+            "stage": "Final Destination",
+            "winner": 1,
+            "team1": [
+                {
+                    "character": "marth",
+                    "colour": "red",
+                    "stocks": 1
+                },
+                {
+                    "character": "donkeykong",
+                    "colour": "red",
+                    "stocks": 1
+                }
+            ],
+            "team2": [
+                {
+                    "character": "link",
+                    "colour": "blue",
+                    "stocks": 0
+                },
+                {
+                    "character": "fox",
+                    "colour": "blue",
+                    "stocks": 0
+                }
+            ]
+        }
+    ]
+}

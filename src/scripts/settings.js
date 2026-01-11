@@ -5,7 +5,7 @@ $(document).ready(function(){
 function getSettings() {
 	$.ajax({
 		type: 'GET',
-		url: "/config",
+		url: "/config.json",
 		data: {},
 		success: function(response) {
 			loadChanges(response)

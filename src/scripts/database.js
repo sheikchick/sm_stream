@@ -251,6 +251,8 @@ const getTournamentPlayersPage = (tournamentSlug, pageNo) => new Promise((resolv
     })
         .then((res) => res.json())
         .then((result) => {
+            console.log(result)
+            console.log(apiKey)
             let players = []
             let promises = []
             for (let participant of result.data.tournament.participants.nodes) {

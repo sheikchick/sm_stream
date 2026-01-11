@@ -3,9 +3,10 @@ const logging = require("./logging.js");
 const fs = require("fs");
 const path = require('path');
 
+exports.DBDIRECTORY = "data/";
 exports.FILTERSDIRECTORY = "data/database-filters/";
 
-const db = new sqlite3.Database(path.join(__dirname, '..', 'data/database.db'));
+const db = new sqlite3.Database(path.join(this.DBDIRECTORY, 'database.db'));
 
 db.run(`
     CREATE TABLE if NOT EXISTS players(

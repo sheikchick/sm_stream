@@ -43,7 +43,6 @@
 			</div>
 			<div class="column stock">
 				<img id="p1-character-actual" class="stock-icon actual" src="stock">
-				<img id="p1d-character-actual" class="stock-icon actual doubles" src="stock">
 			</div>
 			<input id="p1-score-actual" class="score actual" min="0" max="99" value="{{crew1.score}}" readonly="true"
 				tabindex="-1">
@@ -54,13 +53,10 @@
 				tabindex="-1">
 			<div class="column stock">
 				<img id="p2-character-actual" class="stock-icon actual" src="stock">
-				<img id="p2d-character-actual" class="stock-icon actual doubles" src="stock">
 			</div>
 			<div id="p2-text-actual" class="name-container actual">
 				<input type="text" id="p2-name-actual" class="name actual right" value="{{crew2.activePlayer.name}}"
 					tabindex="-1" placeholder="Player 1 name" readonly="true">
-				<input type="text" id="p2d-name-actual" class="name actual right doubles" tabindex="-1"
-					value="{{crew2.activePlayer.name}}" placeholder="Player 2 name" readonly="true">
 			</div>
 		</div>
 		<div id="data-actual" class="data actual column">
@@ -107,36 +103,36 @@
 						placeholder="Crew Name">
 					<div class="crew row">
 						<button type="button" class="load-crew" onclick="loadCrew(1,1)" value="">Load</button>
-						<input type="text" id="t1-crew1" class="crew left" value="{{crew1.players.[0].name}}" slug="{{crew1.players.[0].slug}}"
-							placeholder="Player 1">
+						<input type="text" id="t1-crew1" class="crew left" value="{{crew1.players.[0].name}}"
+							slug="{{crew1.players.[0].slug}}" placeholder="Player 1">
 						<button type="button" id="t1-crew1-toggle" class="toggle-crew c1" onclick="toggleCrew(1,1)"
 							value=""></button>
 					</div>
 					<div class="crew row">
 						<button type="button" class="load-crew" onclick="loadCrew(1,2)" value="">Load</button>
-						<input type="text" id="t1-crew2" class="crew left" value="{{crew1.players.[1].name}}" slug="{{crew1.players.[1].slug}}"
-							placeholder="Player 2">
+						<input type="text" id="t1-crew2" class="crew left" value="{{crew1.players.[1].name}}"
+							slug="{{crew1.players.[1].slug}}" placeholder="Player 2">
 						<button type="button" id="t1-crew2-toggle" class="toggle-crew c1" onclick="toggleCrew(1,2)"
 							value=""></button>
 					</div>
 					<div class="crew row">
 						<button type="button" class="load-crew" onclick="loadCrew(1,3)" value="">Load</button>
-						<input type="text" id="t1-crew3" class="crew left" value="{{crew1.players.[2].name}}" slug="{{crew1.players.[2].slug}}"
-							placeholder="Player 3">
+						<input type="text" id="t1-crew3" class="crew left" value="{{crew1.players.[2].name}}"
+							slug="{{crew1.players.[2].slug}}" placeholder="Player 3">
 						<button type="button" id="t1-crew3-toggle" class="toggle-crew c1" onclick="toggleCrew(1,3)"
 							value=""></button>
 					</div>
-					<div class="crew row hidden">
+					<div class="crew row">
 						<button type="button" class="load-crew" onclick="loadCrew(1,4)" value="">Load</button>
-						<input type="text" id="t1-crew4" class="crew left" value="{{crew1.players.[3].name}}" slug="{{crew1.players.[3].slug}}"
-							placeholder="Player 4">
+						<input type="text" id="t1-crew4" class="crew left" value="{{crew1.players.[3].name}}"
+							slug="{{crew1.players.[3].slug}}" placeholder="Player 4">
 						<button type="button" id="t1-crew4-toggle" class="toggle-crew c1" onclick="toggleCrew(1,4)"
 							value=""></button>
 					</div>
-					<div class="crew row hidden">
+					<div class="crew row">
 						<button type="button" class="load-crew" onclick="loadCrew(1,5)" value="">Load</button>
-						<input type="text" id="t1-crew5" class="crew left" value="{{crew1.players.[4].name}}" slug="{{crew1.players.[4].slug}}"
-							placeholder="Player 5">
+						<input type="text" id="t1-crew5" class="crew left" value="{{crew1.players.[4].name}}"
+							slug="{{crew1.players.[4].slug}}" placeholder="Player 5">
 						<button type="button" id="t1-crew5-toggle" class="toggle-crew c1" onclick="toggleCrew(1,5)"
 							value=""></button>
 					</div>
@@ -214,14 +210,14 @@
 						<button type="button" id="t2-crew3-toggle" class="toggle-crew c2" onclick="toggleCrew(2,3)"
 							value=""></button>
 					</div>
-					<div class="crew row hidden">
+					<div class="crew row">
 						<button type="button" class="load-crew" onclick="loadCrew(2,4)" value="">Load</button>
 						<input type="text" id="t2-crew4" class="crew right" value="{{crew2.players.[3].name}}"
 							slug="{{crew2.players.[3].slug}}" placeholder="Player 4">
 						<button type="button" id="t2-crew4-toggle" class="toggle-crew c2" onclick="toggleCrew(2,4)"
 							value=""></button>
 					</div>
-					<div class="crew row hidden">
+					<div class="crew row">
 						<button type="button" class="load-crew" onclick="loadCrew(2,5)" value="">Load</button>
 						<input type="text" id="t2-crew5" class="crew right" value="{{crew2.players.[4].name}}"
 							slug="{{crew2.players.[4].slug}}" placeholder="Player 5">

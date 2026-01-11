@@ -377,6 +377,17 @@ function getStreamQueue(tournamentSlug, streamName) {
                                 entrant {
                                     id
 									name
+									team {
+										members {
+											isAlternate
+											participant {
+												gamerTag
+												user {
+													discriminator
+												}
+											}
+										}
+									}
                                     participants {
 										prefix
                                         gamerTag
@@ -384,8 +395,8 @@ function getStreamQueue(tournamentSlug, streamName) {
 											discriminator
                                             genderPronoun
 											location {
-													country
-												}
+												country
+											}
                                         }
                                     }
                                 }
@@ -427,8 +438,8 @@ function getSets(stateArray, hideEmpty, showButtons) {
 		},
 		body: JSON.stringify({
 			query: `
-				query GetSets($pgID:ID!, $page:Int!, $perPage:Int!){
-					phaseGroup(id:$pgID){
+				query GetSets($pgID:ID!, $page:Int!, $perPage:Int!) {
+					phaseGroup(id:$pgID) {
 						bracketType
 						displayIdentifier
 						phase {
@@ -442,23 +453,36 @@ function getSets(stateArray, hideEmpty, showButtons) {
 								hideEmpty: ${hideEmpty}
 								state: ${stateArray}
 							}
-						){
-							nodes{
+						) {
+							nodes {
 								id
 								fullRoundText
-								slots{
-									entrant{
-                                        id
+								phaseGroup {
+									bracketType
+									displayIdentifier
+									phase {
 										name
+									}
+								}
+								slots {
+									entrant {
+										id
+										name
+										team {
+											members {
+												isAlternate
+												participant {
+													gamerTag
+													user {
+														discriminator
+													}
+												}
+											}
+										}
 										participants {
-											id
 											prefix
 											gamerTag
-											contactInfo{
-												country
-											}
 											user {
-												id
 												discriminator
 												genderPronoun
 												location {
@@ -482,15 +506,16 @@ function getSets(stateArray, hideEmpty, showButtons) {
 	})
 		.then((res) => res.json())
 		.then((result) => {
+			console.log(result)
 			sets = []
 			phaseGroup = result["data"]["phaseGroup"]
 			for (let set of phaseGroup["sets"]["nodes"]) {
 				matchRound = phaseGroup["bracketType"] == "ROUND_ROBIN"
 					? phaseGroup["phase"]["name"] + " " + phaseGroup["displayIdentifier"]
 					: set["fullRoundText"]
-				set = constructSetObject(set, matchRound)
-				if (set !== null) {
-					sets.push(set)
+				let newSet = constructSetObject(set, matchRound)
+				if (newSet !== null) {
+					sets.push(newSet)
 				}
 			}
 			setPage = 0;
@@ -509,6 +534,7 @@ function constructPlayer(participant) {
 }
 
 function constructSetObject(set, matchRound) {
+	console.log(set)
 	valid = true
 	for (let entrant of set["slots"]) {
 		if (!(entrant["entrant"])) {
@@ -523,13 +549,19 @@ function constructSetObject(set, matchRound) {
 		//TEAM 1
 		let p1Data = []
 		for (let participant of team1.entrant.participants) {
-			p1Data.push(constructPlayer(participant))
+			let isAlternate = team1.entrant.team?.members?.find((e) => {
+				return e.isAlternate && (e.participant.user.discriminator === participant.user.discriminator)
+			})
+			isAlternate || p1Data.push(constructPlayer(participant))
 		}
 
 		//TEAM 2
 		let p2Data = []
 		for (let participant of team2.entrant.participants) {
-			p2Data.push(constructPlayer(participant))
+			let isAlternate = team2.entrant.team?.members?.find((e) => {
+				return e.isAlternate && (e.participant.user.discriminator === participant.user.discriminator)
+			}) 
+			isAlternate || p2Data.push(constructPlayer(participant))
 		}
 
 		let matchData = {
@@ -720,6 +752,7 @@ function getCountryInformation() {
 	})
 		.then((res) => res.json())
 		.then((result) => {
+			console.log(result)
 			let countries = new Map()
 			for (let participant of result.data.tournament.participants.nodes) {
 				country = participant?.contactInfo?.country || participant?.user?.location?.country || "";

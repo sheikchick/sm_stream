@@ -334,7 +334,7 @@ const getTournamentPlayersBasic = (tournamentSlug) => new Promise((resolve, reje
 function load() {
     loadedPlayers = 0
     processedPlayers = 0
-    slug = $("#tournament-slug").val()
+    slug = extractSlug($("#tournament-slug").val())
     getTournamentPlayers(slug).then((res) => {
         $("#list").text("");
         players = res

@@ -1,10 +1,12 @@
 var info;
-
-isDoubles = false;
 var obs;
 var ip;
+
+var tournamentName = ""
 var sets = [];
 var setPage = 0;
+
+var isDoubles = false;
 
 var swapped = false;
 
@@ -1094,6 +1096,7 @@ function loadSet(x) {
 	$("#p1-score-change").val(set.player1.data.length * 4)
 	$("#p2-score-change").val(set.player1.data.length * 4)
 
+	$("#tournament-change").val(set.tournament)
 	$("#round-change").val(set.round)
 	$("#set-id").val(set.id)
 }

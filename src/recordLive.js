@@ -24,7 +24,7 @@ const createFfmpeg = () => {
 exports.createVod = (data, tournamentName) => {
     try {
         const outputPath = config?.["OBS"]?.["VODs"]?.["Output path"] || path.join(process.cwd(), "vods")
-        const tournamentFolder = tournamentName ? tournamentName.replace(/ /g, "_") : 'default'
+        const tournamentFolder = tournamentName ? tournamentName.replace(/[^a-z0-9]/gi, "-") : 'default'
         const tournamentDir = path.join(outputPath, tournamentFolder)
         p1Name = `${data.team1.names[0]}${data.isDoubles || false ? ` & ${data.team1.names[1]}` : ""}`
         p2Name = `${data.team2.names[0]}${data.isDoubles || false ? ` & ${data.team2.names[1]}` : ""}`
@@ -87,7 +87,7 @@ exports.saveClip = (folderName, timecode, tournamentName) => new Promise((resolv
     rejectIfObsNotRecording()
         .then(() => {
             const outputPath = config?.["OBS"]?.["VODs"]?.["Output path"] || path.join(process.cwd(), "vods")
-            const tournamentFolder = tournamentName ? tournamentName.replace(/ /g, "_") : 'default'
+            const tournamentFolder = tournamentName ? tournamentName.replace(/[^a-z0-9]/gi, "-") : 'default'
             const tournamentDir = path.join(outputPath, tournamentFolder)
             obs.call('GetRecordDirectory')
                 .then((response) => {

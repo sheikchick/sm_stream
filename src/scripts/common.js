@@ -24,6 +24,24 @@ function HHmmssToMs(input) {
 	return ms;
 };
 
+function extractSlug(slug) {
+    try {
+        if (!["http://", "https://"].some((word) => slug.startsWith(word))) {
+            return (slug)
+        }
+        let splitUrl = slug.split("/")
+        if (splitUrl[3] === "tournament") {
+            return (splitUrl[4])
+        } else {
+            return (splitUrl[3])
+        }
+    } catch (e) {
+        logging.outputError("Malformed tournament slug: '" + slug + "'")
+        logging.outputError(e)
+        return ("")
+    }
+}
+
 function getName(name) {
 	const lRegex = /\s*\(L\)$/;
 	return ({ name: name.replace(lRegex, ''), l: lRegex.test(name) });

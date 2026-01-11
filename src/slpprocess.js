@@ -121,7 +121,7 @@ checkSetEnd = async (info) => {
                     .then((directory) => {
                         recordLive.getLatestRecordingFile(directory)
                             .then((vod) => {
-                                const tournamentName = info.tournament ? info.tournament.replace(/ /g, "_") : 'default'
+                                const tournamentName = info.tournament ? info.tournament.replace(/[^a-z0-9]/gi, "-") : 'default'
                                 const tournamentPath = path.join("data/json/tournaments/", tournamentName);
                                 const jsonFile = path.join("data/json/tournaments/", tournamentName, TOURNAMENTSETS);
                                 const winner = info.team1.score >= firstTo ? 1 : info.team2.score >= firstTo ? 2 : 0 //0 should never occur

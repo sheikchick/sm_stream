@@ -1,14 +1,14 @@
 var info;
-
-isDoubles = false;
 var obs;
 var ip;
+
+var tournamentName = ""
 var sets = [];
 var setPage = 0;
 
-var swapped = false;
+var isDoubles = false;
 
-const phoneAspect = window.matchMedia("(max-aspect-ratio: 1/1), (max-width: 1000px)");
+var swapped = false;
 
 function isMelee() {
 	return GAME === "melee"
@@ -880,6 +880,7 @@ function loadSet(x) {
 	$("#p1-score-change").val(0)
 	$("#p2-score-change").val(0)
 
+	$("#tournament-change").val(set.tournament.replace(/[^a-z0-9]/gi, "-"))
 	$("#round-change").val(set.round)
 	$("#set-id").val(set.id)
 }

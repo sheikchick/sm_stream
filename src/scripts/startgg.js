@@ -106,7 +106,7 @@ function findSetForPlayers(fullRoundTextFilter = "") {
 
 /* GET EVENTS IN TOURNAMENT (Melee Singles, Melee Doubles, ...) */
 function getTournamentEvents() {
-	tournamentSlug = $("#tournament-slug").val()
+	tournamentSlug = extractSlug($("#tournament-slug").val())
 	eventId = ""
 	fetch('https://api.start.gg/gql/alpha', {
 		method: 'POST',
@@ -145,7 +145,6 @@ function getTournamentEvents() {
 			$("#phase-groups").hide()
 			$("#get-sets").hide()
 			if (result["data"]["tournament"] == null) {
-
 				return
 			}
 			//proceed
@@ -154,6 +153,7 @@ function getTournamentEvents() {
 				return el.type === "profile";
 			})
 			$("#tournament-image").attr("src", image?.url || "static/img/startgg.png")
+			tournamentName = result.data.tournament.name
 			//set up autocomplete
 			//getDBAutocompleteSlug(tournamentSlug)
 			//add new events
@@ -282,7 +282,7 @@ function getPhaseGroups() {
 
 /* GET AND LOAD SETS FROM THE STREAMQUEUE */
 function getStreamQueues() {
-	tournamentSlug = $("#tournament-slug").val()
+	tournamentSlug = extractSlug($("#tournament-slug").val())
 	fetch('https://api.start.gg/gql/alpha', {
 		method: 'POST',
 		headers: {
@@ -326,6 +326,7 @@ function getStreamQueues() {
 				return el.type === "profile";
 			})
 			$("#tournament-image").attr("src", image?.url || "static/img/startgg.png")
+			tournamentName = result.data.tournament.name
 			streamQueue = result.data.tournament.streamQueue
 			if (streamQueue.length === 1) {
 				getStreamQueue(tournamentSlug, streamQueue[0].stream.streamName)
@@ -535,12 +536,9 @@ function constructPlayer(participant) {
 
 function constructSetObject(set, matchRound) {
 	console.log(set)
-	valid = true
-	for (let entrant of set["slots"]) {
-		if (!(entrant["entrant"])) {
-			valid = false
-		}
-	}
+	let valid = !set["slots"].some((slot) => {
+		return !slot["entrant"]
+	})
 	if (valid) {
 		//players
 		let team1 = set["slots"][0]
@@ -566,6 +564,7 @@ function constructSetObject(set, matchRound) {
 
 		let matchData = {
 			"id": set["id"],
+			"tournament": tournamentName,
 			"round": matchRound,
 			"player1": {
 				"entrantId": team1["entrant"]["id"],

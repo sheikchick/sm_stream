@@ -18,9 +18,10 @@ Install Node.js (ver 20 or above), ffmpeg, and set up PATH environment variables
 1. Download the source code for the latest version
 2. Install `pkg` by doing
 ```npm install -g @yao-pkg/pkg```
-3. Do `pkg .` in the root directory to build the executable in `dist/`
+3. Run `npm run package` or `pkg .` in the root directory to build the executable in `dist/`
     1. Ensure wherever the distribution is located it has access to `config.json` and `data/`
 
 ## Running from source
 1. Download the source code for the latest version
 2. Do `npm install` in the root directory, then `npm run` to start the application
+

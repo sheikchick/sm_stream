@@ -95,7 +95,7 @@ checkSetEnd = async (info) => {
                                 global.timecode = ""
                                 //submit data to start.gg
                                 if (config["start.gg"]["Auto-submit sets"] === "true") {
-                                    startgg.submitStartggSet(data, info.startggSwapped)
+                                    startgg.submitStartggSet(data, info.startgg.swapped)
                                 }
                                 //write to match-result for data purposes
                                 writeData(MATCHRESULT, data)
@@ -175,8 +175,8 @@ exports.test = async (path) => {
     const settings = game.getSettings();
     const teams = slpTools.getSlippiTeams(settings.players);
 
-    for(let player of settings.players) {
-        if(player.connectCode !== "") {
+    for (let player of settings.players) {
+        if (player.connectCode !== "") {
             logging.log(`Port ${player.port} - ${player.displayName} (${player.connectCode})`)
         }
     }
@@ -193,14 +193,14 @@ exports.gameStart = async (path) => {
     const teams = slpTools.getSlippiTeams(settings.players);
 
     //Change scene to GameScene if game has been played for less than 10 seconds to avoid mismatched scenes when streaming Netplay
-    if(game.getStats()?.playableFrameCount < 600) {
-        if(!slpTools.hasCPU(settings) || config["Slippi"]["Debug Mode"] === "true") {
+    if (game.getStats()?.playableFrameCount < 600) {
+        if (!slpTools.hasCPU(settings) || config["Slippi"]["Debug Mode"] === "true") {
             changeScene(config["OBS"]["Scenes"]["Game scene"])
         }
     }
 
-    for(let player of settings.players) {
-        if(player.connectCode !== "") {
+    for (let player of settings.players) {
+        if (player.connectCode !== "") {
             logging.log(`Port ${player.port} - ${player.displayName} (${player.connectCode})`)
         }
     }
@@ -246,25 +246,33 @@ exports.gameStart = async (path) => {
  * @returns         Write output to info.json
  */
 exports.gameMid = async ({ game, settings, teams }) => {
-    if (teams?.length === 2) {
-        const playersLatestFrame = game.getLatestFrame().players;
-        const info = await readData(MELEE);
-        if (info.round === this.CREWS) {
-            //handle lowering of score
+    try {
+        if (teams?.length === 2) {
+            const playersLatestFrame = game.getLatestFrame()?.players;
+            if(!playersLatestFrame) {
+                logging.warn("Warning in gameMid - game.getLatestFrame() failed")
+                return
+            }
+            const info = await readData(MELEE);
+            if (info.round === this.CREWS) {
+                //handle lowering of score
+            }
+            teams.forEach(([p, pd = {}], index) => {
+                p1char = slpTools.getLatestCharacter(p, playersLatestFrame)
+                if (p1char === "zelda" || p1char === "sheik") {
+                    sheikZeldaPlaytime[`team${index + 1}`][0][p1char] += 1;
+                }
+                p2char = slpTools.getLatestCharacter(pd, playersLatestFrame)
+                if (p2char === "zelda" || p2char === "sheik") {
+                    sheikZeldaPlaytime[`team${index + 1}`][1][p2char] += 1;
+                }
+                info[`team${index + 1}`].players[0].character = p1char
+                info[`team${index + 1}`].players[1].character = p2char
+            });
+            return writeData(MELEE, info);
         }
-        teams.forEach(([p, pd = {}], index) => {
-            p1char = slpTools.getLatestCharacter(p, playersLatestFrame)
-            if (p1char === "zelda" || p1char === "sheik") {
-                sheikZeldaPlaytime[`team${index + 1}`][0][p1char] += 1;
-            }
-            p2char = slpTools.getLatestCharacter(pd, playersLatestFrame)
-            if (p2char === "zelda" || p2char === "sheik") {
-                sheikZeldaPlaytime[`team${index + 1}`][1][p2char] += 1;
-            }
-            info[`team${index + 1}`].players[0].character = p1char
-            info[`team${index + 1}`].players[1].character = p2char
-        });
-        return writeData(MELEE, info);
+    } catch (e) {
+        logging.error(e)
     }
 };
 
@@ -279,7 +287,7 @@ exports.gameEnd = async ({ game, settings, teams }) => {
     global.gameInProgress = false;
     //if debug mode disabled and if the game is not valid
     if (config["Slippi"]["Debug Mode"] === "false" && !slpTools.isValidGame(game)) {
-        if(!slpTools.hasCPU(settings)  || config["Slippi"]["Debug Mode"] === "true") {
+        if (!slpTools.hasCPU(settings) || config["Slippi"]["Debug Mode"] === "true") {
             changeScene(config["OBS"]["Scenes"]["Game end scene"])
         }
         return;

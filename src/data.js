@@ -86,7 +86,6 @@ exports.fixMeleeJSON = (info) => {
                 }
             ],
             "score": info?.team1?.score || 0,
-            "startggEntrant": info?.team1?.startggEntrant || "",
         },
         "team2": {
             "players": [
@@ -111,8 +110,7 @@ exports.fixMeleeJSON = (info) => {
                     "port": info?.team2?.players?.[1]?.port || 2
                 }
             ],
-            "score": info?.team2?.score || 0,
-            "startggEntrant": info?.team2?.startggEntrant || "",
+            "score": info?.team2?.score || 0
         },
         "casters": [
             {
@@ -124,10 +122,23 @@ exports.fixMeleeJSON = (info) => {
                 "pronouns": info?.casters?.[1].pronouns || "",
             }
         ],
+        "startgg": {
+            "entrant1": {
+                "id": info?.startgg?.entrant1?.id || "",
+                "name": info?.startgg?.entrant1?.name || "",
+                "score": info?.startgg?.entrant1?.score || ""
+            },
+            "entrant2": {
+                "id": info?.startgg?.entrant2?.id || "",
+                "name": info?.startgg?.entrant2?.name || "",
+                "score": info?.startgg?.entrant2?.score || ""
+            },
+            "round": info?.startgg?.round || "",
+            "setId": info?.startgg?.setId || "",
+            "swapped": info?.startgg?.swapped || false,
+        },
         "seatOrdering": info?.seatOrdering || [ "1","2","3","4" ],
         "round": info?.round || "",
-        "startggSetId": info?.startggSetId || "",
-        "startggSwapped": info?.startggSwapped || false,
         "tournament": info?.tournament || "",
         "isDoubles": info?.isDoubles || false,
         "bestOf": info?.bestOf || 5,

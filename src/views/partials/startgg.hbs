@@ -91,4 +91,26 @@
 			</div>
 		</div>
 	</div>
+	<div id="current-set" class="current-set">
+		<div class="startgg-set-data" style="display: none;">
+			<label id="startgg-set-id"></label>
+			<label id="startgg-p1-entrant"></label>
+			<label id="startgg-p2-entrant"></label>
+		</div>
+		<div id="current-set-wrapperL" class="current-set wrapper left">
+			<label class="no-set">No start.gg set selected</label>
+			<label id="startgg-p1-name" class="startgg name left" style="display: none;"></label>
+			<label class="startgg name vs" style="display: none;">vs</label>
+			<label id="startgg-p2-name" class="startgg name right" style="display: none;"></label>
+		</div>
+		<div id="current-set-wrapperR" class="current-set wrapper right">
+			<label id="startgg-set-round" class="startgg round"></label>
+			<div class="column">
+				<button id="startgg-clear-set" class="startgg" onclick="clearStartGGSet()"
+					title="Clear start.gg set">Clear set</button>
+				<button id="startgg-find-set" class="startgg" onclick="findStartGGSet()"
+					title="Find start.gg set for current players">Find set</button>
+			</div>
+		</div>
+	</div>
 </div>

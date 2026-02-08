@@ -63,3 +63,4 @@ data/json/tournaments/**
 data/database-filters/**
 !data/json/tournaments/sm-test/
 config.json
+config.json

@@ -2,6 +2,7 @@
 	--main-bg-color: #443344;
 	--element-bg-color: #332233;
 	--startgg-set-bg-color: #336;
+	--startgg-selected-bg-color: #633;
 }
 
 .stroke {}
@@ -271,9 +272,10 @@ input.startgg.display {
 	filter: saturate(100%) grayscale(1) brightness(0.4);
 }
 
-#find-set {
+.current-set>.column>button {
 	font-size: 12px;
 	padding: 1px 5px;
+	width: 70px;
 }
 
 #swap-group {
@@ -715,6 +717,7 @@ span.stage {
 
 #right-wrapper {
 	display: flex;
+	position: relative;
 	flex-direction: column;
 	min-width: 320px;
 	gap: 0.5em;
@@ -837,25 +840,35 @@ span.stage {
 	display: none;
 }
 
-.set {
+.set,
+.current-set {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
 	min-height: 50px;
-	background-color: var(--startgg-set-bg-color);
 	border-radius: 5px;
 	padding: 5px;
 }
 
-.set.wrapper.left {
+.set {
+	background-color: var(--startgg-set-bg-color);
+}
+
+.current-set {
+	background-color: var(--startgg-selected-bg-color);
+}
+
+.set.wrapper.left,
+.current-set.wrapper.left {
 	width: 188px;
 	display: flex;
 	flex-direction: column;
 	padding: 0px;
 }
 
-.set.wrapper.right {
+.set.wrapper.right,
+.current-set.wrapper.right {
 	display: flex;
 	padding: 0px;
 }
@@ -868,27 +881,16 @@ span.stage {
 	display: none;
 }
 
-.startgg.name {
+.set>label,
+.current-set>label {
 	text-align: center;
 	font-size: 14px;
 	width: 100%;
 }
 
-.startgg.name.vs {
+.startgg.vs {
 	color: #AAA;
 	font-size: 12px;
-}
-
-.startgg.name.display {
-	width: 120px;
-}
-
-.startgg.name.display.left {
-	text-align: right;
-}
-
-.startgg.name.display.right {
-	text-align: left;
 }
 
 #startgg-names {
@@ -906,6 +908,14 @@ span.stage {
 	width: 50px;
 	padding: 2px;
 	font-size: 10px;
+}
+
+/* Current start.gg set*/
+
+#current-set {
+	position: absolute;
+	bottom: 4px;
+	width: 320px;
 }
 
 .red-colour {

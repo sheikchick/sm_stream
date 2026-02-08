@@ -324,8 +324,6 @@ function swapSides(info, characters) {
 		player2name = $("#p2-name").val();
 		player2dname = $("#p2d-name").val();
 
-		team1entrant = $("#p1-entrant").val();
-
 		player1prefix = $("#p1-prefix").val();
 		player1dprefix = $("#p1d-prefix").val();
 		player2prefix = $("#p2-prefix").val();
@@ -335,8 +333,6 @@ function swapSides(info, characters) {
 		player1dpronouns = $("#p1d-pronouns").val();
 		player2pronouns = $("#p2-pronouns").val();
 		player2dpronouns = $("#p2d-pronouns").val();
-
-		team2entrant = $("#p2-entrant").val();
 
 		player1flag = $("#p1-flag").val();
 		player1dflag = $("#p1d-flag").val();
@@ -353,8 +349,6 @@ function swapSides(info, characters) {
 		$("#p2-name").val(player1name);
 		$("#p2d-name").val(player1dname);
 
-		$("#p1-entrant").val(team2entrant);
-
 		$("#p1-prefix").val(player2prefix);
 		$("#p1d-prefix").val(player2dprefix);
 		$("#p2-prefix").val(player1prefix);
@@ -364,8 +358,6 @@ function swapSides(info, characters) {
 		$("#p1d-pronouns").val(player2dpronouns);
 		$("#p2-pronouns").val(player1pronouns);
 		$("#p2d-pronouns").val(player1dpronouns);
-
-		$("#p2-entrant").val(team1entrant);
 
 		$("#p1-flag").val(player2flag).change();
 		$("#p1d-flag").val(player2dflag).change();
@@ -695,11 +687,6 @@ function changeBestOf(value) {
 	}
 }
 
-function toggleStartggEntrant() {
-	current = $(".startgg.display").css('opacity')
-	$(".startgg.display").css('opacity', 1 - current)
-}
-
 function showGetSets() {
 	$("#get-sets").show()
 }
@@ -768,7 +755,7 @@ function showSets(up, showButtons) {
 		}
 	}
 	if (sets.length == 0) {
-		$(".set").hide()
+		$("#right-wrapper>.set").hide()
 		$(".page-button").hide()
 	}
 
@@ -788,9 +775,9 @@ function showSets(up, showButtons) {
 
 function loadSet(x) {
 	const BLANKPLAYER = {
-		slug : "",
-		name : "",
-		prefix : "",
+		slug: "",
+		name: "",
+		prefix: "",
 
 	}
 	swapped = false;
@@ -815,7 +802,6 @@ function loadSet(x) {
 	$("#p1-flag").val(fixCountry(p1Data.country)).change();
 	if (isMelee()) {
 		let p1Db = getPlayer(p1Data.slug)
-		console.log(p1Data.slug)
 		if (p1Db) {
 			if (p1Db.character !== "") {
 				loadCharChange("p1", p1Db.character, p1Db.colour || undefined) //may need to be || ""
@@ -832,7 +818,6 @@ function loadSet(x) {
 	$("#p1d-flag").val(fixCountry(p1dData.country)).change();
 	if (isMelee()) {
 		let p1dDb = getPlayer(p1dData.slug)
-		console.log(p1dData.slug)
 		if (p1dDb) {
 			if (p1dDb.character !== "") {
 				loadCharChange("p1d", p1dDb.character, p1dDb.colour || undefined)
@@ -848,7 +833,6 @@ function loadSet(x) {
 	$("#p2-flag").val(fixCountry(p2Data.country)).change();
 	if (isMelee()) {
 		let p2Db = getPlayer(p2Data.slug)
-		console.log(p2Data.slug)
 		if (p2Db) {
 			if (p2Db.character !== "") {
 				loadCharChange("p2", p2Db.character, p2Db.colour || undefined)
@@ -856,7 +840,7 @@ function loadSet(x) {
 		}
 	}
 
-	//p1d
+	//p2d
 	let p2dData = set.player2.data[1] || BLANKPLAYER
 	$("#p2d-slug").val(p2dData.slug)
 	$("#p2d-name").val(p2dData.name + p2Loser)
@@ -865,22 +849,29 @@ function loadSet(x) {
 	$("#p2d-flag").val(fixCountry(p2dData.country)).change();
 	if (isMelee()) {
 		let p2dDb = getPlayer(p2dData.slug)
-		console.log(p2dData.slug)
 		if (p2dDb) {
 			if (p2dDb.character !== "") {
 				loadCharChange("p2d", p2dDb.character, p2dDb.colour || undefined)
 			}
 		}
 	}
-
 	console.log(set)
-	$("#p1-entrant").val(set.player1.entrantId)
-	$("#p2-entrant").val(set.player2.entrantId)
+
+	$("#startgg-p1-entrant").text(set.player1.entrantId)
+	$("#startgg-p2-entrant").text(set.player2.entrantId)
+	$("#startgg-set-id").text(set.id)
+
+	$("#startgg-p1-name").text($(`#set${x}-name1`).text())
+	$("#startgg-p2-name").text($(`#set${x}-name2`).text())
+	$("#startgg-set-round").text(set.round)
+
+
+	$(".no-set").hide()
+	$("#current-set-wrapperL>.startgg").show()
 
 	$("#p1-score-change").val(0)
 	$("#p2-score-change").val(0)
 
 	$("#tournament-change").val(set.tournament.replace(/[^a-z0-9]/gi, "-"))
 	$("#round-change").val(set.round)
-	$("#set-id").val(set.id)
 }

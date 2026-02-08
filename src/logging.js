@@ -11,7 +11,6 @@ exports.warn = function(str) {
 }
 
 exports.error = function(str) {
-
     console.error(`[${currentTime()}] ERROR: ${str}`);
 }
 

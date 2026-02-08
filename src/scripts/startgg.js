@@ -7,10 +7,18 @@
  * @param {*} fullRoundTextFilter Optional filter for fiding 'Grand Final Reset'
  * @returns 
  */
-function findSetForPlayers(fullRoundTextFilter = "") {
+function findStartGGSet(fullRoundTextFilter = "") {
 	eventId = $("#events :selected").val()
 	if (eventId === undefined) {
 		console.log("Empty events - please select an event on start.gg (e.g. Melee Singles)")
+		$("#startgg-find-set").css("background-color", "#f5da62");
+		$("#startgg-find-set").css("border-bottom", "3px solid #f5cf35");
+		$("#startgg-find-set").text("No event");
+		setTimeout(function () {
+			$("#startgg-find-set").css("background-color", "#FFF");
+			$("#startgg-find-set").css("border-bottom", "3px solid #AAA");
+			$("#startgg-find-set").text("Find set");
+		}, 2000);
 		return
 	}
 	fetch('https://api.start.gg/gql/alpha', {
@@ -70,38 +78,82 @@ function findSetForPlayers(fullRoundTextFilter = "") {
 				playerSlugs.push($("#p1d-slug").val())
 				playerSlugs.push($("#p2d-slug").val())
 			}
-			for (let set of result.data.event.sets.nodes) {
-				//check every slug requested matches the player for a given set
+			let foundSet = result.data.event.sets.nodes.find((set) => {
 				if (fullRoundTextFilter) {
 					if (fullRoundTextFilter !== set.fullRoundText) {
-						continue;
+						return false;
 					}
 				}
-				validSet = playerSlugs.every((slug) => {
+				return playerSlugs.every((slug) => {
 					return set.slots.some((slot) => {
-						return slot.entrant.participants.some((participant) => {
+						return slot.entrant?.participants?.some((participant) => {
 							return slug === participant.user?.discriminator
 						})
 					})
 				})
-				if (validSet) {
-					console.log("Set found")
-					console.log(set)
-					//if #p2-slug is in slot[0], mark it as swapped for startgg (no need to check for doubles or other slots as should not be needed)
-					swapped = set.slots[0].entrant.participants.some((participant) => {
-						return playerSlugs[1] === participant.user.discriminator
-					})
-					$("#p1-entrant").val(set.slots[swapped ? 1 : 0].entrant.id)
-					$("#p2-entrant").val(set.slots[swapped ? 0 : 1].entrant.id)
-					$("#set-id").val(set.id)
-					$("#round-change").val(set.fullRoundText)
-					// Fix " (L)"
-					fixLosers(fullRoundText)
-					return
-				}
+			})
+			//check every slug requested matches the player for a given set
+
+			if (foundSet) {
+				console.log("Set found")
+				console.log(foundSet)
+				//if #p2-slug is in slot[0], mark it as swapped for startgg (no need to check for doubles or other slots as should not be needed)
+				swapped = foundSet.slots[0].entrant.participants.some((participant) => {
+					return playerSlugs[1] === participant.user.discriminator
+				})
+				$("#startgg-p1-entrant").text(foundSet.slots[0].entrant.id)
+				$("#startgg-p2-entrant").text(foundSet.slots[1].entrant.id)
+				$("#startgg-set-id").text(foundSet.id)
+
+				let p1Name = foundSet.slots[0].entrant.participants.length > 1
+					? foundSet.slots[0].entrant.participants[0].gamerTag + " / " + foundSet.slots[0].entrant.participants[1].gamerTag
+					: foundSet.slots[0].entrant.participants[0].gamerTag
+
+				let p2Name = foundSet.slots[1].entrant.participants.length > 1
+					? foundSet.slots[1].entrant.participants[0].gamerTag + " / " + foundSet.slots[1].entrant.participants[1].gamerTag
+					: foundSet.slots[1].entrant.participants[0].gamerTag
+
+				$("#startgg-p1-name").text(p1Name)
+				$("#startgg-p2-name").text(p2Name)
+				$("#startgg-set-round").text(foundSet.fullRoundText)
+				$("#round-change").val(foundSet.fullRoundText)
+
+				$(".no-set").hide()
+				$("#current-set-wrapperL>.startgg").show()
+
+				$("#startgg-find-set").css("background-color", "#55F76B");
+				$("#startgg-find-set").css("border-bottom", "3px solid #349641");
+				$("#startgg-find-set").text("Set found");
+				setTimeout(function () {
+					$("#startgg-find-set").css("background-color", "#FFF");
+					$("#startgg-find-set").css("border-bottom", "3px solid #AAA");
+					$("#startgg-find-set").text("Find set");
+				}, 2000);
+				// Fix " (L)"
+				fixLosers(foundSet.fullRoundText)
+			} else {
+				console.log("No set found")
+				$("#startgg-find-set").css("background-color", "#F56262");
+				$("#startgg-find-set").css("border-bottom", "3px solid #F53535");
+				$("#startgg-find-set").text("Not found");
+				setTimeout(function () {
+					$("#startgg-find-set").css("background-color", "#FFF");
+					$("#startgg-find-set").css("border-bottom", "3px solid #AAA");
+					$("#startgg-find-set").text("Find set");
+				}, 2000);
 			}
-			console.log("No set found")
-		});
+		})
+}
+
+function clearStartGGSet() {
+	$("#startgg-p1-entrant").text("")
+	$("#startgg-p1-name").text("")
+	$("#startgg-p2-entrant").text("")
+	$("#startgg-p2-name").text("")
+	$("#startgg-set-round").text("")
+	$("#startgg-set-id").text("")
+	$("#current-set-wrapperL>.startgg").hide()
+	$(".no-set").show()
 }
 
 /* GET EVENTS IN TOURNAMENT (Melee Singles, Melee Doubles, ...) */
@@ -558,7 +610,7 @@ function constructSetObject(set, matchRound) {
 		for (let participant of team2.entrant.participants) {
 			let isAlternate = team2.entrant.team?.members?.find((e) => {
 				return e.isAlternate && (e.participant.user.discriminator === participant.user.discriminator)
-			}) 
+			})
 			isAlternate || p2Data.push(constructPlayer(participant))
 		}
 
@@ -577,6 +629,7 @@ function constructSetObject(set, matchRound) {
 				"data": p2Data
 			}
 		}
+		console.log(matchData)
 		return (matchData)
 	}
 	return null;

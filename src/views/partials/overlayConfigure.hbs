@@ -38,8 +38,6 @@
 		</div>
 	</div>
 	<div id="p1-info-change" class="info change left">
-		<input type="text" id="p1-entrant" class="startgg display id left" value="{{team1.startggEntrant}}"
-			placeholder="start.gg Entrant">
 		<button type="button" id="team1-swap" class="swap left" onclick="swapTeam(1)"><i
 				class="fa-solid fa-arrows-up-down"></i></button>
 		<div class="player info wrapper column">
@@ -97,13 +95,6 @@
 	</div>
 
 	<div id="middle-row" class="row">
-		<button type="button" id="p1-entrant-button" class="startgg entrant" onclick="toggleStartggEntrant()"
-			title="Toggle display of start.gg IDs for current set"><img class="small-svg-icon"
-				src="static/img/startgg.svg" /></button>
-		<input type="text" id="set-id" class="startgg display setid" value="{{startggSetId}}"
-			placeholder="start.gg Set ID">
-		<button id="find-set" class="startgg" onclick="findSetForPlayers()"
-			title="Find start.gg set for given players">Find start.gg set</button>
 		<div id="swap-group">
 			<button type="button" id="swap-all" class="swap-sides" onclick="swapSides(true, true)">
 				All <i class="fa-solid fa-arrows-up-down"></i>
@@ -121,8 +112,6 @@
 	</div>
 
 	<div id="p2-info-change" class="info change right">
-		<input type="text" id="p2-entrant" class="startgg display id right" value="{{team2.startggEntrant}}"
-			placeholder="P2 start.gg Entrant">
 		<button type="button" id="team2-swap" class="swap right
 				" onclick="swapTeam(2)"><i class="fa-solid fa-arrows-up-down"></i></button>
 		<div class="player info wrapper column">

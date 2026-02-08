@@ -42,8 +42,7 @@ function update() {
 						port: info.team1.players[1].port || 2
 					}
 				],
-				score: parseInt($("#p1-score-change").val()),
-				startggEntrant: $("#p1-entrant").val()
+				score: parseInt($("#p1-score-change").val())
 			},
 			team2: {
 				players: [
@@ -54,7 +53,7 @@ function update() {
 						colour: $("#p2-character-change").attr("colour"),
 						prefix: $("#p2-prefix").val(),
 						pronouns: $("#p2-pronouns").val(),
-						country:  $("#p2-flag").find(":selected").val(),
+						country: $("#p2-flag").find(":selected").val(),
 						port: info.team2.players[0].port || 3
 					},
 					{
@@ -68,8 +67,7 @@ function update() {
 						port: info.team2.players[1].port || 4
 					},
 				],
-				score: parseInt($("#p2-score-change").val()),
-				startggEntrant: $("#p2-entrant").val()
+				score: parseInt($("#p2-score-change").val())
 			},
 			casters: [
 				{
@@ -81,6 +79,21 @@ function update() {
 					pronouns: $("#caster2-pronouns").val()
 				}
 			],
+			startgg: {
+				entrant1: {
+					id: $("#startgg-p1-entrant").text(),
+					name: $("#startgg-p1-name").text(),
+					score: ""
+				},
+				entrant2: {
+					id: $("#startgg-p2-entrant").text(),
+					name: $("#startgg-p2-name").text(),
+					score: ""
+				},
+				round: $("#startgg-set-round").text(),
+				setId: $("#startgg-set-id").text(),
+				startggSwapped: swapped
+			},
 			seatOrdering: [
 				$("#p1-left-seat").attr("index"),
 				$("#p1-right-seat").attr("index"),
@@ -88,8 +101,6 @@ function update() {
 				$("#p2-right-seat").attr("index"),
 			],
 			round: $("#round-change").val(),
-			startggSetId: $("#set-id").val(),
-			startggSwapped: swapped,
 			tournament: $("#tournament-change").val(),
 			isDoubles,
 			bestOf: bestOfValue,
@@ -120,8 +131,19 @@ function loadInitialChanges() {
 		data: {},
 		success: function (response) {
 			info = fixInfo(response);
-			swapped = info.startggSwapped
-
+			//startgg
+			swapped = info.startgg.swapped
+			if(info.startgg.setId) {
+				$(".no-set").hide()
+				$("#startgg-p1-entrant").text(info.startgg.entrant1.id || "")
+				$("#startgg-p1-name").text(info.startgg.entrant1.name || "")
+				$("#startgg-p2-entrant").text(info.startgg.entrant2.id || "")
+				$("#startgg-p2-name").text(info.startgg.entrant2.name || "")
+				$("#startgg-set-round").text(info.startgg.round || "")
+				$("#startgg-set-id").text(info.startgg.id || "")
+				$("#current-set-wrapperL>.startgg").show()
+			}
+			
 			//flags
 			$("#p1-flag").val(info.team1.players[0].country)
 			$("#p1d-flag").val(info.team1.players[1].country)
@@ -144,7 +166,7 @@ function loadChanges() {
 			let scoreChanged = false;
 
 			info = fixInfo(response);
-			swapped = info.startggSwapped
+			swapped = info.startgg.swapped
 			//load team1 data
 			$("#p1-name-actual").attr("value", info.team1.players[0].name)
 			loadCharActual("p1", info.team1.players[0].character, info.team1.players[0].colour)
@@ -186,14 +208,14 @@ function loadChanges() {
 
 			//Handle Grand Finals Reset with start.gg after 10 seconds
 			//Runs every second, need to add an end clause
-			
-			if(scoreChanged && (info.round === "Grand Final" || info.round === "Grand Finals")) {
-				let {l: p1L} = getName(info.team1.players[0].name)
-				let {l: p2L} = getName(info.team2.players[0].name)
-				let firstTo = Math.ceil(info.bestOf/2)
-				if((p1L && info.team1.score === firstTo) || (p2L && info.team2.score === firstTo)) {
+
+			if (scoreChanged && (info.round === "Grand Final" || info.round === "Grand Finals")) {
+				let { l: p1L } = getName(info.team1.players[0].name)
+				let { l: p2L } = getName(info.team2.players[0].name)
+				let firstTo = Math.ceil(info.bestOf / 2)
+				if ((p1L && info.team1.score === firstTo) || (p2L && info.team2.score === firstTo)) {
 					setTimeout(() => {
-						findSetForPlayers("Grand Final Reset")
+						findStartGGSet("Grand Final Reset")
 						setTimeout(() => {
 							fixLosers("Grand Final Reset")
 							document.getElementById("p1-score-actual").value = 0
@@ -217,11 +239,11 @@ function loadChanges() {
 }
 
 function fixLosers(fullRoundText) {
-	let {name: p1Name} = getName($("#p1-name").val())
-	let {name: p2Name} = getName($("#p2-name").val())
-	switch(fullRoundText) {
+	let { name: p1Name } = getName($("#p1-name").val())
+	let { name: p2Name } = getName($("#p2-name").val())
+	switch (fullRoundText) {
 		case "Grand Final":
-			if(swapped) {
+			if (swapped) {
 				$("#p1-name").val(`${p1Name} (L)`)
 				$("#p2-name").val(`${p2Name}`)
 			} else {
@@ -265,7 +287,6 @@ function fixInfo(info) {
 				}
 			],
 			"score": info?.team1?.score || 0,
-			"startggEntrant": info?.team1?.startggEntrant || "",
 		},
 		"team2": {
 			"players": [
@@ -291,7 +312,6 @@ function fixInfo(info) {
 				}
 			],
 			"score": info?.team2?.score || 0,
-			"startggEntrant": info?.team2?.startggEntrant || "",
 		},
 		"casters": [
 			{
@@ -303,10 +323,23 @@ function fixInfo(info) {
 				"pronouns": info?.casters?.[1].pronouns || "",
 			}
 		],
+		"startgg": {
+			"entrant1": {
+				"id": info?.startgg?.entrant1?.id || "",
+				"name": info?.startgg?.entrant1?.name || "",
+				"score": info?.startgg?.entrant1?.score || ""
+			},
+			"entrant2": {
+				"id": info?.startgg?.entrant2?.id || "",
+				"name": info?.startgg?.entrant2?.name || "",
+				"score": info?.startgg?.entrant2?.score || ""
+			},
+			"round": info?.startgg?.round || "",
+			"setId": info?.startgg?.setId || "",
+			"swapped": info?.startgg?.swapped || false,
+		},
 		"seatOrdering": info?.seatOrdering || ["1", "2", "3", "4"],
 		"round": info?.round || "",
-		"startggSetId": info?.startggSetId || "",
-		"startggSwapped": swapped || false,
 		"tournament": info?.tournament || "",
 		"isDoubles": info?.isDoubles || false,
 		"bestOf": info?.bestOf || 5,
@@ -321,7 +354,7 @@ function changeTeamColour(index, colour) {
 }
 
 function getDefaultColour(character) {
-	switch(character) {
+	switch (character) {
 		case "marth":
 		case "iceclimbers":
 			return "blue";

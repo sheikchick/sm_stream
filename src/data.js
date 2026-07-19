@@ -33,8 +33,12 @@ exports.writeData = async (file, data) => this.DATAFILES.includes(file) &&
 
 exports.readData = async (file) => this.DATAFILES.includes(file)
     ? readFile(this.DIRECTORY + file, FORMAT)
-        .then((data) => file === this.MELEE ? this.fixMeleeJSON(JSON.parse(data)) : JSON.parse(data))  //TODO; IMPLEMENT DEFAULT MELEE.JSON LOADING SEAMLESSLY IN CASE OF ERROR
-        .catch((e) => logging.log(`Failed to open ${file} - ${e}`))
+        .then((data) => json === JSON.parse(data))
+        .catch((e) => {
+            logging.log(`Failed to open ${file} - ${e}`)
+            return {};
+        })
+        .then((json) => file === this.MELEE ? this.fixMeleeJSON(json) : json)
     : {};
 
 exports.updateTournament = async (data, index, tournamentFilename) => {
@@ -78,8 +82,8 @@ exports.fixMeleeJSON = (info) => {
                     "slug": info?.team1?.players?.[1]?.slug || "",
                     "name": info?.team1?.players?.[1]?.name || "Player 4",
                     "character": info?.team1?.players?.[1]?.character || "falco",
-                    "prefix": info?.team1?.players?.[1]?.prefix || "",
                     "colour": info?.team1?.players?.[1]?.colour || "red",
+                    "prefix": info?.team1?.players?.[1]?.prefix || "",
                     "pronouns": info?.team1?.players?.[1]?.pronouns || "",
                     "country": info?.team1?.players?.[1]?.country || "EU",
                     "port": info?.team1?.players?.[1]?.port || 2
@@ -135,7 +139,7 @@ exports.fixMeleeJSON = (info) => {
             },
             "round": info?.startgg?.round || "",
             "setId": info?.startgg?.setId || "",
-            "swapped": info?.startgg?.swapped || false,
+            "startggSwapped": info?.startgg?.startggSwapped || false,
         },
         "seatOrdering": info?.seatOrdering || [ "1","2","3","4" ],
         "round": info?.round || "",

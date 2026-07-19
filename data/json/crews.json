@@ -1,1 +1,101 @@
-{"crew1":{"name":"","score":20,"activePlayer":{"slug":"","name":"","character":"fox","colour":"original","prefix":"","pronouns":"","country":"United Kingdom","port":1},"players":[{"name":"","slug":"846be064","alive":true},{"name":"","slug":"735adfc1","alive":true},{"name":"","slug":"bcf96a41","alive":true},{"name":"","slug":"dbff9f24","alive":true},{"name":"","slug":"9c63d861","alive":true}]},"crew2":{"name":"Wales","score":20,"activePlayer":{"name":"","character":"falco","colour":"original","prefix":"","pronouns":"","country":"United Kingdom","port":2},"players":[{"name":"","slug":"6d400b9a","alive":true},{"name":"","slug":"f8040f9e","alive":true},{"name":"","slug":"7f9a2c2b","alive":true},{"name":"","slug":"6381f928","alive":true},{"name":"","slug":"4d748723","alive":true}]},"casters":[{"name":"","pronouns":""},{"name":"","pronouns":""}],"seatOrdering":["1",null,"3",null],"round":"","tournament":""}
+{
+    "crew1": {
+        "name": "",
+        "score": 20,
+        "activePlayer": {
+            "slug": "",
+            "name": "",
+            "character": "",
+            "colour": "",
+            "prefix": "",
+            "pronouns": "",
+            "country": "",
+            "port": 1
+        },
+        "players": [
+            {
+                "name": "",
+                "slug": "",
+                "alive": true
+            },
+            {
+                "name": "",
+                "slug": "",
+                "alive": true
+            },
+            {
+                "name": "",
+                "slug": "",
+                "alive": true
+            },
+            {
+                "name": "",
+                "slug": "",
+                "alive": true
+            },
+            {
+                "name": "",
+                "slug": "",
+                "alive": true
+            }
+        ]
+    },
+    "crew2": {
+        "name": "",
+        "score": 20,
+        "activePlayer": {
+            "name": "",
+            "character": "",
+            "colour": "",
+            "prefix": "",
+            "pronouns": "",
+            "country": "",
+            "port": 2
+        },
+        "players": [
+            {
+                "name": "",
+                "slug": "",
+                "alive": true
+            },
+            {
+                "name": "",
+                "slug": "",
+                "alive": true
+            },
+            {
+                "name": "",
+                "slug": "",
+                "alive": true
+            },
+            {
+                "name": "",
+                "slug": "",
+                "alive": true
+            },
+            {
+                "name": "",
+                "slug": "",
+                "alive": true
+            }
+        ]
+    },
+    "casters": [
+        {
+            "name": "",
+            "pronouns": ""
+        },
+        {
+            "name": "",
+            "pronouns": ""
+        }
+    ],
+    "seatOrdering": [
+        "1",
+        null,
+        "3",
+        null
+    ],
+    "round": "",
+    "tournament": ""
+}

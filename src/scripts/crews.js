@@ -8,7 +8,7 @@ var setPage = 0;
 
 var isDoubles = false;
 
-var swapped = false;
+var startggSwapped = false;
 
 const phoneAspect = window.matchMedia("(max-aspect-ratio: 1/1), (max-width: 1000px)");
 
@@ -601,7 +601,7 @@ function changeScore(value, player) {
 
 function swapSides(info, characters) {
 	if (info) {
-		swapped = !swapped
+		startggSwapped = !startggSwapped
 
 		let player1name = $("#p1-name").val();
 		let player2name = $("#p2-name").val();
@@ -1028,7 +1028,7 @@ function showSets(up, showButtons) {
 }
 
 function loadSet(x) {
-	swapped = false;
+	startggSwapped = false;
 
 	let setID = parseInt($(`#set${x}`).attr("set-index"))
 	let set = sets[setID]
@@ -1102,7 +1102,7 @@ function loadSet(x) {
 }
 
 function saveSet(x) {
-	swapped = false;
+	startggSwapped = false;
 	$("#p1-entrant").val($(`#set${x}-name1`).attr("data-entrant"))
 	$("#p1-entrant-name").text($(`#set${x}-name1`).text())
 

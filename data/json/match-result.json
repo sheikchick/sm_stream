@@ -1,82 +1,106 @@
 {
     "team1": {
-        "entrantId": "16748899",
+        "entrantId": "",
         "names": [
-            "Rain",
-            "c:leo"
+            "Player 1",
+            ""
         ]
     },
     "team2": {
-        "entrantId": "16748919",
+        "entrantId": "",
         "names": [
-            "sky",
-            "Glaikit"
+            "Player2",
+            ""
         ]
     },
-    "round": "Winners Final",
-    "vod": "D:\\OBS\\2025-07-10 00-31-28.mkv",
-    "setId": "75267518",
-    "winner": 1,
+    "round": "Grand Final",
+    "vod": "",
+    "setId": "",
+    "winner": 2,
     "timecodes": [
         0,
-        149566
+        0
     ],
     "isDoubles": false,
     "games": [
         {
             "stage": "Battlefield",
-            "winner": 1,
+            "winner": 2,
             "team1": [
                 {
                     "character": "marth",
-                    "colour": "red",
-                    "stocks": 3
+                    "colour": "white",
+                    "stocks": 0
                 },
-                {
-                    "character": "sheik",
-                    "colour": "red",
-                    "stocks": 2
-                }
+                {}
             ],
             "team2": [
                 {
-                    "character": "link",
-                    "colour": "blue",
-                    "stocks": 0
-                },
-                {
                     "character": "marth",
-                    "colour": "blue",
-                    "stocks": 0
-                }
+                    "colour": "black",
+                    "stocks": 2
+                },
+                {}
             ]
         },
         {
-            "stage": "Final Destination",
+            "stage": "Yoshis Story",
+            "winner": 2,
+            "team1": [
+                {
+                    "character": "marth",
+                    "colour": "white",
+                    "stocks": 0
+                },
+                {}
+            ],
+            "team2": [
+                {
+                    "character": "marth",
+                    "colour": "black",
+                    "stocks": 1
+                },
+                {}
+            ]
+        },
+        {
+            "stage": "Pokemon Stadium",
             "winner": 1,
             "team1": [
                 {
                     "character": "marth",
-                    "colour": "red",
-                    "stocks": 0
-                },
-                {
-                    "character": "captainfalcon",
-                    "colour": "red",
+                    "colour": "white",
                     "stocks": 2
-                }
+                },
+                {}
             ],
             "team2": [
                 {
-                    "character": "link",
-                    "colour": "blue",
+                    "character": "marth",
+                    "colour": "black",
                     "stocks": 0
                 },
+                {}
+            ]
+        },
+        {
+            "stage": "Pokemon Stadium",
+            "winner": 1,
+            "team1": [
                 {
-                    "character": "fox",
-                    "colour": "blue",
+                    "character": "marth",
+                    "colour": "white",
+                    "stocks": 1
+                },
+                {}
+            ],
+            "team2": [
+                {
+                    "character": "marth",
+                    "colour": "black",
                     "stocks": 0
-                }
+                },
+                {}
             ]
         },
         {
@@ -85,82 +109,18 @@
             "team1": [
                 {
                     "character": "marth",
-                    "colour": "red",
+                    "colour": "white",
                     "stocks": 0
                 },
-                {
-                    "character": "falco",
-                    "colour": "red",
-                    "stocks": 0
-                }
+                {}
             ],
             "team2": [
-                {
-                    "character": "link",
-                    "colour": "blue",
-                    "stocks": 3
-                },
-                {
-                    "character": "fox",
-                    "colour": "blue",
-                    "stocks": 1
-                }
-            ]
-        },
-        {
-            "stage": "Final Destination",
-            "winner": 2,
-            "team1": [
                 {
                     "character": "marth",
-                    "colour": "red",
+                    "colour": "black",
                     "stocks": 1
                 },
-                {
-                    "character": "donkeykong",
-                    "colour": "red",
-                    "stocks": 1
-                }
-            ],
-            "team2": [
-                {
-                    "character": "link",
-                    "colour": "blue",
-                    "stocks": 0
-                },
-                {
-                    "character": "fox",
-                    "colour": "blue",
-                    "stocks": 0
-                }
-            ]
-        },
-        {
-            "stage": "Final Destination",
-            "winner": 1,
-            "team1": [
-                {
-                    "character": "marth",
-                    "colour": "red",
-                    "stocks": 1
-                },
-                {
-                    "character": "donkeykong",
-                    "colour": "red",
-                    "stocks": 1
-                }
-            ],
-            "team2": [
-                {
-                    "character": "link",
-                    "colour": "blue",
-                    "stocks": 0
-                },
-                {
-                    "character": "fox",
-                    "colour": "blue",
-                    "stocks": 0
-                }
+                {}
             ]
         }
     ]

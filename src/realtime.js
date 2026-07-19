@@ -4,7 +4,7 @@ const { Ports } = require('@slippi/slippi-js')
 
 const slpTools = require("./slptools.js");
 const logging = require("./logging.js");
-const { readData, writeData, MELEE, MATChRESULT } = require("./data.js");
+const { readData, writeData, MELEE, MATCHRESULT } = require("./data.js");
 
 const { SlpLiveStream, SlpRealTime, ComboFilter, generateDolphinQueuePayload } = require("@vinceau/slp-realtime");
 

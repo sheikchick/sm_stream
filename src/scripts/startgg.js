@@ -2,163 +2,10 @@
  * STARTGG
  */
 
-/**
- * Find a start.gg set for the currently active players
- * @param {*} fullRoundTextFilter Optional filter for fiding 'Grand Final Reset'
- * @returns 
- */
-function findStartGGSet(fullRoundTextFilter = "") {
-	eventId = $("#events :selected").val()
-	if (eventId === undefined) {
-		console.log("Empty events - please select an event on start.gg (e.g. Melee Singles)")
-		$("#startgg-find-set").css("background-color", "#f5da62");
-		$("#startgg-find-set").css("border-bottom", "3px solid #f5cf35");
-		$("#startgg-find-set").text("No event");
-		setTimeout(function () {
-			$("#startgg-find-set").css("background-color", "#FFF");
-			$("#startgg-find-set").css("border-bottom", "3px solid #AAA");
-			$("#startgg-find-set").text("Find set");
-		}, 2000);
-		return
-	}
-	fetch('https://api.start.gg/gql/alpha', {
-		method: 'POST',
-		headers: {
-			'Authorization': 'Bearer ' + apiKey,
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			query: `
-				query EventSets($eventId:ID!){
-					event(id:$eventId){
-						sets( 
-							page: 1,
-							perPage: 500,
-							filters: {
-								hideEmpty: true,
-								state: [1,2,4,5,6,7]
-							} 
-						) {
-							nodes{
-								id
-								fullRoundText
-								slots{
-									entrant{
-                                        id
-										participants{
-											prefix
-											gamerTag
-											contactInfo{
-												country
-											}
-											user {
-												discriminator
-												genderPronoun
-												location {
-													country
-												}
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			`,
-			variables: {
-				eventId: eventId
-			},
-		}),
-	})
-		.then((res) => res.json())
-		.then((result) => {
-			playerSlugs = [$("#p1-slug").val(), $("#p2-slug").val()]
-			if (isDoubles) {
-				playerSlugs.push($("#p1d-slug").val())
-				playerSlugs.push($("#p2d-slug").val())
-			}
-			let foundSet = result.data.event.sets.nodes.find((set) => {
-				if (fullRoundTextFilter) {
-					if (fullRoundTextFilter !== set.fullRoundText) {
-						return false;
-					}
-				}
-				return playerSlugs.every((slug) => {
-					return set.slots.some((slot) => {
-						return slot.entrant?.participants?.some((participant) => {
-							return slug === participant.user?.discriminator
-						})
-					})
-				})
-			})
-			//check every slug requested matches the player for a given set
-
-			if (foundSet) {
-				console.log("Set found")
-				console.log(foundSet)
-				//if #p2-slug is in slot[0], mark it as swapped for startgg (no need to check for doubles or other slots as should not be needed)
-				swapped = foundSet.slots[0].entrant.participants.some((participant) => {
-					return playerSlugs[1] === participant.user.discriminator
-				})
-				$("#startgg-p1-entrant").text(foundSet.slots[0].entrant.id)
-				$("#startgg-p2-entrant").text(foundSet.slots[1].entrant.id)
-				$("#startgg-set-id").text(foundSet.id)
-
-				let p1Name = foundSet.slots[0].entrant.participants.length > 1
-					? foundSet.slots[0].entrant.participants[0].gamerTag + " / " + foundSet.slots[0].entrant.participants[1].gamerTag
-					: foundSet.slots[0].entrant.participants[0].gamerTag
-
-				let p2Name = foundSet.slots[1].entrant.participants.length > 1
-					? foundSet.slots[1].entrant.participants[0].gamerTag + " / " + foundSet.slots[1].entrant.participants[1].gamerTag
-					: foundSet.slots[1].entrant.participants[0].gamerTag
-
-				$("#startgg-p1-name").text(p1Name)
-				$("#startgg-p2-name").text(p2Name)
-				$("#startgg-set-round").text(foundSet.fullRoundText)
-				$("#round-change").val(foundSet.fullRoundText)
-
-				$(".no-set").hide()
-				$("#current-set-wrapperL>.startgg").show()
-
-				$("#startgg-find-set").css("background-color", "#55F76B");
-				$("#startgg-find-set").css("border-bottom", "3px solid #349641");
-				$("#startgg-find-set").text("Set found");
-				setTimeout(function () {
-					$("#startgg-find-set").css("background-color", "#FFF");
-					$("#startgg-find-set").css("border-bottom", "3px solid #AAA");
-					$("#startgg-find-set").text("Find set");
-				}, 2000);
-				// Fix " (L)"
-				fixLosers(foundSet.fullRoundText)
-			} else {
-				console.log("No set found")
-				$("#startgg-find-set").css("background-color", "#F56262");
-				$("#startgg-find-set").css("border-bottom", "3px solid #F53535");
-				$("#startgg-find-set").text("Not found");
-				setTimeout(function () {
-					$("#startgg-find-set").css("background-color", "#FFF");
-					$("#startgg-find-set").css("border-bottom", "3px solid #AAA");
-					$("#startgg-find-set").text("Find set");
-				}, 2000);
-			}
-		})
-}
-
-function clearStartGGSet() {
-	$("#startgg-p1-entrant").text("")
-	$("#startgg-p1-name").text("")
-	$("#startgg-p2-entrant").text("")
-	$("#startgg-p2-name").text("")
-	$("#startgg-set-round").text("")
-	$("#startgg-set-id").text("")
-	$("#current-set-wrapperL>.startgg").hide()
-	$(".no-set").show()
-}
-
 /* GET EVENTS IN TOURNAMENT (Melee Singles, Melee Doubles, ...) */
-function getTournamentEvents() {
-	tournamentSlug = extractSlug($("#tournament-slug").val())
+const getTournamentEvents = (tournamentSlug = "") => new Promise((resolve, reject) => {
+	if (!tournamentSlug)
+		tournamentSlug = extractSlug($("#tournament-slug").val())
 	eventId = ""
 	fetch('https://api.start.gg/gql/alpha', {
 		method: 'POST',
@@ -179,6 +26,12 @@ function getTournamentEvents() {
 						events{
 							id
 							name
+						}
+						streams {
+							enabled
+							id
+							streamName
+							streamSource
 						}
 					}
 				}
@@ -214,14 +67,24 @@ function getTournamentEvents() {
 			for (let event of result["data"]["tournament"]["events"]) {
 				eventOption = new Option(event["name"], event["id"]);
 				$("#events").append(eventOption);
-				$("#events").show()
 			}
+			$("#events").show()
+			//set up live streams
+			$("#startgg-streams").empty()
+			$("#startgg-streams").append(new Option("Select stream...", 0));
+			for (let livestream of result["data"]["tournament"]["streams"]) {
+				livestreamOption = new Option(`${livestream["streamSource"].toLowerCase()}/${livestream["streamName"]}`, livestream["id"]);
+				$("#startgg-streams").append(livestreamOption);
+			}
+			$("#startgg-streams").show()
+			resolve()
 		});
-}
+})
 
 /* GET PHASES IN EVENT (Pools, Pro Bracket, ...) */
-function getEventPhases() {
-	eventId = $("#events :selected").val()
+const getEventPhases = (eventId = "") => new Promise((resolve, reject) => {
+	if (!eventId)
+		eventId = $("#events :selected").val()
 	fetch('https://api.start.gg/gql/alpha', {
 		method: 'POST',
 		headers: {
@@ -232,6 +95,9 @@ function getEventPhases() {
 			query: `
 				query EventPhases($id:ID!){
 					event(id:$id){
+						tournament {
+							slug
+						}
 						phases{
 						  	id
 						  	name
@@ -266,18 +132,23 @@ function getEventPhases() {
 				phaseOption = `<option value="${phase.id}" disabled>${phase.name}</option>`;
 				$("#phases").append(phaseOption);
 				for (let phaseGroup of phase.phaseGroups.nodes) {
-					phaseGroupOption = `<option value="${phaseGroup.id}">${phase.name} ${phaseGroup.displayIdentifier}</option>`;
+					let phaseName = phase.name
+					if (phase.phaseGroups.nodes.length > 1)
+						phaseName += ` ${phaseGroup.displayIdentifier}`
+					phaseGroupOption = `<option value="${phaseGroup.id}">&nbsp;&nbsp;${phaseName}</option>`;
 					$("#phases").append(phaseGroupOption);
 				}
-				$("#phases").attr("tournament-slug", tournamentSlug)
+				$("#phases").attr("tournament-slug", result["data"]["event"]["tournament"]["slug"])
 				$("#phases").show()
 			}
+			resolve()
 		});
-}
+})
 
 /* GET PHASEGROUPS IN PHASE (Pool A1, Pool A2, ...) */
-function getPhaseGroups() {
-	phaseId = $("#phases :selected").val()
+const getPhaseGroups = (phaseId = "") => new Promise((resolve, reject) => {
+	if (!phaseId)
+		phaseId = $("#phases :selected").val()
 	fetch('https://api.start.gg/gql/alpha', {
 		method: 'POST',
 		headers: {
@@ -329,8 +200,9 @@ function getPhaseGroups() {
 				$("#phase-groups").hide()
 				showGetSets()
 			}
+			resolve()
 		});
-}
+})
 
 /* GET AND LOAD SETS FROM THE STREAMQUEUE */
 function getStreamQueues() {
@@ -483,6 +355,7 @@ function getStreamQueue(tournamentSlug, streamName) {
 /* GET AND LOAD SETS FOR A GIVEN PHASEGROUP */
 function getSets(stateArray, hideEmpty, showButtons) {
 	phaseGroup = $("#phases :selected").val();
+	console.log(phaseGroup)
 	fetch('https://api.start.gg/gql/alpha', {
 		method: 'POST',
 		headers: {
@@ -760,10 +633,277 @@ function updateStartggSet(setId, winnerId, gameData) {
 		})
 }
 
-//database
-//misc
+/**
+ * Find a start.gg set for the currently active players
+ * @param {*} fullRoundTextFilter Optional filter for fiding 'Grand Final Reset'
+ * @returns 
+ */
+function findStartGGSet(fullRoundTextFilter = "") {
+	eventId = $("#events :selected").val()
+	if (eventId === undefined) {
+		console.log("Empty events - please select an event on start.gg (e.g. Melee Singles)")
+		$("#startgg-find-set").css("background-color", "#f5da62");
+		$("#startgg-find-set").css("border-bottom", "3px solid #f5cf35");
+		$("#startgg-find-set").text("No event");
+		setTimeout(function () {
+			$("#startgg-find-set").css("background-color", "#FFF");
+			$("#startgg-find-set").css("border-bottom", "3px solid #AAA");
+			$("#startgg-find-set").text("Find set");
+		}, 2000);
+		return
+	}
+	fetch('https://api.start.gg/gql/alpha', {
+		method: 'POST',
+		headers: {
+			'Authorization': 'Bearer ' + apiKey,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			query: `
+				query EventSets($eventId:ID!){
+					event(id:$eventId){
+						sets( 
+							page: 1,
+							perPage: 500,
+							filters: {
+								hideEmpty: true,
+								state: [1,2,4,5,6,7]
+							} 
+						) {
+							nodes{
+								id
+								fullRoundText
+								stream {
+									enabled
+									id
+									shortName
+									streamName
+									streamSource
+									streamType
+								}
+								slots{
+									entrant{
+                                        id
+										participants{
+											prefix
+											gamerTag
+											contactInfo{
+												country
+											}
+											user {
+												discriminator
+												genderPronoun
+												location {
+													country
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			`,
+			variables: {
+				eventId: eventId
+			},
+		}),
+	})
+		.then((res) => res.json())
+		.then((result) => {
+			console.log(result)
+			playerSlugs = [$("#p1-slug").val(), $("#p2-slug").val()]
+			if (isDoubles) {
+				playerSlugs.push($("#p1d-slug").val())
+				playerSlugs.push($("#p2d-slug").val())
+			}
+			let foundSet = result?.data?.event?.sets?.nodes?.find((set) => {
+				if (fullRoundTextFilter) {
+					if (fullRoundTextFilter !== set.fullRoundText) {
+						return false;
+					}
+				}
+				return playerSlugs.every((slug) => {
+					return set.slots.some((slot) => {
+						return slot.entrant?.participants?.some((participant) => {
+							return slug === participant.user?.discriminator
+						})
+					})
+				})
+			})
+			//check every slug requested matches the player for a given set
 
-//misc
+			if (foundSet) {
+				console.log("Set found")
+				console.log(foundSet)
+				//if #p2-slug is in slot[0], mark it as swapped for startgg (no need to check for doubles or other slots as should not be needed)
+				startggSwapped = foundSet.slots[0].entrant.participants.some((participant) => {
+					return playerSlugs[1] === participant.user.discriminator
+				})
+				$("#startgg-p1-entrant").text(foundSet.slots[0].entrant.id)
+				$("#startgg-p2-entrant").text(foundSet.slots[1].entrant.id)
+				$("#startgg-set-id").text(foundSet.id)
+
+				let p1Name = foundSet.slots[0].entrant.participants.length > 1
+					? foundSet.slots[0].entrant.participants[0].gamerTag + " / " + foundSet.slots[0].entrant.participants[1].gamerTag
+					: foundSet.slots[0].entrant.participants[0].gamerTag
+
+				let p2Name = foundSet.slots[1].entrant.participants.length > 1
+					? foundSet.slots[1].entrant.participants[0].gamerTag + " / " + foundSet.slots[1].entrant.participants[1].gamerTag
+					: foundSet.slots[1].entrant.participants[0].gamerTag
+
+				$("#startgg-p1-name").text(p1Name)
+				$("#startgg-p2-name").text(p2Name)
+				$("#startgg-set-round").text(foundSet.fullRoundText)
+				$("#round-change").val(foundSet.fullRoundText)
+
+				$(".no-set").hide()
+				$("#current-set-wrapper-info>.wrapper").show()
+
+				$("#startgg-find-set").css("background-color", "#55F76B");
+				$("#startgg-find-set").css("border-bottom", "3px solid #349641");
+				$("#startgg-find-set").text("Set found");
+				setTimeout(function () {
+					$("#startgg-find-set").css("background-color", "#FFF");
+					$("#startgg-find-set").css("border-bottom", "3px solid #AAA");
+					$("#startgg-find-set").text("Find set");
+				}, 2000);
+				// Fix " (L)"
+				fixLosers(foundSet.fullRoundText)
+			} else {
+				console.log("No set found")
+				$("#startgg-find-set").css("background-color", "#F56262");
+				$("#startgg-find-set").css("border-bottom", "3px solid #F53535");
+				$("#startgg-find-set").text("Not found");
+				setTimeout(function () {
+					$("#startgg-find-set").css("background-color", "#FFF");
+					$("#startgg-find-set").css("border-bottom", "3px solid #AAA");
+					$("#startgg-find-set").text("Find set");
+				}, 2000);
+			}
+		})
+}
+
+function clearStartGGSet() {
+	$("#startgg-p1-entrant").text("")
+	$("#startgg-p1-name").text("")
+	$("#startgg-p2-entrant").text("")
+	$("#startgg-p2-name").text("")
+	$("#startgg-set-round").text("")
+	$("#startgg-set-id").text("")
+	$("#current-set-wrapper-info>.wrapper").hide()
+	$(".no-set").show()
+}
+
+function getSetProgress(setID) {
+	fetch('https://api.start.gg/gql/alpha', {
+		method: 'POST',
+		headers: {
+			'Authorization': 'Bearer ' + apiKey,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			query: `
+				query GetSet($setID:ID!) {
+					set(id:$setID) {
+						state
+						stream {
+							enabled
+							id
+							streamName
+							streamSource
+						}
+					}
+				}
+			`,
+			variables: {
+				setID: setID
+			},
+		}),
+	})
+		.then((res) => res.json())
+		.then((result) => {
+			switch (result.data.set.state) {
+				case 1:
+					//NOT STARTED - 1
+					$("#startgg-status").text("Not started")
+					$("#current-set-wrapper-status").css({ "background-color": "#68717a" })
+					break
+				case 2:
+					//IN PROGRESS - 2
+					$("#startgg-status").text("In progress")
+					$("#current-set-wrapper-status").css({ "background-color": "#ff9900" })
+					break
+				case 3:
+					//COMPLETED - 3
+					$("#startgg-status").text("Completed")
+					$("#current-set-wrapper-status").css({ "background-color": "#0d8225" })
+					break
+				case 6:
+					//CALLED - 6
+					$("#startgg-status").text("Called")
+					$("#current-set-wrapper-status").css({ "background-color": "#b1a418" })
+					break;
+				default:
+					$("#startgg-status").text(`Unk: ${result.data.set.state}`)
+					$("#current-set-wrapper-status").css({ "background-color": "#68717a" })
+			}
+		});
+
+}
+
+async function loadInitialStartGG(info) {
+	let setId = info.startgg.setId
+	fetch('https://api.start.gg/gql/alpha', {
+		method: 'POST',
+		headers: {
+			'Authorization': 'Bearer ' + apiKey,
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			query: `
+				query GetSet($setId: ID!) {
+					set(id:$setId) {
+						state
+						stream {
+							enabled
+							id
+							streamName
+							streamSource
+						}
+						event {
+							id
+							tournament {
+								slug
+							}
+						}
+						phaseGroup {
+							id
+							phase {
+								id
+							}
+						}
+					}
+				}
+			`,
+			variables: {
+				setId: setId
+			},
+		}),
+	})
+		.then((res) => res.json())
+		.then(async (result) => {
+			$("#tournament-slug").val(result.data.set.event.tournament.slug.replace("tournament/", ""))
+			await getTournamentEvents(result.data.set.event.tournament.slug.replace("tournament/", ""))
+			$("#events").val(result.data.set.event.id)
+			await getEventPhases(result.data.set.event.id)
+			$("#phases").val(result.data.set.phaseGroup.id).change()
+		});
+}
+
+/* MISC */
+
 function getCountryInformation() {
 	let tournamentSlug = $("#country-tournament").val()
 	fetch('https://api.start.gg/gql/alpha', {

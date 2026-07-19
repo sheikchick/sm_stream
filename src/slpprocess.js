@@ -95,7 +95,7 @@ checkSetEnd = async (info) => {
                                 global.timecode = ""
                                 //submit data to start.gg
                                 if (config["start.gg"]["Auto-submit sets"] === "true") {
-                                    startgg.submitStartggSet(data, info.startgg.swapped)
+                                    startgg.submitStartggSet(data, info.startgg.startggSwapped)
                                 }
                                 //write to match-result for data purposes
                                 writeData(MATCHRESULT, data)
@@ -127,14 +127,14 @@ checkSetEnd = async (info) => {
                                 const winner = info.team1.score >= firstTo ? 1 : info.team2.score >= firstTo ? 2 : 0 //0 should never occur
                                 const data = {
                                     team1: {
-                                        entrantId: info.team1.startggEntrant,
+                                        entrantId: info.startgg.startggSwapped ? info.startgg.entrant2.id : info.startgg.entrant1.id,
                                         names: [
                                             info.team1.players[0].name,
                                             info.team1.players[1].name
                                         ]
                                     },
                                     team2: {
-                                        entrantId: info.team2.startggEntrant,
+                                        entrantId: info.startgg.startggSwapped ? info.startgg.entrant1.id : info.startgg.entrant2.id,
                                         names: [
                                             info.team2.players[0].name,
                                             info.team2.players[1].name
@@ -142,7 +142,7 @@ checkSetEnd = async (info) => {
                                     },
                                     round: info.round,
                                     vod: directory ? path.join(directory, vod) : vod,
-                                    setId: info.startggSetId,
+                                    setId: info.startgg.setId,
                                     winner: winner,
                                     timecodes: [timecode, recordLive.timecodeOffset(finalTimecode, 15000)],
                                     isDoubles: info.isDoubles,

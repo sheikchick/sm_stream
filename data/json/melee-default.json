@@ -2,42 +2,52 @@
     "team1": {
         "players": [
             {
+                "slug": "",
                 "name": "Player 1",
                 "character": "fox",
-                "colour": "red",
+                "colour": "default",
+                "prefix": "",
                 "pronouns": "",
+                "country": "Scotland",
                 "port": 1
             },
             {
-                "name": "P1 Teammate",
-                "character": "falco",
-                "colour": "red",
+                "slug": "",
+                "name": "Player 4",
+                "character": "fox",
+                "colour": "default",
+                "prefix": "",
                 "pronouns": "",
+                "country": "Scotland",
                 "port": 4
             }
         ],
-        "score": 0,
-        "startggEntrant": ""
+        "score": 0
     },
     "team2": {
         "players": [
             {
+                "slug": "",
                 "name": "Player 2",
-                "character": "peach",
-                "colour": "blue",
+                "character": "sheik",
+                "colour": "original",
+                "prefix": "",
                 "pronouns": "",
+                "country": "Scotland",
                 "port": 2
             },
             {
-                "name": "P2 Teammate",
-                "character": "sheik",
-                "colour": "blue",
+                "slug": "",
+                "name": "Player 3",
+                "character": "peach",
+                "colour": "red",
+                "prefix": "",
                 "pronouns": "",
+                "country": "Scotland",
                 "port": 3
             }
         ],
-        "score": 0,
-        "startggEntrant": ""
+        "score": 0
     },
     "casters": [
         {
@@ -49,6 +59,21 @@
             "pronouns": ""
         }
     ],
+    "startgg": {
+        "entrant1": {
+            "id": "",
+            "name": "",
+            "score": ""
+        },
+        "entrant2": {
+            "id": "",
+            "name": "",
+            "score": ""
+        },
+        "round": "",
+        "setId": "",
+        "startggSwapped": false
+    },
     "seatOrdering": [
         "1",
         "2",
@@ -56,8 +81,8 @@
         "4"
     ],
     "round": "Grand Final",
-    "startggSetId": "",
-    "startggSwapped": false,
-    "tournament": "test",
-    "isDoubles": false
+    "tournament": "",
+    "isDoubles": false,
+    "bestOf": 5,
+    "isHandwarmers": false
 }

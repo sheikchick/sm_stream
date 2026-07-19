@@ -1,8 +1,9 @@
 const { collect } = require("underscore");
 const logging = require("./logging.js");
 
-exports.submitStartggSet = async (data, swapped) => {
-    const setData = constructGQLSet(data, swapped)
+exports.submitStartggSet = async (data, startggSwapped) => {
+    const setData = constructGQLSet(data, startggSwapped)
+    console.log(data)
     let winnerId = data.winner === 1 ? data.team1.entrantId : data.team2.entrantId;
     if(winnerId === "") {
         logging.log(`No start.gg info provided, not submitting - ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
@@ -69,32 +70,40 @@ const GQLSubmit = (type, setId, winnerId, gameData) => new Promise((resolve, rej
 
 });
 
-function constructGQLSet(data, swapped) {
+function constructGQLSet(data, startggSwapped) {
     let index = 1;
     let set = []
     for (let game of data.games) {
-        set.push(constructGQLGame(index, game, data, swapped))
+        set.push(constructGQLGame(index, game, data, startggSwapped))
         index++;
     }
     return set
 }
 
-function constructGQLGame(index, game, data, swapped) {
+function constructGQLGame(index, game, data, startggSwapped) {
     const gameData = {
         "winnerId": game.winner == 1 ? data.team1.entrantId : data.team2.entrantId,
         "gameNum": index,
-        "entrant1Score": swapped ? game.team2[0].stocks : game.team1[0].stocks,
-        "entrant2Score": swapped ? game.team1[0].stocks : game.team2[0].stocks,
+        "entrant1Score": startggSwapped ? game.team2[0].stocks : game.team1[0].stocks,
+        "entrant2Score": startggSwapped ? game.team1[0].stocks : game.team2[0].stocks,
         "stageId": resolveStartggStage(game.stage),
         "selections": [
             {
                 "entrantId": data.team1.entrantId,
-                "characterId": resolveStartggCharacter(data?.isDoubles === true ? game.team1[1 - (index % 2)].character : game.team1[0].character)
+                "characterId": resolveStartggCharacter(game.team1[0].character)
             },
+            /*data?.isDoubles ? {
+                "entrantId": data.team1.entrantId,
+                "characterId": resolveStartggCharacter(game.team1[1].character)
+            } : [],*/
             {
                 "entrantId": data.team2.entrantId,
-                "characterId": resolveStartggCharacter(data?.isDoubles === true ? game.team2[1 - (index % 2)].character : game.team2[0].character)
-            }
+                "characterId": resolveStartggCharacter(game.team2[0].character)
+            }/*,
+            data?.isDoubles ? {
+                "entrantId": data.team2.entrantId,
+                "characterId": resolveStartggCharacter(game.team2[1].character)
+            } : []    */   
         ]
     }
     return gameData

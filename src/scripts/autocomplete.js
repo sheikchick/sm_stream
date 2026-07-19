@@ -136,7 +136,6 @@ function showResults(id, val) {
 	res.innerHTML = '';
 	let list = '';
 	let terms = autocompleteMatch(val);
-    console.log(val)
 	for (i = 0; i < terms.length; i++) {
 		list += `<li class="autocomplete-item" index="${indicator}" slug="${terms[i].slug}">${terms[i].name}</li>`;
 	}

@@ -25,92 +25,108 @@
 		<button id="page-right" class="page-button" onclick="showSets(true)"><i
 				class="fa-solid fa-arrow-right"></i></button>
 	</div>
-	<div id="set1" class="set">
-		<div id="set1-wrapperL" class="set wrapper left">
-			<label id="set1-name1" class="startgg name left"></label>
-			<label id="set1-vs" class="startgg name vs">vs</label>
-			<label id="set1-name2" class="startgg name right"></label>
-		</div>
-		<div id="set1-wrapperR" class="set wrapper right">
-			<label id="set1-round" class="startgg round"></label>
-			<div class="column">
-				<button id="set1-button" class="startgg button load" onclick="loadSet(1)">Load</button>
+	<div id="sets">
+		<div id="set1" class="set">
+			<div class="set wrapper names">
+				<label id="set1-name1" class="startgg name left"></label>
+				<label id="set1-vs" class="startgg name vs">vs</label>
+				<label id="set1-name2" class="startgg name right"></label>
 			</div>
-		</div>
+			<div class="set wrapper right">
+				<label id="set1-round" class="startgg round"></label>
+				<div class="column">
+					<button id="set1-button" class="startgg button load" onclick="loadSet(1)">Load</button>
+				</div>
+			</div>
 
-	</div>
-	<div id="set2" class="set">
-		<div id="set2-wrapperL" class="set wrapper left">
-			<label id="set2-name1" class="startgg name left"></label>
-			<label id="set2-vs" class="startgg name vs">vs</label>
-			<label id="set2-name2" class="startgg name right"></label>
 		</div>
-		<div id="set2-wrapperR" class="set wrapper right">
-			<label id="set2-round" class="startgg round"></label>
-			<div class="column">
-				<button id="set2-button" class="startgg button load" onclick="loadSet(2)">Load</button>
+		<div id="set2" class="set">
+			<div class="set wrapper names">
+				<label id="set2-name1" class="startgg name left"></label>
+				<label id="set2-vs" class="startgg name vs">vs</label>
+				<label id="set2-name2" class="startgg name right"></label>
+			</div>
+			<div class="set wrapper right">
+				<label id="set2-round" class="startgg round"></label>
+				<div class="column">
+					<button id="set2-button" class="startgg button load" onclick="loadSet(2)">Load</button>
+				</div>
+			</div>
+		</div>
+		<div id="set3" class="set">
+			<div class="set wrapper names">
+				<label id="set3-name1" class="startgg name left"></label>
+				<label id="set3-vs" class="startgg name vs">vs</label>
+				<label id="set3-name2" class="startgg name right"></label>
+			</div>
+			<div class="set wrapper right">
+				<label id="set3-round" class="startgg round"></label>
+				<div class="column">
+					<button id="set3-button" class="startgg button load" onclick="loadSet(3)">Load</button>
+				</div>
+			</div>
+		</div>
+		<div id="set4" class="set">
+			<div class="set wrapper names">
+				<label id="set4-name1" class="startgg name left"></label>
+				<label id="set4-vs" class="startgg name vs">vs</label>
+				<label id="set4-name2" class="startgg name right"></label>
+			</div>
+			<div class="set wrapper right">
+				<label id="set4-round" class="startgg round"></label>
+				<div class="column">
+					<button id="set4-button" class="startgg button load" onclick="loadSet(4)">Load</button>
+				</div>
+			</div>
+		</div>
+		<div id="set5" class="set">
+			<div class="set wrapper names">
+				<label id="set5-name1" class="startgg name left"></label>
+				<label id="set5-vs" class="startgg name vs">vs</label>
+				<label id="set5-name2" class="startgg name right"></label>
+			</div>
+			<div class="set wrapper right">
+				<label id="set5-round" class="startgg round"></label>
+				<div class="column">
+					<button id="set5-button" class="startgg button load" onclick="loadSet(5)">Load</button>
+				</div>
 			</div>
 		</div>
 	</div>
-	<div id="set3" class="set">
-		<div id="set3-wrapperL" class="set wrapper left">
-			<label id="set3-name1" class="startgg name left"></label>
-			<label id="set3-vs" class="startgg name vs">vs</label>
-			<label id="set3-name2" class="startgg name right"></label>
-		</div>
-		<div id="set3-wrapperR" class="set wrapper right">
-			<label id="set3-round" class="startgg round"></label>
-			<div class="column">
-				<button id="set3-button" class="startgg button load" onclick="loadSet(3)">Load</button>
+	<div id="startgg-info-wrapper">
+		<div class="set-wrapper">
+			<div id="current-set-wrapper-status" class="current-set wrapper status" style="display: none;">
+				<label id="startgg-status" class="startgg name status">Not started</label>
+			</div>
+			<label>Current start.gg set</label>
+			<div id="current-set">
+				<div class="startgg-set-data" style="display: none;">
+					<label id="startgg-set-id"></label>
+					<label id="startgg-p1-entrant"></label>
+					<label id="startgg-p2-entrant"></label>
+				</div>
+				<div id="current-set-wrapper-info" class="current-set wrapper info">
+					<label class="no-set">No start.gg set selected</label>
+					<div class="current-set wrapper names" style="display: none;">
+						<label id="startgg-p1-name" class="startgg name left"></label>
+						<label class="startgg name vs">vs</label>
+						<label id="startgg-p2-name" class="startgg name right"></label>
+					</div>
+				</div>
+				<div class="current-set wrapper right">
+					<label id="startgg-set-round" class="startgg round"></label>
+					<div id="current-set-buttons" class="column">
+						<button id="startgg-clear-set" class="startgg" onclick="clearStartGGSet()"
+							title="Clear start.gg set">Clear set</button>
+						<button id="startgg-find-set" class="startgg" onclick="findStartGGSet()"
+							title="Find start.gg set for current players">Find set</button>
+					</div>
+				</div>
 			</div>
 		</div>
-	</div>
-	<div id="set4" class="set">
-		<div id="set4-wrapperL" class="set wrapper left">
-			<label id="set4-name1" class="startgg name left"></label>
-			<label id="set4-vs" class="startgg name vs">vs</label>
-			<label id="set4-name2" class="startgg name right"></label>
-		</div>
-		<div id="set4-wrapperR" class="set wrapper right">
-			<label id="set4-round" class="startgg round"></label>
-			<div class="column">
-				<button id="set4-button" class="startgg button load" onclick="loadSet(4)">Load</button>
-			</div>
-		</div>
-	</div>
-	<div id="set5" class="set">
-		<div id="set5-wrapperL" class="set wrapper left">
-			<label id="set5-name1" class="startgg name left"></label>
-			<label id="set5-vs" class="startgg name vs">vs</label>
-			<label id="set5-name2" class="startgg name right"></label>
-		</div>
-		<div id="set5-wrapperR" class="set wrapper right">
-			<label id="set5-round" class="startgg round"></label>
-			<div class="column">
-				<button id="set5-button" class="startgg button load" onclick="loadSet(5)">Load</button>
-			</div>
-		</div>
-	</div>
-	<div id="current-set" class="current-set">
-		<div class="startgg-set-data" style="display: none;">
-			<label id="startgg-set-id"></label>
-			<label id="startgg-p1-entrant"></label>
-			<label id="startgg-p2-entrant"></label>
-		</div>
-		<div id="current-set-wrapperL" class="current-set wrapper left">
-			<label class="no-set">No start.gg set selected</label>
-			<label id="startgg-p1-name" class="startgg name left" style="display: none;"></label>
-			<label class="startgg name vs" style="display: none;">vs</label>
-			<label id="startgg-p2-name" class="startgg name right" style="display: none;"></label>
-		</div>
-		<div id="current-set-wrapperR" class="current-set wrapper right">
-			<label id="startgg-set-round" class="startgg round"></label>
-			<div class="column">
-				<button id="startgg-clear-set" class="startgg" onclick="clearStartGGSet()"
-					title="Clear start.gg set">Clear set</button>
-				<button id="startgg-find-set" class="startgg" onclick="findStartGGSet()"
-					title="Find start.gg set for current players">Find set</button>
-			</div>
+		<div id="startgg-config" style="display: none;">
+			<img type="icon" id="livestream-icon" class="icon" src="static/img/livestream.svg">
+			<select id="startgg-streams" style="display: none;"></select>
 		</div>
 	</div>
 </div>

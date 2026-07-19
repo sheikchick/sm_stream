@@ -94,7 +94,7 @@
 		</div>
 	</div>
 
-	<div id="middle-row" class="row">
+	<div id="middle-row" class="main row">
 		<div id="swap-group">
 			<button type="button" id="swap-all" class="swap-sides" onclick="swapSides(true, true)">
 				All <i class="fa-solid fa-arrows-up-down"></i>
@@ -170,7 +170,7 @@
 			<button id="p2-blue" class="team-colour blue-colour" onclick="changeTeamColour(2, 'blue')">B</button>
 		</div>
 	</div>
-	<div id="seat-wrapper" class="row">
+	<div id="seat-wrapper" class="main row">
 		<button id="seat-reset" onclick="resetSeats()"><i class="fa-solid fa-rotate-left"></i></button>
 		<div class="seat p1 left column" id="p1-left-seat" index="{{seatOrdering.[0]}}">
 			<span class="name" tabindex="-1">{{team1.players.[0].name}}</span>
@@ -224,7 +224,7 @@
 		</div>
 	</div>
 
-	<div id="data-wrapper" class="row">
+	<div id="data-wrapper" class="main row">
 		<input type="text" id="tournament-change" value="{{tournament}}" placeholder="Tournament">
 		<div class="column">
 			<input type="text" id="round-change" value="{{round}}" placeholder="Round">
@@ -239,10 +239,8 @@
 		</select>
 		<button type="button" class="toggle-doubles" onclick="toggleDoubles()" value="{{isDoubles}}"
 			title="Toggle between Singles/Doubles"></button>
-		<button type="button" class="update" onclick="update()">Update <i class="fa fa-sync"></i></button>
 	</div>
-
-	<div id="caster-wrapper" class="row">
+	<div id="caster-wrapper" class="main row">
 		<img class="icon" id="caster-icon" src="static/img/microphone.svg" alt="Mic" />
 		<div class="caster row">
 			<input type="text" id="caster1-name" value="" class="caster caster-name" placeholder="Caster 1 name">
@@ -253,7 +251,7 @@
 			<input type="text" id="caster2-pronouns" value="" class="caster pronouns" placeholder="Pronouns">
 		</div>
 	</div>
-	<div id="obs-wrapper" class="row">
+	<div id="obs-wrapper" class="main row">
 		<img class="icon" id="obs-icon" src="static/img/obs.svg" alt="OBS" />
 		<div class="row" id="obs-load">
 			<button type="button" id="ffmpeg-clip" onclick="clip()"><img class="clip"
@@ -266,4 +264,5 @@
 			</div>
 		</div>
 	</div>
+	<button type="button" class="update" onclick="update()">Update <i class="fa fa-sync"></i></button>
 </div>

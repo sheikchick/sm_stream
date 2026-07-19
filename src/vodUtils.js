@@ -31,6 +31,7 @@ async function main() {
                 break;
             case "timestamps":
                 console.log("Creating YouTube timestamps:")
+                sets = JSON.parse(fs.readFileSync(path.join(process.cwd(), "../data/json/tournaments", process.argv[3], "tournament-sets.json"), 'utf8'));
                 createTimestamps(process.argv[3])
                 break;
             default:
@@ -68,15 +69,12 @@ function createVods(vodDir, tournamentName) {
     console.log(`Saved all to ${dir}\\${vodDirSplit[vodDirSplit.length - 1].replaceAll(".json", ".bat")}`)
 }
 
-function createTimestamps(vodDir) {
-    file = fs.readFileSync(vodDir)
-    jsonInput = JSON.parse(file);
+function createTimestamps() {
+    sets = JSON.parse(fs.readFileSync(path.join(process.cwd(), "../data/json/tournaments", process.argv[3], "tournament-sets.json"), 'utf8'));
 
-    vodDirSplit = vodDir.split("\\")
-    tournament = vodDirSplit[vodDirSplit.length - 1].replaceAll("_", " ").replaceAll(".json", "")
-    dir = vodDirSplit.slice(0, -1).join("\\");
-    fs.appendFileSync(`${dir}\\${vodDirSplit[vodDirSplit.length - 1].replaceAll(".json", "")}.bat`, `mkdir "${tournament.replace(/[^a-zA-Z0-9 ]/g, "")}"\n`);
-    for (let set of jsonInput) {
+    tournament = process.argv[3].replaceAll("_", " ")
+    dir = path.join(process.cwd(), "../data/json/tournaments", process.argv[3])
+    for (let set of sets) {
         team1 = set.team1.names[0].replace(/[^a-zA-Z0-9 ]/g, "");
         team2 = set.team2.names[0].replace(/[^a-zA-Z0-9 ]/g, "");
         if (set.team1.names.length > 2 && set.team2.names.length > 2) {

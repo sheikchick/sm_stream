@@ -5,8 +5,6 @@
 	--startgg-selected-bg-color: #633;
 }
 
-.stroke {}
-
 /* GENERAL */
 
 input.left,
@@ -16,9 +14,6 @@ input.right,
 button.right,
 select.right {
 	border-bottom: 2px solid rgb(153, 153, 153);
-}
-
-.score-changer:focus {
 }
 
 .info {
@@ -71,6 +66,7 @@ select.right {
 }
 
 .score.change {
+	appearance: textfield;
 	-moz-appearance: textfield;
 }
 
@@ -273,9 +269,10 @@ input.startgg.display {
 }
 
 .current-set>.column>button {
-	font-size: 12px;
-	padding: 1px 5px;
-	width: 70px;
+	padding: 1px 2px;
+	margin: 3px;
+	width: 60px;
+	height: 20px;
 }
 
 #swap-group {
@@ -287,7 +284,8 @@ input.startgg.display {
 	gap: 1em;
 }
 
-#swap-all, #swap-chars {
+#swap-all,
+#swap-chars {
 	opacity: 0;
 }
 
@@ -438,6 +436,11 @@ select.flag>optgroup {
 	flex-direction: column;
 }
 
+.main.row {
+	border-radius: 5px;
+	padding: 5px;
+}
+
 .name.change {
 	height: 32px;
 	font-size: 24px;
@@ -461,7 +464,7 @@ select.flag>optgroup {
 }
 
 .csp.change:hover {
-	background-color: rgba(0, 0, 0, 0.2)!important;
+	background-color: rgba(0, 0, 0, 0.2) !important;
 }
 
 .score {
@@ -490,7 +493,7 @@ select.flag>optgroup {
 }
 
 #middle-row {
-	justify-content: flex-start;
+	justify-content: center;
 	align-items: center;
 	gap: 1em;
 }
@@ -572,18 +575,19 @@ select.flag>optgroup {
 	width: 90px;
 }
 
-option.special {
+option:disabled {
 	font-style: italic;
+	text-align: center;
 }
 
 .update {
 	font-size: 16px;
 	padding: 12px 0px;
-	margin: 5px 5px 5px 5px;
 	color: #323232;
 	background-color: #CBFFC7;
 	border: none;
 	border-bottom: 3px solid #64B55E;
+	width: 100%
 }
 
 .update:hover {
@@ -596,7 +600,6 @@ option.special {
 #caster-wrapper {
 	align-items: center;
 	background-color: var(--element-bg-color);
-	border-radius: 5px;
 	gap: 0.5em;
 }
 
@@ -738,6 +741,7 @@ span.stage {
 	width: 220px;
 	align-items: center;
 }
+
 #startgg-input-wrapper>.row {
 	gap: 0.5em
 }
@@ -840,37 +844,50 @@ span.stage {
 	display: none;
 }
 
+#sets {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
 .set,
-.current-set {
+#current-set {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	min-height: 50px;
-	border-radius: 5px;
-	padding: 5px;
+	min-height: 60px;
 }
 
 .set {
 	background-color: var(--startgg-set-bg-color);
+	padding: 5px;
+	border-radius: 5px;
 }
 
-.current-set {
-	background-color: var(--startgg-selected-bg-color);
-}
-
-.set.wrapper.left,
-.current-set.wrapper.left {
-	width: 188px;
+.set.wrapper.names {
 	display: flex;
 	flex-direction: column;
 	padding: 0px;
+	width: 188px;
+}
+
+.current-set.wrapper.info {
+	display: flex;
+	flex-direction: row;
+}
+
+.current-set.wrapper.names {
+	display: flex;
+	flex-direction: column;
+	width: 168px;
 }
 
 .set.wrapper.right,
 .current-set.wrapper.right {
 	display: flex;
 	padding: 0px;
+	vertical-align: middle;
 }
 
 #set1,
@@ -898,40 +915,85 @@ span.stage {
 }
 
 .startgg.round {
+	display: flex;
+	align-items: center;
 	width: 60px;
 	text-align: center;
 	font-size: 12px;
 }
 
-.startgg.button {
+button.startgg {
 	height: 30px;
 	width: 50px;
 	padding: 2px;
 	font-size: 10px;
+	line-height: 10px;
 }
 
 /* Current start.gg set*/
 
-#current-set {
+#startgg-info-wrapper {
+	display: flex;
+	flex-direction: column;
 	position: absolute;
 	bottom: 4px;
-	width: 320px;
+	gap: 5px;
+}
+
+.set-wrapper {
+	position: relative;
+	width: 318px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 5px;
+	border-radius: 5px;
+	background-color: var(--startgg-selected-bg-color);
+}
+
+#current-set-wrapper-status {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	max-width: 75px;
+	border-radius: 5px 0 5px 0;
+	padding: 1px 4px;
+	color: white;
+	background-color: green;
+}
+
+#startgg-config {
+	display: flex;
+	flex-direction: row;
+	padding: 5px;
+	height: 30px;
+	gap: 5px;
+	border-radius: 5px;
+	background-color: var(--startgg-selected-bg-color);
+}
+
+#startgg-config>select {
+	padding: 3px 8px 3px 8px
+}
+
+#livestream-icon {
+	margin: 0;
 }
 
 .red-colour {
 	color: rgb(136, 34, 34);
 	background-color: rgb(245, 98, 98);
-	border-bottom: 2px solid rgb(68, 34, 34)!important;
+	border-bottom: 2px solid rgb(68, 34, 34) !important;
 }
 
 .blue-colour {
 	color: rgb(34, 34, 136);
 	background-color: rgb(98, 98, 245);
-	border-bottom: 2px solid rgb(34, 34, 68)!important;
+	border-bottom: 2px solid rgb(34, 34, 68) !important;
 }
 
 .green-colour {
 	color: rgb(34, 136, 34);
 	background-color: rgb(98, 245, 98);
-	border-bottom: 2px solid rgb(34, 68, 34)!important;
+	border-bottom: 2px solid rgb(34, 68, 34) !important;
 }

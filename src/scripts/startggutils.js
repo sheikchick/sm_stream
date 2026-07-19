@@ -161,7 +161,7 @@ function startggState(int) {
 ie: team1 plays FOX/FALCO game 1 but plays SHEIK/FALCO game 2 and 3, on startgg display characters as g1 FOX g2 FALCO g3 SHEIK
 */
 
-function constructSet(p1Id, p2Id, games, swapped) {
+function constructSet(p1Id, p2Id, games, startggSwapped) {
     /*
     if(games[0].team1.length > 1) {
         if(games[0].team1[1] != {}) {
@@ -185,22 +185,22 @@ function constructSet(p1Id, p2Id, games, swapped) {
                 char2 = game.team2[0].character
             }
         } else {*/
-            char1 = swapped ? game.team2[0].character : game.team1[0].character
-            char2 = swapped ? game.team1[0].character : game.team2[0].character
+            char1 = startggSwapped ? game.team2[0].character : game.team1[0].character
+            char2 = startggSwapped ? game.team1[0].character : game.team2[0].character
         //}
-        set.push(constructGame(index, p1Id, p2Id, char1, char2, game, swapped))
+        set.push(constructGame(index, p1Id, p2Id, char1, char2, game, startggSwapped))
         characterIndex++;
         index++;
     }
     return set
 }
 
-function constructGame(gameIndex, p1Id, p2Id, p1Char, p2Char, data, swapped) {
+function constructGame(gameIndex, p1Id, p2Id, p1Char, p2Char, data, startggSwapped) {
     const game = {
-        "winnerId": data.winner == 1 ? (swapped ? p2Id : p1Id) : (swapped ? p1Id : p2Id),
+        "winnerId": data.winner == 1 ? (startggSwapped ? p2Id : p1Id) : (startggSwapped ? p1Id : p2Id),
         "gameNum": gameIndex,
-        "entrant1Score": swapped ? data.team2[0].stocks : data.team1[0].stocks,
-        "entrant2Score": swapped ? data.team1[0].stocks : data.team2[0].stocks,
+        "entrant1Score": startggSwapped ? data.team2[0].stocks : data.team1[0].stocks,
+        "entrant2Score": startggSwapped ? data.team1[0].stocks : data.team2[0].stocks,
         "stageId": resolveStartggStage(data.stage),
         "selections": [
           {

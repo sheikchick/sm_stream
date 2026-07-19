@@ -92,7 +92,7 @@ function update() {
 				},
 				round: $("#startgg-set-round").text(),
 				setId: $("#startgg-set-id").text(),
-				startggSwapped: swapped
+				startggSwapped: startggSwapped
 			},
 			seatOrdering: [
 				$("#p1-left-seat").attr("index"),
@@ -132,7 +132,7 @@ function loadInitialChanges() {
 		success: function (response) {
 			info = fixInfo(response);
 			//startgg
-			swapped = info.startgg.swapped
+			startggSwapped = info.startgg.startggSwapped
 			if(info.startgg.setId) {
 				$(".no-set").hide()
 				$("#startgg-p1-entrant").text(info.startgg.entrant1.id || "")
@@ -141,7 +141,8 @@ function loadInitialChanges() {
 				$("#startgg-p2-name").text(info.startgg.entrant2.name || "")
 				$("#startgg-set-round").text(info.startgg.round || "")
 				$("#startgg-set-id").text(info.startgg.id || "")
-				$("#current-set-wrapperL>.startgg").show()
+				$("#current-set-wrapper-info>.wrapper").show()
+				loadInitialStartGG(info)
 			}
 			
 			//flags
@@ -166,7 +167,6 @@ function loadChanges() {
 			let scoreChanged = false;
 
 			info = fixInfo(response);
-			swapped = info.startgg.swapped
 			//load team1 data
 			$("#p1-name-actual").attr("value", info.team1.players[0].name)
 			loadCharActual("p1", info.team1.players[0].character, info.team1.players[0].colour)
@@ -243,7 +243,7 @@ function fixLosers(fullRoundText) {
 	let { name: p2Name } = getName($("#p2-name").val())
 	switch (fullRoundText) {
 		case "Grand Final":
-			if (swapped) {
+			if (startggSwapped) {
 				$("#p1-name").val(`${p1Name} (L)`)
 				$("#p2-name").val(`${p2Name}`)
 			} else {
@@ -336,7 +336,7 @@ function fixInfo(info) {
 			},
 			"round": info?.startgg?.round || "",
 			"setId": info?.startgg?.setId || "",
-			"swapped": info?.startgg?.swapped || false,
+			"startggSwapped": info?.startgg?.startggSwapped || false,
 		},
 		"seatOrdering": info?.seatOrdering || ["1", "2", "3", "4"],
 		"round": info?.round || "",

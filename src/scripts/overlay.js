@@ -8,7 +8,7 @@ var setPage = 0;
 
 var isDoubles = false;
 
-var swapped = false;
+var startggSwapped = false;
 
 function isMelee() {
 	return GAME === "melee"
@@ -313,7 +313,9 @@ function changeScore(value, player) {
 
 function swapSides(info, characters) {
 	if (info) {
-		swapped = !swapped
+		console.log(startggSwapped)
+		startggSwapped = !startggSwapped
+		console.log(startggSwapped)
 		player1slug = $("#p1-slug").val();
 		player1dslug = $("#p1d-slug").val();
 		player2slug = $("#p2-slug").val();
@@ -780,7 +782,7 @@ function loadSet(x) {
 		prefix: "",
 
 	}
-	swapped = false;
+	startggSwapped = false;
 
 	let setID = parseInt($(`#set${x}`).attr("set-index"))
 	let set = sets[setID]
@@ -867,11 +869,12 @@ function loadSet(x) {
 
 
 	$(".no-set").hide()
-	$("#current-set-wrapperL>.startgg").show()
+	$("#current-set-wrapper-info>.wrapper").show()
 
 	$("#p1-score-change").val(0)
 	$("#p2-score-change").val(0)
 
-	$("#tournament-change").val(set.tournament.replace(/[^a-z0-9]/gi, "-"))
+	$("#tournament-change").val(set.tournament.replace(/[^a-z0-9 ]/gi, "-"))
 	$("#round-change").val(set.round)
+	//getSetProgress(set.id)
 }

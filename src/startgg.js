@@ -3,26 +3,30 @@ const logging = require("./logging.js");
 
 exports.submitStartggSet = async (data, startggSwapped) => {
     const setData = constructGQLSet(data, startggSwapped)
-    console.log(data)
     let winnerId = data.winner === 1 ? data.team1.entrantId : data.team2.entrantId;
-    if(winnerId === "") {
-        logging.log(`No start.gg info provided, not submitting - ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
+    if (winnerId === "") {
+        logging.log(`No start.gg player info provided, not submitting - ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
+        return
+    }
+    if (data.setId === "") {
+        logging.log(`No start.gg set info provided, not submitting - ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
+        return
     }
     logging.log(`Attempting to submit set to start.gg`)
     GQLSubmit("reportBracketSet", data.setId, winnerId, setData)
         .then(() => {
             logging.log(`Submitted set to start.gg - ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
         }).catch((e) => {
-            console.error(JSON.stringify(e))
             logging.error(`Failed to submit set to start.gg - ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
-            return;
-            //return due to issues with updating a set that has already been reported, likely not ever needed anyway
+            logging.error(e)
+            //due to issues with updating a set that has already been reported, likely not ever needed anyway
+            /*
             GQLSubmit("updateBracketSet", data.setId, winnerId, setData)
                 .then(() => {
-                    logging.log(`Updated set on start.gg -    ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
+                    logging.log(`Updated set on start.gg - ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
                 }).catch((e) => {
-                    logging.error(`Failed to submit set to start.gg -    ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
-                })
+                    logging.error(`Failed to submit set to start.gg - ${data.team1.names[0]} vs ${data.team2.names[0]} - ${data.round}`)
+                })*/
         })
 }
 
@@ -54,19 +58,19 @@ const GQLSubmit = (type, setId, winnerId, gameData) => new Promise((resolve, rej
         }),
         signal: submitController.signal,
     })
-    .then((res) => res.json())
-    .then((result) => {
-        clearTimeout(submitTimeout)
-        if (typeof result.errors !== "undefined") {
-            console.error(result.errors)
-            reject(result.errors);
-        } else {
-            resolve();
-        }
-    })
-    .catch((e) => {
-        logging.error(e)
-    })
+        .then((res) => res.json())
+        .then((result) => {
+            clearTimeout(submitTimeout)
+            if (typeof result.errors !== "undefined") {
+                console.error(result.errors)
+                reject(result.errors);
+            } else {
+                resolve();
+            }
+        })
+        .catch((e) => {
+            logging.error(e)
+        })
 
 });
 
@@ -103,7 +107,7 @@ function constructGQLGame(index, game, data, startggSwapped) {
             data?.isDoubles ? {
                 "entrantId": data.team2.entrantId,
                 "characterId": resolveStartggCharacter(game.team2[1].character)
-            } : []    */   
+            } : []    */
         ]
     }
     return gameData

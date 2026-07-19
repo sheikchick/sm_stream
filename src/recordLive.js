@@ -45,8 +45,7 @@ exports.createVod = (data, tournamentName) => {
                 })
             })
     } catch (e) {
-        logging.error("Cannot create VOD")
-        logging.error(e)
+        logging.error("Cannot create VOD - " + e)
     }
 }
 
@@ -70,14 +69,14 @@ const saveVodFile = (vod, startTimestamp, videoLength, outputPath) => new Promis
             logging.log(`Creating VOD output for '${setName}'`);
             logging.debugLog(commandLine)
         })
-        .on("error", function (err) {
-            logging.error(err)
+        .on("error", function (e) {
+            logging.error(e)
         })
-        .on('end', async function (err) {
+        .on('end', async function (e) {
             if (!err) {
                 logging.log(`VOD output completed, saved to '${outputPath}'`)
             } else {
-                logging.error(err)
+                logging.error(e)
             }
         })
         .saveToFile(outputPath)
@@ -108,9 +107,7 @@ exports.saveClip = (folderName, timecode, tournamentName) => new Promise((resolv
                                             .then(() => {
                                                 logging.log(`Command to extract clip from vertical VoD saved to ${batFile}`);
                                                 if (vod === FILENOTFOUND) {
-                                                    const message = "Unable to find VoD. Command saved with placeholder filename";
-                                                    logging.error(message)
-                                                    //throw new Error(message); // Throw simply to return a 500
+                                                    logging.log("Unable to find VoD. Command saved with placeholder filename")
                                                 } else {
                                                     logging.debugLog("Attempting to saveClipFile")
                                                     saveClipFile(path.join(recordDirectory, vod), startTimestamp, clipLength, path.join(tournamentDir, "clips", folderName, `${timecode}.mp4`))
@@ -149,16 +146,16 @@ const saveClipFile = (vod, startTimestamp, videoLength, outputPath) => new Promi
             logging.log(`Creating clip...`)
             logging.debugLog(commandLine)
         })
-        .on("error", function (err) {
-            logging.error(err)
+        .on("error", function (e) {
+            logging.error(e)
             reject()
         })
-        .on('end', async function (err) {
+        .on('end', async function (e) {
             if (!err) {
                 logging.log(`Clip output completed, saved to '${outputPath}'`)
                 resolve()
             } else {
-                logging.error(err)
+                logging.error(e)
                 reject()
             }
         })

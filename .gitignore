@@ -52,13 +52,13 @@ ffmpeg/
 # OTHER #
 #########
 *.bak
-desktop.ini
-overlay/**
+desktop.ini 
 dist/**
 static/img/melee/vs_icons/**
 static/img/melee/fete_icons/**
 static/img/slapcity/**
 static/overlay/**
-data/json/tournaments/**
 data/database-filters/**
+data/json/tournaments/*
 !data/json/tournaments/sm-test/
+log.txt

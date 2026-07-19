@@ -60,6 +60,7 @@ app.post("/update-melee", (req, res) => {
     }
     writeData(MELEE, info)
         .then(() => {
+            logging.log("Updated melee.json")
             res.sendStatus(200);
         })
         .catch(() => {
@@ -390,7 +391,7 @@ app.post("/replay-record", (req, res) => {
         recordReplays(queue);
         res.sendStatus(200);
     }).catch((e) => {
-        logging.log(e)
+        logging.error(e)
         res.sendStatus(500)
     });
 });*/

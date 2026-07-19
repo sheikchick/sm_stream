@@ -22,11 +22,11 @@ exports.loadObs = async () => {
                 return refreshBrowserTransition(browserTransition);
             }*/
         }).catch(() => {
-            logging.error("Failed to connect to OBS, disconnecting...");
+            logging.error("Failed to connect to OBS, disconnecting...", false);
             unloadObs();
         });
     } else {
-        logging.error("OBS websocket password provided is too short, disconnecting...");
+        logging.error("OBS websocket password provided is too short, disconnecting...", false);
         unloadObs();
     }
 };
@@ -76,7 +76,7 @@ const refreshBrowserTransition = async (configTransition) => {
 };
 
 const unloadObs = () => {
-    logging.error('OBS WebSocket unloaded');
+    logging.log('OBS WebSocket unloaded');
     global.obs?.disconnect();
     global.obs = null;
 };
@@ -114,7 +114,7 @@ exports.getTimecode = async () => {
         .then((f) => {
             return f.outputDuration;
         }).catch((e) => {
-            logging.error(`error in getTimecode() - ${e}`)
+            logging.error(`Error in getTimecode() - ${e}`)
             return false
         });
 };
@@ -130,7 +130,7 @@ exports.getDirectory = async () => {
         .then((f) => {
             return f.recordDirectory;
         }).catch((e) => {
-            logging.error(`error in getDirectory() - ${e}`)
+            logging.error(`Error in getDirectory() - ${e}`)
             return false
         });
 };

@@ -33,9 +33,9 @@ exports.writeData = async (file, data) => this.DATAFILES.includes(file) &&
 
 exports.readData = async (file) => this.DATAFILES.includes(file)
     ? readFile(this.DIRECTORY + file, FORMAT)
-        .then((data) => json === JSON.parse(data))
+        .then((data) => JSON.parse(data))
         .catch((e) => {
-            logging.log(`Failed to open ${file} - ${e}`)
+            logging.error(`Failed to open ${file} - ${e}`)
             return {};
         })
         .then((json) => file === this.MELEE ? this.fixMeleeJSON(json) : json)

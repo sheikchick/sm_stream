@@ -1,6 +1,6 @@
 {
   "name": "sm_stream_application",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "automatic melee stream application using slippi, with startgg integration",
   "main": "src/server.js",
   "bin": "src/server.js",

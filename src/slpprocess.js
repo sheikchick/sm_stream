@@ -157,7 +157,7 @@ checkSetEnd = async (info) => {
                                             setTimeout(() => { recordLive.createVod(data, info.tournament) }, 20000)
                                         }
                                     })
-                                    .catch(() => {
+                                    .catch(() => { //redundant butt just in case
                                         createFile(jsonFile, data, info, tournamentName)
                                         if (config["OBS"]["VODs"]["Auto-record"] === "true") {
                                             logging.log("Saving VOD in 20s")
@@ -199,6 +199,7 @@ exports.gameStart = async (path) => {
         }
     }
 
+    //For online sets, log the information of ports
     for (let player of settings.players) {
         if (player.connectCode !== "") {
             logging.log(`Port ${player.port} - ${player.displayName} (${player.connectCode})`)

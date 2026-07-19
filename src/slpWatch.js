@@ -2,7 +2,9 @@ const chokidar = require("chokidar");
 const processSlp = require("./slpprocess");
 const { changeScene } = require("./obs");
 const logging = require("./logging");
+const { compareDirectory } = require("./data")
 const { delayPromiseStart } = require('./util');
+const e = require("express");
 
 const ignoredRegex = /^[/\w\.-]+(?<!\.slp)$/;
 const pending = 'pending';
@@ -15,6 +17,12 @@ let watcher;
  */
 exports.watch = (dir) => {
     logging.log(`Searching for files in '${dir}'`)
+    compareDirectory(dir).then(valid => {
+        valid
+            ? logging.log(`Valid Slippi directory: '${dir}'`)
+            : logging.warn(`Invalid Slippi directory, make sure it is set to the correct folder: '${dir}'`) 
+    })
+
     watcher?.close();
     watcher = chokidar.watch(dir, {
         ignored: ignoredRegex,

@@ -1,4 +1,5 @@
 const path = require("path");
+const os = require('os');
 const { readFile, writeFile } = require("fs/promises");
 const logging = require("./logging");
 
@@ -63,6 +64,23 @@ exports.updateTournament = async (data, index, tournamentFilename) => {
             throw new Error(message);
         });
 };
+
+exports.compareDirectory = (dir) => {
+    return readFile(path.join(os.homedir(), "AppData", "Roaming", "Slippi Launcher", "Settings"))
+        .then((readFile) => {
+            var slippiSettings = JSON.parse(readFile)
+            dir = dir.replaceAll("/", "\\")
+            if(dir.startsWith(slippiSettings.settings.rootSlpPath))
+                return true
+            if(dir.startsWith(slippiSettings.settings.spectateSlpPath))
+                return true
+            for(let connection of slippiSettings.connections) {
+                if(dir.startsWith(connection.folderPath))
+                    return true
+            }
+            return false
+        })
+}
 
 exports.fixMeleeJSON = (info) => {
     let newInfo = {

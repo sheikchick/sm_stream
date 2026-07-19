@@ -15,7 +15,7 @@ const playerDB = require("./database.js")
 const { loadObs } = require("./obs.js");
 const recordLive = require("./recordlive.js");
 const charInfo = require("./charinfo.js");
-const { readData, writeData, updateTournament, MELEE, CREWS, CHARACTERDATA, DATAFILES, REPLAYQUEUE, DIRECTORY } = require("./data.js");
+const { readData, writeData, updateTournament, compareDirectory, MELEE, CREWS, CHARACTERDATA, DATAFILES, REPLAYQUEUE, DIRECTORY } = require("./data.js");
 const { watch } = require("./slpwatch.js");
 const { checkSetStart, test } = require("./slpprocess.js");
 //const realtime = require("./realtime.js")
@@ -481,6 +481,7 @@ async function startApp() {
         logging.log("Web application listening on port " + config.Web.Port)
     });
     //file read
+    compareDirectory(config['Slippi']['Directory'])
     watch(config['Slippi']['Directory'], true);
     //realtime
     //realtime.start("127.0.0.1", Ports.DEFAULT);

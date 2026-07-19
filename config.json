@@ -32,5 +32,10 @@
         "API key": "",
         "Auto-submit sets": "false",
         "Database filter": ""
+    },
+    "File Logging": {
+        "Output to file": "true",
+        "All logs": "false",
+        "Verbose": "true"
     }
 }
